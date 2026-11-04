@@ -1,1 +1,133 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #3b82f6;
+  --color-brand-500: #0168f5;
+  --color-brand-600: #0057d9;
+  --color-brand-700: #0047b3;
+  --color-brand-800: #003a94;
+  --color-brand-900: #003078;
+  --color-brand-950: #001d4d;
+  --color-brand: #0168f5;
+  --color-brand-hover: #0055cb;
+  --color-brand-dark: #004099;
+  --color-brand-navy: #0c192c;
+  --color-brand-midnight: #060e19;
+  --color-brand-carbon: #1d1d1b;
+  --color-brand-light: #eef5ff;
+  --color-brand-accent: #1677ff;
+  --color-brand-border: #cce1ff;
+
+  --color-whatsapp: #25d366;
+  --color-whatsapp-hover: #1ebe5d;
+  --color-whatsapp-dark: #128c7e;
+  --color-whatsapp-light: #dcf8c6;
+
+  --shadow-soft-card: 0 4px 20px -2px rgba(1, 104, 245, 0.08);
+  --shadow-soft-hover: 0 12px 30px -4px rgba(1, 104, 245, 0.16);
+  --shadow-brand-glow: 0 0 20px rgba(1, 104, 245, 0.28);
+  --shadow-dropdown: 0 10px 30px -5px rgba(12, 25, 44, 0.15);
+  --shadow-floating: 0 10px 25px -5px rgba(37, 211, 102, 0.4);
+
+  --animate-badge-pop: badge-pop 0.3s ease-out;
+  --animate-fade-in: fadeIn 0.25s ease-out;
+  --animate-gentle-bounce: gentle-bounce 3s infinite ease-in-out;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-800 antialiased dark:bg-slate-950 dark:text-slate-100;
+    font-family: var(--font-sans);
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@keyframes badge-pop {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gentle-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.badge-pulse {
+  animation: var(--animate-badge-pop);
+}
+
+.view-container {
+  animation: var(--animate-fade-in);
+}
+
+.floating-hint {
+  animation: var(--animate-gentle-bounce);
+}
+
+.dropdown-menu {
+  animation: var(--animate-fade-in);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+::selection {
+  background-color: var(--color-brand);
+  color: #fff;
+}

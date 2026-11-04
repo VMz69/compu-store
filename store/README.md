@@ -1,75 +1,43 @@
-# React + TypeScript + Vite
+# CompuStore SV — Front-Office
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Tienda en línea de tecnología (catálogo, carrito y checkout por WhatsApp) para
+CompuStore SV, Cojutepeque, El Salvador. SPA construida con React 19 + TypeScript
++ Tailwind 4 + Vite 8 + Zustand 5, siguiendo arquitectura DOMA.
 
-Currently, two official plugins are available:
+## Scripts
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+pnpm install
+pnpm dev       # servidor de desarrollo (Vite)
+pnpm build     # tsc -b + vite build
+pnpm lint      # ESLint
+pnpm preview   # previsualización de dist/
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Estructura
 
 ```
+src/
+  components/   # UI presentacional (< 150 líneas)
+  pages/        # Vistas (< 100 líneas)
+  hooks/        # Lógica de vista (DOMA)
+  services/     # Funciones puras
+  store/        # Zustand
+  data/         # Datos estáticos (barrel @/data)
+  types/        # Tipos compartidos
+  ui-traceability/  # uiMeta (data-ui-*)
+```
+
+## Convenciones clave
+
+- `.tsx` no contiene estado/lógica de negocio (DOMA).
+- Todo elemento interactivo o contenedor principal declara `uiMeta({ id, component, source })`.
+- Trazabilidad desactivable con `VITE_UI_TRACEABILITY=false`.
+- Tema: por defecto sigue `prefers-color-scheme`; el toggle persiste override manual.
+- Ruta por defecto: `#/` (Home).
+
+## Documentación
+
+- Arquitectura original: [`arch-fronOffice.md`](./arch-fronOffice.md)
+- Reglas de desarrollo: [`agent-rules.md`](./agent-rules.md)
+- **Diagnóstico y escalabilidad:** [`DIAGNOSTICO.md`](./DIAGNOSTICO.md)
