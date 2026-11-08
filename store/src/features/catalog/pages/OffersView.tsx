@@ -12,7 +12,7 @@ export const OffersView = () => {
   const { products, sortBy, setSortBy } = useOffersView()
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <Breadcrumbs
         items={[{ label: 'Inicio', to: '/' }, { label: 'Ofertas y Promociones' }]}
         traceId="ofertas.breadcrumbs"

@@ -29,14 +29,14 @@ export const ProductTabs = ({
   onSelectTab,
 }: ProductTabsProps) => (
   <div
-    className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-soft-card dark:shadow-none overflow-hidden"
+    className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-soft-card dark:shadow-none overflow-hidden"
     {...uiMeta({
       id: 'producto.tabs',
       component: 'ProductTabs',
       source: SOURCE,
     })}
   >
-    <div className="flex border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 px-4 sm:px-8 pt-3 gap-2 sm:gap-4 overflow-x-auto hide-scrollbar">
+    <div className="flex border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 px-2 sm:px-8 pt-2 sm:pt-3 gap-1 sm:gap-4 overflow-x-auto hide-scrollbar">
       {TABS.map((tab) => {
         const isActive = activeTab === tab.id
         return (
@@ -78,7 +78,7 @@ export const ProductTabs = ({
       })}
     </div>
 
-    <div className="p-6 sm:p-10">
+    <div className="p-4 sm:p-10">
       {activeTab === 'overview' ? <ProductOverviewTab product={product} /> : null}
       {activeTab === 'specs' ? (
         <ProductSpecsTab product={product} availableStock={availableStock} />

@@ -23,7 +23,7 @@ export const FilterBar = ({
   traceId,
 }: FilterBarProps) => (
   <div
-    className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800"
+    className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800"
     {...uiMeta({ id: traceId, component: 'FilterBar', source: SOURCE })}
   >
     <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">

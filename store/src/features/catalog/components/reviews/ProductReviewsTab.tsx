@@ -12,14 +12,14 @@ export const ProductReviewsTab = ({ product }: { product: Product }) => {
 
   return (
     <div
-      className="space-y-10 animate-fade-in"
+      className="space-y-6 sm:space-y-10 animate-fade-in"
       {...uiMeta({
         id: 'producto.tabs.reviews',
         component: 'ProductReviewsTab',
         source: SOURCE,
       })}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
         <div className="lg:col-span-5 space-y-6">
           <RatingSummary
             rating={product.rating}

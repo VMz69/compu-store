@@ -7,7 +7,7 @@ const SOURCE = 'src/app/layout/footer/FooterBrand.tsx'
 
 export const FooterBrand = () => (
   <div
-    className="space-y-4"
+    className="col-span-2 md:col-span-1 space-y-4"
     {...uiMeta({ id: 'layout.footer.brand', component: 'FooterBrand', source: SOURCE })}
   >
     <Link

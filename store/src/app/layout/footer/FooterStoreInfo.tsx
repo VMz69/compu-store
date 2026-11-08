@@ -5,6 +5,7 @@ const SOURCE = 'src/app/layout/footer/FooterStoreInfo.tsx'
 
 export const FooterStoreInfo = () => (
   <div
+    className="col-span-2 md:col-span-1"
     {...uiMeta({
       id: 'layout.footer.store',
       component: 'FooterStoreInfo',

@@ -56,16 +56,16 @@ src/
 ├── app/                         ensamblaje
 │   ├── router.tsx               rutas
 │   ├── nav.config.ts            enlaces del footer
-│   ├── hooks/                   header, navbar, overlay móvil, scroll
+│   ├── hooks/                   header, navbar, overlay móvil, scroll, insets del layout
 │   ├── lib/route.service.ts     normaliza la vista inicial
-│   └── layout/                  MainLayout · header/ · navbar/ · footer/ · ToastContainer · FloatingWhatsApp
+│   └── layout/                  MainLayout · header/ (TopBar, Header) · navbar/ · footer/ · ToastContainer · FloatingWhatsApp
 ├── shared/                      sin lógica de negocio
 │   ├── ui/                      Button, Badge, Select, Breadcrumbs, EmptyState, Logo, Toast…
 │   ├── hooks/                   useTheme · useToasts · useClickOutside
-│   ├── store/                   ui.store (overlays, tema) · toast.store
+│   ├── store/                   ui.store (panel Explorar, menú móvil, barra de compra móvil, tema) · toast.store
 │   ├── lib/                     formatters · whatsapp (enlace genérico)
 │   ├── config/store.config.ts   identidad comercial
-│   └── types/                   modelo del catálogo (Product, Category, Brand, Review…)
+│   └── types/                   modelo del catálogo (Product + `images?` de galería, Category, Brand, Review…)
 └── features/
     ├── catalog/                 productos, categorías, marcas, ofertas, detalle, reseñas, favoritos
     ├── cart/                    carrito, checkout WhatsApp, CartWidget
@@ -102,7 +102,8 @@ src/
 
 | Feature | Componentes | Hooks / estado |
 |---|---|---|
-| **catalog** | `grid/` ProductCard (+Media, Info, Actions), ProductGrid · `detail/` Gallery (+Thumbs, Lightbox), Info (+Actions), BuyBox, Tabs, RelatedList · `reviews/` ReviewCard, ReviewForm, RatingSummary · `browse/` CategoryCard, BrandCard · FilterBar | useFilters, useCatalogStats, useProductDetail, useProductGallery, useShareProduct, useFavorites · `filters` / `favorites` / `reviews.store` |
+| **app** (layout) | `header/` TopBar, Header · `navbar/` Navbar, ExploreMenu (+Panel), MobileMenu (+Catalog, Info), MobileMenuBackdrop · `footer/` · FloatingWhatsApp, ToastContainer | useNavbar, useHeaderState, useMobileMenuOverlay, useMobileSearchCollapse, useLayoutInsets, useScrollToTop |
+| **catalog** | `grid/` ProductCard (+Media, Info, Actions), ProductGrid · `detail/` Gallery (+Thumbs, Lightbox), Info (+Actions), BuyBox, MobileBar, Tabs, RelatedList · `reviews/` ReviewCard, ReviewForm, RatingSummary · `browse/` CategoryCard, BrandCard · FilterBar | useFilters, useCatalogStats, useProductDetail, useProductGallery, useShareProduct, useMobileActionBar, useFavorites · `filters` / `favorites` / `reviews.store` |
 | **cart** | CartItem, CartSummary, CheckoutForm, CartWidget | useCart, useCartView · `store.ts` |
 | **search** | SearchInput, SearchDropdown, SearchResultItem | useSearchInput, useSearchSuggestions, useSearchDropdown, useSearchLock |
 | **home** | HeroSlider, TrustPillars, CategoryTile, BrandTile | useHomeData, useHeroSlider |
@@ -117,3 +118,50 @@ src/
 - **Formularios** → `useXForm.ts` (lógica) + `XForm.tsx` (campos).
 - **Contenido repetitivo** (footer, pilares, orden) → `config/*.config.ts` + `.map()`.
 - **Mensajes de WhatsApp** → `features/<x>/lib/whatsapp.ts` sobre `shared/lib/whatsapp`.
+
+---
+
+## 7. Layout y responsive
+
+**Contenedor.** Todo el ancho sale del token `--container-app` (`index.css`, 1600 px) → clase `max-w-app`,
+usada por TopBar, Header, Navbar, `main` y Footer. Gutter común: `px-4 sm:px-6 lg:px-8 2xl:px-10`.
+Para cambiar el ancho de la app se edita solo el token.
+
+**Mobile-first denso.** El valor base es el de móvil (compacto) y `sm:` restaura el espaciado amplio;
+tablet y desktop no dependen de los valores base. Pautas en móvil: separación entre secciones
+`space-y-4…8`, tarjetas `p-3/p-4` con `rounded-2xl`, títulos de sección `text-xl`. El gutter lateral
+(16 px) y las zonas táctiles (≥ 40 px) no se reducen.
+
+**Grillas de producto.** `ProductGrid` por defecto: `2 → md:3 → lg:4 → 2xl:5` columnas. Las vitrinas con
+cantidad fija (portada: 4 ítems) fijan `lg:4` vía `gridClassName` para no dejar huecos. En móvil,
+`ProductCard` oculta el chip de categoría y la descripción.
+
+**Navegación.**
+
+| Zona | Contenido |
+|---|---|
+| TopBar (≥ lg) | ubicación · WhatsApp · horario · **Nosotros / Contacto** (navegación institucional) |
+| Navbar (≥ lg) | **Explorar** (panel: categorías + marcas, cada una con «Ver todas») · accesos rápidos a categorías (≥ xl, activo = subrayado) · **Ofertas** (único destacado) |
+| Menú móvil (< lg) | Ofertas → Categorías → Marcas → Información (Nosotros, Contacto, WhatsApp + horario) |
+
+«Inicio» no figura en la navegación: el logo y el breadcrumb cumplen esa función. Los overlays se cierran al
+cambiar de ruta, con click fuera y con `Esc` (`useNavbar`).
+
+**Detalle de producto (`/product/:id`).**
+
+| Ancho | Distribución |
+|---|---|
+| ≥ xl | tarjeta (galería con miniaturas verticales \| info) + BuyBox lateral `sticky` |
+| lg | tarjeta (galería sobre info) + BuyBox `sticky` |
+| < lg | apilado; las acciones de compra viven solo en `ProductMobileBar` (fija inferior) y BuyBox queda como ficha (stock, cantidad, vendedor, garantías) |
+
+- Galería: miniaturas, contador, visor a pantalla completa (`ProductLightbox`: flechas, miniaturas, `Esc`, bloqueo de scroll).
+- Compartir: copia la URL al portapapeles (con respaldo para contextos no seguros) y confirma con toast.
+- `ProductMobileBar` activa `isMobileActionBarVisible` (`useMobileActionBar`): `MainLayout` reserva espacio
+  inferior y oculta `FloatingWhatsApp` bajo `lg` (`useLayoutInsets`). No se monta si el producto está agotado.
+
+**Elementos fijos.** Los overlays `fixed` montados dentro de una página (`ProductLightbox`, `ProductMobileBar`)
+se renderizan con `createPortal` en `document.body`, porque la animación de entrada de `main`
+(`.view-container`, `transform`) desplazaría su posición. Capas: header `z-40` · barra móvil `z-30` ·
+WhatsApp flotante `z-20` · menús/toasts `z-50` · lightbox `z-[70]`.
+

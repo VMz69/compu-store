@@ -13,10 +13,10 @@ export const HeroSlider = () => {
       onMouseLeave={resume}
       onFocus={pause}
       onBlur={resume}
-      className={`relative overflow-hidden rounded-3xl shadow-lg bg-gradient-to-r ${promotion.gradient} text-white min-h-[440px] sm:min-h-[420px] md:min-h-0 md:h-[360px] flex flex-col justify-center`}
+      className={`relative overflow-hidden rounded-3xl shadow-lg bg-gradient-to-r ${promotion.gradient} text-white min-h-[360px] sm:min-h-[420px] md:min-h-0 md:h-[360px] flex flex-col justify-center`}
       {...uiMeta({ id: 'home.hero', component: 'HeroSlider', source: SOURCE })}
     >
-      <div className="relative z-10 flex flex-col md:flex-row items-center justify-between px-6 sm:px-12 py-8 md:py-0 pb-12 md:pb-0 md:h-full">
+      <div className="relative z-10 flex flex-col md:flex-row items-center justify-between px-6 sm:px-12 py-6 sm:py-8 md:py-0 pb-10 sm:pb-12 md:pb-0 md:h-full">
         <div className="w-full md:w-3/5 space-y-3 sm:space-y-4 text-center md:text-left z-20 my-auto">
           <span
             className={`inline-flex items-center px-3 py-1 rounded-full ${promotion.badgeColor} text-[11px] font-black tracking-wider uppercase shadow-xs`}
@@ -61,7 +61,7 @@ export const HeroSlider = () => {
           </div>
         </div>
 
-        <div className="w-full md:w-2/5 h-32 sm:h-40 md:h-72 flex items-center justify-center md:justify-end z-10 my-auto">
+        <div className="w-full md:w-2/5 h-28 sm:h-40 md:h-72 flex items-center justify-center md:justify-end z-10 my-auto">
           <img
             src={promotion.imageUrl}
             alt={promotion.title}

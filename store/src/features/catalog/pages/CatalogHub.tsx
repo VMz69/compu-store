@@ -10,7 +10,7 @@ export const CatalogHub = () => {
   const { categories, totalProducts } = useCatalogHub()
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5 sm:space-y-8">
       <Breadcrumbs
         items={[
           { label: 'Inicio', to: '/' },
@@ -32,7 +32,7 @@ export const CatalogHub = () => {
       </PageBanner>
 
       <div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6"
         {...uiMeta({ id: 'categorias.grid', component: 'CatalogHub', source: SOURCE })}
       >
         {categories.map((category) => (

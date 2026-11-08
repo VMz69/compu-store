@@ -19,11 +19,11 @@ export const SectionHeading = ({
   className = '',
 }: SectionHeadingProps) => (
   <div
-    className={`flex flex-wrap justify-between items-end gap-3 mb-6 ${className}`}
+    className={`flex flex-wrap justify-between items-end gap-x-3 gap-y-1.5 mb-4 sm:mb-6 ${className}`}
     {...uiMeta({ id: traceId, component: 'SectionHeading', source: SOURCE })}
   >
     <div>
-      <h2 className="text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
+      <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
         {title}
       </h2>
       {subtitle ? (

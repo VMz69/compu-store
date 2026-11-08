@@ -36,7 +36,7 @@ const HIGHLIGHTS = [
 
 export const ProductOverviewTab = ({ product }: { product: Product }) => (
   <div
-    className="space-y-8 animate-fade-in"
+    className="space-y-5 sm:space-y-8 animate-fade-in"
     {...uiMeta({
       id: 'producto.tabs.overview',
       component: 'ProductOverviewTab',
@@ -52,11 +52,11 @@ export const ProductOverviewTab = ({ product }: { product: Product }) => (
       </p>
     </div>
 
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 sm:pt-2">
       {HIGHLIGHTS.map((highlight) => (
         <div
           key={highlight.title}
-          className="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 flex flex-col justify-between"
+          className="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-3.5 sm:p-5 border border-slate-100 dark:border-slate-800 flex flex-col justify-start"
           {...uiMeta({
             id: `producto.tabs.overview.highlight.${highlight.title}`,
             component: 'ProductOverviewTab',
@@ -64,7 +64,7 @@ export const ProductOverviewTab = ({ product }: { product: Product }) => (
           })}
         >
           <div
-            className={`w-10 h-10 rounded-xl ${highlight.tone} flex items-center justify-center text-lg mb-3`}
+            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl ${highlight.tone} flex items-center justify-center text-base sm:text-lg mb-2 sm:mb-3`}
           >
             <i className={highlight.icon} />
           </div>
@@ -80,7 +80,7 @@ export const ProductOverviewTab = ({ product }: { product: Product }) => (
       ))}
     </div>
 
-    <div className="bg-blue-50/50 dark:bg-brand-950/30 rounded-2xl p-6 border border-blue-100 dark:border-brand-900 space-y-3">
+    <div className="bg-blue-50/50 dark:bg-brand-950/30 rounded-2xl p-4 sm:p-6 border border-blue-100 dark:border-brand-900 space-y-3">
       <h4 className="text-xs font-bold text-brand uppercase tracking-wider flex items-center gap-2">
         <i className="fa-solid fa-box-open" />
         <span>¿Qué incluye el empaque?</span>

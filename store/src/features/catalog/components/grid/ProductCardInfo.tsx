@@ -9,7 +9,7 @@ export const ProductCardInfo = ({ product }: { product: Product }) => {
 
   return (
     <div
-      className="mt-3.5 space-y-1"
+      className="mt-2.5 sm:mt-3.5 space-y-1"
       {...uiMeta({
         id: `${traceId}.info`,
         component: 'ProductCardInfo',
@@ -20,7 +20,7 @@ export const ProductCardInfo = ({ product }: { product: Product }) => {
         <span className="text-[10px] font-bold uppercase tracking-wider text-brand bg-brand-50 dark:bg-brand-950/60 px-2 py-0.5 rounded-full">
           {product.brand}
         </span>
-        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
+        <span className="hidden sm:inline text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
           {product.category}
         </span>
       </div>
@@ -38,7 +38,7 @@ export const ProductCardInfo = ({ product }: { product: Product }) => {
         {product.name}
       </Link>
 
-      <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+      <p className="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:line-clamp-2 leading-relaxed">
         {product.description}
       </p>
     </div>

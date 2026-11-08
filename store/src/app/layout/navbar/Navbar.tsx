@@ -1,17 +1,17 @@
 import { Link } from 'react-router-dom'
-import { BrandMenu } from './BrandMenu'
-import { CategoryMenu } from './CategoryMenu'
+import { ExploreMenu } from './ExploreMenu'
 import { MobileMenu } from './MobileMenu'
 import { useNavbar } from '../../hooks/useNavbar'
 import { uiMeta } from '@/ui-traceability'
 
 const SOURCE = 'src/app/layout/navbar/Navbar.tsx'
 
-const navPill = (active: boolean) =>
-  `px-3.5 py-1.5 rounded-full transition-all cursor-pointer ${
+/** Enlace de texto: la página activa se marca con un subrayado de marca, sin relleno. */
+const quickLink = (active: boolean) =>
+  `relative h-12 px-3 inline-flex items-center text-sm transition-colors after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:rounded-full after:transition-colors ${
     active
-      ? 'bg-brand text-white font-bold shadow-xs'
-      : 'text-slate-600 dark:text-slate-300 hover:text-brand hover:bg-slate-100/70 dark:hover:bg-slate-800/70'
+      ? 'text-brand font-bold after:bg-brand'
+      : 'text-slate-600 dark:text-slate-300 font-medium hover:text-brand after:bg-transparent hover:after:bg-brand-200 dark:hover:after:bg-brand-800'
   }`
 
 export const Navbar = () => {
@@ -20,11 +20,11 @@ export const Navbar = () => {
     pathname,
     categories,
     brands,
-    isCategoryDropdownOpen,
-    isBrandDropdownOpen,
+    isExploreMenuOpen,
     isMobileMenuOpen,
-    toggleCategoryDropdown,
-    toggleBrandDropdown,
+    isCatalogActive,
+    isOffersActive,
+    toggleExploreMenu,
     closeOverlays,
   } = useNavbar()
 
@@ -36,99 +36,61 @@ export const Navbar = () => {
       {...uiMeta({ id: 'layout.navbar', component: 'Navbar', source: SOURCE })}
     >
       <div className="max-w-app mx-auto px-3 sm:px-6 lg:px-8 2xl:px-10">
-        <div className="hidden lg:flex items-center justify-between py-1.5 md:py-1 min-h-[44px] md:h-13">
-          <div className="w-full grid grid-cols-2 gap-2 sm:gap-3 lg:flex lg:w-auto lg:items-center lg:space-x-2.5">
-            <CategoryMenu
-              open={isCategoryDropdownOpen}
+        <div className="hidden lg:flex items-center justify-between gap-6 h-12">
+          <div className="flex items-center gap-4 min-w-0">
+            <ExploreMenu
+              open={isExploreMenuOpen}
+              active={isCatalogActive}
               categories={categories}
-              pathname={pathname}
-              onToggle={() => toggleCategoryDropdown()}
-            />
-            <BrandMenu
-              open={isBrandDropdownOpen}
               brands={brands}
               pathname={pathname}
-              onToggle={() => toggleBrandDropdown()}
+              onToggle={toggleExploreMenu}
             />
+
+            <span aria-hidden="true" className="hidden xl:block h-5 w-px bg-slate-200 dark:bg-slate-700" />
+
+            <ul className="hidden xl:flex items-center">
+              {categories.map((category) => {
+                const isActive = pathname === `/category/${category.slug}`
+                return (
+                  <li key={category.id}>
+                    <Link
+                      to={`/category/${category.slug}`}
+                      aria-current={isActive ? 'page' : undefined}
+                      className={quickLink(isActive)}
+                      {...uiMeta({
+                        id: `layout.navbar.link.category.${category.slug}`,
+                        component: 'Navbar',
+                        source: SOURCE,
+                      })}
+                    >
+                      {category.name}
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
           </div>
 
-          <div className="hidden lg:flex items-center space-x-1 lg:space-x-1.5 text-xs font-medium">
-            <Link
-              to="/"
-              aria-current={pathname === '/' ? 'page' : undefined}
-              className={navPill(pathname === '/')}
-              {...uiMeta({
-                id: 'layout.navbar.link.home',
-                component: 'Navbar',
-                source: SOURCE,
-              })}
-            >
-              Inicio
-            </Link>
-            {categories.map((category) => (
-              <Link
-                key={category.id}
-                to={`/category/${category.slug}`}
-                aria-current={pathname === `/category/${category.slug}` ? 'page' : undefined}
-                className={`hidden xl:inline-flex ${navPill(pathname === `/category/${category.slug}`)}`}
-                {...uiMeta({
-                  id: `layout.navbar.link.category.${category.slug}`,
-                  component: 'Navbar',
-                  source: SOURCE,
-                })}
-              >
-                {category.name}
-              </Link>
-            ))}
-            <Link
-              to="/about"
-              aria-current={pathname === '/about' ? 'page' : undefined}
-              className={navPill(pathname === '/about')}
-              {...uiMeta({
-                id: 'layout.navbar.link.about',
-                component: 'Navbar',
-                source: SOURCE,
-              })}
-            >
-              Nosotros
-            </Link>
-            <Link
-              to="/contact"
-              aria-current={pathname === '/contact' ? 'page' : undefined}
-              className={navPill(pathname === '/contact')}
-              {...uiMeta({
-                id: 'layout.navbar.link.contact',
-                component: 'Navbar',
-                source: SOURCE,
-              })}
-            >
-              Contacto
-            </Link>
-            <Link
-              to="/offers"
-              aria-current={pathname === '/offers' ? 'page' : undefined}
-              className={`px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1.5 ml-1 lg:ml-2.5 cursor-pointer ${
-                pathname === '/offers'
-                  ? 'bg-amber-500 text-white font-bold shadow-xs'
-                  : 'text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/60 border border-amber-200/90 dark:border-amber-800/60 font-semibold'
-              }`}
-              {...uiMeta({
-                id: 'layout.navbar.link.offers',
-                component: 'Navbar',
-                source: SOURCE,
-              })}
-            >
-              <span>Ofertas</span>
-              <span className="bg-red-500 text-white text-[8px] font-black px-1.5 rounded-full uppercase">
-                Hot
-              </span>
-            </Link>
-          </div>
+          <Link
+            to="/offers"
+            aria-current={isOffersActive ? 'page' : undefined}
+            className={`h-9 px-4 rounded-full text-sm font-bold flex shrink-0 items-center gap-2 transition-colors ${
+              isOffersActive
+                ? 'bg-amber-500 text-white'
+                : 'text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/60 border border-amber-200/90 dark:border-amber-800/60'
+            }`}
+            {...uiMeta({ id: 'layout.navbar.link.offers', component: 'Navbar', source: SOURCE })}
+          >
+            <i className="fa-solid fa-fire text-xs" />
+            <span>Ofertas</span>
+          </Link>
         </div>
 
         <MobileMenu
           open={isMobileMenuOpen}
           categories={categories}
+          brands={brands}
           pathname={pathname}
           onNavigate={closeOverlays}
         />

@@ -23,7 +23,7 @@ export const PageBanner = ({
   traceId,
 }: PageBannerProps) => (
   <div
-    className={`bg-gradient-to-r ${gradient} rounded-3xl p-6 sm:p-10 text-white flex flex-col sm:flex-row items-center justify-between gap-6 shadow-md`}
+    className={`bg-gradient-to-r ${gradient} rounded-2xl sm:rounded-3xl p-5 sm:p-10 text-white flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 shadow-md`}
     {...uiMeta({ id: traceId, component: 'PageBanner', source: SOURCE })}
   >
     <div className="space-y-2 max-w-2xl text-center sm:text-left">

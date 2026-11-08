@@ -13,7 +13,7 @@ export const CartView = () => {
   const cart = useCartView()
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <Breadcrumbs
         items={[{ label: 'Inicio', to: '/' }, { label: 'Carrito de Compras' }]}
         traceId="carrito.breadcrumbs"
@@ -41,7 +41,7 @@ export const CartView = () => {
       </div>
 
       {cart.items.length > 0 ? (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-start">
           <div
             className="lg:col-span-8 space-y-4"
             {...uiMeta({ id: 'carrito.lista', component: 'CartView', source: SOURCE })}

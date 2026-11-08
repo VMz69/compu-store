@@ -3,9 +3,14 @@ import { uiMeta } from '@/ui-traceability'
 
 const SOURCE = 'src/app/layout/FloatingWhatsApp.tsx'
 
-export const FloatingWhatsApp = () => (
+interface FloatingWhatsAppProps {
+  /** Con la barra de compra móvil activa, se oculta bajo `lg` para no duplicar el CTA. */
+  hiddenOnMobile?: boolean
+}
+
+export const FloatingWhatsApp = ({ hiddenOnMobile = false }: FloatingWhatsAppProps) => (
   <div
-    className="fixed bottom-6 right-6 z-20 flex items-center gap-3"
+    className={`fixed bottom-6 right-6 z-20 items-center gap-3 ${hiddenOnMobile ? 'hidden lg:flex' : 'flex'}`}
     {...uiMeta({
       id: 'layout.floating-whatsapp',
       component: 'FloatingWhatsApp',

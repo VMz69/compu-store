@@ -1,7 +1,14 @@
+import { Link } from 'react-router-dom'
 import { STORE_CONFIG } from '@/shared/config/store.config'
 import { uiMeta } from '@/ui-traceability'
 
 const SOURCE = 'src/app/layout/header/TopBar.tsx'
+
+/** Navegación institucional: fuera de la navbar de compra para reducir ruido. */
+const UTILITY_LINKS = [
+  { to: '/about', label: 'Nosotros', traceId: 'layout.topbar.about' },
+  { to: '/contact', label: 'Contacto', traceId: 'layout.topbar.contact' },
+]
 
 export const TopBar = () => (
   <div
@@ -37,6 +44,19 @@ export const TopBar = () => (
           <i className="fa-regular fa-clock mr-1 text-slate-400" />
           {STORE_CONFIG.scheduleShort}
         </span>
+        <span className="text-slate-600" aria-hidden="true">|</span>
+        <nav aria-label="Información de la tienda" className="flex items-center gap-4">
+          {UTILITY_LINKS.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className="font-medium text-slate-300 hover:text-white transition-colors"
+              {...uiMeta({ id: link.traceId, component: 'TopBar', source: SOURCE })}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
       </div>
     </div>
   </div>

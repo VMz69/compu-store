@@ -28,7 +28,7 @@ export const ProductInfo = ({
   const traceId = `producto.detalle.${product.id}`
 
   return (
-    <div className="min-w-0 space-y-5" {...uiMeta({ id: `${traceId}.info`, component: 'ProductInfo', source: SOURCE })}>
+    <div className="min-w-0 space-y-4 sm:space-y-5" {...uiMeta({ id: `${traceId}.info`, component: 'ProductInfo', source: SOURCE })}>
       <div className="space-y-3">
         <div className="flex items-start justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2 pt-1">
@@ -71,7 +71,7 @@ export const ProductInfo = ({
         </div>
       </div>
 
-      <div className="py-4 border-y border-slate-100 dark:border-slate-800 flex flex-wrap items-baseline gap-x-3 gap-y-2">
+      <div className="py-3 sm:py-4 border-y border-slate-100 dark:border-slate-800 flex flex-wrap items-baseline gap-x-3 gap-y-2">
         <span className="text-3xl sm:text-4xl font-black text-brand-dark dark:text-sky-400">
           {formatCurrency(product.price)}
         </span>

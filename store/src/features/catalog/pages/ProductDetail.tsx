@@ -3,6 +3,7 @@ import { ProductBuyBox } from '../components/detail/ProductBuyBox'
 import { ProductDetailHeader } from '../components/detail/ProductDetailHeader'
 import { ProductGallery } from '../components/detail/ProductGallery'
 import { ProductInfo } from '../components/detail/ProductInfo'
+import { ProductMobileBar } from '../components/detail/ProductMobileBar'
 import { ProductTabs } from '../components/detail/ProductTabs'
 import { RelatedList } from '../components/detail/RelatedList'
 import { EmptyState } from '@/shared/ui/EmptyState'
@@ -42,15 +43,15 @@ export const ProductDetail = () => {
   const product = detail.product
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-8">
       <ProductDetailHeader productName={product.name} categoryLabel={detail.categoryLabel} categorySlug={detail.categorySlug} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
         <section
-          className="lg:col-span-8 xl:col-span-9 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 lg:p-8 border border-slate-200/90 dark:border-slate-800 shadow-soft-card dark:shadow-none"
+          className="lg:col-span-8 xl:col-span-9 bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-slate-200/90 dark:border-slate-800 shadow-soft-card dark:shadow-none"
           {...uiMeta({ id: 'producto.hero-card', component: 'ProductDetail', source: SOURCE })}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-6 xl:gap-10 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-5 sm:gap-6 xl:gap-10 items-start">
             <ProductGallery key={product.id} productName={product.name} images={detail.images} discount={detail.discount} />
             <ProductInfo
               product={product}
@@ -84,6 +85,16 @@ export const ProductDetail = () => {
       />
 
       <RelatedList products={detail.relatedProducts} categoryLabel={detail.categoryLabel} categorySlug={detail.categorySlug} />
+
+      <ProductMobileBar
+        productId={product.id}
+        isOutOfStock={product.stock <= 0}
+        canAddToCart={detail.availableStock > 0}
+        quantity={detail.quantity}
+        subtotal={detail.subtotal}
+        whatsappUrl={detail.whatsappUrl}
+        onAddToCart={detail.addToCart}
+      />
     </div>
   )
 }

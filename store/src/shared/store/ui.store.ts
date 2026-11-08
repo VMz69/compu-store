@@ -33,16 +33,18 @@ const getSystemDarkMode = (): boolean => {
 const initialThemePreference = getStoredThemePreference()
 
 interface UIState {
-  isCategoryDropdownOpen: boolean
-  isBrandDropdownOpen: boolean
+  /** Panel «Explorar» (categorías + marcas) de la navbar de escritorio. */
+  isExploreMenuOpen: boolean
   isMobileMenuOpen: boolean
+  /** Barra de compra fija inferior (móvil) activa: el layout reserva espacio y oculta el WhatsApp flotante. */
+  isMobileActionBarVisible: boolean
   activeHeroSlide: number
   productDetailTab: ProductDetailTab
   isDark: boolean
   themePreference: ThemePreference
-  toggleCategoryDropdown: (open?: boolean) => void
-  toggleBrandDropdown: (open?: boolean) => void
+  toggleExploreMenu: (open?: boolean) => void
   toggleMobileMenu: (open?: boolean) => void
+  setMobileActionBarVisible: (visible: boolean) => void
   closeOverlays: () => void
   setHeroSlide: (index: number, total: number) => void
   setProductDetailTab: (tab: ProductDetailTab) => void
@@ -52,9 +54,9 @@ interface UIState {
 }
 
 export const useUIStore = create<UIState>((set, get) => ({
-  isCategoryDropdownOpen: false,
-  isBrandDropdownOpen: false,
+  isExploreMenuOpen: false,
   isMobileMenuOpen: false,
+  isMobileActionBarVisible: false,
   activeHeroSlide: 0,
   productDetailTab: 'overview',
   isDark:
@@ -63,22 +65,15 @@ export const useUIStore = create<UIState>((set, get) => ({
       : initialThemePreference === 'dark',
   themePreference: initialThemePreference,
 
-  toggleCategoryDropdown: (open) => {
-    const next = open ?? !get().isCategoryDropdownOpen
-    set({ isCategoryDropdownOpen: next, isBrandDropdownOpen: false })
-  },
-
-  toggleBrandDropdown: (open) => {
-    const next = open ?? !get().isBrandDropdownOpen
-    set({ isBrandDropdownOpen: next, isCategoryDropdownOpen: false })
-  },
+  toggleExploreMenu: (open) => set({ isExploreMenuOpen: open ?? !get().isExploreMenuOpen }),
 
   toggleMobileMenu: (open) => set({ isMobileMenuOpen: open ?? !get().isMobileMenuOpen }),
 
+  setMobileActionBarVisible: (visible) => set({ isMobileActionBarVisible: visible }),
+
   closeOverlays: () =>
     set({
-      isCategoryDropdownOpen: false,
-      isBrandDropdownOpen: false,
+      isExploreMenuOpen: false,
       isMobileMenuOpen: false,
     }),
 

@@ -20,7 +20,7 @@ export const RelatedList = ({
 
   return (
     <div
-      className="mt-14 pt-8 border-t border-slate-200/80 dark:border-slate-800 space-y-5"
+      className="mt-6 pt-5 sm:mt-14 sm:pt-8 border-t border-slate-200/80 dark:border-slate-800 space-y-4 sm:space-y-5"
       {...uiMeta({
         id: 'producto.relacionados',
         component: 'RelatedList',
@@ -53,7 +53,7 @@ export const RelatedList = ({
       <ProductGrid
         products={products}
         traceId="producto.relacionados.grid"
-        gridClassName="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 opacity-95 hover:opacity-100 transition-opacity"
+        gridClassName="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 opacity-95 hover:opacity-100 transition-opacity"
       />
     </div>
   )

@@ -26,7 +26,7 @@ export const ProductDetailHeader = ({
     />
     <Link
       to={`/category/${categorySlug}`}
-      className="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-brand flex items-center gap-1.5 transition-colors"
+      className="text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-brand hidden sm:flex items-center gap-1.5 transition-colors"
       {...uiMeta({
         id: 'producto.volver',
         component: 'ProductDetailHeader',

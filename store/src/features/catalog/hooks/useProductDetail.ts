@@ -39,6 +39,7 @@ export const useProductDetail = (productId?: string) => {
     relatedProducts,
     availableStock,
     quantity,
+    subtotal: product ? product.price * quantity : 0,
     increment,
     decrement,
     reviewsCount: reviews.length,

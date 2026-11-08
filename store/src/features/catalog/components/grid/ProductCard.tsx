@@ -12,7 +12,7 @@ export const ProductCard = ({ product }: { product: Product }) => {
 
   return (
     <div
-      className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-800 shadow-soft-card dark:shadow-none hover:shadow-soft-hover dark:hover:border-slate-700 transition-all flex flex-col justify-between group overflow-hidden"
+      className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-slate-200/80 dark:border-slate-800 shadow-soft-card dark:shadow-none hover:shadow-soft-hover dark:hover:border-slate-700 transition-all flex flex-col justify-between group overflow-hidden"
       {...uiMeta({
         id: `producto.card.${product.id}`,
         component: 'ProductCard',

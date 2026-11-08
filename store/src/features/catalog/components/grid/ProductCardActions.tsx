@@ -22,14 +22,14 @@ export const ProductCardActions = ({
 
   return (
     <div
-      className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-3"
+      className="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2.5 sm:space-y-3"
       {...uiMeta({
         id: `${traceId}.acciones`,
         component: 'ProductCardActions',
         source: SOURCE,
       })}
     >
-      <div className="flex items-baseline justify-between">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-2">
         <div>
           <span className="text-base sm:text-lg font-black text-brand-dark dark:text-sky-400">
             {formatCurrency(product.price)}

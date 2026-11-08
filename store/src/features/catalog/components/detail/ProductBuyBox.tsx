@@ -31,7 +31,7 @@ export const ProductBuyBox = ({
 
   return (
     <aside
-      className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-36 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200/90 dark:border-slate-800 shadow-soft-card dark:shadow-none space-y-5"
+      className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-36 bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 dark:border-slate-800 shadow-soft-card dark:shadow-none space-y-4 sm:space-y-5"
       aria-label="Opciones de compra"
       {...uiMeta({ id: `${traceId}.buybox`, component: 'ProductBuyBox', source: SOURCE })}
     >
@@ -65,7 +65,7 @@ export const ProductBuyBox = ({
       )}
 
       {!isOutOfStock ? (
-        <div className="space-y-3">
+        <div className="lg:space-y-3">
           <div className="flex items-center justify-between gap-3">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Cantidad</span>
             <QuantitySelector
@@ -77,27 +77,30 @@ export const ProductBuyBox = ({
             />
           </div>
 
-          <button
-            type="button"
-            onClick={onAddToCart}
-            disabled={availableStock <= 0}
-            className="w-full bg-brand hover:bg-brand-hover text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 text-sm shadow-md transition-all active:scale-95 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-            {...uiMeta({ id: `${traceId}.agregar`, component: 'ProductBuyBox', source: SOURCE })}
-          >
-            <i className="fa-solid fa-cart-plus text-base" />
-            <span>Agregar al Carrito</span>
-          </button>
+          {/* En < lg las acciones viven en ProductMobileBar (barra inferior fija). */}
+          <div className="hidden lg:block space-y-3">
+            <button
+              type="button"
+              onClick={onAddToCart}
+              disabled={availableStock <= 0}
+              className="w-full bg-brand hover:bg-brand-hover text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 text-sm shadow-md transition-all active:scale-95 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              {...uiMeta({ id: `${traceId}.agregar`, component: 'ProductBuyBox', source: SOURCE })}
+            >
+              <i className="fa-solid fa-cart-plus text-base" />
+              <span>Agregar al Carrito</span>
+            </button>
 
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full bg-whatsapp hover:bg-whatsapp-hover text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 text-sm shadow-md transition-all active:scale-95"
-            {...uiMeta({ id: `${traceId}.whatsapp`, component: 'ProductBuyBox', source: SOURCE })}
-          >
-            <i className="fa-brands fa-whatsapp text-lg" />
-            <span>Comprar por WhatsApp</span>
-          </a>
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full bg-whatsapp hover:bg-whatsapp-hover text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 text-sm shadow-md transition-all active:scale-95"
+              {...uiMeta({ id: `${traceId}.whatsapp`, component: 'ProductBuyBox', source: SOURCE })}
+            >
+              <i className="fa-brands fa-whatsapp text-lg" />
+              <span>Comprar por WhatsApp</span>
+            </a>
+          </div>
         </div>
       ) : null}
 

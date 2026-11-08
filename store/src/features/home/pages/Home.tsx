@@ -10,13 +10,13 @@ import { uiMeta } from '@/ui-traceability'
 
 const SOURCE = 'src/features/home/pages/Home.tsx'
 /** Las vitrinas de portada muestran 4 productos: se fijan en 4 columnas para no dejar huecos. */
-const SHOWCASE_GRID = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'
+const SHOWCASE_GRID = 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6'
 
 export const Home = () => {
   const { categoriesWithCounts, brandsWithCounts, featuredProducts, dealProducts } = useHomeData()
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8 sm:space-y-12">
       <HeroSlider />
       <TrustPillars />
 
@@ -26,7 +26,7 @@ export const Home = () => {
           subtitle="Selección organizada para encontrar justo lo que buscas"
           traceId="home.categories.heading"
         />
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4">
           {categoriesWithCounts.map((category) => (
             <CategoryTile key={category.id} category={category} />
           ))}
@@ -48,7 +48,7 @@ export const Home = () => {
             </Link>
           }
         />
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+        <div className="grid grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-3">
           {brandsWithCounts.map((brand) => (
             <BrandTile key={brand.id} brand={brand} />
           ))}

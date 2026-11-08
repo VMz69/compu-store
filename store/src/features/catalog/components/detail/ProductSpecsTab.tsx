@@ -24,7 +24,7 @@ export const ProductSpecsTab = ({ product, availableStock }: ProductSpecsTabProp
 
   return (
     <div
-      className="space-y-8 animate-fade-in"
+      className="space-y-5 sm:space-y-8 animate-fade-in"
       {...uiMeta({
         id: 'producto.tabs.specs',
         component: 'ProductSpecsTab',
@@ -85,7 +85,7 @@ export const ProductSpecsTab = ({ product, availableStock }: ProductSpecsTabProp
         </div>
       </div>
 
-      <div className="bg-amber-50/60 dark:bg-amber-950/30 rounded-2xl p-5 border border-amber-200/80 dark:border-amber-900/60 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-3">
+      <div className="bg-amber-50/60 dark:bg-amber-950/30 rounded-2xl p-4 sm:p-5 border border-amber-200/80 dark:border-amber-900/60 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-3">
         <i className="fa-solid fa-triangle-exclamation text-amber-600 text-sm mt-0.5" />
         <div>
           <span className="font-bold block mb-0.5">

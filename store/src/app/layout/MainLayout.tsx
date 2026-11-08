@@ -6,6 +6,7 @@ import { MobileMenuBackdrop } from './navbar/MobileMenuBackdrop'
 import { Navbar } from './navbar/Navbar'
 import { ToastContainer } from './ToastContainer'
 import { TopBar } from './header/TopBar'
+import { useLayoutInsets } from '../hooks/useLayoutInsets'
 import { useScrollToTop } from '../hooks/useScrollToTop'
 import { useTheme } from '@/shared/hooks/useTheme'
 import { uiMeta } from '@/ui-traceability'
@@ -15,10 +16,11 @@ const SOURCE = 'src/app/layout/MainLayout.tsx'
 export const MainLayout = () => {
   useScrollToTop()
   useTheme()
+  const { hasMobileActionBar } = useLayoutInsets()
 
   return (
     <div
-      className="min-h-screen flex flex-col"
+      className={`min-h-screen flex flex-col ${hasMobileActionBar ? 'pb-20 lg:pb-0' : ''}`}
       {...uiMeta({ id: 'layout.shell', component: 'MainLayout', source: SOURCE })}
     >
       <TopBar />
@@ -35,7 +37,7 @@ export const MainLayout = () => {
 
       <div className="flex flex-1 flex-col overflow-x-clip">
         <main
-          className="flex-grow max-w-app w-full mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 py-6 md:py-8 view-container"
+          className="flex-grow max-w-app w-full mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 py-4 sm:py-6 md:py-8 view-container"
           {...uiMeta({ id: 'layout.main', component: 'MainLayout', source: SOURCE })}
         >
           <Outlet />
@@ -44,7 +46,7 @@ export const MainLayout = () => {
         <Footer />
       </div>
 
-      <FloatingWhatsApp />
+      <FloatingWhatsApp hiddenOnMobile={hasMobileActionBar} />
       <ToastContainer />
     </div>
   )

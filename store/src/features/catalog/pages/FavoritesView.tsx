@@ -10,7 +10,7 @@ export const FavoritesView = () => {
   const { products } = useFavoritesView()
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <Breadcrumbs
         items={[{ label: 'Inicio', to: '/' }, { label: 'Mis Favoritos' }]}
         traceId="favoritos.breadcrumbs"

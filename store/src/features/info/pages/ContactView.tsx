@@ -36,7 +36,7 @@ const quickActions = [
 ]
 
 export const ContactView = () => (
-  <div className="mx-auto max-w-5xl space-y-8">
+  <div className="mx-auto max-w-5xl space-y-5 sm:space-y-8">
     <Breadcrumbs
       items={[{ label: 'Inicio', to: '/' }, { label: 'Contacto' }]}
       traceId="contacto.breadcrumbs"
@@ -86,7 +86,7 @@ export const ContactView = () => (
       ))}
     </div>
 
-    <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+    <div className="grid grid-cols-1 gap-5 sm:gap-8 lg:grid-cols-12">
       <ContactForm />
       <ContactInfoCards />
     </div>
