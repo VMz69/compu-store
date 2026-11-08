@@ -1,11 +1,11 @@
-import { ProductCardActions } from '@/components/product/ProductCardActions'
-import { ProductCardInfo } from '@/components/product/ProductCardInfo'
-import { ProductCardMedia } from '@/components/product/ProductCardMedia'
-import { useProductCard } from '@/hooks/useProductCard'
+import { ProductCardActions } from './ProductCardActions'
+import { ProductCardInfo } from './ProductCardInfo'
+import { ProductCardMedia } from './ProductCardMedia'
+import { useProductCard } from '../../hooks/useProductCard'
 import { uiMeta } from '@/ui-traceability'
-import type { Product } from '@/types'
+import type { Product } from '@/shared/types'
 
-const SOURCE = 'src/components/product/ProductCard.tsx'
+const SOURCE = 'src/features/catalog/components/grid/ProductCard.tsx'
 
 export const ProductCard = ({ product }: { product: Product }) => {
   const card = useProductCard(product)

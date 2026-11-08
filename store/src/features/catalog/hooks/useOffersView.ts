@@ -1,4 +1,4 @@
-import { useFilters } from '@/hooks/useFilters'
+import { useFilters } from './useFilters'
 
 /**
  * Productos en oferta y su ordenamiento.

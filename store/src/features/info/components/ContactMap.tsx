@@ -1,7 +1,7 @@
-import { STORE_CONFIG } from '@/data/storeConfig'
+import { STORE_CONFIG } from '@/shared/config/store.config'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/contact/ContactMap.tsx'
+const SOURCE = 'src/features/info/components/ContactMap.tsx'
 
 const MAP_EMBED_URL =
   'https://www.google.com/maps?q=13.7214635,-88.9349584&z=17&output=embed'

@@ -1,9 +1,129 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #f4f6f8;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Tokens corporativos (alineados con /store y el demo del BackOffice) */
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-200: #bfdbfe;
+  --color-brand-300: #93c5fd;
+  --color-brand-400: #3b82f6;
+  --color-brand-500: #0168f5;
+  --color-brand-600: #0057d9;
+  --color-brand-700: #0047b3;
+  --color-brand-800: #003a94;
+  --color-brand-900: #003078;
+  --color-brand-950: #001d4d;
+  --color-brand: #0168f5;
+  --color-brand-hover: #0055cb;
+  --color-brand-dark: #004099;
+  --color-brand-navy: #0c192c;
+  --color-brand-midnight: #060e19;
+  --color-brand-carbon: #1d1d1b;
+  --color-brand-light: #eef5ff;
+  --color-brand-accent: #1677ff;
+  --color-brand-border: #cce1ff;
+
+  --color-sidebar: #0c192c;
+  --color-sidebar-hover: #14253f;
+  --color-sidebar-border: rgba(255, 255, 255, 0.08);
+  --color-sidebar-muted: #94a3b8;
+
+  --color-whatsapp: #25d366;
+  --color-whatsapp-hover: #1ebe5d;
+  --color-whatsapp-dark: #128c7e;
+  --color-whatsapp-light: #dcf8c6;
+
+  --shadow-soft-card: 0 4px 20px -2px rgba(1, 104, 245, 0.08);
+  --shadow-soft-hover: 0 12px 30px -4px rgba(1, 104, 245, 0.16);
+  --shadow-brand-glow: 0 0 20px rgba(1, 104, 245, 0.28);
+  --shadow-dropdown: 0 10px 30px -5px rgba(12, 25, 44, 0.15);
+  --shadow-modal: 0 25px 50px -12px rgba(12, 25, 44, 0.25);
+
+  --animate-fade-in: fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-slate-100 text-slate-800 antialiased dark:bg-slate-950 dark:text-slate-100;
+    font-family: var(--font-sans);
+    overflow: hidden;
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+  }
+
+  /* Calendarios, flechas de number y scroll nativos coherentes con el modo oscuro. */
+  .dark {
+    color-scheme: dark;
+  }
+
+  ::selection {
+    @apply bg-brand-500 text-white;
+  }
+
+  /* Tailwind v4 dejó de poner cursor:pointer en botones; se restaura el comportamiento del demo. */
+  button:not(:disabled),
+  [role="button"] {
+    cursor: pointer;
+  }
+}
+
+@utility hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+  &:where(.dark, .dark *)::-webkit-scrollbar-thumb {
+    background: #334155;
+  }
+}
+
+@utility sidebar-transition {
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@utility nav-text-transition {
+  transition:
+    opacity 0.2s ease,
+    width 0.2s ease;
 }

@@ -1,4 +1,4 @@
-import { useFilters } from '@/hooks/useFilters'
+import { useFilters } from '@/features/catalog'
 
 /**
  * Resultados de búsqueda y término activo.

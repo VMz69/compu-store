@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
-import { useClickOutside } from '@/hooks/useClickOutside'
-import { useCatalogStats } from '@/hooks/useCatalogStats'
-import { useUIStore } from '@/store/useUIStore'
+import { useClickOutside } from '@/shared/hooks/useClickOutside'
+import { useCatalogStats } from '@/features/catalog'
+import { useUIStore } from '@/shared/store/ui.store'
 
 /**
  * Estado de los menús de navegación: cierre por ruta, click fuera y overlays.

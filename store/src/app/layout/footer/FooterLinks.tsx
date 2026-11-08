@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import { FOOTER_LINKS } from '@/data'
+import { FOOTER_LINKS } from '../../nav.config'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/layout/FooterLinks.tsx'
+const SOURCE = 'src/app/layout/footer/FooterLinks.tsx'
 
 export const FooterLinks = () => (
   <div

@@ -7,7 +7,7 @@ Proyecto de comercio electrónico para CompuStore SV, tienda de computadoras y a
 | Carpeta | Propósito | Estado actual |
 | --- | --- | --- |
 | [`store/`](store/) | Tienda pública: catálogo, búsqueda, productos, carrito, favoritos, ofertas y contacto. | Frontend funcional con datos locales; el pedido se coordina por WhatsApp. |
-| [`admin/`](admin/) | Panel de administración con una tabla de inventario. | Prototipo visual con datos de ejemplo; no está conectado a la tienda ni a un backend. |
+| [`admin/`](admin/) | Back office: inventario, pedidos, facturación, clientes, cotizaciones, ofertas y ajustes con roles. | Prototipo funcional con datos de ejemplo; no está conectado a la tienda ni a un backend. |
 | [`api/`](api/) | Espacio para el futuro servidor. | Aún no contiene implementación ni comandos de desarrollo o ejecución. |
 
 No hay un workspace ni scripts en la raíz: cada frontend tiene su propio `package.json`, archivo de bloqueo y ciclo de instalación. La carpeta `api` tampoco es necesaria para ejecutar las aplicaciones actuales.
@@ -15,7 +15,7 @@ No hay un workspace ni scripts en la raíz: cada frontend tiene su propio `packa
 ## Tecnologías
 
 - **Tienda:** React 19, TypeScript, Vite 8, React Router 7, Zustand 5 y Tailwind CSS 4.
-- **Administración:** React 19, TypeScript, Vite 8 y Material UI, incluido Data Grid.
+- **Administración:** React 19, TypeScript 7 (TS 6 para ESLint), Vite 8, React Router 7, Zustand 5, Tailwind CSS 4 y jsPDF.
 - **API:** sin stack de servidor implementado todavía.
 
 Se requiere Node.js compatible con Vite 8 y pnpm. La configuración de `api/package.json` declara pnpm `12.16.1` como versión del gestor.
@@ -57,30 +57,26 @@ pnpm preview   # servir localmente el build de dist/
 - Información de la tienda y formulario de contacto.
 - Preparación de pedidos y consultas mediante enlaces de WhatsApp; no se procesa el pago en el sitio.
 
-El catálogo, las marcas, las categorías y la configuración del negocio son datos estáticos en `store/src/data/`. El inventario del panel también es estático y está en `admin/src/data/dummyInventory.ts`.
+Ambas aplicaciones usan datos estáticos tipados en `features/<dominio>/mocks/` y la configuración del negocio en `shared/config/store.config.ts`.
 
 ## Estructura principal
 
+Los dos frontends comparten la misma arquitectura DOMA por features:
+
 ```text
-store/src/
-  components/   Componentes de interfaz por dominio
-  pages/        Vistas y rutas de la tienda
-  hooks/        Lógica de vistas
-  services/     Operaciones de catálogo, carrito y WhatsApp
-  store/        Estado global con Zustand
-  data/         Catálogo y configuración estáticos
-  types/        Tipos compartidos
-  ui-traceability/ Metadatos de trazabilidad de interfaz
-
-admin/src/
-  App.tsx       Panel y tabla de inventario
-  data/         Inventario de ejemplo
-
-api/
-  package.json  Configuración inicial, sin servidor implementado
+<app>/src/
+  app/              Ensamblaje: router, layout, guards, configuración de navegación
+  features/<x>/     Dominio: index.ts (API pública), types, store, hooks, lib, mocks, components, pages
+  shared/           Sin lógica de negocio: ui, hooks, store, lib, config (y types en store)
+  ui-traceability/  Metadatos de trazabilidad (data-ui-*)
 ```
 
-La arquitectura y las convenciones del frontend público están documentadas en [`store/README.md`](store/README.md), [`store/arch-fronOffice.md`](store/arch-fronOffice.md) y [`store/agent-rules.md`](store/agent-rules.md). El diagnóstico técnico y las limitaciones conocidas están en [`store/DIAGNOSTICO.md`](store/DIAGNOSTICO.md).
+- **store:** `catalog`, `cart`, `search`, `home`, `info`.
+- **admin:** `access`, `catalog`, `sales`, `billing`, `customers`, `quotes`, `promotions`, `interactions`, `dashboard`, `settings`.
+
+Dependencias permitidas: `app → features → shared`; entre features solo vía `index.ts` y sin ciclos.
+
+La arquitectura de cada frontend está en [`store/arch-fronOffice.md`](store/arch-fronOffice.md) y [`admin/arch-backOffice.md`](admin/arch-backOffice.md); las reglas de desarrollo, en los respectivos `agent-rules.md`. El diagnóstico técnico y las limitaciones conocidas están en [`store/DIAGNOSTICO.md`](store/DIAGNOSTICO.md).
 
 ## Estado y alcance
 

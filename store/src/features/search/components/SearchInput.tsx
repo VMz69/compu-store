@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
 import { uiMeta } from '@/ui-traceability'
-import { SearchDropdown } from '@/components/layout/SearchDropdown'
-import { useSearchLock } from '@/hooks/useSearchLock'
-import type { Product } from '@/types'
+import { SearchDropdown } from './SearchDropdown'
+import { useSearchDropdown } from '../hooks/useSearchDropdown'
+import { containerClass, iconWrapperClass, inputClass, placeholderText, submitClass } from './searchInput.styles'
+import type { Product } from '@/shared/types'
 
-const SOURCE = 'src/components/layout/SearchInput.tsx'
+const SOURCE = 'src/features/search/components/SearchInput.tsx'
 
 interface SearchInputProps {
   variant: 'desktop' | 'mobile'
@@ -33,76 +33,39 @@ export const SearchInput = ({
 }: SearchInputProps) => {
   const isDesktop = variant === 'desktop'
   const isCollapsed = !isDesktop && collapsed
-  const [openState, setOpenState] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
   const traceId = `layout.search.${variant}`
-
-  useEffect(() => {
-    const handlePointerDown = (event: MouseEvent) => {
-      if (!containerRef.current) return
-      if (!containerRef.current.contains(event.target as Node)) setOpenState(false)
-    }
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpenState(false)
-    }
-    document.addEventListener('mousedown', handlePointerDown)
-    document.addEventListener('keydown', handleKeyDown)
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown)
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [])
-
-  const closeDropdown = () => setOpenState(false)
-  const isOpen = !isCollapsed && openState
-  const showDropdown = isOpen && value.trim().length > 0
-
-  useSearchLock(!isDesktop && showDropdown)
+  const { containerRef, showDropdown, openDropdown, closeDropdown } = useSearchDropdown(
+    isDesktop,
+    isCollapsed,
+    value,
+  )
 
   return (
     <div
       ref={containerRef}
       aria-hidden={isCollapsed || undefined}
-      className={
-        isDesktop
-          ? 'relative hidden lg:flex flex-1 max-w-2xl mx-4 lg:mx-8'
-          : `relative lg:hidden transition-all duration-300 ease-out ${
-              isCollapsed
-                ? 'max-h-0 overflow-hidden opacity-0 pointer-events-none'
-                : 'max-h-24 overflow-visible opacity-100 pb-3'
-            }`
-      }
+      className={containerClass(isDesktop, isCollapsed)}
     >
       <form
         className="relative w-full"
         onSubmit={(event) => {
           event.preventDefault()
           onSubmit()
-          setOpenState(false)
+          closeDropdown()
         }}
         {...uiMeta({ id: traceId, component: 'SearchInput', source: SOURCE })}
       >
-        <div
-          className={`absolute inset-y-0 left-0 ${isDesktop ? 'pl-3.5' : 'pl-3'} flex items-center pointer-events-none text-slate-400`}
-        >
+        <div className={iconWrapperClass(isDesktop)}>
           <i className={`fa-solid fa-magnifying-glass ${isDesktop ? '' : 'text-sm'}`} />
         </div>
         <input
           type="text"
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          onFocus={() => setOpenState(true)}
+          onFocus={openDropdown}
           tabIndex={isCollapsed ? -1 : undefined}
-          placeholder={
-            isDesktop
-              ? 'Buscar por producto, marca o categoría (ej. Laptop, Dell, M.2)...'
-              : 'Buscar en CompuStore SV...'
-          }
-          className={`block w-full ${
-            isDesktop
-              ? 'pl-10 pr-24 py-2.5 text-sm border-slate-300 dark:border-slate-700 bg-slate-50'
-              : 'pl-9 pr-20 py-2 text-xs border-slate-300 dark:border-slate-700 bg-slate-50'
-          } border rounded-full leading-5 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:bg-white dark:focus:bg-slate-700 focus:ring-2 focus:ring-brand/30 focus:border-brand transition-all`}
+          placeholder={placeholderText(isDesktop)}
+          className={inputClass(isDesktop)}
           {...uiMeta({
             id: `${traceId}.input`,
             component: 'SearchInput',
@@ -128,9 +91,7 @@ export const SearchInput = ({
         <button
           type="submit"
           tabIndex={isCollapsed ? -1 : undefined}
-          className={`absolute inset-y-1 right-1 bg-brand hover:bg-brand-hover text-white rounded-full ${
-            isDesktop ? 'px-5 text-sm' : 'px-3 text-xs'
-          } font-semibold transition-colors shadow-sm cursor-pointer`}
+          className={submitClass(isDesktop)}
           {...uiMeta({
             id: `${traceId}.submit`,
             component: 'SearchInput',
@@ -162,7 +123,7 @@ export const SearchInput = ({
         suggestions={suggestions}
         onSelect={(product) => {
           onSelectSuggestion?.(product)
-          setOpenState(false)
+          closeDropdown()
           onClear()
         }}
         onAddToCart={(product) => {

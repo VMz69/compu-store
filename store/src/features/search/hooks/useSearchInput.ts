@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useFilterStore } from '@/store/useFilterStore'
+import { useFilterStore } from '@/features/catalog'
 
 const SEARCHABLE_VIEWS = ['/category', '/brand', '/search', '/offers', '/favorites']
 

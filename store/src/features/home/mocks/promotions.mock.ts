@@ -1,4 +1,4 @@
-import type { Promotion } from '@/types'
+import type { Promotion } from '@/shared/types'
 
 export const promotions: Promotion[] = [
   {

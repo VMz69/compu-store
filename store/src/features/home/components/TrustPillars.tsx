@@ -1,7 +1,7 @@
-import { TRUST_PILLARS } from '@/data'
+import { TRUST_PILLARS } from '../config/trustPillars.config'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/catalog/TrustPillars.tsx'
+const SOURCE = 'src/features/home/components/TrustPillars.tsx'
 
 export const TrustPillars = () => (
   <div

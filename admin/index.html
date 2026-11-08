@@ -1,10 +1,44 @@
 <!doctype html>
-<html lang="en">
+<html lang="es" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>admin</title>
+    <title>CompuStore SV · BackOffice Administrativo | Cojutepeque</title>
+    <meta
+      name="description"
+      content="Panel Administrativo BackOffice para CompuStore SV. Gestión integral de catálogo, pedidos, inventario, clientes y analítica comercial."
+    />
+    <link id="app-favicon" rel="icon" type="image/png" href="%BASE_URL%logo/icono-bgWhite.png" />
+    <link id="app-apple-icon" rel="apple-touch-icon" href="%BASE_URL%logo/icono-bgWhite.png" />
+
+    <!-- Tema inicial (evita parpadeo) y favicon según modo claro/oscuro -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('compustore_sv_theme')
+          var prefersDark =
+            window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+          var isDark = saved === 'dark' || (!saved && prefersDark)
+          document.documentElement.classList.toggle('dark', isDark)
+          var iconPath = '%BASE_URL%logo/' + (isDark ? 'icono-bgBlack.png' : 'icono-bgWhite.png')
+          var fav = document.getElementById('app-favicon')
+          var appleFav = document.getElementById('app-apple-icon')
+          if (fav) fav.href = iconPath
+          if (appleFav) appleFav.href = iconPath
+        } catch (e) {}
+      })()
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
   </head>
   <body>
     <div id="root"></div>

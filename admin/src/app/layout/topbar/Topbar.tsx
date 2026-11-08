@@ -1,0 +1,45 @@
+import { RoleBadge } from '@/features/access'
+import { IconButton } from '@/shared/ui'
+import { tracer } from '@/ui-traceability'
+import { useTopbar } from '../../hooks/useLayout'
+import { ThemeToggle } from './ThemeToggle'
+
+const t = tracer('Topbar', 'src/app/layout/topbar/Topbar.tsx')
+
+/** Barra superior: colapsar menú, vista activa, sucursal y tema. */
+export function Topbar() {
+  const { title, role, isSidebarOpen, toggleSidebar } = useTopbar()
+
+  return (
+    <header
+      className="h-14 px-5 flex items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900"
+      {...t('layout.topbar')}
+    >
+      <div className="flex items-center gap-3 min-w-0">
+        <IconButton
+          icon={isSidebarOpen ? 'fa-solid fa-bars-staggered' : 'fa-solid fa-bars'}
+          label="Colapsar Menú"
+          iconClass="text-sm"
+          aria-expanded={isSidebarOpen}
+          onClick={toggleSidebar}
+          {...t('layout.topbar.toggle-sidebar')}
+        />
+        <h1 className="text-base font-black text-slate-800 dark:text-slate-100 capitalize flex items-center gap-2 truncate">
+          {title}
+          {role && <RoleBadge role={role} />}
+        </h1>
+      </div>
+
+      <div className="flex items-center gap-2.5">
+        <div
+          className="hidden md:flex items-center gap-2 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-bold"
+          {...t('layout.topbar.branch')}
+        >
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+          <span>Cojutepeque</span>
+        </div>
+        <ThemeToggle />
+      </div>
+    </header>
+  )
+}

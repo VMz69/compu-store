@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import { useHeroSlider } from '@/hooks/useHeroSlider'
+import { useHeroSlider } from '../hooks/useHeroSlider'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/catalog/HeroSlider.tsx'
+const SOURCE = 'src/features/home/components/HeroSlider.tsx'
 
 export const HeroSlider = () => {
   const { promotion, activeSlide, total, goTo, next, prev, pause, resume } = useHeroSlider()

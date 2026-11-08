@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD de Inventario Consolidado - UX/UI Optimizado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans antialiased p-6">
+
+    <div class="max-w-4xl mx-auto bg-slate-800 border border-slate-700 rounded-xl shadow-2xl overflow-hidden">
+        
+        <!-- Header del Modal / Vista CRUD -->
+        <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center bg-slate-850">
+            <div>
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>
+                    Gestión de Producto (CRUD Consolidado)
+                </h2>
+                <p class="text-xs text-slate-400">Diseño UX/UI modular con control de lotes y especificaciones técnicas dinámicas.</p>
+            </div>
+            <div class="flex gap-2">
+                <button type="button" class="px-4 py-2 text-sm bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg transition">Cancelar</button>
+                <button type="button" class="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition">Guardar Cambios</button>
+            </div>
+        </div>
+
+        <!-- Navegación por Tabs -->
+        <div class="flex border-b border-slate-700 bg-slate-800 px-6 gap-6 text-sm font-medium overflow-x-auto">
+            <button onclick="switchTab('general')" id="tab-general" class="py-3 border-b-2 border-blue-500 text-blue-400 transition whitespace-nowrap">1. General</button>
+            <button onclick="switchTab('commercial')" id="tab-commercial" class="py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition whitespace-nowrap">2. Precios y Costos</button>
+            <button onclick="switchTab('technical')" id="tab-technical" class="py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition whitespace-nowrap">3. Especificaciones</button>
+            <button onclick="switchTab('logistics')" id="tab-logistics" class="py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition whitespace-nowrap">4. Control Logístico</button>
+        </div>
+
+        <!-- Contenedor de Contenidos -->
+        <div class="p-6">
+
+            <!-- TAB 1: GENERAL -->
+            <div id="content-general" class="tab-content space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Imagen Upload -->
+                    <div class="flex flex-col items-center justify-center border-2 border-dashed border-slate-600 rounded-xl p-4 bg-slate-900/50 hover:border-blue-500 transition cursor-pointer min-h-[160px]">
+                        <svg class="mx-auto h-10 w-10 text-slate-400 mb-2" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="text-xs font-medium text-slate-300 text-center">Subir Imagen / Foto</span>
+                    </div>
+                    
+                    <!-- Campos Principales -->
+                    <div class="md:col-span-2 space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nombre del Producto</label>
+                            <input type="text" placeholder="Ej. Kit de distribución o Repuesto X" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Categoría</label>
+                                <select class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                                    <option>Seleccionar...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Cód / SKU</label>
+                                <input type="text" placeholder="SKU-100293" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Marca</label>
+                        <input type="text" placeholder="Ej. Bosch / Genérico" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Modelo</label>
+                        <input type="text" placeholder="Ej. V2-Pro" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Condición</label>
+                        <select class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                            <option>Nuevo</option>
+                            <option>Usado</option>
+                            <option>Reacondicionado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between p-3 bg-slate-900/60 rounded-lg border border-slate-700 mt-4">
+                    <div>
+                        <span class="text-sm font-medium text-white block">Estado del Producto (Activo / Desactivo)</span>
+                        <span class="text-xs text-slate-400">Si se desactiva, no aparecerá disponible en el punto de venta.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" checked class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- TAB 2: COMERCIAL (Precios y Costos) -->
+            <div id="content-commercial" class="tab-content hidden space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Costo Unitario ($)</label>
+                        <input type="number" step="0.01" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Precio de Venta ($)</label>
+                        <input type="number" step="0.01" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Precio Anterior (P. Ant.)</label>
+                        <input type="number" step="0.01" placeholder="0.00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Impuesto / IVA (%)</label>
+                        <input type="number" placeholder="13" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Descuento (%)</label>
+                        <input type="number" placeholder="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Descripción Comercial / Notas</label>
+                    <textarea rows="3" placeholder="Detalles de oferta o descripción visible para clientes..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-blue-500"></textarea>
+                </div>
+            </div>
+
+            <!-- TAB 3: ESPECIFICACIONES TÉCNICAS -->
+            <div id="content-technical" class="tab-content hidden space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Compatibilidad</label>
+                        <textarea rows="3" placeholder="Ej. Modelos compatibles, marcas, años..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-blue-500"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Conectividad / Puertos</label>
+                        <textarea rows="3" placeholder="Ej. USB-C, Bluetooth 5.0, Terminales..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-blue-500"></textarea>
+                    </div>
+                </div>
+
+                <!-- Componentes Dinámicos (D1, D2, D3...) -->
+                <div class="border-t border-slate-700 pt-4 mt-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">Detalles y Componentes (D1, D2, D3...)</label>
+                        <button type="button" onclick="agregarComponente()" class="text-xs bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 px-2.5 py-1 rounded border border-blue-500/35 transition">+ Agregar Componente</button>
+                    </div>
+                    <div id="componentes-list" class="space-y-2">
+                        <div class="comp-item flex gap-2">
+                            <input type="text" placeholder="Clave (Ej. Voltaje)" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-white">
+                            <input type="text" placeholder="Valor (Ej. 12V)" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-white">
+                            <button type="button" onclick="eliminarComponente(this)" class="px-3 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20 hover:bg-red-500/20 text-sm">×</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: CONTROL LOGÍSTICO Y ALMACÉN -->
+            <div id="content-logistics" class="tab-content hidden space-y-5">
+                
+                <!-- Toggle de Control de Lotes -->
+                <div class="flex justify-between items-center bg-slate-900/60 p-4 rounded-xl border border-slate-700">
+                    <div>
+                        <span class="text-sm font-bold text-white block">Control de Lotes y Trazabilidad</span>
+                        <span class="text-xs text-slate-400">Activa para autocalcular el stock mediante lotes o desactívalo para ingreso plano manual.</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggle-lotes" onchange="toggleLotesMode()" class="sr-only peer">
+                        <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                </div>
+
+                <!-- Inputs de Stock y Punto de Reorden -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-xs font-semibold uppercase tracking-wider text-slate-400" id="label-stock-title">Stock Actual (Manual)</label>
+                            <span id="badge-mode" class="text-[10px] bg-slate-700 text-slate-300 px-2 py-0.5 rounded">Modo Plano</span>
+                        </div>
+                        <input type="number" id="input-stock-actual" value="0" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 font-semibold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Pto. Re-orden (Alerta Stock Bajo)</label>
+                        <input type="number" value="10" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                    </div>
+                </div>
+
+                <!-- Desglose de Lotes Dinámico (Oculto por defecto si el toggle está apagado) -->
+                <div id="section-lotes-container" class="hidden space-y-3 pt-3 border-t border-slate-700">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-rose-400">Desglose de Lotes / Cajas</span>
+                        <span class="text-xs text-slate-400">Total calculado: <strong id="total-calculado" class="text-white">0</strong></span>
+                    </div>
+
+                    <div id="lotes-list" class="space-y-3">
+                        <div class="lote-item grid grid-cols-1 md:grid-cols-12 gap-3 items-center bg-slate-900 p-3 rounded-xl border border-slate-700">
+                            <div class="md:col-span-3">
+                                <label class="block text-[10px] uppercase text-slate-400 mb-1">Cant.</label>
+                                <input type="number" value="0" oninput="calcularStockTotal()" class="lote-cant w-full bg-slate-800 border border-slate-600 rounded-lg px-2.5 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div class="md:col-span-4">
+                                <label class="block text-[10px] uppercase text-slate-400 mb-1">No. Lote</label>
+                                <input type="text" placeholder="Ej. L-24A" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2.5 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div class="md:col-span-4">
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="block text-[10px] uppercase text-slate-400">Vencimiento</label>
+                                    <label class="text-[10px] text-slate-400 flex items-center gap-1 cursor-pointer">
+                                        <input type="checkbox" onchange="toggleVencimiento(this)" class="rounded bg-slate-800 border-slate-600 text-blue-600 h-3 w-3"> No vence
+                                    </label>
+                                </div>
+                                <input type="date" class="lote-venc w-full bg-slate-800 border border-slate-600 rounded-lg px-2.5 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                            </div>
+                            <div class="md:col-span-1 flex justify-center pt-5">
+                                <button type="button" onclick="eliminarLote(this)" class="text-slate-400 hover:text-red-400 p-1 transition text-lg">✕</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="agregarLote()" class="w-full py-2.5 border border-dashed border-slate-600 hover:border-blue-500 text-slate-300 hover:text-blue-400 rounded-xl text-xs font-medium transition flex items-center justify-center gap-2 bg-slate-900/40">
+                        + Agregar otro lote
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Script de Control UI -->
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('content-' + tabName).classList.remove('hidden');
+
+            ['general', 'commercial', 'technical', 'logistics'].forEach(t => {
+                const btn = document.getElementById('tab-' + t);
+                if (t === tabName) {
+                    btn.classList.remove('border-transparent', 'text-slate-400');
+                    btn.classList.add('border-blue-500', 'text-blue-400');
+                } else {
+                    btn.classList.add('border-transparent', 'text-slate-400');
+                    btn.classList.remove('border-blue-500', 'text-blue-400');
+                }
+            });
+        }
+
+        function toggleLotesMode() {
+            const isChecked = document.getElementById('toggle-lotes').checked;
+            const stockInput = document.getElementById('input-stock-actual');
+            const stockTitle = document.getElementById('label-stock-title');
+            const badgeMode = document.getElementById('badge-mode');
+            const lotesContainer = document.getElementById('section-lotes-container');
+
+            if (isChecked) {
+                lotesContainer.classList.remove('hidden');
+                stockInput.setAttribute('readonly', true);
+                stockInput.classList.add('opacity-60', 'cursor-not-allowed');
+                stockTitle.textContent = "Stock Actual (Autocalculado)";
+                badgeMode.textContent = "Modo Lotes";
+                badgeMode.className = "text-[10px] bg-blue-600/30 text-blue-400 px-2 py-0.5 rounded border border-blue-500/30";
+                calcularStockTotal();
+            } else {
+                lotesContainer.classList.add('hidden');
+                stockInput.removeAttribute('readonly');
+                stockInput.classList.remove('opacity-60', 'cursor-not-allowed');
+                stockTitle.textContent = "Stock Actual (Manual)";
+                badgeMode.textContent = "Modo Plano";
+                badgeMode.className = "text-[10px] bg-slate-700 text-slate-300 px-2 py-0.5 rounded";
+            }
+        }
+
+        function agregarLote() {
+            const list = document.getElementById('lotes-list');
+            const newItem = document.createElement('div');
+            newItem.className = "lote-item grid grid-cols-1 md:grid-cols-12 gap-3 items-center bg-slate-900 p-3 rounded-xl border border-slate-700";
+            newItem.innerHTML = `
+                <div class="md:col-span-3">
+                    <input type="number" value="0" oninput="calcularStockTotal()" class="lote-cant w-full bg-slate-800 border border-slate-600 rounded-lg px-2.5 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="md:col-span-4">
+                    <input type="text" placeholder="Ej. L-24A" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2.5 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="md:col-span-4">
+                    <div class="flex justify-end mb-1">
+                        <label class="text-[10px] text-slate-400 flex items-center gap-1 cursor-pointer">
+                            <input type="checkbox" onchange="toggleVencimiento(this)" class="rounded bg-slate-800 border-slate-600 text-blue-600 h-3 w-3"> No vence
+                        </label>
+                    </div>
+                    <input type="date" class="lote-venc w-full bg-slate-800 border border-slate-600 rounded-lg px-2.5 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div class="md:col-span-1 flex justify-center">
+                    <button type="button" onclick="eliminarLote(this)" class="text-slate-400 hover:text-red-400 p-1 transition text-lg">✕</button>
+                </div>
+            `;
+            list.appendChild(newItem);
+        }
+
+        function eliminarLote(btn) {
+            const item = btn.closest('.lote-item');
+            if (document.querySelectorAll('.lote-item').length > 1) {
+                item.remove();
+                calcularStockTotal();
+            } else {
+                alert("Debes mantener al menos un lote activo si el control de lotes está encendido.");
+            }
+        }
+
+        function toggleVencimiento(checkbox) {
+            const dateInput = checkbox.closest('.md\\:col-span-4').querySelector('.lote-venc');
+            if (checkbox.checked) {
+                dateInput.value = '';
+                dateInput.setAttribute('disabled', true);
+                dateInput.classList.add('opacity-40', 'cursor-not-allowed');
+            } else {
+                dateInput.removeAttribute('disabled');
+                dateInput.classList.remove('opacity-40', 'cursor-not-allowed');
+            }
+        }
+
+        function calcularStockTotal() {
+            let total = 0;
+            document.querySelectorAll('.lote-cant').forEach(input => {
+                let val = parseFloat(input.value) || 0;
+                total += val;
+            });
+            document.getElementById('total-calculado').textContent = total;
+            document.getElementById('input-stock-actual').value = total;
+        }
+
+        function agregarComponente() {
+            const list = document.getElementById('componentes-list');
+            const newItem = document.createElement('div');
+            newItem.className = "comp-item flex gap-2";
+            newItem.innerHTML = `
+                <input type="text" placeholder="Clave (Ej. Tipo de conector)" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-white">
+                <input type="text" placeholder="Valor (Ej. 4 pines)" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-white">
+                <button type="button" onclick="eliminarComponente(this)" class="px-3 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20 hover:bg-red-500/20 text-sm">×</button>
+            `;
+            list.appendChild(newItem);
+        }
+
+        function eliminarComponente(btn) {
+            const item = btn.closest('.comp-item');
+            if (document.querySelectorAll('.comp-item').length > 1) {
+                item.remove();
+            } else {
+                alert("Debes mantener al menos un campo de componente o dejarlo vacío.");
+            }
+        }
+    </script>
+</body>
+</html>

@@ -25,13 +25,13 @@ centralización del tema.
 
 | Capa | Tecnología | Carpeta |
 |---|---|---|
-| UI / render | React 19, Tailwind 4 | `src/components`, `src/pages` |
-| Routing | React Router 7 (HashRouter) | `src/App.tsx` |
-| Estado global | Zustand 5 (con `persist`) | `src/store` |
-| Lógica de vista | Custom Hooks | `src/hooks` |
-| Lógica pura | Servicios sin React | `src/services` |
-| Datos estáticos | Módulos tipados | `src/data` (barrel `@/data`) |
-| Tipos | TypeScript strict-ish | `src/types` |
+| UI / render | React 19, Tailwind 4 | `features/*/components`, `features/*/pages`, `shared/ui` |
+| Routing | React Router 7 (HashRouter) | `src/app/router.tsx` |
+| Estado global | Zustand 5 (con `persist`) | `features/*/store.ts`, `features/catalog/*.store.ts`, `shared/store` |
+| Lógica de vista | Custom Hooks | `features/*/hooks`, `app/hooks`, `shared/hooks` |
+| Lógica pura | Servicios sin React | `features/*/lib`, `shared/lib` |
+| Datos estáticos | Módulos tipados | `features/*/mocks`, `features/*/config`, `shared/config` |
+| Tipos | TypeScript strict-ish | `shared/types` (kernel), `features/cart/types.ts` |
 | Trazabilidad | `uiMeta` | `src/ui-traceability` |
 
 **Conteo actual:** 12 páginas, 60 componentes, 30 hooks, 5 servicios, 6 stores,
@@ -120,8 +120,8 @@ centralización del tema.
 
 1. **Acoplamiento a datos estáticos.** `useFilters`, `useHomeData`, `useProductDetail`,
    `useCatalogStats`, `useFavoritesView` importan `products` directamente. Se
-   centralizó el acceso en el barrel `@/data` para que la migración a API toque un
-   solo punto, pero el acoplamiento sigue existiendo (ver sección 7).
+   centralizó el acceso en los `mocks/` de cada feature, expuestos por su `index.ts`, para que la migración a API toque un
+   solo punto por dominio, pero el acoplamiento sigue existiendo (ver sección 7).
 
 2. **Fuente de verdad del tema en UI.** `useTheme` se invocaba desde `Header` vía
    `useHeaderState`. Se movió al shell (`MainLayout`) para que el tema no dependa
@@ -146,7 +146,7 @@ centralización del tema.
 
 - **DOMA:** componentes = presentación; hooks = lógica de vista; services = funciones
   puras; stores = estado global.
-- **Fuentes únicas:** `@/data` para catálogo/configuración, `@/services` para cálculos.
+- **Fuentes únicas:** `mocks/` + `index.ts` de cada feature para datos, `lib/` para cálculos.
 - **IDs de trazabilidad dinámicos** en listas (`.map`).
 - **Persistencia versionada:** claves `compustore_sv_cart_v4`, `compustore_sv_favorites_v2`,
   `compustore_sv_theme`.
@@ -163,7 +163,7 @@ centralización del tema.
   `formatters` no dependen de React; pueden cubrirse con unit tests directamente.
 - **Stores desacoplados:** Zustand permite añadir slices (inventario, auth, pedidos)
   sin reestructurar.
-- **Barrel `@/data`:** único punto de entrada de datos; sustituir por un repositorio
+- **`mocks/` por feature:** punto de entrada de datos de cada dominio; sustituir por un repositorio
   asíncrono es localizado.
 - **Traceability kill switch:** permite desactivar metadatos en producción sin tocar
   componentes.
@@ -172,7 +172,7 @@ centralización del tema.
 ### 7.2 Trabajo necesario para producción
 | Área | Acción | Esfuerzo |
 |---|---|---|
-| API / datos | Reemplazar `@/data` por llamadas async (React Query o SWR) con caché. | Medio |
+| API / datos | Reemplazar `features/*/mocks` por llamadas async (React Query o SWR) con caché. | Medio |
 | Auth / usuarios | Añadir store de sesión y rutas protegidas (favoritos, historial). | Medio |
 | Backend de pedidos | Sustituir URL de WhatsApp por orden persistida + webhook. | Alto |
 | SSR / SEO | Migrar Vite SPA a Next.js/Remix o prerender estático para SEO de productos. | Alto |
@@ -196,8 +196,8 @@ centralización del tema.
 ## 8. Próximos pasos recomendados (priorizados)
 
 1. Añadir `ErrorBoundary` global y página 404 amigable.
-2. Integrar tests unitarios para `services/*` (Vitest).
-3. Migrar datos a una API real detrás de `@/data` (o un repositorio).
+2. Integrar tests unitarios para `features/*/lib` y `shared/lib` (Vitest).
+3. Migrar datos a una API real detrás del `index.ts` de cada feature (o un repositorio).
 4. Reemplazar `placehold.co` por assets reales y optimizar imágenes.
 5. Activar `React.lazy` para rutas y medir bundle.
 6. Auditoría WCAG 2.2 y soporte de teclado completo en menús dropdown.

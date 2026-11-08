@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
-import { ProductGrid } from '@/components/product/ProductGrid'
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
-import { useFavoritesView } from '@/hooks/useFavoritesView'
+import { ProductGrid } from '../components/grid/ProductGrid'
+import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
+import { useFavoritesView } from '../hooks/useFavoritesView'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/pages/FavoritesView.tsx'
+const SOURCE = 'src/features/catalog/pages/FavoritesView.tsx'
 
 export const FavoritesView = () => {
   const { products } = useFavoritesView()

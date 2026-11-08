@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { uiMeta } from '@/ui-traceability'
-import type { CategoryWithCount } from '@/types'
+import type { CategoryWithCount } from '@/shared/types'
 
-const SOURCE = 'src/components/catalog/CategoryCard.tsx'
+const SOURCE = 'src/features/catalog/components/browse/CategoryCard.tsx'
 
 interface CategoryCardProps {
   category: CategoryWithCount

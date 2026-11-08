@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/ui/PageBanner.tsx'
+const SOURCE = 'src/shared/ui/PageBanner.tsx'
 
 interface PageBannerProps {
   badge?: string

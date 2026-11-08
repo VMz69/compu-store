@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom'
-import { BrandMenu } from '@/components/layout/BrandMenu'
-import { CategoryMenu } from '@/components/layout/CategoryMenu'
-import { MobileMenu } from '@/components/layout/MobileMenu'
-import { useNavbar } from '@/hooks/useNavbar'
+import { BrandMenu } from './BrandMenu'
+import { CategoryMenu } from './CategoryMenu'
+import { MobileMenu } from './MobileMenu'
+import { useNavbar } from '../../hooks/useNavbar'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/layout/Navbar.tsx'
+const SOURCE = 'src/app/layout/navbar/Navbar.tsx'
 
 const navPill = (active: boolean) =>
   `px-3.5 py-1.5 rounded-full transition-all cursor-pointer ${
@@ -35,7 +35,7 @@ export const Navbar = () => {
       className="relative lg:border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors"
       {...uiMeta({ id: 'layout.navbar', component: 'Navbar', source: SOURCE })}
     >
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+      <div className="max-w-app mx-auto px-3 sm:px-6 lg:px-8 2xl:px-10">
         <div className="hidden lg:flex items-center justify-between py-1.5 md:py-1 min-h-[44px] md:h-13">
           <div className="w-full grid grid-cols-2 gap-2 sm:gap-3 lg:flex lg:w-auto lg:items-center lg:space-x-2.5">
             <CategoryMenu

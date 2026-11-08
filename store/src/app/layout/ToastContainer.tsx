@@ -1,8 +1,8 @@
-import { Toast } from '@/components/ui/Toast'
-import { useToasts } from '@/hooks/useToasts'
+import { Toast } from '@/shared/ui/Toast'
+import { useToasts } from '@/shared/hooks/useToasts'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/layout/ToastContainer.tsx'
+const SOURCE = 'src/app/layout/ToastContainer.tsx'
 
 export const ToastContainer = () => {
   const { toasts, dismissToast } = useToasts()

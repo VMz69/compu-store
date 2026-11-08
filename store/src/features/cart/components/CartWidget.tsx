@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import { formatCurrency } from '@/services/formatters'
+import { formatCurrency } from '@/shared/lib/formatters'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/layout/CartWidget.tsx'
+const SOURCE = 'src/features/cart/components/CartWidget.tsx'
 
 interface CartWidgetProps {
   count: number

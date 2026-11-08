@@ -1,11 +1,9 @@
 import { Link } from 'react-router-dom'
-import { formatCurrency } from '@/services/formatters'
-import { getAvailableStock } from '@/services/cart.service'
-import { useCartStore } from '@/store/useCartStore'
 import { uiMeta } from '@/ui-traceability'
-import type { Product } from '@/types'
+import { SearchResultItem } from './SearchResultItem'
+import type { Product } from '@/shared/types'
 
-const SOURCE = 'src/components/layout/SearchDropdown.tsx'
+const SOURCE = 'src/features/search/components/SearchDropdown.tsx'
 
 interface SearchDropdownProps {
   open: boolean
@@ -19,10 +17,8 @@ interface SearchDropdownProps {
 /**
  * Desplegable global de búsqueda.
  *
- * Muestra las coincidencias más relevantes con imagen, marca, título, precio,
- * estado de oferta y un botón para añadir al carrito sin salir de la vista.
- * Cada fila navega al detalle al hacer clic; el botón de carrito detiene la
- * propagación para no disparar la navegación.
+ * Muestra las coincidencias más relevantes (`SearchResultItem`) y un enlace a
+ * la vista completa de resultados.
  */
 export const SearchDropdown = ({
   open,
@@ -32,7 +28,6 @@ export const SearchDropdown = ({
   onAddToCart,
   onClose,
 }: SearchDropdownProps) => {
-  const cartItems = useCartStore((state) => state.items)
   if (!open || !query.trim()) return null
 
   const hasResults = suggestions.length > 0
@@ -44,102 +39,14 @@ export const SearchDropdown = ({
     >
       {hasResults ? (
         <ul className="max-h-80 overflow-y-auto py-1.5" role="listbox">
-          {suggestions.map((product) => {
-            const isOffer =
-              Boolean(product.originalPrice) && product.originalPrice! > product.price
-            const discount =
-              isOffer && product.originalPrice
-                ? Math.round(
-                    ((product.originalPrice! - product.price) / product.originalPrice!) * 100,
-                  )
-                : 0
-            const inCart = cartItems.some((item) => item.product.id === product.id)
-            const availableStock = getAvailableStock(product, cartItems)
-
-            return (
-              <li
-                key={product.id}
-                role="option"
-                className="group"
-                {...uiMeta({
-                  id: `layout.search.result.${product.id}`,
-                  component: 'SearchDropdown',
-                  source: SOURCE,
-                })}
-              >
-                <div className="flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/70">
-                  <button
-                    type="button"
-                    onClick={() => onSelect(product)}
-                    className="flex min-w-0 flex-1 items-center gap-3 text-left"
-                    {...uiMeta({
-                      id: `layout.search.result.${product.id}.link`,
-                      component: 'SearchDropdown',
-                      source: SOURCE,
-                    })}
-                  >
-                    <span className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-slate-50 dark:bg-slate-800/60">
-                      <img
-                        src={product.imageUrl}
-                        alt={product.name}
-                        className="h-full w-full object-contain p-1"
-                        loading="lazy"
-                      />
-                      {isOffer ? (
-                        <span className="absolute -right-1 -top-1 rounded-full bg-amber-500 px-1.5 py-0.5 text-[9px] font-black text-amber-950 shadow-xs">
-                          -{discount}%
-                        </span>
-                      ) : null}
-                    </span>
-
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                        {product.brand}
-                      </span>
-                      <span className="block truncate text-sm font-bold text-slate-800 dark:text-slate-100">
-                        {product.name}
-                      </span>
-                      <span className="mt-0.5 flex items-center gap-2">
-                        <span className="text-sm font-black text-brand-dark dark:text-sky-400">
-                          {formatCurrency(product.price)}
-                        </span>
-                        {isOffer ? (
-                          <span className="text-[10px] font-semibold text-slate-400 line-through">
-                            {formatCurrency(product.originalPrice!)}
-                          </span>
-                        ) : null}
-                        {product.stock <= 0 ? (
-                          <span className="text-[10px] font-bold text-red-500">Agotado</span>
-                        ) : null}
-                      </span>
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      onAddToCart(product)
-                    }}
-                    disabled={product.stock <= 0 || availableStock <= 0}
-                    title="Agregar al carrito"
-                    aria-label={`Agregar ${product.name} al carrito`}
-                    className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand text-white shadow-xs transition-all hover:bg-brand-hover active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
-                    {...uiMeta({
-                      id: `layout.search.result.${product.id}.add`,
-                      component: 'SearchDropdown',
-                      source: SOURCE,
-                    })}
-                  >
-                    <i className="fa-solid fa-cart-plus text-xs" />
-                    {inCart ? (
-                      <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900" />
-                    ) : null}
-                  </button>
-                </div>
-              </li>
-            )
-          })}
+          {suggestions.map((product) => (
+            <SearchResultItem
+              key={product.id}
+              product={product}
+              onSelect={onSelect}
+              onAddToCart={onAddToCart}
+            />
+          ))}
         </ul>
       ) : (
         <div className="flex flex-col items-center gap-2 px-4 py-8 text-center">

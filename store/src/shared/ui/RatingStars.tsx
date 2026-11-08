@@ -1,6 +1,6 @@
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/ui/RatingStars.tsx'
+const SOURCE = 'src/shared/ui/RatingStars.tsx'
 
 interface RatingStarsProps {
   rating: number

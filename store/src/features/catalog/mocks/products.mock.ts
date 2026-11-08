@@ -1,4 +1,4 @@
-import type { Product } from '@/types'
+import type { Product } from '@/shared/types'
 
 export const products: Product[] = [
   {
@@ -14,6 +14,11 @@ export const products: Product[] = [
     rating: 4.8,
     reviewsCount: 14,
     imageUrl: 'https://placehold.co/400x300/f8fafc/0168f5?text=Laptop+Acer+Aspire',
+    images: [
+      'https://placehold.co/800x600/eef5ff/0047b3?text=Laptop+Acer+Aspire+-+Vista+lateral',
+      'https://placehold.co/800x600/e2e8f0/0c192c?text=Laptop+Acer+Aspire+-+Detalle',
+      'https://placehold.co/800x600/dbeafe/0168f5?text=Laptop+Acer+Aspire+-+Empaque',
+    ],
     description:
       'Laptop reacondicionada clase A, ideal para trabajo de oficina, programación y multitarea exigente. Pantalla 15.6 pulgadas Full HD.',
     specs: [
@@ -37,6 +42,11 @@ export const products: Product[] = [
     rating: 4.9,
     reviewsCount: 22,
     imageUrl: 'https://placehold.co/400x300/f8fafc/0168f5?text=Monitor+Dell+24+IPS',
+    images: [
+      'https://placehold.co/800x600/eef5ff/0047b3?text=Monitor+Dell+24+IPS+-+Vista+lateral',
+      'https://placehold.co/800x600/e2e8f0/0c192c?text=Monitor+Dell+24+IPS+-+Detalle',
+      'https://placehold.co/800x600/dbeafe/0168f5?text=Monitor+Dell+24+IPS+-+Empaque',
+    ],
     description:
       'Pantalla IPS antirreflejo de bisel ultrafino con excelente precisión de color sRGB y conectividad HDMI/VGA. Ajuste ergonómico de inclinación.',
     specs: [
@@ -60,6 +70,11 @@ export const products: Product[] = [
     rating: 5,
     reviewsCount: 31,
     imageUrl: 'https://placehold.co/400x300/f8fafc/0168f5?text=Disco+M2+Samsung+1TB',
+    images: [
+      'https://placehold.co/800x600/eef5ff/0047b3?text=Disco+M2+Samsung+1TB+-+Vista+lateral',
+      'https://placehold.co/800x600/e2e8f0/0c192c?text=Disco+M2+Samsung+1TB+-+Detalle',
+      'https://placehold.co/800x600/dbeafe/0168f5?text=Disco+M2+Samsung+1TB+-+Empaque',
+    ],
     description:
       'Unidad de estado sólido NVMe PCIe 3.0 con velocidades de lectura de hasta 3,500 MB/s. Máxima velocidad de booteo y carga de videojuegos.',
     specs: [
@@ -83,6 +98,11 @@ export const products: Product[] = [
     rating: 4.7,
     reviewsCount: 19,
     imageUrl: 'https://placehold.co/400x300/f8fafc/0168f5?text=Teclado+RGB+Gamer',
+    images: [
+      'https://placehold.co/800x600/eef5ff/0047b3?text=Teclado+RGB+Gamer+-+Vista+lateral',
+      'https://placehold.co/800x600/e2e8f0/0c192c?text=Teclado+RGB+Gamer+-+Detalle',
+      'https://placehold.co/800x600/dbeafe/0168f5?text=Teclado+RGB+Gamer+-+Empaque',
+    ],
     description:
       'Teclado mecánico con switches táctiles Outemu Blue, retroiluminación RGB dinámica con 18 modos y estructura de aluminio reforzado.',
     specs: [
@@ -106,6 +126,11 @@ export const products: Product[] = [
     rating: 4.6,
     reviewsCount: 45,
     imageUrl: 'https://placehold.co/400x300/f8fafc/0168f5?text=Mouse+Logitech+M185',
+    images: [
+      'https://placehold.co/800x600/eef5ff/0047b3?text=Mouse+Logitech+M185+-+Vista+lateral',
+      'https://placehold.co/800x600/e2e8f0/0c192c?text=Mouse+Logitech+M185+-+Detalle',
+      'https://placehold.co/800x600/dbeafe/0168f5?text=Mouse+Logitech+M185+-+Empaque',
+    ],
     description:
       'Mouse compacto, confiable y plug-and-play. Conexión inalámbrica estable de 2.4 GHz mediante nano receptor USB y 12 meses de duración de batería.',
     specs: [
@@ -129,6 +154,11 @@ export const products: Product[] = [
     rating: 4.8,
     reviewsCount: 18,
     imageUrl: 'https://placehold.co/400x300/f8fafc/0168f5?text=Audifonos+Diadema+7.1',
+    images: [
+      'https://placehold.co/800x600/eef5ff/0047b3?text=Audifonos+Diadema+7.1+-+Vista+lateral',
+      'https://placehold.co/800x600/e2e8f0/0c192c?text=Audifonos+Diadema+7.1+-+Detalle',
+      'https://placehold.co/800x600/dbeafe/0168f5?text=Audifonos+Diadema+7.1+-+Empaque',
+    ],
     description:
       'Sonido envolvente 7.1 virtual para localizar con precisión los pasos de tus oponentes. Almohadillas memory foam transpirables y luz LED.',
     specs: [
@@ -152,6 +182,11 @@ export const products: Product[] = [
     rating: 4.9,
     reviewsCount: 29,
     imageUrl: 'https://placehold.co/400x300/f8fafc/0168f5?text=Soporte+Metalico+Laptop',
+    images: [
+      'https://placehold.co/800x600/eef5ff/0047b3?text=Soporte+Metalico+Laptop+-+Vista+lateral',
+      'https://placehold.co/800x600/e2e8f0/0c192c?text=Soporte+Metalico+Laptop+-+Detalle',
+      'https://placehold.co/800x600/dbeafe/0168f5?text=Soporte+Metalico+Laptop+-+Empaque',
+    ],
     description:
       'Soporte de aleación de aluminio con 6 niveles de inclinación ergonómica. Disipa el calor de tu laptop y mejora tu postura de trabajo.',
     specs: [
@@ -175,6 +210,11 @@ export const products: Product[] = [
     rating: 4.3,
     reviewsCount: 12,
     imageUrl: 'https://placehold.co/400x300/f8fafc/0168f5?text=Webcam+Full+HD+1080p',
+    images: [
+      'https://placehold.co/800x600/eef5ff/0047b3?text=Webcam+Full+HD+1080p+-+Vista+lateral',
+      'https://placehold.co/800x600/e2e8f0/0c192c?text=Webcam+Full+HD+1080p+-+Detalle',
+      'https://placehold.co/800x600/dbeafe/0168f5?text=Webcam+Full+HD+1080p+-+Empaque',
+    ],
     description:
       'Cámara web con lente de cristal FHD y corrección automática de baja luz. Micrófono estéreo integrado con reducción de ruido ambiental.',
     specs: [
@@ -198,6 +238,11 @@ export const products: Product[] = [
     rating: 4.9,
     reviewsCount: 8,
     imageUrl: 'https://placehold.co/400x300/f8fafc/0168f5?text=HP+ProBook+450+G8',
+    images: [
+      'https://placehold.co/800x600/eef5ff/0047b3?text=HP+ProBook+450+G8+-+Vista+lateral',
+      'https://placehold.co/800x600/e2e8f0/0c192c?text=HP+ProBook+450+G8+-+Detalle',
+      'https://placehold.co/800x600/dbeafe/0168f5?text=HP+ProBook+450+G8+-+Empaque',
+    ],
     description:
       'Potencia corporativa en chasis de aluminio pulido. Seguridad TPM 2.0 y excelente autonomía de batería para profesionales.',
     specs: [
@@ -221,6 +266,11 @@ export const products: Product[] = [
     rating: 4.7,
     reviewsCount: 34,
     imageUrl: 'https://placehold.co/400x300/f8fafc/0168f5?text=JBL+Pure+Bass+BT',
+    images: [
+      'https://placehold.co/800x600/eef5ff/0047b3?text=JBL+Pure+Bass+BT+-+Vista+lateral',
+      'https://placehold.co/800x600/e2e8f0/0c192c?text=JBL+Pure+Bass+BT+-+Detalle',
+      'https://placehold.co/800x600/dbeafe/0168f5?text=JBL+Pure+Bass+BT+-+Empaque',
+    ],
     description:
       'Sonido legendario JBL Pure Bass con Bluetooth 5.0. Hasta 40 horas continuas de reproducción y carga rápida USB-C.',
     specs: [
@@ -244,6 +294,11 @@ export const products: Product[] = [
     rating: 5,
     reviewsCount: 40,
     imageUrl: 'https://placehold.co/400x300/f8fafc/0168f5?text=RAM+Kingston+16GB',
+    images: [
+      'https://placehold.co/800x600/eef5ff/0047b3?text=RAM+Kingston+16GB+-+Vista+lateral',
+      'https://placehold.co/800x600/e2e8f0/0c192c?text=RAM+Kingston+16GB+-+Detalle',
+      'https://placehold.co/800x600/dbeafe/0168f5?text=RAM+Kingston+16GB+-+Empaque',
+    ],
     description:
       'Módulo de alto rendimiento para gaming y diseño. Disipador de calor de aluminio negro de perfil bajo compatible con Intel XMP y AMD Ryzen.',
     specs: [
@@ -267,6 +322,11 @@ export const products: Product[] = [
     rating: 4.8,
     reviewsCount: 16,
     imageUrl: 'https://placehold.co/400x300/f8fafc/0168f5?text=Silla+Gamer+Ergonomica',
+    images: [
+      'https://placehold.co/800x600/eef5ff/0047b3?text=Silla+Gamer+Ergonomica+-+Vista+lateral',
+      'https://placehold.co/800x600/e2e8f0/0c192c?text=Silla+Gamer+Ergonomica+-+Detalle',
+      'https://placehold.co/800x600/dbeafe/0168f5?text=Silla+Gamer+Ergonomica+-+Empaque',
+    ],
     description:
       'Comodidad suprema para largas sesiones de trabajo o juego. Cojines lumbar y cervical ajustables, apoyabrazos acolchados y pistón clase 4.',
     specs: [

@@ -1,14 +1,16 @@
 import { Link } from 'react-router-dom'
-import { BrandTile } from '@/components/catalog/BrandTile'
-import { CategoryTile } from '@/components/catalog/CategoryTile'
-import { HeroSlider } from '@/components/catalog/HeroSlider'
-import { TrustPillars } from '@/components/catalog/TrustPillars'
-import { ProductGrid } from '@/components/product/ProductGrid'
-import { SectionHeading } from '@/components/ui/SectionHeading'
-import { useHomeData } from '@/hooks/useHomeData'
+import { BrandTile } from '../components/BrandTile'
+import { CategoryTile } from '../components/CategoryTile'
+import { HeroSlider } from '../components/HeroSlider'
+import { TrustPillars } from '../components/TrustPillars'
+import { ProductGrid } from '@/features/catalog'
+import { SectionHeading } from '@/shared/ui/SectionHeading'
+import { useHomeData } from '../hooks/useHomeData'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/pages/Home.tsx'
+const SOURCE = 'src/features/home/pages/Home.tsx'
+/** Las vitrinas de portada muestran 4 productos: se fijan en 4 columnas para no dejar huecos. */
+const SHOWCASE_GRID = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'
 
 export const Home = () => {
   const { categoriesWithCounts, brandsWithCounts, featuredProducts, dealProducts } = useHomeData()
@@ -68,7 +70,7 @@ export const Home = () => {
             </Link>
           }
         />
-        <ProductGrid products={featuredProducts} traceId="home.featured.grid" />
+        <ProductGrid products={featuredProducts} traceId="home.featured.grid" gridClassName={SHOWCASE_GRID} />
       </section>
 
       <section {...uiMeta({ id: 'home.deals', component: 'Home', source: SOURCE })}>
@@ -86,7 +88,7 @@ export const Home = () => {
             </Link>
           }
         />
-        <ProductGrid products={dealProducts} traceId="home.deals.grid" />
+        <ProductGrid products={dealProducts} traceId="home.deals.grid" gridClassName={SHOWCASE_GRID} />
       </section>
     </div>
   )

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import { products } from '@/data'
-import { useFavorites } from '@/hooks/useFavorites'
+import { products } from '../mocks/products.mock'
+import { useFavorites } from './useFavorites'
 
 /**
  * Productos favoritos resueltos a partir de los ids persistidos.

@@ -1,6 +1,6 @@
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/product/ProductTrustChips.tsx'
+const SOURCE = 'src/features/catalog/components/detail/ProductTrustChips.tsx'
 
 const CHIPS = [
   {
@@ -19,7 +19,7 @@ const CHIPS = [
 
 export const ProductTrustChips = () => (
   <div
-    className="w-full grid grid-cols-3 gap-2 mt-4 text-center"
+    className="space-y-2"
     {...uiMeta({
       id: 'producto.detalle.trust',
       component: 'ProductTrustChips',
@@ -29,15 +29,17 @@ export const ProductTrustChips = () => (
     {CHIPS.map((chip, index) => (
       <div
         key={chip.label}
-        className="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-2 border border-slate-100 dark:border-slate-800"
+        className="flex items-center gap-2.5"
         {...uiMeta({
           id: `producto.detalle.trust.${index}`,
           component: 'ProductTrustChips',
           source: SOURCE,
         })}
       >
-        <i className={`${chip.icon} text-sm mb-1 block`} />
-        <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 block leading-tight">
+        <span className="w-7 h-7 shrink-0 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-center justify-center">
+          <i className={`${chip.icon} text-xs`} />
+        </span>
+        <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 leading-tight">
           {chip.label}
         </span>
       </div>

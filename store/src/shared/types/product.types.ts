@@ -29,6 +29,8 @@ export interface Product {
   rating: number
   reviewsCount: number
   imageUrl: string
+  /** Fotos adicionales de la galería de detalle; la portada siempre es `imageUrl`. */
+  images?: string[]
   description: string
   specs: string[]
 }

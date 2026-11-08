@@ -1,10 +1,10 @@
-import { CategoryCard } from '@/components/catalog/CategoryCard'
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
-import { PageBanner } from '@/components/ui/PageBanner'
-import { useCatalogHub } from '@/hooks/useCatalogHub'
+import { CategoryCard } from '../components/browse/CategoryCard'
+import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
+import { PageBanner } from '@/shared/ui/PageBanner'
+import { useCatalogHub } from '../hooks/useCatalogHub'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/pages/CatalogHub.tsx'
+const SOURCE = 'src/features/catalog/pages/CatalogHub.tsx'
 
 export const CatalogHub = () => {
   const { categories, totalProducts } = useCatalogHub()

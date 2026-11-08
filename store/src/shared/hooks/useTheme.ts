@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useUIStore } from '@/store/useUIStore'
+import { useUIStore } from '@/shared/store/ui.store'
 
 const THEME_STORAGE_KEY = 'compustore_sv_theme'
 

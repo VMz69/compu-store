@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { uiMeta } from '@/ui-traceability'
-import type { BrandWithCount } from '@/types'
+import type { BrandWithCount } from '@/shared/types'
 
-const SOURCE = 'src/components/catalog/BrandTile.tsx'
+const SOURCE = 'src/features/home/components/BrandTile.tsx'
 
 export const BrandTile = ({ brand }: { brand: BrandWithCount }) => (
   <Link

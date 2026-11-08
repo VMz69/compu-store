@@ -1,8 +1,8 @@
-import { formatSku } from '@/services/formatters'
+import { formatSku } from '@/shared/lib/formatters'
 import { uiMeta } from '@/ui-traceability'
-import type { Product } from '@/types'
+import type { Product } from '@/shared/types'
 
-const SOURCE = 'src/components/product/ProductSpecsTab.tsx'
+const SOURCE = 'src/features/catalog/components/detail/ProductSpecsTab.tsx'
 
 interface ProductSpecsTabProps {
   product: Product

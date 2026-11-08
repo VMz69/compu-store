@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react'
-import { ProductCard } from '@/components/product/ProductCard'
-import { EmptyState } from '@/components/ui/EmptyState'
+import { ProductCard } from './ProductCard'
+import { EmptyState } from '@/shared/ui/EmptyState'
 import { uiMeta } from '@/ui-traceability'
-import type { Product } from '@/types'
+import type { Product } from '@/shared/types'
 
-const SOURCE = 'src/components/product/ProductGrid.tsx'
+const SOURCE = 'src/features/catalog/components/grid/ProductGrid.tsx'
 
 interface ProductGridProps {
   products: Product[]
@@ -23,7 +23,7 @@ export const ProductGrid = ({
   emptyDescription = 'Actualmente no hay artículos que coincidan con esta selección.',
   emptyAction,
   traceId,
-  gridClassName = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6',
+  gridClassName = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-6',
 }: ProductGridProps) => {
   if (products.length === 0) {
     return (

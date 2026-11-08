@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/ui/ConfirmDialog.tsx'
+const SOURCE = 'src/shared/ui/ConfirmDialog.tsx'
 
 interface ConfirmDialogProps {
   open: boolean

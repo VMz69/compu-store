@@ -1,7 +1,5 @@
 import { useMemo } from 'react'
-import { products } from '@/data'
-import { getDeals } from '@/services/catalog.service'
-import { useCatalogStats } from '@/hooks/useCatalogStats'
+import { getDeals, products, useCatalogStats } from '@/features/catalog'
 
 export const useHomeData = () => {
   const stats = useCatalogStats()

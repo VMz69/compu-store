@@ -1,9 +1,9 @@
-import { CheckoutForm } from '@/components/cart/CheckoutForm'
-import { formatCurrency } from '@/services/formatters'
+import { CheckoutForm } from './CheckoutForm'
+import { formatCurrency } from '@/shared/lib/formatters'
 import { uiMeta } from '@/ui-traceability'
-import type { DeliveryMethod } from '@/types'
+import type { DeliveryMethod } from '../types'
 
-const SOURCE = 'src/components/cart/CartSummary.tsx'
+const SOURCE = 'src/features/cart/components/CartSummary.tsx'
 
 interface CartSummaryProps {
   subtotal: number

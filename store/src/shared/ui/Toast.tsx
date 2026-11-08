@@ -1,8 +1,8 @@
 import { uiMeta } from '@/ui-traceability'
 
-import type { ToastMessage } from '@/store/useToastStore'
+import type { ToastMessage } from '@/shared/store/toast.store'
 
-const SOURCE = 'src/components/ui/Toast.tsx'
+const SOURCE = 'src/shared/ui/Toast.tsx'
 
 const TONE: Record<ToastMessage['type'], string> = {
   success: 'bg-emerald-600 text-white border-emerald-700',

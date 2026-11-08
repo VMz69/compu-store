@@ -1,6 +1,6 @@
-import { useFavStore } from '@/store/useFavStore'
-import { useToastStore } from '@/store/useToastStore'
-import type { Product } from '@/types'
+import { useFavStore } from '../favorites.store'
+import { useToastStore } from '@/shared/store/toast.store'
+import type { Product } from '@/shared/types'
 
 /**
  * Favoritos del usuario: consulta, alternancia y toast de confirmación.

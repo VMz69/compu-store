@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { uiMeta } from '@/ui-traceability'
-import type { CategoryWithCount } from '@/types'
+import type { CategoryWithCount } from '@/shared/types'
 
-const SOURCE = 'src/components/layout/MobileMenu.tsx'
+const SOURCE = 'src/app/layout/navbar/MobileMenu.tsx'
 
 interface MobileMenuProps {
   open: boolean

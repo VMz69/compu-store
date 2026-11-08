@@ -1,75 +1,35 @@
-# React + TypeScript + Vite
+# CompuStore SV — Back Office
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Panel de administración (inventario, pedidos, facturación, clientes, cotizaciones,
+ofertas y ajustes con control de acceso por roles). SPA con React 19 + TypeScript 7
++ Tailwind 4 + Vite 8 + Zustand 5, siguiendo arquitectura DOMA por features.
 
-Currently, two official plugins are available:
+## Scripts
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+pnpm install
+pnpm dev       # servidor de desarrollo (puerto 5174)
+pnpm build     # tsc -b (TS 7) + vite build
+pnpm lint      # ESLint (typescript-eslint sobre el alias TS 6)
+pnpm preview   # previsualización de dist/
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Estructura
 
 ```
+src/
+  app/              # router, guards, layout (sidebar, topbar), overlays
+  features/<x>/     # access, catalog, sales, billing, customers, quotes,
+                    # promotions, interactions, dashboard, settings
+  shared/           # ui, hooks, store, lib, config (sin lógica de negocio)
+  ui-traceability/  # uiMeta + tracer (data-ui-*)
+```
+
+## Variables (`.env`)
+
+`VITE_UI_TRACEABILITY`, `VITE_STORE_URL`, `VITE_BASE_PATH`, `VITE_SHOW_DEMO_CREDENTIALS`.
+
+## Documentación
+
+- Arquitectura: [`arch-backOffice.md`](./arch-backOffice.md)
+- Reglas de desarrollo: [`agent-rules.md`](./agent-rules.md)

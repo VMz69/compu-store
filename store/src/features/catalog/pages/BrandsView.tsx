@@ -1,10 +1,10 @@
-import { BrandCard } from '@/components/catalog/BrandCard'
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
-import { PageBanner } from '@/components/ui/PageBanner'
-import { useBrandsPage } from '@/hooks/useBrandsPage'
+import { BrandCard } from '../components/browse/BrandCard'
+import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
+import { PageBanner } from '@/shared/ui/PageBanner'
+import { useBrandsPage } from '../hooks/useBrandsPage'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/pages/BrandsView.tsx'
+const SOURCE = 'src/features/catalog/pages/BrandsView.tsx'
 
 export const BrandsView = () => {
   const { brands } = useBrandsPage()

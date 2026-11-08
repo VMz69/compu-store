@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom'
-import { ProductGrid } from '@/components/product/ProductGrid'
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
-import { FilterBar } from '@/components/ui/FilterBar'
-import { PageBanner } from '@/components/ui/PageBanner'
-import { useOffersView } from '@/hooks/useOffersView'
+import { ProductGrid } from '../components/grid/ProductGrid'
+import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
+import { FilterBar } from '../components/FilterBar'
+import { PageBanner } from '@/shared/ui/PageBanner'
+import { useOffersView } from '../hooks/useOffersView'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/pages/OffersView.tsx'
+const SOURCE = 'src/features/catalog/pages/OffersView.tsx'
 
 export const OffersView = () => {
   const { products, sortBy, setSortBy } = useOffersView()

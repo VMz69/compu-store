@@ -1,7 +1,7 @@
-import { STORE_CONFIG } from '@/data/storeConfig'
+import { STORE_CONFIG } from '@/shared/config/store.config'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/contact/ContactInfoCards.tsx'
+const SOURCE = 'src/features/info/components/ContactInfoCards.tsx'
 
 export const ContactInfoCards = () => (
   <div

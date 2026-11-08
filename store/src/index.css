@@ -5,6 +5,9 @@
 @theme {
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 
+  /* Ancho máximo del contenido de toda la app (header, main, footer): 1600px. */
+  --container-app: 100rem;
+
   --color-brand-50: #eff6ff;
   --color-brand-100: #dbeafe;
   --color-brand-200: #bfdbfe;

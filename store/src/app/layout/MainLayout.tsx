@@ -1,16 +1,16 @@
 import { Outlet } from 'react-router-dom'
-import { Footer } from '@/components/layout/Footer'
-import { FloatingWhatsApp } from '@/components/layout/FloatingWhatsApp'
-import { Header } from '@/components/layout/Header'
-import { MobileMenuBackdrop } from '@/components/layout/MobileMenuBackdrop'
-import { Navbar } from '@/components/layout/Navbar'
-import { ToastContainer } from '@/components/layout/ToastContainer'
-import { TopBar } from '@/components/layout/TopBar'
-import { useScrollToTop } from '@/hooks/useScrollToTop'
-import { useTheme } from '@/hooks/useTheme'
+import { Footer } from './footer/Footer'
+import { FloatingWhatsApp } from './FloatingWhatsApp'
+import { Header } from './header/Header'
+import { MobileMenuBackdrop } from './navbar/MobileMenuBackdrop'
+import { Navbar } from './navbar/Navbar'
+import { ToastContainer } from './ToastContainer'
+import { TopBar } from './header/TopBar'
+import { useScrollToTop } from '../hooks/useScrollToTop'
+import { useTheme } from '@/shared/hooks/useTheme'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/layout/MainLayout.tsx'
+const SOURCE = 'src/app/layout/MainLayout.tsx'
 
 export const MainLayout = () => {
   useScrollToTop()
@@ -35,7 +35,7 @@ export const MainLayout = () => {
 
       <div className="flex flex-1 flex-col overflow-x-clip">
         <main
-          className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 view-container"
+          className="flex-grow max-w-app w-full mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 py-6 md:py-8 view-container"
           {...uiMeta({ id: 'layout.main', component: 'MainLayout', source: SOURCE })}
         >
           <Outlet />

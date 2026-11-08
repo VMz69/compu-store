@@ -1,7 +1,7 @@
 import { uiMeta } from '@/ui-traceability'
-import type { Product } from '@/types'
+import type { Product } from '@/shared/types'
 
-const SOURCE = 'src/components/product/ProductOverviewTab.tsx'
+const SOURCE = 'src/features/catalog/components/detail/ProductOverviewTab.tsx'
 
 const HIGHLIGHTS = [
   {

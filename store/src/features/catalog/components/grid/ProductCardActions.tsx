@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
-import { formatCurrency } from '@/services/formatters'
+import { formatCurrency } from '@/shared/lib/formatters'
 import { uiMeta } from '@/ui-traceability'
-import type { Product } from '@/types'
+import type { Product } from '@/shared/types'
 
-const SOURCE = 'src/components/product/ProductCardActions.tsx'
+const SOURCE = 'src/features/catalog/components/grid/ProductCardActions.tsx'
 
 interface ProductCardActionsProps {
   product: Product

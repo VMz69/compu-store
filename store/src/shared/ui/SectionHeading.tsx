@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/ui/SectionHeading.tsx'
+const SOURCE = 'src/shared/ui/SectionHeading.tsx'
 
 interface SectionHeadingProps {
   title: string

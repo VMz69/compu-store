@@ -1,11 +1,10 @@
 import { Link } from 'react-router-dom'
-import { ProductGrid } from '@/components/product/ProductGrid'
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
-import { FilterBar } from '@/components/ui/FilterBar'
-import { useSearchView } from '@/hooks/useSearchView'
+import { FilterBar, ProductGrid } from '@/features/catalog'
+import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
+import { useSearchView } from '../hooks/useSearchView'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/pages/SearchView.tsx'
+const SOURCE = 'src/features/search/pages/SearchView.tsx'
 
 export const SearchView = () => {
   const { products, searchQuery, sortBy, setSortBy, resetFilters } = useSearchView()

@@ -1,4 +1,4 @@
-import type { Product } from './product.types'
+import type { Product } from '@/shared/types'
 
 export type DeliveryMethod = 'pickup' | 'shipping'
 

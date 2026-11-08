@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
-import { ProductGrid } from '@/components/product/ProductGrid'
+import { ProductGrid } from '../grid/ProductGrid'
 import { uiMeta } from '@/ui-traceability'
-import type { Product } from '@/types'
+import type { Product } from '@/shared/types'
 
-const SOURCE = 'src/components/product/RelatedList.tsx'
+const SOURCE = 'src/features/catalog/components/detail/RelatedList.tsx'
 
 interface RelatedListProps {
   products: Product[]

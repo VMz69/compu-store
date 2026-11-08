@@ -1,4 +1,4 @@
-import { useCatalogStats } from '@/hooks/useCatalogStats'
+import { useCatalogStats } from './useCatalogStats'
 
 /**
  * Marcas con conteo de productos para la página de marcas.

@@ -1,6 +1,6 @@
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/ui/QuantitySelector.tsx'
+const SOURCE = 'src/shared/ui/QuantitySelector.tsx'
 
 interface QuantitySelectorProps {
   value: number

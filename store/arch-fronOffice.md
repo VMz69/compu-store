@@ -1,157 +1,119 @@
-# Blueprint Topológico y Arquitectónico: Front-Office (`/store/`)
+# Blueprint · Front Office `/store` — CompuStore SV
 
-Este blueprint define la arquitectura del Front-Office (Vitrina Pública) sobre tu base de **React + Vite + TypeScript + Tailwind CSS**. Se aplican rigurosamente los principios **SRP (Single Responsibility Principle)** y **Desacoplamiento**, garantizando que **ningún archivo supere las 150 líneas de código**. Para lograrlo, la lógica de negocio se aísla en *Custom Hooks*, *Services* (funciones puras) y *Stores* (Zustand), dejando los componentes de React como simples renderizadores (Presentational Components).
+> **Objetivo:** vitrina pública (catálogo, carrito, favoritos, contacto) con checkout por WhatsApp.
+> **Stack:** React 19 · Vite 8 · TS 6 · Tailwind v4 · React Router 7 (HashRouter) · Zustand 5
+> **Gemelo:** [`admin/arch-backOffice.md`](../admin/arch-backOffice.md) — misma arquitectura y reglas.
 
 ---
 
-## 1. Topología de Directorios (`/store/src/`)
+## 0. Especificación común (store + admin)
 
-```text
-store/
-├── package.json
-├── vite.config.ts
-├── tailwind.config.js
-└── src/
-    ├── main.tsx                  # Punto de entrada de React (Router Provider)
-    ├── App.tsx                   # Layout raíz y configuración de Rutas (< 50 líneas)
-    ├── index.css                 # Directivas Tailwind y variables CSS base
-    │
-    ├── types/                    # Interfaces de TypeScript compartidas
-    │   ├── index.ts              # Exportador central
-    │   ├── product.types.ts      # Product, Category, Brand
-    │   └── cart.types.ts         # CartItem, CheckoutState
-    │
-    ├── data/                     # JSON / Mock Data (Fase actual)
-    │   ├── storeConfig.ts        # Info del negocio
-    │   └── dummyProducts.ts      # Inventario simulado
-    │
-    ├── store/                    # Estado Global (Zustand) - Separado por Dominio
-    │   ├── useCartStore.ts       # Lógica pura del carrito (< 100 líneas)
-    │   ├── useUIStore.ts         # Estado de menús, modales, theme oscuro
-    │   └── useFavStore.ts        # Persistencia de favoritos
-    │
-    ├── services/                 # Funciones puras (Sin React, 100% testeables)
-    │   ├── catalog.service.ts    # Filtrado, ordenamiento de productos
-    │   ├── cart.service.ts       # Cálculos matemáticos de subtotales/impuestos
-    │   ├── whatsapp.service.ts   # Generación de URLs y mensajes para WhatsApp
-    │   └── formatters.ts         # Formateo de moneda y fechas
-    │
-    ├── hooks/                    # Lógica de componentes extraída (SRP)
-    │   ├── useFilters.ts         # Orquesta el filtrado de catálogo
-    │   ├── useProductTabs.ts     # Controla las pestañas de ProductDetail
-    │   └── useTheme.ts           # Interfaz para cambiar dark/light mode
-    │
-    ├── components/               # Máxima modularización (< 150 líneas por archivo)
-    │   ├── ui/                   # Átomos (Componentes genéricos reutilizables)
-    │   │   ├── Button.tsx
-    │   │   ├── Badge.tsx
-    │   │   ├── Select.tsx
-    │   │   └── Toast.tsx
-    │   │
-    │   ├── layout/               # Esqueleto estructural estático
-    │   │   ├── MainLayout.tsx    # Wrapper que junta Header, Main y Footer
-    │   │   ├── Header.tsx        # Solo orquesta Navbar y acciones
-    │   │   ├── Navbar.tsx        # Enlaces de navegación principal
-    │   │   ├── MobileMenu.tsx    # Drawer móvil (aislado para no saturar Header)
-    │   │   └── Footer.tsx
-    │   │
-    │   ├── product/              # Dominio: Productos
-    │   │   ├── ProductCard.tsx   # Tarjeta modular (Botones delegados a UI)
-    │   │   ├── ProductGrid.tsx   # Mapeador de grillas
-    │   │   ├── ProductTabs.tsx   # Componente de pestañas del detalle
-    │   │   └── RelatedList.tsx   # Slider de sugerencias
-    │   │
-    │   └── cart/                 # Dominio: Carrito
-    │       ├── CartItem.tsx      # Fila individual del carrito
-    │       ├── CartSummary.tsx   # Caja de totales
-    │       └── CheckoutForm.tsx  # Radio buttons de envío y nota
-    │
-    └── pages/                    # Vistas (Smart Components - Solo inyectan datos)
-        ├── Home.tsx              # Index
-        ├── CatalogHub.tsx        # Categorías generales / Marcas
-        ├── CategoryView.tsx      # Listado de productos por departamento
-        ├── ProductDetail.tsx     # Ensambla imágenes, info y pestañas
-        ├── CartView.tsx          # Vista principal del carrito
-        ├── OffersView.tsx        # Liquidaciones
-        ├── AboutView.tsx         # Nosotros
-        └── ContactView.tsx       # Formulario y ubicación
+| Aspecto | Convención |
+|---|---|
+| Arquitectura | DOMA por features: `app/ → features/ → shared/` (nunca al revés) |
+| API de un feature | Solo `features/<x>/index.ts`; dentro del feature, imports relativos |
+| Anatomía | `index.ts · types.ts · store.ts · hooks/ · lib/ · mocks/ · config/ · components/ · pages/` |
+| Vista | `.tsx` ≤ 150 líneas (ESLint `max-lines`), sin estado ni cálculos |
+| Lógica | hooks (vista) · `lib/` (funciones puras) · `store.ts` (Zustand) |
+| Datos | Mocks tipados en `features/<x>/mocks/`; el feature los expone por su `index.ts` |
+| Trazabilidad | `data-ui-id/component/source`, kill-switch `VITE_UI_TRACEABILITY` |
+| Alias | `@/*` → `src/*` |
+
+---
+
+## 1. Reglas
+
+1. **Máximo 150 líneas por `.tsx`** (ESLint lo bloquea); páginas ≤ 100.
+2. **La vista no lleva lógica.** Estado, efectos y cálculos van en hooks, `lib/` o stores.
+3. **Grafo acíclico de features:** `cart ← catalog ← home / search`; `info` es independiente.
+4. **`shared/` no conoce el negocio:** no importa de `features/` ni de `app/`.
+5. **Clases Tailwind completas;** las condicionales largas se extraen a `*.styles.ts`.
+6. **Persistencia versionada:** `compustore_sv_cart_v4`, `compustore_sv_favorites_v2`, `compustore_sv_theme`.
+
+---
+
+## 2. Capa de trazabilidad
+
+```tsx
+import { uiMeta } from '@/ui-traceability'
+const SOURCE = 'src/features/catalog/components/grid/ProductCard.tsx'
+<article {...uiMeta({ id: `producto.card.${p.id}`, component: 'ProductCard', source: SOURCE })} />
 ```
 
----
-
-## 2. Inventario de Vistas (Pages)
-*Regla de Arquitectura: Las páginas **NO** contienen lógica compleja ni estilos densos. Su única responsabilidad es llamar a los `hooks` o `stores`, y pasar props a los componentes de `/components`. Ninguna vista superará las 100 líneas.*
-
-1. **`Home.tsx`**: Ensambla el Hero slider, pilares de confianza y vitrinas destacadas.
-2. **`CatalogHub.tsx`**: Index visual para mostrar tarjetas grandes de Categorías o Marcas.
-3. **`CategoryView.tsx`**: Recibe un parámetro de ruta (slug), usa `useFilters` y renderiza el `ProductGrid`.
-4. **`ProductDetail.tsx`**: Vista compuesta. Renderiza galería de imágenes, bloque de compra, y el componente `ProductTabs` para descripción/specs.
-5. **`CartView.tsx`**: Consumo directo de `useCartStore`. Renderiza lista de `CartItem` y `CartSummary`.
-6. **`OffersView.tsx`**: Filtra productos con propiedad de descuento y renderiza `ProductGrid`.
-7. **`FavoritesView.tsx`**: Consumo de `useFavStore` integrado con `ProductGrid`.
-8. **`AboutView.tsx`**: Página estática descriptiva del negocio.
-9. **`ContactView.tsx`**: Componente visual con mapa, horarios y redirección a `whatsapp.service`.
+- `source` **debe** coincidir con la ruta real del archivo: al mover un archivo, actualízalo.
+- Los `id` son contrato estable (no dependen de la carpeta). **Uso funcional:** `useSearchLock` y
+  `useMobileMenuOverlay` consultan `[data-ui-id="layout.sticky-header"]` y `layout.search.dropdown`.
+- Listas: ids dinámicos (`lista.item.${id}`). Nunca en componentes de terceros (envolver en `<span>`).
 
 ---
 
-## 3. Inventario de Componentes (Altamente Desacoplados)
-*Fragmentación extrema para cumplir la regla de <150 líneas y favorecer la reutilización.*
+## 3. Topología
 
-### Componentes UI (Átomos)
-* **`Button.tsx`**: Recibe variantes (primary, secondary, danger) mediante Tailwind variants.
-* **`Badge.tsx`**: Etiquetas de estado (Oferta, Agotado, Destacado).
-* **`Select.tsx`**: Dropdown nativo estilizado para los filtros de ordenamiento.
-* **`QuantitySelector.tsx`**: Botones `[-] [1] [+]` aislados. Dispara eventos `onChange`.
+```txt
+src/
+├── main.tsx · App.tsx           HashRouter → AppRoutes
+├── ui-traceability/             uiMeta + kill-switch
+├── app/                         ensamblaje
+│   ├── router.tsx               rutas
+│   ├── nav.config.ts            enlaces del footer
+│   ├── hooks/                   header, navbar, overlay móvil, scroll
+│   ├── lib/route.service.ts     normaliza la vista inicial
+│   └── layout/                  MainLayout · header/ · navbar/ · footer/ · ToastContainer · FloatingWhatsApp
+├── shared/                      sin lógica de negocio
+│   ├── ui/                      Button, Badge, Select, Breadcrumbs, EmptyState, Logo, Toast…
+│   ├── hooks/                   useTheme · useToasts · useClickOutside
+│   ├── store/                   ui.store (overlays, tema) · toast.store
+│   ├── lib/                     formatters · whatsapp (enlace genérico)
+│   ├── config/store.config.ts   identidad comercial
+│   └── types/                   modelo del catálogo (Product, Category, Brand, Review…)
+└── features/
+    ├── catalog/                 productos, categorías, marcas, ofertas, detalle, reseñas, favoritos
+    ├── cart/                    carrito, checkout WhatsApp, CartWidget
+    ├── search/                  buscador del header + resultados
+    ├── home/                    portada (hero, pilares, vitrinas)
+    └── info/                    nosotros y contacto
+```
 
-### Componentes de Layout
-* **`MainLayout.tsx`**: Renderiza `<Header>`, `<main>{children}</main>` y `<Footer>`. Envuelve la SPA completa.
-* **`Header.tsx`**: Contenedor.
-* **`Navbar.tsx`**: Extraído del Header para separar la lógica de menús.
-* **`SearchInput.tsx`**: Barra de búsqueda aislada, maneja su propio estado local y *debounce*.
-* **`CartWidget.tsx`**: Icono del carrito con su burbuja flotante (badge) consumiendo `useCartStore`.
-
-### Componentes de Dominio (Producto)
-* **`ProductCard.tsx`**: Muestra imagen, título, precio, badge y botón agregar. No calcula stocks, solo recibe props `product`.
-* **`ProductGrid.tsx`**: Recibe un array `Product[]`. Si está vacío, renderiza `<EmptyState>`. Si hay datos, itera `<ProductCard>`.
-* **`ProductTabs.tsx`**: Maneja el estado local de navegación entre Descripción, Especificaciones Técnicas y Opiniones.
-
-### Componentes de Dominio (Carrito)
-* **`CartItem.tsx`**: Fila con imagen miniatura, título, precio unitario y control `QuantitySelector`.
-* **`CartSummary.tsx`**: Recibe subtotales y renderiza el desglose financiero. Contiene el botón a WhatsApp.
+> `shared/types` es el *shared kernel*: `Product` lo usan `catalog`, `cart` y `search`, y ubicarlo en
+> un feature crearía un ciclo `catalog ↔ cart`.
 
 ---
 
-## 4. Estrategia de Escalabilidad y Cumplimiento (< 150 líneas)
+## 4. Directorio de vistas
 
-Para garantizar un mantenimiento ágil, se aplican los siguientes patrones estandarizados:
+| Ruta (`#/…`) | Página | Feature |
+|---|---|---|
+| `/` | Home | home |
+| `/categories` | CatalogHub | catalog |
+| `/category/:slug` | CategoryView | catalog |
+| `/brands` | BrandsView | catalog |
+| `/brand/:slug` | BrandDetail | catalog |
+| `/product/:id` | ProductDetail | catalog |
+| `/offers` | OffersView | catalog |
+| `/favorites` | FavoritesView | catalog |
+| `/cart` | CartView | cart |
+| `/search` | SearchView | search |
+| `/about` · `/contact` | AboutView · ContactView | info |
+| `*` | → `/` | app |
 
-1. **Inversión de Dependencias en Estado (Zustand):** 
-   En lugar de pasar props infinitos (Prop Drilling), los componentes leen directamente su fragmento de estado.
-   ```typescript
-   // useCartStore.ts (Solo lógica, < 100 líneas)
-   export const useCartStore = create<CartState>((set) => ({
-     items: [],
-     addToCart: (product, qty) => set((state) => CartService.addItem(state.items, product, qty)),
-     // ...
-   }));
-   ```
+---
 
-2. **Custom Hooks para Lógica de Vistas (SRP):**
-   Cualquier lógica de `useEffect`, timeouts o manipulaciones complejas de arreglos salen del componente hacia un hook.
-   ```typescript
-   // En CategoryView.tsx, en lugar de 100 líneas de lógica de filtrado:
-   const { filteredProducts, sortBy, setSortBy } = useFilters(categorySlug);
-   return <ProductGrid products="{filteredProducts}"/>
-   ```
+## 5. Inventario de componentes
 
-3. **Delegación de Lógica Pura a `/services`:**
-   Ni Zustand ni React deben calcular strings de WhatsApp ni totales matemáticos. Eso pertenece a funciones aisladas puras en `services/`, que además son 100% testeables en el futuro.
-   ```typescript
-   // whatsapp.service.ts
-   export const generateCartMessage = (items: CartItem[], delivery: string): string => {
-       // Lógica de mapeo a string...
-   };
-   ```
+| Feature | Componentes | Hooks / estado |
+|---|---|---|
+| **catalog** | `grid/` ProductCard (+Media, Info, Actions), ProductGrid · `detail/` Gallery (+Thumbs, Lightbox), Info (+Actions), BuyBox, Tabs, RelatedList · `reviews/` ReviewCard, ReviewForm, RatingSummary · `browse/` CategoryCard, BrandCard · FilterBar | useFilters, useCatalogStats, useProductDetail, useProductGallery, useShareProduct, useFavorites · `filters` / `favorites` / `reviews.store` |
+| **cart** | CartItem, CartSummary, CheckoutForm, CartWidget | useCart, useCartView · `store.ts` |
+| **search** | SearchInput, SearchDropdown, SearchResultItem | useSearchInput, useSearchSuggestions, useSearchDropdown, useSearchLock |
+| **home** | HeroSlider, TrustPillars, CategoryTile, BrandTile | useHomeData, useHeroSlider |
+| **info** | ContactForm, ContactInfoCards, ContactMap | useContactForm |
 
-4. **Clases de Utilidad de Tailwind en Constantes:**
-   Si los atributos `className` ocupan demasiadas líneas, se extraen a un objeto constante fuera del cuerpo del componente o se utiliza herramientas como `clsx` / `tailwind-merge` dentro del archivo de UI genérico (`Button.tsx`).
+---
+
+## 6. Cómo respetar las 150 líneas
+
+- **Tarjetas grandes** → partes `Media`, `Info`, `Actions`.
+- **Listas** → extraer la fila (`SearchResultItem`) y su estado derivado a un hook.
+- **Formularios** → `useXForm.ts` (lógica) + `XForm.tsx` (campos).
+- **Contenido repetitivo** (footer, pilares, orden) → `config/*.config.ts` + `.map()`.
+- **Mensajes de WhatsApp** → `features/<x>/lib/whatsapp.ts` sobre `shared/lib/whatsapp`.

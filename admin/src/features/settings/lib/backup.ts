@@ -1,0 +1,32 @@
+import { getUsersSnapshot } from '@/features/access'
+import { getCatalogSnapshot } from '@/features/catalog'
+import { getCustomersSnapshot } from '@/features/customers'
+import { getSalesSnapshot } from '@/features/sales'
+import type { StoreSettings } from '@/shared/config/store.config'
+import { snapshotRegisteredDemoData } from '@/shared/lib/demoData'
+
+export const BACKUP_VERSION = '2026.2'
+
+/** Snapshot integral para exportar en JSON. */
+export function buildBackup(settings: StoreSettings) {
+  const { products, categories } = getCatalogSnapshot()
+  const { orders, orderStatuses, channels } = getSalesSnapshot()
+  return {
+    version: BACKUP_VERSION,
+    exportDate: new Date().toISOString(),
+    settings,
+    products,
+    orders,
+    channels,
+    orderStatuses,
+    categories,
+    customers: getCustomersSnapshot(),
+    // Los usuarios se exportan SIN hash de contraseña.
+    users: getUsersSnapshot(),
+    // Secciones de los features registrados (cotizaciones, …).
+    ...snapshotRegisteredDemoData(),
+  }
+}
+
+export const backupFilename = (date: Date = new Date()): string =>
+  `compustore_backup_${date.toISOString().slice(0, 10)}.json`

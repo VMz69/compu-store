@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom'
-import { useCart } from '@/hooks/useCart'
-import { useFavorites } from '@/hooks/useFavorites'
-import { useUIStore } from '@/store/useUIStore'
+import { useCart } from '@/features/cart'
+import { useFavorites } from '@/features/catalog'
+import { useUIStore } from '@/shared/store/ui.store'
 
 /**
  * Datos que necesita la barra superior (carrito, favoritos, tema y menú móvil).

@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { buildCartCheckoutUrl } from '@/services/whatsapp.service'
-import { calculateItemCount, calculateSubtotal } from '@/services/cart.service'
-import { useCartStore } from '@/store/useCartStore'
-import { useToastStore } from '@/store/useToastStore'
-import type { CartItem } from '@/types'
+import { buildCartCheckoutUrl } from '../lib/whatsapp'
+import { calculateItemCount, calculateSubtotal } from '../lib/cart.service'
+import { useCartStore } from '../store'
+import { useToastStore } from '@/shared/store/toast.store'
+import type { CartItem } from '../types'
 
 /**
  * Vista del carrito: líneas, totales, métodos de entrega y checkout por WhatsApp.

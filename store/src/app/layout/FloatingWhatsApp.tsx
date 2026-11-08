@@ -1,7 +1,7 @@
-import { buildAssistantUrl } from '@/services/whatsapp.service'
+import { buildAssistantUrl } from '@/shared/lib/whatsapp'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/layout/FloatingWhatsApp.tsx'
+const SOURCE = 'src/app/layout/FloatingWhatsApp.tsx'
 
 export const FloatingWhatsApp = () => (
   <div

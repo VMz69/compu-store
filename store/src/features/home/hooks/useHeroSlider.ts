@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { promotions } from '@/data'
-import { useUIStore } from '@/store/useUIStore'
+import { promotions } from '../mocks/promotions.mock'
+import { useUIStore } from '@/shared/store/ui.store'
 
 const AUTOPLAY_MS = 7000
 

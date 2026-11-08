@@ -19,4 +19,9 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    // Directiva DOMA: ningún componente o página supera las 150 líneas.
+    files: ['src/**/*.tsx'],
+    rules: { 'max-lines': ['error', { max: 150 }] },
+  },
 ])

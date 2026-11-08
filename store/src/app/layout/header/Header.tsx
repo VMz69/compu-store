@@ -1,16 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { CartWidget } from '@/components/layout/CartWidget'
-import { Logo } from '@/components/layout/Logo'
-import { SearchInput } from '@/components/layout/SearchInput'
-import { ThemeToggle } from '@/components/layout/ThemeToggle'
-import { useCart } from '@/hooks/useCart'
-import { useHeaderState } from '@/hooks/useHeaderState'
-import { useMobileSearchCollapse } from '@/hooks/useMobileSearchCollapse'
-import { useSearchInput } from '@/hooks/useSearchInput'
-import { useSearchSuggestions } from '@/hooks/useSearchSuggestions'
+import { CartWidget, useCart } from '@/features/cart'
+import { Logo } from '@/shared/ui/Logo'
+import { SearchInput, useSearchInput, useSearchSuggestions } from '@/features/search'
+import { ThemeToggle } from './ThemeToggle'
+import { useHeaderState } from '../../hooks/useHeaderState'
+import { useMobileSearchCollapse } from '../../hooks/useMobileSearchCollapse'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/layout/Header.tsx'
+const SOURCE = 'src/app/layout/header/Header.tsx'
 
 export const Header = () => {
   const {
@@ -31,7 +28,7 @@ export const Header = () => {
 
   return (
     <div
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+      className="max-w-app mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10"
       {...uiMeta({ id: 'layout.header', component: 'Header', source: SOURCE })}
     >
       <div className="flex justify-between items-center h-16 md:h-20 gap-2 md:gap-4">

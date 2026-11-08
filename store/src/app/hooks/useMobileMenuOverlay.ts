@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
-import { useUIStore } from '@/store/useUIStore'
+import { useUIStore } from '@/shared/store/ui.store'
 
 /**
  * Controla el estado del menú móvil: bloquea el scroll de la página,

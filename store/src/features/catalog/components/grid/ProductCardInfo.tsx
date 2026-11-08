@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { uiMeta } from '@/ui-traceability'
-import type { Product } from '@/types'
+import type { Product } from '@/shared/types'
 
-const SOURCE = 'src/components/product/ProductCardInfo.tsx'
+const SOURCE = 'src/features/catalog/components/grid/ProductCardInfo.tsx'
 
 export const ProductCardInfo = ({ product }: { product: Product }) => {
   const traceId = `producto.card.${product.id}`

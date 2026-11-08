@@ -1,18 +1,18 @@
-import { FooterBrand } from '@/components/layout/FooterBrand'
-import { FooterLinks } from '@/components/layout/FooterLinks'
-import { FooterSocial } from '@/components/layout/FooterSocial'
-import { FooterStoreInfo } from '@/components/layout/FooterStoreInfo'
-import { STORE_CONFIG } from '@/data/storeConfig'
+import { FooterBrand } from './FooterBrand'
+import { FooterLinks } from './FooterLinks'
+import { FooterSocial } from './FooterSocial'
+import { FooterStoreInfo } from './FooterStoreInfo'
+import { STORE_CONFIG } from '@/shared/config/store.config'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/layout/Footer.tsx'
+const SOURCE = 'src/app/layout/footer/Footer.tsx'
 
 export const Footer = () => (
   <footer
     className="bg-brand-navy text-slate-300 border-t-4 border-brand mt-auto"
     {...uiMeta({ id: 'layout.footer', component: 'Footer', source: SOURCE })}
   >
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+    <div className="max-w-app mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 py-12 lg:py-16">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
         <FooterBrand />
         <FooterStoreInfo />

@@ -1,7 +1,7 @@
-import { STORE_CONFIG } from '@/data/storeConfig'
+import { STORE_CONFIG } from '@/shared/config/store.config'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/layout/FooterStoreInfo.tsx'
+const SOURCE = 'src/app/layout/footer/FooterStoreInfo.tsx'
 
 export const FooterStoreInfo = () => (
   <div

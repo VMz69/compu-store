@@ -1,16 +1,15 @@
 import { useState } from 'react'
-import { categories, products } from '@/data'
-import { useCart } from '@/hooks/useCart'
-import { useFavorites } from '@/hooks/useFavorites'
-import { useProductReviews } from '@/hooks/useProductReviews'
-import { getAvailableStock } from '@/services/cart.service'
-import { calculateDiscountPercentage } from '@/services/formatters'
-import { getProductById, getRelatedProducts } from '@/services/catalog.service'
-import { buildSingleProductUrl } from '@/services/whatsapp.service'
-import { useCartStore } from '@/store/useCartStore'
+import { categories } from '../mocks/categories.mock'
+import { products } from '../mocks/products.mock'
+import { getAvailableStock, useCart, useCartStore } from '@/features/cart'
+import { useFavorites } from './useFavorites'
+import { useProductReviews } from './useProductReviews'
+import { calculateDiscountPercentage } from '@/shared/lib/formatters'
+import { getProductById, getProductImages, getRelatedProducts } from '../lib/catalog.service'
+import { buildSingleProductUrl } from '../lib/whatsapp'
 
 /**
- * Compone la vista de detalle: producto, stock, cantidad, relacionados, reseñas y WhatsApp.
+ * Compone la vista de detalle: producto, galería, stock, cantidad, relacionados, reseñas y WhatsApp.
  */
 export const useProductDetail = (productId?: string) => {
   const product = getProductById(products, Number(productId))
@@ -36,6 +35,7 @@ export const useProductDetail = (productId?: string) => {
 
   return {
     product,
+    images: product ? getProductImages(product) : [],
     relatedProducts,
     availableStock,
     quantity,

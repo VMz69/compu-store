@@ -1,7 +1,7 @@
-import { RatingStars } from '@/components/ui/RatingStars'
+import { RatingStars } from '@/shared/ui/RatingStars'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/product/RatingSummary.tsx'
+const SOURCE = 'src/features/catalog/components/reviews/RatingSummary.tsx'
 
 interface DistributionItem {
   stars: number

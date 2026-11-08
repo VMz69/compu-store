@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { uiMeta } from '@/ui-traceability'
-import type { CategoryWithCount } from '@/types'
+import type { CategoryWithCount } from '@/shared/types'
 
-const SOURCE = 'src/components/catalog/CategoryTile.tsx'
+const SOURCE = 'src/features/home/components/CategoryTile.tsx'
 
 export const CategoryTile = ({ category }: { category: CategoryWithCount }) => (
   <Link

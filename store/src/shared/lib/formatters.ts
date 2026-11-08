@@ -1,4 +1,4 @@
-import { STORE_CONFIG } from '@/data/storeConfig'
+import { STORE_CONFIG } from '@/shared/config/store.config'
 
 /**
  * Formateadores de presentación. No dependen de React y son reutilizables en

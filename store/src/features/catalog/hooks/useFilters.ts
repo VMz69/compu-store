@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
-import { products } from '@/data'
-import { filterAndSort } from '@/services/catalog.service'
-import { useFilterStore } from '@/store/useFilterStore'
-import type { ProductFilters } from '@/types'
+import { products } from '../mocks/products.mock'
+import { filterAndSort } from '../lib/catalog.service'
+import { useFilterStore } from '../filters.store'
+import type { ProductFilters } from '@/shared/types'
 
 /**
  * Filtra y ordena el catálogo de forma memoizada según la ruta y los filtros globales.

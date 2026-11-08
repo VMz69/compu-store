@@ -1,114 +1,113 @@
-import { ProductBuyBoxHeader } from '@/components/product/ProductBuyBoxHeader'
-import { ProductBuyBoxSpecs } from '@/components/product/ProductBuyBoxSpecs'
-import { QuantitySelector } from '@/components/ui/QuantitySelector'
-import { formatCurrency } from '@/services/formatters'
+import { ProductTrustChips } from './ProductTrustChips'
+import { QuantitySelector } from '@/shared/ui/QuantitySelector'
+import { formatCurrency } from '@/shared/lib/formatters'
+import { STORE_CONFIG } from '@/shared/config/store.config'
 import { uiMeta } from '@/ui-traceability'
-import type { Product } from '@/types'
+import type { Product } from '@/shared/types'
 
-const SOURCE = 'src/components/product/ProductBuyBox.tsx'
+const SOURCE = 'src/features/catalog/components/detail/ProductBuyBox.tsx'
 
 interface ProductBuyBoxProps {
   product: Product
   availableStock: number
   quantity: number
-  reviewsCount: number
   whatsappUrl: string
   onIncrement: () => void
   onDecrement: () => void
   onAddToCart: () => void
-  onShowReviews: () => void
 }
 
 export const ProductBuyBox = ({
   product,
   availableStock,
   quantity,
-  reviewsCount,
   whatsappUrl,
   onIncrement,
   onDecrement,
   onAddToCart,
-  onShowReviews,
 }: ProductBuyBoxProps) => {
   const isOutOfStock = product.stock <= 0
   const traceId = `producto.detalle.${product.id}`
 
   return (
-    <div
-      className="lg:col-span-7 space-y-5"
+    <aside
+      className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-36 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200/90 dark:border-slate-800 shadow-soft-card dark:shadow-none space-y-5"
+      aria-label="Opciones de compra"
       {...uiMeta({ id: `${traceId}.buybox`, component: 'ProductBuyBox', source: SOURCE })}
     >
-      <ProductBuyBoxHeader
-        product={product}
-        reviewsCount={reviewsCount}
-        onShowReviews={onShowReviews}
-      />
-
-      <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex flex-wrap items-baseline gap-4">
-        <span className="text-3xl sm:text-4xl font-black text-brand-dark dark:text-sky-400">
+      <div className="hidden lg:block">
+        <span className="text-3xl font-black text-brand-dark dark:text-sky-400">
           {formatCurrency(product.price)}
         </span>
         {product.originalPrice ? (
-          <>
-            <span className="text-sm text-slate-400 line-through font-bold">
-              {formatCurrency(product.originalPrice)}
-            </span>
-            <span className="text-xs font-black text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full">
-              Ahorras {formatCurrency(product.originalPrice - product.price)}
-            </span>
-          </>
+          <span className="block text-xs text-slate-400 mt-0.5">
+            Antes <span className="line-through font-bold">{formatCurrency(product.originalPrice)}</span>
+          </span>
         ) : null}
       </div>
 
-      <ProductBuyBoxSpecs product={product} availableStock={availableStock} />
+      {isOutOfStock ? (
+        <div className="p-3 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-300 font-bold flex items-center gap-2 text-xs">
+          <i className="fa-solid fa-ban text-sm" />
+          <span>Producto agotado temporalmente en sala de ventas.</span>
+        </div>
+      ) : (
+        <div className="space-y-1.5">
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/70 dark:border-emerald-900/60 px-2.5 py-1 rounded-full">
+            <i className="fa-solid fa-circle-check" />
+            {availableStock} disponible(s) en sala
+          </span>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            <i className="fa-solid fa-bolt-lightning text-amber-500 mr-1.5" />
+            Entrega inmediata en Cojutepeque
+          </p>
+        </div>
+      )}
 
       {!isOutOfStock ? (
-        <div className="space-y-3 pt-1">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <div className="flex w-full items-center justify-between gap-3 sm:w-auto">
-              <span className="pl-1 text-[11px] font-bold uppercase tracking-wider text-slate-400 sm:hidden">
-                Cantidad
-              </span>
-              <QuantitySelector
-                value={quantity}
-                max={Math.max(1, availableStock)}
-                onIncrement={onIncrement}
-                onDecrement={onDecrement}
-                traceId={`${traceId}.cantidad`}
-              />
-            </div>
-            <button
-              type="button"
-              onClick={onAddToCart}
-              disabled={availableStock <= 0}
-              className="w-full sm:w-auto sm:flex-1 shrink-0 bg-brand hover:bg-brand-hover text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 text-sm shadow-md transition-all active:scale-95 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-              {...uiMeta({
-                id: `${traceId}.agregar`,
-                component: 'ProductBuyBox',
-                source: SOURCE,
-              })}
-            >
-              <i className="fa-solid fa-cart-plus text-base" />
-              <span>Agregar al Carrito</span>
-            </button>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Cantidad</span>
+            <QuantitySelector
+              value={quantity}
+              max={Math.max(1, availableStock)}
+              onIncrement={onIncrement}
+              onDecrement={onDecrement}
+              traceId={`${traceId}.cantidad`}
+            />
           </div>
+
+          <button
+            type="button"
+            onClick={onAddToCart}
+            disabled={availableStock <= 0}
+            className="w-full bg-brand hover:bg-brand-hover text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 text-sm shadow-md transition-all active:scale-95 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            {...uiMeta({ id: `${traceId}.agregar`, component: 'ProductBuyBox', source: SOURCE })}
+          >
+            <i className="fa-solid fa-cart-plus text-base" />
+            <span>Agregar al Carrito</span>
+          </button>
 
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full bg-whatsapp hover:bg-whatsapp-hover text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 text-xs sm:text-sm shadow-md transition-all active:scale-95"
-            {...uiMeta({
-              id: `${traceId}.whatsapp`,
-              component: 'ProductBuyBox',
-              source: SOURCE,
-            })}
+            className="w-full bg-whatsapp hover:bg-whatsapp-hover text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 text-sm shadow-md transition-all active:scale-95"
+            {...uiMeta({ id: `${traceId}.whatsapp`, component: 'ProductBuyBox', source: SOURCE })}
           >
             <i className="fa-brands fa-whatsapp text-lg" />
-            <span>Comprar Ahora por WhatsApp</span>
+            <span>Comprar por WhatsApp</span>
           </a>
         </div>
       ) : null}
-    </div>
+
+      <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          Vendido y garantizado por{' '}
+          <span className="font-bold text-brand">{STORE_CONFIG.name}</span>
+        </p>
+        <ProductTrustChips />
+      </div>
+    </aside>
   )
 }

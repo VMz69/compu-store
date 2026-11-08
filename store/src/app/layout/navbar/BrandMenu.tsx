@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { uiMeta } from '@/ui-traceability'
-import type { BrandWithCount } from '@/types'
+import type { BrandWithCount } from '@/shared/types'
 
-const SOURCE = 'src/components/layout/BrandMenu.tsx'
+const SOURCE = 'src/app/layout/navbar/BrandMenu.tsx'
 
 interface BrandMenuProps {
   open: boolean

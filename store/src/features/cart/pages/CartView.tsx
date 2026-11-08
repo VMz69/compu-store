@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom'
-import { CartItem } from '@/components/cart/CartItem'
-import { CartSummary } from '@/components/cart/CartSummary'
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
-import { EmptyState } from '@/components/ui/EmptyState'
-import { useCartView } from '@/hooks/useCartView'
+import { CartItem } from '../components/CartItem'
+import { CartSummary } from '../components/CartSummary'
+import { ConfirmDialog } from '@/shared/ui/ConfirmDialog'
+import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
+import { EmptyState } from '@/shared/ui/EmptyState'
+import { useCartView } from '../hooks/useCartView'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/pages/CartView.tsx'
+const SOURCE = 'src/features/cart/pages/CartView.tsx'
 
 export const CartView = () => {
   const cart = useCartView()

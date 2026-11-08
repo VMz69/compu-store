@@ -18,19 +18,22 @@ pnpm preview   # previsualización de dist/
 
 ```
 src/
-  components/   # UI presentacional (< 150 líneas)
-  pages/        # Vistas (< 100 líneas)
-  hooks/        # Lógica de vista (DOMA)
-  services/     # Funciones puras
-  store/        # Zustand
-  data/         # Datos estáticos (barrel @/data)
-  types/        # Tipos compartidos
+  app/              # router, layout (header, navbar, footer), hooks del shell
+  features/
+    catalog/        # productos, categorías, marcas, ofertas, detalle, reseñas, favoritos
+    cart/           # carrito y checkout por WhatsApp
+    search/         # buscador global y resultados
+    home/           # portada
+    info/           # nosotros y contacto
+  shared/           # ui, hooks, store, lib, config, types (sin lógica de negocio)
   ui-traceability/  # uiMeta (data-ui-*)
 ```
 
+Cada feature expone su API en `index.ts`; detalle en [`arch-fronOffice.md`](./arch-fronOffice.md).
+
 ## Convenciones clave
 
-- `.tsx` no contiene estado/lógica de negocio (DOMA).
+- `.tsx` no contiene estado/lógica de negocio (DOMA) y no supera 150 líneas (ESLint).
 - Todo elemento interactivo o contenedor principal declara `uiMeta({ id, component, source })`.
 - Trazabilidad desactivable con `VITE_UI_TRACEABILITY=false`.
 - Tema: por defecto sigue `prefers-color-scheme`; el toggle persiste override manual.
@@ -38,6 +41,6 @@ src/
 
 ## Documentación
 
-- Arquitectura original: [`arch-fronOffice.md`](./arch-fronOffice.md)
+- Arquitectura: [`arch-fronOffice.md`](./arch-fronOffice.md)
 - Reglas de desarrollo: [`agent-rules.md`](./agent-rules.md)
 - **Diagnóstico y escalabilidad:** [`DIAGNOSTICO.md`](./DIAGNOSTICO.md)

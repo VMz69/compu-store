@@ -1,11 +1,11 @@
-import { Select } from '@/components/ui/Select'
-import { SORT_OPTIONS } from '@/data'
+import { Select } from '@/shared/ui/Select'
+import { SORT_OPTIONS } from '../config/sort.config'
 import { uiMeta } from '@/ui-traceability'
 
-import type { SortBy } from '@/types'
+import type { SortBy } from '@/shared/types'
 
-const SOURCE = 'src/components/ui/FilterBar.tsx'
-const SOURCE_SELECT = 'src/components/ui/Select.tsx'
+const SOURCE = 'src/features/catalog/components/FilterBar.tsx'
+const SOURCE_SELECT = 'src/shared/ui/Select.tsx'
 
 interface FilterBarProps {
   count: number

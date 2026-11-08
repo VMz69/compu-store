@@ -1,5 +1,5 @@
-import { brands } from '@/data'
-import { useFilters } from '@/hooks/useFilters'
+import { brands } from '../mocks/brands.mock'
+import { useFilters } from './useFilters'
 
 /**
  * Marca actual y sus productos.

@@ -1,4 +1,4 @@
-import { useCatalogStats } from '@/hooks/useCatalogStats'
+import { useCatalogStats } from './useCatalogStats'
 
 /**
  * Datos del hub de categorías.

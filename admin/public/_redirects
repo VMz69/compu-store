@@ -1,0 +1,2 @@
+# Netlify / Cloudflare Pages: toda ruta desconocida carga la SPA (React Router resuelve la vista).
+/*    /index.html   200

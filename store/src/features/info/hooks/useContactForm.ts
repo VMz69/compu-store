@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { CONTACT_SUBJECTS } from '@/data'
-import { buildContactUrl } from '@/services/whatsapp.service'
-import { useToastStore } from '@/store/useToastStore'
+import { CONTACT_SUBJECTS } from '../config/contact.config'
+import { buildContactUrl } from '../lib/whatsapp'
+import { useToastStore } from '@/shared/store/toast.store'
 
 interface ContactFormState {
   name: string

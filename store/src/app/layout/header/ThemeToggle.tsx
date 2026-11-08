@@ -8,7 +8,7 @@ interface ThemeToggleProps {
   source?: string
 }
 
-const SOURCE = 'src/components/layout/ThemeToggle.tsx'
+const SOURCE = 'src/app/layout/header/ThemeToggle.tsx'
 
 export const ThemeToggle = ({
   isDark,

@@ -1,11 +1,11 @@
-import { ProductOverviewTab } from '@/components/product/ProductOverviewTab'
-import { ProductReviewsTab } from '@/components/product/ProductReviewsTab'
-import { ProductSpecsTab } from '@/components/product/ProductSpecsTab'
+import { ProductOverviewTab } from './ProductOverviewTab'
+import { ProductReviewsTab } from '../reviews/ProductReviewsTab'
+import { ProductSpecsTab } from './ProductSpecsTab'
 import { uiMeta } from '@/ui-traceability'
-import type { ProductDetailTab } from '@/store/useUIStore'
-import type { Product } from '@/types'
+import type { ProductDetailTab } from '@/shared/store/ui.store'
+import type { Product } from '@/shared/types'
 
-const SOURCE = 'src/components/product/ProductTabs.tsx'
+const SOURCE = 'src/features/catalog/components/detail/ProductTabs.tsx'
 
 interface ProductTabsProps {
   product: Product

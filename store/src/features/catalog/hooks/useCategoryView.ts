@@ -1,5 +1,5 @@
-import { categories } from '@/data'
-import { useFilters } from '@/hooks/useFilters'
+import { categories } from '../mocks/categories.mock'
+import { useFilters } from './useFilters'
 
 /**
  * Resuelve la categoría por slug y entrega sus productos filtrados.

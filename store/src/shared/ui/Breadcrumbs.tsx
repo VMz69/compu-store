@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/ui/Breadcrumbs.tsx'
+const SOURCE = 'src/shared/ui/Breadcrumbs.tsx'
 
 export interface Crumb {
   label: string

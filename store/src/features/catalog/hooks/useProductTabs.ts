@@ -1,5 +1,5 @@
-import { useUIStore } from '@/store/useUIStore'
-import type { ProductDetailTab } from '@/store/useUIStore'
+import { useUIStore } from '@/shared/store/ui.store'
+import type { ProductDetailTab } from '@/shared/store/ui.store'
 
 /**
  * Pestaña activa del detalle de producto.

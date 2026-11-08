@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom'
-import { ContactForm } from '@/components/contact/ContactForm'
-import { ContactInfoCards } from '@/components/contact/ContactInfoCards'
-import { ContactMap } from '@/components/contact/ContactMap'
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
-import { STORE_CONFIG } from '@/data/storeConfig'
+import { ContactForm } from '../components/ContactForm'
+import { ContactInfoCards } from '../components/ContactInfoCards'
+import { ContactMap } from '../components/ContactMap'
+import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
+import { STORE_CONFIG } from '@/shared/config/store.config'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/pages/ContactView.tsx'
+const SOURCE = 'src/features/info/pages/ContactView.tsx'
 
 const quickActions = [
   {

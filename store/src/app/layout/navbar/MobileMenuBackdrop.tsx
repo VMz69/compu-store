@@ -1,7 +1,7 @@
-import { useMobileMenuOverlay } from '@/hooks/useMobileMenuOverlay'
+import { useMobileMenuOverlay } from '../../hooks/useMobileMenuOverlay'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/layout/MobileMenuBackdrop.tsx'
+const SOURCE = 'src/app/layout/navbar/MobileMenuBackdrop.tsx'
 
 export const MobileMenuBackdrop = () => {
   const { isOpen, closeMenu } = useMobileMenuOverlay()

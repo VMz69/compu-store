@@ -5,7 +5,7 @@ import type {
   CategoryWithCount,
   Product,
   ProductFilters,
-} from '@/types'
+} from '@/shared/types'
 
 /**
  * Dominio de catálogo. Funciones puras y sin dependencias de React: reciben
@@ -112,3 +112,7 @@ export const getDeals = (products: Product[], limit?: number): Product[] => {
   )
   return typeof limit === 'number' ? deals.slice(0, limit) : deals
 }
+
+/** Fotos de la galería de detalle: portada primero y sin duplicados. */
+export const getProductImages = (product: Product): string[] =>
+  Array.from(new Set([product.imageUrl, ...(product.images ?? [])]))

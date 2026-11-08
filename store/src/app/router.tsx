@@ -1,19 +1,13 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { MainLayout } from '@/components/layout/MainLayout'
-import { AboutView } from '@/pages/AboutView'
-import { BrandDetail } from '@/pages/BrandDetail'
-import { BrandsView } from '@/pages/BrandsView'
-import { CartView } from '@/pages/CartView'
-import { CatalogHub } from '@/pages/CatalogHub'
-import { CategoryView } from '@/pages/CategoryView'
-import { ContactView } from '@/pages/ContactView'
-import { FavoritesView } from '@/pages/FavoritesView'
-import { Home } from '@/pages/Home'
-import { OffersView } from '@/pages/OffersView'
-import { ProductDetail } from '@/pages/ProductDetail'
-import { SearchView } from '@/pages/SearchView'
+import { MainLayout } from './layout/MainLayout'
+import { AboutView, ContactView } from '@/features/info'
+import { BrandDetail, BrandsView, CatalogHub, CategoryView, FavoritesView, OffersView, ProductDetail } from '@/features/catalog'
+import { CartView } from '@/features/cart'
+import { Home } from '@/features/home'
+import { SearchView } from '@/features/search'
 
-export const App = () => (
+/** Árbol de rutas del Front Office (HashRouter en `main.tsx`). */
+export const AppRoutes = () => (
   <Routes>
     <Route element={<MainLayout />}>
       <Route index element={<Home />} />
@@ -32,5 +26,3 @@ export const App = () => (
     </Route>
   </Routes>
 )
-
-export default App

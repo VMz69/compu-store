@@ -1,7 +1,7 @@
-import { STORE_CONFIG } from '@/data/storeConfig'
+import { STORE_CONFIG } from '@/shared/config/store.config'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/layout/FooterSocial.tsx'
+const SOURCE = 'src/app/layout/footer/FooterSocial.tsx'
 
 const SOCIALS = [
   { label: 'Facebook', icon: 'fa-brands fa-facebook-f', href: STORE_CONFIG.socials.facebook },

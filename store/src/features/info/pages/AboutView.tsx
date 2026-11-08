@@ -1,9 +1,9 @@
-import { Logo } from '@/components/layout/Logo'
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
-import { STORE_CONFIG } from '@/data/storeConfig'
+import { Logo } from '@/shared/ui/Logo'
+import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
+import { STORE_CONFIG } from '@/shared/config/store.config'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/pages/AboutView.tsx'
+const SOURCE = 'src/features/info/pages/AboutView.tsx'
 
 export const AboutView = () => (
   <div className="space-y-12 max-w-5xl mx-auto">

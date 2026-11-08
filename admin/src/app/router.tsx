@@ -1,0 +1,67 @@
+import { createBrowserRouter } from 'react-router-dom'
+import { LoginPage } from '@/features/access'
+import { BillingPage } from '@/features/billing'
+import { CategoriesPage, ProductsPage } from '@/features/catalog'
+import { CustomersPage } from '@/features/customers'
+import { DashboardPage } from '@/features/dashboard'
+import { InteractionsPage } from '@/features/interactions'
+import { PromotionsPage } from '@/features/promotions'
+import { NewQuotePage, QuotesPage } from '@/features/quotes'
+import { OrdersPage } from '@/features/sales'
+import { ChannelsPage, FiscalPage, IdentityPage, MaintenancePage, SettingsPage, UsersPage } from '@/features/settings'
+import { HomeRedirect } from './guards/HomeRedirect'
+import { RequireAuth } from './guards/RequireAuth'
+import { RequireView } from './guards/RequireView'
+import { AdminLayout } from './layout/AdminLayout'
+import { NotFoundPage } from './pages/NotFoundPage'
+import { RootLayout } from './RootLayout'
+
+export const router = createBrowserRouter([
+  {
+    element: <RootLayout />,
+    children: [
+      { path: '/login', element: <LoginPage /> },
+      {
+        element: <RequireAuth />,
+        children: [
+          {
+            element: <AdminLayout />,
+            children: [
+              { index: true, element: <HomeRedirect /> },
+              { path: 'tablero', element: <RequireView view="tablero"><DashboardPage /></RequireView> },
+              { path: 'productos', element: <RequireView view="productos"><ProductsPage /></RequireView> },
+              { path: 'pedidos', element: <RequireView view="pedidos"><OrdersPage /></RequireView> },
+              { path: 'facturacion', element: <RequireView view="facturacion"><BillingPage /></RequireView> },
+              { path: 'clientes', element: <RequireView view="clientes"><CustomersPage /></RequireView> },
+              { path: 'categorias', element: <RequireView view="categorias"><CategoriesPage /></RequireView> },
+              { path: 'ofertas', element: <RequireView view="ofertas"><PromotionsPage /></RequireView> },
+              {
+                path: 'cotizaciones',
+                children: [
+                  { index: true, element: <RequireView view="cotizaciones"><QuotesPage /></RequireView> },
+                  { path: 'nueva', element: <RequireView view="cotizaciones"><NewQuotePage /></RequireView> },
+                ],
+              },
+              { path: 'interacciones', element: <RequireView view="interacciones"><InteractionsPage /></RequireView> },
+              {
+                path: 'ajustes',
+                children: [
+                  { index: true, element: <RequireView view="ajustes"><SettingsPage /></RequireView> },
+                  { path: 'canales', element: <RequireView view="ajustes"><ChannelsPage /></RequireView> },
+                  { path: 'usuarios', element: <RequireView view="ajustes"><UsersPage /></RequireView> },
+                  { path: 'identidad', element: <RequireView view="ajustes"><IdentityPage /></RequireView> },
+                  { path: 'parametros', element: <RequireView view="ajustes"><FiscalPage /></RequireView> },
+                  { path: 'mantenimiento', element: <RequireView view="ajustes"><MaintenancePage /></RequireView> },
+                ],
+              },
+              { path: '*', element: <NotFoundPage /> },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+], {
+  // Misma base que Vite (VITE_BASE_PATH): permite desplegar en una subcarpeta.
+  basename: import.meta.env.BASE_URL,
+})

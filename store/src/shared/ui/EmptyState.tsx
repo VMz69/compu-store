@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/ui/EmptyState.tsx'
+const SOURCE = 'src/shared/ui/EmptyState.tsx'
 
 interface EmptyStateProps {
   icon: string

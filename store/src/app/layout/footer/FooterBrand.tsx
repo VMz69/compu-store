@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
-import { Logo } from '@/components/layout/Logo'
-import { STORE_CONFIG } from '@/data/storeConfig'
+import { Logo } from '@/shared/ui/Logo'
+import { STORE_CONFIG } from '@/shared/config/store.config'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/layout/FooterBrand.tsx'
+const SOURCE = 'src/app/layout/footer/FooterBrand.tsx'
 
 export const FooterBrand = () => (
   <div

@@ -1,4 +1,5 @@
-import type { CartItem, Product } from '@/types'
+import type { Product } from '@/shared/types'
+import type { CartItem } from '../types'
 
 /**
  * Dominio del carrito. Todas las operaciones son puras: reciben el estado

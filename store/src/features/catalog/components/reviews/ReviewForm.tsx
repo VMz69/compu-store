@@ -1,7 +1,7 @@
-import { useReviewForm } from '@/hooks/useReviewForm'
+import { useReviewForm } from '../../hooks/useReviewForm'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/product/ReviewForm.tsx'
+const SOURCE = 'src/features/catalog/components/reviews/ReviewForm.tsx'
 
 const STARS = [1, 2, 3, 4, 5]
 

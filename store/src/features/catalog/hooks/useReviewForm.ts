@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useToastStore } from '@/store/useToastStore'
-import { useReviewStore } from '@/store/useReviewStore'
+import { useToastStore } from '@/shared/store/toast.store'
+import { useReviewStore } from '../reviews.store'
 
 const RATING_LABELS: Record<number, string> = {
   1: 'Malo',

@@ -1,14 +1,14 @@
-import { STORE_CONFIG } from '@/data/storeConfig'
+import { STORE_CONFIG } from '@/shared/config/store.config'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/layout/TopBar.tsx'
+const SOURCE = 'src/app/layout/header/TopBar.tsx'
 
 export const TopBar = () => (
   <div
-    className="hidden lg:block bg-brand-navy dark:bg-brand-midnight text-slate-300 text-xs py-2 px-4 border-b border-brand-midnight dark:border-slate-800 transition-colors"
+    className="hidden lg:block bg-brand-navy dark:bg-brand-midnight text-slate-300 text-xs py-2 border-b border-brand-midnight dark:border-slate-800 transition-colors"
     {...uiMeta({ id: 'layout.topbar', component: 'TopBar', source: SOURCE })}
   >
-    <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1.5 text-center sm:text-left">
+    <div className="max-w-app mx-auto px-4 sm:px-6 lg:px-8 2xl:px-10 flex flex-col sm:flex-row justify-between items-center gap-1.5 text-center sm:text-left">
       <div className="flex items-center gap-2">
         <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-brand/30 text-sky-200 border border-brand/50">
           <i className="fa-solid fa-store mr-1 text-[9px]" /> UBICACIÓN

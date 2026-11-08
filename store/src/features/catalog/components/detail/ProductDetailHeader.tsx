@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
+import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
 import { uiMeta } from '@/ui-traceability'
 
-const SOURCE = 'src/components/product/ProductDetailHeader.tsx'
+const SOURCE = 'src/features/catalog/components/detail/ProductDetailHeader.tsx'
 
 interface ProductDetailHeaderProps {
   productName: string

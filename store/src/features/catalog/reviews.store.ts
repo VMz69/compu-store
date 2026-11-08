@@ -1,6 +1,6 @@
 import { create } from 'zustand'
-import { INITIAL_REVIEWS } from '@/data'
-import type { Review } from '@/types'
+import { INITIAL_REVIEWS } from './mocks/reviews.mock'
+import type { Review } from '@/shared/types'
 
 /**
  * Reseñas por producto. En esta fase viven en memoria; la forma del estado ya

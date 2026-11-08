@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
-import { brands, categories, products } from '@/data'
-import { getBrandsWithCounts, getCategoriesWithCounts } from '@/services/catalog.service'
+import { brands } from '../mocks/brands.mock'
+import { categories } from '../mocks/categories.mock'
+import { products } from '../mocks/products.mock'
+import { getBrandsWithCounts, getCategoriesWithCounts } from '../lib/catalog.service'
 
 /**
  * Estadísticas derivadas del catálogo: conteos por categoría/marca y total de productos.

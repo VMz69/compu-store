@@ -1,4 +1,4 @@
-import type { Brand } from '@/types'
+import type { Brand } from '@/shared/types'
 
 export const brands: Brand[] = [
   {

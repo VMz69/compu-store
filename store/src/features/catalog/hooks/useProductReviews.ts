@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
-import { DEFAULT_REVIEWS } from '@/data'
-import { useReviewStore } from '@/store/useReviewStore'
+import { DEFAULT_REVIEWS } from '../mocks/reviews.mock'
+import { useReviewStore } from '../reviews.store'
 
 /**
  * Reseñas del producto y distribución de estrellas memoizada.

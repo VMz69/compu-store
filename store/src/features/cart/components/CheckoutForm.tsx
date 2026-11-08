@@ -1,7 +1,7 @@
 import { uiMeta } from '@/ui-traceability'
-import type { DeliveryMethod } from '@/types'
+import type { DeliveryMethod } from '../types'
 
-const SOURCE = 'src/components/cart/CheckoutForm.tsx'
+const SOURCE = 'src/features/cart/components/CheckoutForm.tsx'
 
 interface CheckoutFormProps {
   deliveryMethod: DeliveryMethod

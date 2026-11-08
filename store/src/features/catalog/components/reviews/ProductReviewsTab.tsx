@@ -1,11 +1,11 @@
-import { RatingSummary } from '@/components/product/RatingSummary'
-import { ReviewCard } from '@/components/product/ReviewCard'
-import { ReviewForm } from '@/components/product/ReviewForm'
-import { useProductReviews } from '@/hooks/useProductReviews'
+import { RatingSummary } from './RatingSummary'
+import { ReviewCard } from './ReviewCard'
+import { ReviewForm } from './ReviewForm'
+import { useProductReviews } from '../../hooks/useProductReviews'
 import { uiMeta } from '@/ui-traceability'
-import type { Product } from '@/types'
+import type { Product } from '@/shared/types'
 
-const SOURCE = 'src/components/product/ProductReviewsTab.tsx'
+const SOURCE = 'src/features/catalog/components/reviews/ProductReviewsTab.tsx'
 
 export const ProductReviewsTab = ({ product }: { product: Product }) => {
   const { reviews, distribution } = useProductReviews(product.id)

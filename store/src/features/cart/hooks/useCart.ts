@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react'
-import { calculateItemCount, calculateSubtotal } from '@/services/cart.service'
-import { useCartStore } from '@/store/useCartStore'
-import { useToastStore } from '@/store/useToastStore'
-import type { Product } from '@/types'
+import { calculateItemCount, calculateSubtotal } from '../lib/cart.service'
+import { useCartStore } from '../store'
+import { useToastStore } from '@/shared/store/toast.store'
+import type { Product } from '@/shared/types'
 
 /**
  * Acciones y totales del carrito para componentes de producto y header.
