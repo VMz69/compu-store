@@ -9,6 +9,7 @@ interface FavStore {
   ids: number[]
   toggleFavorite: (productId: number) => boolean
   isFavorite: (productId: number) => boolean
+  clearFavorites: () => void
 }
 
 export const useFavStore = create<FavStore>()(
@@ -27,6 +28,8 @@ export const useFavStore = create<FavStore>()(
       },
 
       isFavorite: (productId) => get().ids.includes(productId),
+
+      clearFavorites: () => set({ ids: [] }),
     }),
     { name: 'compustore_sv_favorites_v2' },
   ),

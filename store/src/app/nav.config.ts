@@ -7,3 +7,9 @@ export const FOOTER_LINKS = [
   { label: 'Sobre Nosotros', to: '/about' },
   { label: 'Contacto y Ubicación', to: '/contact' },
 ]
+
+/** Navegación institucional, alineada a la derecha en la navbar de escritorio. */
+export const INFO_LINKS = [
+  { to: '/about', label: 'Nosotros', traceId: 'layout.navbar.link.about' },
+  { to: '/contact', label: 'Contacto', traceId: 'layout.navbar.link.contact' },
+]

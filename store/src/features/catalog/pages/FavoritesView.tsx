@@ -1,13 +1,15 @@
 import { Link } from 'react-router-dom'
 import { ProductGrid } from '../components/grid/ProductGrid'
 import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
+import { ConfirmDialog } from '@/shared/ui/ConfirmDialog'
 import { useFavoritesView } from '../hooks/useFavoritesView'
 import { uiMeta } from '@/ui-traceability'
 
 const SOURCE = 'src/features/catalog/pages/FavoritesView.tsx'
 
 export const FavoritesView = () => {
-  const { products } = useFavoritesView()
+  const favorites = useFavoritesView()
+  const { products } = favorites
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -25,6 +27,16 @@ export const FavoritesView = () => {
             Tienes {products.length} producto(s) guardado(s)
           </p>
         </div>
+        {products.length > 0 ? (
+          <button
+            type="button"
+            onClick={favorites.requestClearFavorites}
+            className="text-xs text-red-500 hover:text-red-700 font-semibold flex items-center gap-1 cursor-pointer"
+            {...uiMeta({ id: 'favoritos.vaciar', component: 'FavoritesView', source: SOURCE })}
+          >
+            <i className="fa-regular fa-trash-can" /> Vaciar Favoritos
+          </button>
+        ) : null}
       </div>
 
       <ProductGrid
@@ -46,6 +58,17 @@ export const FavoritesView = () => {
             Ver Catálogo
           </Link>
         }
+      />
+
+      <ConfirmDialog
+        open={favorites.isClearModalOpen}
+        title="¿Vaciar tus favoritos?"
+        description="Se quitarán todos los productos guardados en tu lista. Esta acción no se puede deshacer."
+        confirmLabel="Sí, vaciar"
+        cancelLabel="Cancelar"
+        tone="danger"
+        onConfirm={favorites.confirmClearFavorites}
+        onCancel={favorites.cancelClearFavorites}
       />
     </div>
   )

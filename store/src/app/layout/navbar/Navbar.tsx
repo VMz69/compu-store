@@ -1,18 +1,12 @@
 import { Link } from 'react-router-dom'
 import { ExploreMenu } from './ExploreMenu'
 import { MobileMenu } from './MobileMenu'
+import { navOffersPill, navQuickLink } from './navbar.styles'
+import { INFO_LINKS } from '../../nav.config'
 import { useNavbar } from '../../hooks/useNavbar'
 import { uiMeta } from '@/ui-traceability'
 
 const SOURCE = 'src/app/layout/navbar/Navbar.tsx'
-
-/** Enlace de texto: la página activa se marca con un subrayado de marca, sin relleno. */
-const quickLink = (active: boolean) =>
-  `relative h-12 px-3 inline-flex items-center text-sm transition-colors after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:rounded-full after:transition-colors ${
-    active
-      ? 'text-brand font-bold after:bg-brand'
-      : 'text-slate-600 dark:text-slate-300 font-medium hover:text-brand after:bg-transparent hover:after:bg-brand-200 dark:hover:after:bg-brand-800'
-  }`
 
 export const Navbar = () => {
   const {
@@ -57,7 +51,7 @@ export const Navbar = () => {
                     <Link
                       to={`/category/${category.slug}`}
                       aria-current={isActive ? 'page' : undefined}
-                      className={quickLink(isActive)}
+                      className={navQuickLink(isActive)}
                       {...uiMeta({
                         id: `layout.navbar.link.category.${category.slug}`,
                         component: 'Navbar',
@@ -70,21 +64,35 @@ export const Navbar = () => {
                 )
               })}
             </ul>
+
+            <span aria-hidden="true" className="h-5 w-px bg-slate-200 dark:bg-slate-700" />
+
+            <Link
+              to="/offers"
+              aria-current={isOffersActive ? 'page' : undefined}
+              className={navOffersPill(isOffersActive)}
+              {...uiMeta({ id: 'layout.navbar.link.offers', component: 'Navbar', source: SOURCE })}
+            >
+              <i className="fa-solid fa-fire text-xs" />
+              <span>Ofertas</span>
+            </Link>
           </div>
 
-          <Link
-            to="/offers"
-            aria-current={isOffersActive ? 'page' : undefined}
-            className={`h-9 px-4 rounded-full text-sm font-bold flex shrink-0 items-center gap-2 transition-colors ${
-              isOffersActive
-                ? 'bg-amber-500 text-white'
-                : 'text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/60 border border-amber-200/90 dark:border-amber-800/60'
-            }`}
-            {...uiMeta({ id: 'layout.navbar.link.offers', component: 'Navbar', source: SOURCE })}
-          >
-            <i className="fa-solid fa-fire text-xs" />
-            <span>Ofertas</span>
-          </Link>
+          <ul aria-label="Información de la tienda" className="flex shrink-0 items-center">
+            {INFO_LINKS.map((link) => (
+              <li key={link.to}>
+                <Link
+                  to={link.to}
+                  aria-current={pathname === link.to ? 'page' : undefined}
+                  className={navQuickLink(pathname === link.to)}
+                  {...uiMeta({ id: link.traceId, component: 'Navbar', source: SOURCE })}
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
         </div>
 
         <MobileMenu

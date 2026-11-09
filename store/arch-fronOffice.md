@@ -140,8 +140,8 @@ cantidad fija (portada: 4 ítems) fijan `lg:4` vía `gridClassName` para no deja
 
 | Zona | Contenido |
 |---|---|
-| TopBar (≥ lg) | ubicación · WhatsApp · horario · **Nosotros / Contacto** (navegación institucional) |
-| Navbar (≥ lg) | **Explorar** (panel: categorías + marcas, cada una con «Ver todas») · accesos rápidos a categorías (≥ xl, activo = subrayado) · **Ofertas** (único destacado) |
+| TopBar (≥ lg) | ubicación · WhatsApp · horario |
+| Navbar (≥ lg) | izquierda: **Explorar** (panel: categorías + marcas, cada una con «Ver todas») · accesos rápidos a categorías (≥ xl, activo = subrayado) · **Ofertas** (píldora destacada: degradado ámbar en claro, sutil en oscuro) — derecha: **Nosotros · Contacto** (`INFO_LINKS` en `nav.config.ts`) |
 | Menú móvil (< lg) | Ofertas → Categorías → Marcas → Información (Nosotros, Contacto, WhatsApp + horario) |
 
 «Inicio» no figura en la navegación: el logo y el breadcrumb cumplen esa función. Los overlays se cierran al
