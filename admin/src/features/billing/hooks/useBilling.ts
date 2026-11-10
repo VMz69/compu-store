@@ -7,7 +7,7 @@ import { usePagination } from '@/shared/hooks/usePagination'
 import { askConfirm } from '@/shared/store/confirm.store'
 import { openModal } from '@/shared/store/modal.store'
 import { toast } from '@/shared/store/toast.store'
-import { filterInvoices, INVOICE_STATUS_META, invoiceTotals } from '../lib/invoice.service'
+import { filterInvoices, INVOICE_STATUS_META, invoiceTotals, stockLines } from '../lib/invoice.service'
 import { BILLING_MODALS } from '../modals'
 import { useBillingStore } from '../store'
 import type { Invoice, InvoiceStatus } from '../types'
@@ -73,7 +73,8 @@ export function useBilling() {
       onConfirm: () => {
         if (!ensurePermission('canInvoice', 'Su rol no puede anular facturas')) return
         voidInvoice(invoice.id)
-        restoreStock(invoice.items.map((i) => ({ productId: i.productId, quantity: i.quantity })))
+        // Solo productos: los cargos extra (envío, instalación…) no son inventario.
+        restoreStock(stockLines(invoice.items))
         const order = findOrder(invoice.orderId)
         if (order?.invoiceId === invoice.id) setOrderInvoice(order.id, null, user?.name ?? 'Equipo CompuStore')
         toast(`Factura ${invoice.internalId} anulada · stock repuesto`, 'info')

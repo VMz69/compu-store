@@ -39,7 +39,7 @@ export function CustomerOption({ customer: c, domId, active, traceId, onHover, o
     >
       <CustomerInitials name={c.name} type={c.type} className="w-8 h-8 text-[11px]" />
       <span className="min-w-0 flex-1">
-        <span className="block text-xs font-bold text-slate-800 dark:text-slate-100 truncate">{c.name}</span>
+        <span className="block text-xs font-bold text-slate-800 dark:text-slate-100 truncate" title={c.name}>{c.name}</span>
         <span className="block text-[11px] text-slate-500 dark:text-slate-400 truncate">{detail}</span>
       </span>
       {c.type === 'empresa' && (

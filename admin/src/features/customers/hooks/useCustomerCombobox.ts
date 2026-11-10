@@ -59,7 +59,8 @@ export function useCustomerCombobox(selection: CustomerSelection) {
       setFocusInput(true)
       setOpen(true)
     },
-    /** Sin coincidencias: registra como cliente ocasional con lo escrito. */
+    registerNew: selection.registerNew,
+    /** Sin coincidencias: pasa a datos a mano (cliente nuevo u ocasional) con lo escrito. */
     useAsWalkin: () => selection.startWalkin(query),
     inputProps: {
       role: 'combobox' as const,

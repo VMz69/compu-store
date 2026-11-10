@@ -56,7 +56,7 @@ export function OrderDetailModal() {
         </div>
 
         {o.notes && <p className={`${PANEL} text-[11px] text-slate-600 dark:text-slate-300`}><b>Notas:</b> {o.notes}</p>}
-        <OrderLines lines={detail.lines} totals={detail.totals} />
+        <OrderLines lines={detail.lines} charges={detail.charges} totals={detail.totals} />
         <OrderTimeline timeline={detail.timeline} />
       </div>
 

@@ -1,11 +1,11 @@
 import { useId } from 'react'
 import { cn } from '@/shared/lib/cn'
-import { Field, Input } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
 import { useCustomerCombobox } from '../hooks/useCustomerCombobox'
 import type { CustomerSelection } from '../hooks/useCustomerSelection'
 import { CustomerSearch } from './picker/CustomerSearch'
 import { SelectedCustomerCard } from './picker/SelectedCustomerCard'
+import { WalkinCustomerFields } from './picker/WalkinCustomerFields'
 
 const t = tracer('CustomerPicker', 'src/features/customers/components/CustomerPicker.tsx')
 
@@ -21,7 +21,7 @@ interface CustomerPickerProps {
   traceId: string
 }
 
-/** Cliente de un documento comercial: del directorio o cliente ocasional (datos a mano). */
+/** Cliente de un documento comercial: del directorio, nuevo (se registra) u ocasional (datos a mano). */
 export function CustomerPicker({ selection: s, errors, title, traceId }: CustomerPickerProps) {
   const isDirectory = s.mode === 'directory'
   const cb = useCustomerCombobox(s)
@@ -35,7 +35,8 @@ export function CustomerPicker({ selection: s, errors, title, traceId }: Custome
           <i className="fa-solid fa-address-book mr-1" aria-hidden="true" /> Del directorio
         </button>
         <button type="button" aria-pressed={!isDirectory} className={cn(MODE_BASE, !isDirectory ? MODE_ACTIVE : MODE_IDLE)} onClick={s.setWalkinMode} {...t(`${traceId}.walkin`)}>
-          <i className="fa-solid fa-user-clock mr-1" aria-hidden="true" /> Cliente ocasional
+          <i className={cn('fa-solid mr-1', s.registerNew ? 'fa-user-plus' : 'fa-user-clock')} aria-hidden="true" />
+          {s.registerNew ? 'Cliente nuevo' : 'Cliente ocasional'}
         </button>
       </div>
 
@@ -56,17 +57,7 @@ export function CustomerPicker({ selection: s, errors, title, traceId }: Custome
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Field label="Nombre o razón social" variant="caps" required error={errors.name} className="sm:col-span-2">
-            <Input placeholder="Ej. Colegio San José" invalid={Boolean(errors.name)} {...s.bind('name')} {...t(`${traceId}.name`)} />
-          </Field>
-          <Field label="Teléfono" variant="caps" required error={errors.phone}>
-            <Input type="tel" placeholder="7038-8225" invalid={Boolean(errors.phone)} {...s.bind('phone')} {...t(`${traceId}.phone`)} />
-          </Field>
-          <Field label="Correo" variant="caps">
-            <Input type="email" placeholder="Opcional" {...s.bind('email')} {...t(`${traceId}.email`)} />
-          </Field>
-        </div>
+        <WalkinCustomerFields selection={s} errors={errors} traceId={traceId} />
       )}
     </section>
   )

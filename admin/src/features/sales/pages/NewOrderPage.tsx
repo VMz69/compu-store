@@ -35,7 +35,7 @@ export function NewOrderPage() {
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto lg:overflow-hidden custom-scrollbar p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_440px] gap-5">
+      <div className="flex-1 min-h-0 overflow-y-auto lg:overflow-hidden custom-scrollbar p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_480px] xl:grid-cols-[minmax(0,1fr)_540px] gap-5">
         <div className="lg:overflow-y-auto custom-scrollbar lg:pr-1">
           <ProductPicker picker={picker} onAdd={builder.addProduct} traceId="sales.builder.picker" target="el pedido" />
         </div>

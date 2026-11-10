@@ -47,6 +47,9 @@ export function PendingOrdersTable({ orders, canInvoice, onInvoice }: PendingOrd
           </td>
           <td className="py-3 px-3 text-[11px] text-slate-600 dark:text-slate-300 max-w-xs">
             <span className="line-clamp-2">{o.items.map((i) => `${i.quantity}× ${i.name}`).join(', ')}</span>
+            {(o.charges?.length ?? 0) > 0 && (
+              <span className="block text-[10px] text-slate-400">+ {o.charges.map((c) => c.concept).join(', ')}</span>
+            )}
           </td>
           <td className="py-3 px-3">
             <OrderStatusBadge status={o.status} />

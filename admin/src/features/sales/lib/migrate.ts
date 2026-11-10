@@ -21,7 +21,7 @@ const toIso = (stamp: string | undefined): string => {
 
 /**
  * Convierte un pedido guardado con el modelo v1 (estados en texto, un solo
- * precio por línea, sin cliente enlazado) al modelo v2. Idempotente.
+ * precio por línea, sin cliente enlazado) y v2 (sin cargos extra) al modelo actual. Idempotente.
  */
 export function migrateOrder(raw: LegacyOrder): Order {
   let status: OrderStatusId = isOrderStatusId(raw.status) ? raw.status : (LEGACY_STATUS[raw.status] ?? 'registrado')
@@ -53,6 +53,8 @@ export function migrateOrder(raw: LegacyOrder): Order {
     ...raw,
     status,
     items,
+    // v3: los pedidos anteriores no tenían cargos extra (su total ya era el de los productos).
+    charges: raw.charges ?? [],
     history: raw.history?.length ? raw.history : [{ status, at: toIso(raw.date), by: 'Migración de datos' }],
   }
 }

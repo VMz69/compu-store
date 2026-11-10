@@ -16,6 +16,17 @@ export interface OrderItem {
   discountPercent: number
 }
 
+/**
+ * Cargo adicional al pago del pedido que no sale del inventario (envío, instalación,
+ * configuración…). Suma al total y se factura como línea de servicio.
+ */
+export interface OrderCharge {
+  id: string
+  concept: string
+  /** Monto en dólares con IVA incluido, > 0. */
+  amount: number
+}
+
 /** Evento del historial (trazabilidad: quién movió el pedido y cuándo). */
 export interface OrderEvent {
   status: OrderStatusId
@@ -37,13 +48,15 @@ export interface Order {
   channel: string
   /** Fecha local "YYYY-MM-DD HH:mm". */
   date: string
-  /** Total con descuentos e IVA incluido (snapshot al registrar). */
+  /** Total con descuentos, cargos extra e IVA incluido (snapshot al registrar). */
   total: number
   status: OrderStatusId
   paymentMethod: string
   deliveryMethod: string
   notes: string
   items: OrderItem[]
+  /** Cargos extra (no son productos: no reservan ni descuentan stock). */
+  charges: OrderCharge[]
   /** Factura que cerró la venta; la asigna Facturación al emitir y la limpia al anular. */
   invoiceId: string | null
   /** Cotización de origen, si el pedido se convirtió desde una. */

@@ -1,9 +1,9 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { delay } from '@/shared/lib/delay'
-import { summarizeLines } from '@/shared/lib/pricing'
 import { STORAGE_KEYS } from '@/shared/lib/storage'
 import { slugify } from '@/shared/lib/text'
+import { orderTotals } from './lib/charges'
 import { migrateOrder } from './lib/migrate'
 import { findOrderByQuote, nextOrderId, nowStamp } from './lib/order.service'
 import { canTransition, ORDER_STATUSES } from './lib/orderFlow'
@@ -37,9 +37,10 @@ const patchOrder = (orders: Order[], id: string, fn: (o: Order) => Order) => ord
 
 /**
  * Versión del esquema persistido.
- * v1: estados en texto libre, una sola línea · v2: flujo tipado, cliente enlazado, descuentos, historial.
+ * v1: estados en texto libre, una sola línea · v2: flujo tipado, cliente enlazado, descuentos, historial
+ * · v3: cargos extra (`charges`).
  */
-const SALES_SCHEMA_VERSION = 2
+const SALES_SCHEMA_VERSION = 3
 
 export const useSalesStore = create<SalesState>()(
   persist(
@@ -59,7 +60,7 @@ export const useSalesStore = create<SalesState>()(
           ...draft,
           id: nextOrderId(get().orders),
           date: nowStamp(),
-          total: summarizeLines(draft.items).total,
+          total: orderTotals(draft.items, draft.charges).total,
           status: 'registrado',
           invoiceId: null,
           history: [],

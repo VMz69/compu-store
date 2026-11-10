@@ -2,8 +2,14 @@ export type InvoiceStatus = 'emitida' | 'anulada'
 
 export type PaymentCondition = 'Efectivo' | 'Tarjeta' | 'Transferencia' | 'Crédito'
 
+/** "product" = sale del inventario · "charge" = cargo extra del pedido (servicio, sin stock). */
+export type InvoiceItemKind = 'product' | 'charge'
+
 /** Línea de factura (copiada del pedido al emitir; no cambia si cambia el catálogo). */
 export interface InvoiceItem {
+  /** Ausente en facturas anteriores a los cargos extra: se asume "product". */
+  kind?: InvoiceItemKind
+  /** Id del producto; en cargos extra, id del cargo (no existe en el catálogo). */
   productId: string
   description: string
   /** Unidad de medida (ej. "Unidad"). */
@@ -69,7 +75,10 @@ export interface InvoiceTotals {
   /** Ventas gravadas (con IVA incluido) después de descuentos. */
   taxed: number
   discount: number
+  /** Suma de cargos extra (servicios), ya incluida en `taxed` y `total`. */
+  charges: number
   /** Monto total de la operación = total a pagar (sin retenciones en consumidor final). */
   total: number
+  /** Unidades de producto (los cargos extra no cuentan). */
   units: number
 }

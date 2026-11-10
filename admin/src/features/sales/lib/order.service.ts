@@ -4,7 +4,8 @@ import { ACTIVE_STATUSES, SOLD_STATUSES } from './orderFlow'
 
 export const ORDER_ID_PREFIX = 'ORD-2026-'
 
-export const PAYMENT_METHODS = ['Efectivo', 'Tarjeta de Crédito', 'Transferencia', 'Wompi / QR', 'Crédito Fiscal 30 Días']
+/** Formas de pago aceptadas en pedidos nuevos (los históricos conservan la que tenían). */
+export const PAYMENT_METHODS = ['Efectivo', 'Transferencia']
 
 export const DELIVERY_METHODS = [
   'Retiro en Sala de Ventas (2da Planta)',

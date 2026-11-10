@@ -16,6 +16,13 @@ const money = (value: number): number => Math.round(value * 100) / 100
 
 export const lineAmount = (item: InvoiceItem): number => money(item.unitPrice * item.quantity - item.discount)
 
+/** Línea que sale del inventario (las facturas antiguas no tienen `kind`: son productos). */
+export const isProductItem = (item: InvoiceItem): boolean => item.kind !== 'charge'
+
+/** Movimiento de inventario de la factura: solo productos, nunca cargos extra. */
+export const stockLines = (items: InvoiceItem[]) =>
+  items.filter(isProductItem).map((i) => ({ productId: i.productId, quantity: i.quantity }))
+
 /**
  * Factura de Consumidor Final: los precios incluyen IVA y no hay retenciones,
  * por eso "Sub-total", "Monto total de la operación" y "Total a pagar" coinciden.
@@ -24,8 +31,9 @@ export function invoiceTotals(items: InvoiceItem[]): InvoiceTotals {
   return {
     taxed: money(items.reduce((acc, i) => acc + lineAmount(i), 0)),
     discount: money(items.reduce((acc, i) => acc + i.discount, 0)),
+    charges: money(items.filter((i) => !isProductItem(i)).reduce((acc, i) => acc + lineAmount(i), 0)),
     total: money(items.reduce((acc, i) => acc + lineAmount(i), 0)),
-    units: items.reduce((acc, i) => acc + i.quantity, 0),
+    units: items.filter(isProductItem).reduce((acc, i) => acc + i.quantity, 0),
   }
 }
 

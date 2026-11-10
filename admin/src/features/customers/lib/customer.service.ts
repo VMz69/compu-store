@@ -28,6 +28,13 @@ export function filterCustomers(customers: Customer[], { search, type, status }:
   })
 }
 
+/** Cliente (activo o no) con el mismo teléfono; null si el número aún está incompleto. */
+export function findByPhone(customers: Customer[], phone: string): Customer | null {
+  const digits = normalizePhone(phone)
+  if (digits.length < 8) return null
+  return customers.find((c) => normalizePhone(c.phone) === digits) ?? null
+}
+
 /** Coincidencia sin acentos por nombre, correo, ciudad, DUI/NIT o id; por teléfono desde 3 dígitos. */
 export function matchesCustomer(c: Customer, search: string): boolean {
   const term = foldText(search)

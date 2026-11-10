@@ -61,8 +61,8 @@ export function CustomerSearch({ cb, invalid, traceId, inputId }: CustomerSearch
                 className="text-[11px] font-bold text-brand hover:text-brand-hover"
                 {...t(`${traceId}.useWalkin`)}
               >
-                <i className="fa-solid fa-user-clock mr-1" aria-hidden="true" />
-                Registrar como cliente ocasional
+                <i className={cn('fa-solid mr-1', cb.registerNew ? 'fa-user-plus' : 'fa-user-clock')} aria-hidden="true" />
+                {cb.registerNew ? 'Registrar como cliente nuevo' : 'Registrar como cliente ocasional'}
               </button>
             </div>
           )}

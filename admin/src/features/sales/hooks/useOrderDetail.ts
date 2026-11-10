@@ -1,5 +1,6 @@
 import { buildWhatsAppLink } from '@/shared/lib/whatsapp'
-import { lineTotal, summarizeLines } from '@/shared/lib/pricing'
+import { lineTotal } from '@/shared/lib/pricing'
+import { orderTotals } from '../lib/charges'
 import { closeModal, useModalPayload } from '@/shared/store/modal.store'
 import { statusOf } from '../lib/orderFlow'
 import { useSalesStore } from '../store'
@@ -17,7 +18,8 @@ export function useOrderDetail() {
     order,
     status: statusOf(order.status),
     lines: order.items.map((item) => ({ ...item, total: lineTotal(item) })),
-    totals: summarizeLines(order.items),
+    charges: order.charges ?? [],
+    totals: orderTotals(order.items, order.charges ?? []),
     timeline: [...order.history].reverse().map((e) => ({ ...e, name: statusOf(e.status).name, icon: statusOf(e.status).icon })),
     buttons: actions.actionsFor(order),
     run: (action: Parameters<typeof actions.run>[0]) => {

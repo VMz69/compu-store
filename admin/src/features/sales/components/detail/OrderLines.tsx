@@ -1,10 +1,10 @@
 import { formatCurrency } from '@/shared/lib/currency'
 import type { OrderDetailApi } from '../../hooks/useOrderDetail'
 
-type OrderLinesProps = Pick<OrderDetailApi, 'lines' | 'totals'>
+type OrderLinesProps = Pick<OrderDetailApi, 'lines' | 'charges' | 'totals'>
 
-/** Desglose de artículos con descuentos y totales del pedido. */
-export function OrderLines({ lines, totals }: OrderLinesProps) {
+/** Desglose de artículos, cargos extra y totales del pedido. */
+export function OrderLines({ lines, charges, totals }: OrderLinesProps) {
   return (
     <div>
       <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Desglose de artículos</h4>
@@ -21,12 +21,30 @@ export function OrderLines({ lines, totals }: OrderLinesProps) {
             <span className="font-black text-slate-800 dark:text-slate-100 tabular-nums">{formatCurrency(line.total)}</span>
           </div>
         ))}
+        {charges.map((charge) => (
+          <div key={charge.id} className="p-3 flex items-center justify-between gap-3 bg-slate-50/70 dark:bg-slate-800/30">
+            <div className="min-w-0">
+              <p className="font-bold text-slate-800 dark:text-slate-100">{charge.concept}</p>
+              <span className="text-[10px] text-slate-400">
+                <i className="fa-solid fa-receipt mr-1" aria-hidden="true" />
+                Cargo extra · sin inventario
+              </span>
+            </div>
+            <span className="font-black text-slate-800 dark:text-slate-100 tabular-nums">{formatCurrency(charge.amount)}</span>
+          </div>
+        ))}
       </div>
       <dl className="mt-3 space-y-1 text-[11px]">
         {totals.discount > 0 && (
           <div className="flex justify-between text-slate-500">
-            <dt>Subtotal · Descuentos</dt>
+            <dt>Productos · Descuentos</dt>
             <dd className="tabular-nums">{formatCurrency(totals.gross)} · −{formatCurrency(totals.discount)}</dd>
+          </div>
+        )}
+        {totals.chargesTotal > 0 && (
+          <div className="flex justify-between text-slate-500">
+            <dt>Cargos extra</dt>
+            <dd className="tabular-nums">+{formatCurrency(totals.chargesTotal)}</dd>
           </div>
         )}
         <div className="flex justify-between items-center">

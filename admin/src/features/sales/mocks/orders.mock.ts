@@ -1,4 +1,4 @@
-import { summarizeLines } from '@/shared/lib/pricing'
+import { orderTotals } from '../lib/charges'
 import type { Order, OrderEvent, OrderItem, OrderStatusId } from '../types'
 
 const line = (productId: string, sku: string, name: string, unitPrice: number, quantity = 1, discountPercent = 0): OrderItem => ({
@@ -9,7 +9,7 @@ const line = (productId: string, sku: string, name: string, unitPrice: number, q
 const trail = (date: string, by: string, ...statuses: OrderStatusId[]): OrderEvent[] =>
   statuses.map((status, i) => ({ status, at: new Date(new Date(date.replace(' ', 'T')).getTime() + i * 3_600_000).toISOString(), by }))
 
-type Seed = Omit<Order, 'total' | 'notes' | 'quoteId' | 'email'> & Partial<Pick<Order, 'notes' | 'quoteId' | 'email'>>
+type Seed = Omit<Order, 'total' | 'notes' | 'quoteId' | 'email' | 'charges'> & Partial<Pick<Order, 'notes' | 'quoteId' | 'email' | 'charges'>>
 
 /**
  * Pedidos de prueba que recorren todo el flujo. Clientes del directorio
@@ -38,6 +38,10 @@ const SEED: Seed[] = [
     channel: 'Tienda Web', date: '2026-11-02 11:05', status: 'confirmado', paymentMethod: 'Tarjeta de Crédito',
     deliveryMethod: 'Envío local Cojutepeque', invoiceId: null,
     items: [line('PRD-003', 'SAM-980-1TB', 'Disco M.2 1 TB SAMSUNG NVMe 980', 75)],
+    charges: [
+      { id: 'CHG-1', concept: 'Envío local', amount: 3.5 },
+      { id: 'CHG-2', concept: 'Instalación y clonado de disco', amount: 15 },
+    ],
     history: trail('2026-11-02 11:05', 'Tienda Web', 'registrado', 'confirmado'),
   },
   {
@@ -45,6 +49,7 @@ const SEED: Seed[] = [
     channel: 'Corporativo', date: '2026-11-02 11:30', status: 'registrado', paymentMethod: 'Crédito Fiscal 30 Días',
     deliveryMethod: 'Envío departamental (encomienda)', invoiceId: null, notes: 'Requiere Crédito Fiscal. Validar línea de crédito con gerencia.',
     items: [line('PRD-009', 'HP-450G8-I5', 'Laptop HP ProBook 450 G8 Core i5', 799, 2, 5)],
+    charges: [{ id: 'CHG-1', concept: 'Envío departamental (encomienda)', amount: 8 }],
     history: trail('2026-11-02 11:30', 'Ing. Marvin Castro', 'registrado'),
   },
   {
@@ -67,5 +72,5 @@ const SEED: Seed[] = [
 ]
 
 // Más recientes primero, igual que en la vista.
-export const ORDERS_MOCK: Order[] = SEED.map((o) => ({ email: '', notes: '', quoteId: null, ...o, total: summarizeLines(o.items).total }))
+export const ORDERS_MOCK: Order[] = SEED.map((o) => ({ email: '', notes: '', quoteId: null, charges: [], ...o, total: orderTotals(o.items, o.charges ?? []).total }))
   .sort((a, b) => b.date.localeCompare(a.date))

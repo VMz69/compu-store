@@ -22,7 +22,7 @@ export function SelectedCustomerCard({ customer: c, traceId, onChange }: Selecte
     >
       <CustomerInitials name={c.name} type={c.type} className="w-10 h-10 text-xs" />
       <div className="min-w-0 flex-1 space-y-0.5">
-        <p className="text-xs font-black text-slate-800 dark:text-slate-100 truncate">{c.name}</p>
+        <p className="text-xs font-black text-slate-800 dark:text-slate-100 break-words">{c.name}</p>
         <p className="text-[11px] text-slate-600 dark:text-slate-300">
           <i className="fa-solid fa-phone text-[9px] mr-1 text-slate-400" aria-hidden="true" />
           {c.phone}

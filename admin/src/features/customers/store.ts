@@ -11,6 +11,8 @@ interface CustomersState {
   customers: Customer[]
   isLoading: boolean
   saveCustomer: (draft: CustomerDraft) => Promise<'created' | 'updated'>
+  /** Alta directa; devuelve el cliente con su id (para enlazarlo a un documento). */
+  createCustomer: (draft: CustomerDraft) => Promise<Customer>
   deleteCustomer: (id: string) => void
   reset: () => void
 }
@@ -22,14 +24,24 @@ export const useCustomersStore = create<CustomersState>()(
       isLoading: false,
 
       saveCustomer: async (draft) => {
+        const exists = Boolean(draft.id) && get().customers.some((c) => c.id === draft.id)
+        if (!exists) {
+          await get().createCustomer(draft)
+          return 'created'
+        }
+        set({ isLoading: true })
+        await delay()
+        set((s) => ({
+          customers: s.customers.map((c) => (c.id === draft.id ? { ...c, ...draft, id: c.id } : c)),
+          isLoading: false,
+        }))
+        return 'updated'
+      },
+
+      createCustomer: async (draft) => {
         set({ isLoading: true })
         await delay()
         const { customers } = get()
-        const current = draft.id ? customers.find((c) => c.id === draft.id) : undefined
-        if (current) {
-          set({ customers: customers.map((c) => (c.id === current.id ? { ...c, ...draft, id: c.id } : c)), isLoading: false })
-          return 'updated'
-        }
         const created: Customer = {
           ...draft,
           id: nextSequentialId(customers.map((c) => c.id), 'CLI-'),
@@ -37,7 +49,7 @@ export const useCustomersStore = create<CustomersState>()(
         }
         // Los nuevos van primero: es lo que el usuario espera ver tras guardar.
         set({ customers: [created, ...customers], isLoading: false })
-        return 'created'
+        return created
       },
 
       deleteCustomer: (id) => set((s) => ({ customers: s.customers.filter((c) => c.id !== id) })),

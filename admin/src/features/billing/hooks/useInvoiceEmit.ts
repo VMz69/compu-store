@@ -8,7 +8,7 @@ import { useFormState } from '@/shared/hooks/useFormState'
 import { lineDiscount } from '@/shared/lib/pricing'
 import { closeModal, openModal, useModalPayload } from '@/shared/store/modal.store'
 import { toast } from '@/shared/store/toast.store'
-import { invoiceTotals, PAYMENT_CONDITIONS, paymentConditionFrom } from '../lib/invoice.service'
+import { invoiceTotals, PAYMENT_CONDITIONS, paymentConditionFrom, stockLines } from '../lib/invoice.service'
 import { BILLING_MODALS } from '../modals'
 import { useBillingStore } from '../store'
 import type { InvoiceItem, InvoiceReceptor, PaymentCondition } from '../types'
@@ -51,11 +51,17 @@ export function useInvoiceEmit() {
     notes: '',
   })
 
-  const items: InvoiceItem[] = (order?.items ?? []).map((i) => ({
-    // El descuento pactado en el pedido (o la cotización) pasa a la factura en dólares.
-    productId: i.productId, description: i.name, unit: 'Unidad', quantity: i.quantity, unitPrice: i.unitPrice, discount: lineDiscount(i),
-  }))
-  const lines = items.map((i) => ({ productId: i.productId, quantity: i.quantity }))
+  const items: InvoiceItem[] = [
+    ...(order?.items ?? []).map((i): InvoiceItem => ({
+      // El descuento pactado en el pedido (o la cotización) pasa a la factura en dólares.
+      kind: 'product', productId: i.productId, description: i.name, unit: 'Unidad', quantity: i.quantity, unitPrice: i.unitPrice, discount: lineDiscount(i),
+    })),
+    // Cargos extra del pedido → líneas de servicio (no mueven inventario).
+    ...(order?.charges ?? []).map((c): InvoiceItem => ({
+      kind: 'charge', productId: c.id, description: c.concept, unit: 'Servicio', quantity: 1, unitPrice: c.amount, discount: 0,
+    })),
+  ]
+  const lines = stockLines(items)
   const names = Object.fromEntries(items.map((i) => [i.productId, i.description]))
   const availability = checkAvailability(products, lines, names)
   const stockOk = availability.every((r) => r.ok)
