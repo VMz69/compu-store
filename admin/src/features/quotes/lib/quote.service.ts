@@ -1,7 +1,7 @@
 import type { BadgeTone } from '@/shared/ui'
 import { sumCharges, type ExtraCharge } from '@/shared/lib/charges'
 import { lineTotal as pricedLineTotal, money, summarizeLines } from '@/shared/lib/pricing'
-import { nextSequentialId } from '@/shared/lib/text'
+import { matchesQuery, nextSequentialId } from '@/shared/lib/text'
 import type { Quote, QuoteItem, QuoteStatus, QuoteTotals } from '../types'
 
 /**
@@ -68,10 +68,14 @@ export function filterQuotes(
   status: 'all' | QuoteStatus,
   orderOf: (quoteId: string) => string | null = () => null,
 ): Quote[] {
-  const term = search.trim().toLowerCase()
   return quotes.filter((q) => {
-    if (status !== 'all' && effectiveStatus(q, orderOf(q.id)) !== status) return false
-    if (!term) return true
-    return [q.id, q.customer.name, q.customer.phone, q.createdBy].some((f) => f.toLowerCase().includes(term))
+    const st = effectiveStatus(q, orderOf(q.id))
+    if (status !== 'all' && st !== status) return false
+    // Búsqueda por varios parámetros (ver `matchesQuery`).
+    return matchesQuery(
+      [q.id, q.customer.name, q.customer.phone, q.customer.email, q.customer.documentId, q.createdBy, QUOTE_STATUS_META[st].label,
+        ...q.items.flatMap((i) => [i.name, i.sku]), ...(q.charges ?? []).map((c) => c.concept)],
+      search,
+    )
   })
 }

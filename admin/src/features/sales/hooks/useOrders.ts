@@ -38,7 +38,7 @@ export function useInvoiceableCount(): number {
 }
 
 /**
- * Unidades reservadas por producto (pedidos "Confirmado y Listo"). Al editar un
+ * Unidades reservadas por producto (pedidos "Reservado" vigentes). Al editar un
  * pedido confirmado se excluye su propia reserva: sus unidades siguen disponibles para él.
  */
 export function useReservedStock(excludeOrderId?: string): Record<string, number> {
@@ -66,17 +66,21 @@ export function useOrderStatusTabs() {
 
   const tabs = useMemo(
     () => [
-      { value: 'all' as OrderStatusFilter, label: `Todos (${orders.length})`, icon: null },
+      { id: 'all' as OrderStatusFilter, label: 'Todos', count: orders.length },
       ...ORDER_STATUSES.map((s) => ({
-        value: s.id as OrderStatusFilter,
-        label: `${statusOf(s.id).name} (${countByStatus(orders, s.id)})`,
+        id: s.id as OrderStatusFilter,
+        label: statusOf(s.id).name,
+        count: countByStatus(orders, s.id),
         icon: `fa-solid ${s.icon}`,
       })),
     ],
     [orders],
   )
 
-  return { tabs, active, select }
+  /** Área activa para la línea de ubicación de la barra (Pedidos › Reservado). */
+  const activeLabel = tabs.find((tab) => tab.id === active)?.label ?? 'Todos'
+
+  return { tabs, active, select, activeLabel }
 }
 
 /** Estado con sus textos personalizados; re-renderiza cuando se editan en Ajustes. */

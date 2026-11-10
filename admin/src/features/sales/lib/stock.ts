@@ -1,18 +1,19 @@
 import type { Product } from '@/features/catalog'
 import type { Order, OrderItem } from '../types'
-import { RESERVING_STATUS } from './orderFlow'
+import { isReservationActive } from './reservation'
 
 /**
  * Reservas de inventario DERIVADAS de los pedidos (no se guardan):
- * reservado(producto) = Σ cantidades en pedidos "Confirmado y Listo".
+ * reservado(producto) = Σ cantidades en pedidos "Reservado" con la reserva VIGENTE
+ * (una reserva vencida deja de contar aunque el barrido aún no la haya liberado).
  *
  * Al ser derivadas no hay que sincronizar nada: cancelar, facturar o anular
  * una factura cambia el estado del pedido y la reserva se recalcula sola.
  */
-export function reservedByProduct(orders: Order[], excludeOrderId?: string): Record<string, number> {
+export function reservedByProduct(orders: Order[], excludeOrderId?: string, today?: string): Record<string, number> {
   const reserved: Record<string, number> = {}
   for (const order of orders) {
-    if (order.status !== RESERVING_STATUS || order.id === excludeOrderId) continue
+    if (!isReservationActive(order, today) || order.id === excludeOrderId) continue
     for (const item of order.items) reserved[item.productId] = (reserved[item.productId] ?? 0) + item.quantity
   }
   return reserved

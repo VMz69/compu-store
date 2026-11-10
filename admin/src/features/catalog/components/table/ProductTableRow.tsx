@@ -7,6 +7,7 @@ import type { ProductActions } from '../../hooks/useProductActions'
 import { getStockSeverity } from '../../lib/catalog.service'
 import type { Product, StockSeverity } from '../../types'
 import { StockBadge } from '../StockBadge'
+import { ReservedBadge } from '../ReservedBadge'
 
 const t = tracer('ProductTableRow', 'src/features/catalog/components/table/ProductTableRow.tsx')
 
@@ -53,7 +54,10 @@ export function ProductTableRow({ product: p, actions }: ProductTableRowProps) {
         <span className={cn('font-bold', STOCK_TEXT[getStockSeverity(p.stock, p.reorderPoint)])}>{p.stock}</span>
       </td>
       <td className="py-2.5 px-3">
-        <StockBadge stock={p.stock} active={p.active} reorderPoint={p.reorderPoint} />
+        <div className="flex flex-col items-start gap-1">
+          <StockBadge stock={p.stock} active={p.active} reorderPoint={p.reorderPoint} />
+          <ReservedBadge productId={p.id} stock={p.stock} />
+        </div>
       </td>
       <td className="py-2.5 px-4 text-right space-x-2" {...isolate}>
         {actions.permissions.canEdit && (

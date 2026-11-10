@@ -1,3 +1,4 @@
+import { matchesQuery } from '@/shared/lib/text'
 import type { BadgeTone } from '@/shared/ui'
 import type { Invoice, InvoiceItem, InvoiceStatus, InvoiceTotals, PaymentCondition } from '../types'
 
@@ -45,8 +46,19 @@ export const nextControlNumber = (invoices: Invoice[]): string =>
   `${CONTROL_PREFIX}${String(maxSuffix(invoices.map((i) => i.id), CONTROL_PREFIX, LAST_CONTROL) + 1).padStart(15, '0')}`
 
 /** Siguiente correlativo interno (6 dígitos). */
-export const nextInternalId = (invoices: Invoice[]): string =>
-  String(maxSuffix(invoices.map((i) => i.internalId), '', LAST_INTERNAL) + 1).padStart(6, '0')
+/** Último correlativo interno usado (incluye anuladas: un número nunca se reutiliza). */
+export const lastInternalNumber = (invoices: Invoice[]): number => maxSuffix(invoices.map((i) => i.internalId), '', LAST_INTERNAL)
+
+/**
+ * Siguiente correlativo interno (6 dígitos). La semilla configurada en Ajustes ›
+ * Identidad solo puede ADELANTAR la secuencia: si es menor o igual al último
+ * emitido se ignora, para que nunca se repita un número.
+ */
+export const nextInternalNumber = (invoices: Invoice[], seed: number | null = null): number =>
+  Math.max(lastInternalNumber(invoices) + 1, seed ?? 0)
+
+export const nextInternalId = (invoices: Invoice[], seed: number | null = null): string =>
+  String(nextInternalNumber(invoices, seed)).padStart(6, '0')
 
 /** Código de generación con formato UUID v4 en mayúsculas. */
 export const newGenerationCode = (): string => crypto.randomUUID().toUpperCase()
@@ -74,11 +86,13 @@ export const INVOICE_STATUS_META: Record<InvoiceStatus, { label: string; tone: B
   anulada: { label: 'Anulada', tone: 'danger', icon: 'fa-solid fa-ban' },
 }
 
+/** Campos del buscador de facturas emitidas (varios parámetros a la vez). */
+export const invoiceSearchFields = (inv: Invoice): Array<string | null> => [
+  inv.id, inv.internalId, inv.orderId, inv.receptor.name, inv.receptor.documentId, inv.receptor.email,
+  inv.receptor.phone, inv.paymentCondition, inv.createdBy, INVOICE_STATUS_META[inv.status].label, inv.createdAt.slice(0, 10),
+  ...inv.items.map((i) => i.description),
+]
+
 export function filterInvoices(invoices: Invoice[], search: string, status: 'all' | InvoiceStatus): Invoice[] {
-  const term = search.trim().toLowerCase()
-  return invoices.filter((inv) => {
-    if (status !== 'all' && inv.status !== status) return false
-    if (!term) return true
-    return [inv.id, inv.internalId, inv.orderId, inv.receptor.name].some((f) => f.toLowerCase().includes(term))
-  })
+  return invoices.filter((inv) => (status === 'all' || inv.status === status) && matchesQuery(invoiceSearchFields(inv), search))
 }

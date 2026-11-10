@@ -1,4 +1,4 @@
-import { foldText } from '@/shared/lib/text'
+import { foldText, matchesQuery } from '@/shared/lib/text'
 import type { Customer, CustomerStatusFilter, CustomerType } from '../types'
 
 /**
@@ -37,13 +37,8 @@ export function findByPhone(customers: Customer[], phone: string): Customer | nu
 
 /** Coincidencia sin acentos por nombre, correo, ciudad, DUI/NIT o id; por teléfono desde 3 dígitos. */
 export function matchesCustomer(c: Customer, search: string): boolean {
-  const term = foldText(search)
-  if (!term) return true
-  const digits = normalizePhone(search)
-  return (
-    [c.name, c.email, c.city, c.documentId, c.id].some((f) => foldText(f).includes(term)) ||
-    (digits.length >= 3 && normalizePhone(c.phone).includes(digits))
-  )
+  // Búsqueda unificada del sistema: varias palabras, sin tildes, teléfono con o sin guion.
+  return matchesQuery([c.name, c.email, c.city, c.documentId, c.id, c.phone], search)
 }
 
 /**

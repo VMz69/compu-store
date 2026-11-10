@@ -8,6 +8,8 @@ import type { ProductReview, ReviewStatus } from '../types'
 
 export type ReviewFilter = 'all' | ReviewStatus
 
+const STATUS_TITLES: Record<ReviewFilter, string> = { pendiente: 'Pendientes', aprobado: 'Publicados', rechazado: 'Rechazados', all: 'Todos' }
+
 /** Vista /interacciones: moderación de comentarios de productos del Front Office. */
 export function useReviewModeration() {
   const { user } = useSession()
@@ -29,19 +31,22 @@ export function useReviewModeration() {
   const pendingVisible = items.filter((i) => i.review.status === 'pendiente').map((i) => i.review.id)
 
   const doApprove = (ids: string[]) => {
-    if (!ensurePermission('canModerateReviews', 'Su rol no puede moderar comentarios')) return
+    if (!ensurePermission('canModerateReviews', 'No tienes permiso para moderar comentarios')) return
     approve(ids, by)
     toast(ids.length === 1 ? 'Comentario publicado en el Front Office' : `${ids.length} comentarios publicados`, 'success')
   }
 
   return {
     items,
+    /** Área activa para la línea de ubicación de la barra (Comentarios › Pendientes). */
+    areaLabel: STATUS_TITLES[status],
     metrics: reviewMetrics(reviews),
     total: reviews.length,
     status,
     setStatus,
     search,
     onSearch: (event: { target: { value: string } }) => setSearch(event.target.value),
+    clearSearch: () => setSearch(''),
     rating,
     setRating,
     canModerate,
@@ -62,7 +67,7 @@ export function useReviewModeration() {
         confirmText: 'Rechazar',
         reason: { label: 'Motivo', placeholder: `Ej. ${REJECT_REASONS.join(', ')}`, minLength: 3 },
         onConfirm: (reason) => {
-          if (!ensurePermission('canModerateReviews', 'Su rol no puede moderar comentarios')) return
+          if (!ensurePermission('canModerateReviews', 'No tienes permiso para moderar comentarios')) return
           reject(review.id, by, reason)
           toast('Comentario rechazado: no se publica', 'info')
         },
@@ -73,7 +78,7 @@ export function useReviewModeration() {
         message: `Se eliminará definitivamente el comentario de ${review.author}${review.status === 'aprobado' ? ' y dejará de mostrarse en el Front Office' : ''}. Esta acción no se puede deshacer.`,
         confirmText: 'Eliminar',
         onConfirm: () => {
-          if (!ensurePermission('canModerateReviews', 'Su rol no puede eliminar comentarios')) return
+          if (!ensurePermission('canModerateReviews', 'No tienes permiso para eliminar comentarios')) return
           removeReview(review.id)
           toast('Comentario eliminado', 'info')
         },

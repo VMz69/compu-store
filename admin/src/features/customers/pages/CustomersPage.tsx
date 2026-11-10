@@ -30,7 +30,7 @@ export function CustomersPage() {
           <b className="text-slate-700 dark:text-slate-200">{summary.total}</b> clientes registrados ·{' '}
           <b className="text-slate-700 dark:text-slate-200">{summary.companies}</b> empresas ·{' '}
           <b className="text-slate-700 dark:text-slate-200">{summary.inactive}</b> inactivos. Las compras se calculan
-          con los pedidos entregados.
+          con los pedidos facturados o entregados.
         </p>
 
         {api.totalCount === 0 ? (
@@ -38,13 +38,7 @@ export function CustomersPage() {
             icon="fa-solid fa-address-book"
             title="No hay clientes que coincidan."
             hint="Ajusta la búsqueda o los filtros."
-            action={
-              api.canManage && (
-                <Button icon="fa-solid fa-user-plus" size="md" onClick={api.openCreate} {...t('customers.empty.create')}>
-                  Registrar cliente
-                </Button>
-              )
-            }
+            action={api.canManage && <Button icon="fa-solid fa-user-plus" size="md" onClick={api.openCreate} {...t('customers.empty.create')}>Registrar cliente</Button>}
           />
         ) : (
           <DataTable headers={headers} {...t('customers.table')}>

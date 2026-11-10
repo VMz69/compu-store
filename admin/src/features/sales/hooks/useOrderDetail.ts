@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { formatLongISO } from '@/shared/lib/date'
 import { buildWhatsAppLink } from '@/shared/lib/whatsapp'
 import { lineTotal } from '@/shared/lib/pricing'
 import { orderTotals } from '../lib/charges'
@@ -19,6 +20,8 @@ export function useOrderDetail() {
   return {
     order,
     status: statusOf(order.status),
+    /** Vigencia de la reserva (solo en estado Reservado). */
+    reservation: order.status === 'confirmado' && order.reservedUntil ? { until: order.reservedUntil, date: formatLongISO(order.reservedUntil) } : null,
     lines: order.items.map((item) => ({ ...item, total: lineTotal(item) })),
     charges: order.charges ?? [],
     totals: orderTotals(order.items, order.charges ?? []),
@@ -29,7 +32,7 @@ export function useOrderDetail() {
       if (action === 'invoice') closeModal()
       actions.run(action, order)
     },
-    /** Editar: solo sin factura (Registrado o Confirmado y Listo) y con permiso sobre pedidos. */
+    /** Editar: solo sin factura (Registrado o Reservado) y con permiso sobre pedidos. */
     canEdit: actions.canChangeStatus && isEditable(order),
     canDelete: actions.canDelete(order),
     /** Eliminación lógica; al confirmarse, el comprobante se cierra. */

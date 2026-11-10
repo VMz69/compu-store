@@ -1,15 +1,15 @@
-import { RoleBadge } from '@/features/access'
 import { IconButton } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
 import { useTopbar } from '../../hooks/useLayout'
 import { ThemeToggle } from './ThemeToggle'
 import { TopbarShortcut } from './TopbarShortcut'
+import { TopbarTitle } from './TopbarTitle'
 
 const t = tracer('Topbar', 'src/app/layout/topbar/Topbar.tsx')
 
-/** Barra superior: colapsar menú, vista activa, sucursal, tema y accesos directos (Ajustes). */
+/** Barra superior: colapsar menú, título único de la vista, sucursal, tema y accesos directos (Ajustes). */
 export function Topbar() {
-  const { title, role, isSidebarOpen, toggleSidebar, shortcuts } = useTopbar()
+  const { title, crumbs, backTo, badge, role, isSidebarOpen, toggleSidebar, shortcuts } = useTopbar()
 
   return (
     <header
@@ -25,10 +25,7 @@ export function Topbar() {
           onClick={toggleSidebar}
           {...t('layout.topbar.toggle-sidebar')}
         />
-        <h1 className="text-base font-black text-slate-800 dark:text-slate-100 capitalize flex items-center gap-2 truncate">
-          {title}
-          {role && <RoleBadge role={role} />}
-        </h1>
+        <TopbarTitle title={title} crumbs={crumbs} backTo={backTo} badge={badge} role={role} />
       </div>
 
       <div className="flex items-center gap-2.5">

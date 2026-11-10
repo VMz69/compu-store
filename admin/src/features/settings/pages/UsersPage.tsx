@@ -1,7 +1,6 @@
 import { UsersSection } from '@/features/access'
-import { PageContainer } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
-import { SettingsSubHeader } from '../components/SettingsSubHeader'
+import { useSettingsPageMeta } from '../hooks/useSettingsPageMeta'
 
 const t = tracer('UsersPage', 'src/features/settings/pages/UsersPage.tsx')
 
@@ -11,14 +10,10 @@ const t = tracer('UsersPage', 'src/features/settings/pages/UsersPage.tsx')
  * Las piezas viven en el feature `access`; esta página solo las compone.
  */
 export function UsersPage() {
+  useSettingsPageMeta('Usuarios y accesos')
   return (
-    <PageContainer spacing="space-y-6" {...t('settings.users-page')}>
-      <SettingsSubHeader
-        section="Usuarios y Roles"
-        title="Usuarios y accesos"
-        icon="fa-solid fa-users-gear text-purple-500"
-      />
+    <div className="flex flex-col h-full animate-fade-in" {...t('settings.users-page')}>
       <UsersSection />
-    </PageContainer>
+    </div>
   )
 }

@@ -44,9 +44,18 @@ const patchUser = (users: User[], id: number, patch: Partial<User>) =>
  * Versión del esquema persistido.
  * v0: sesión por rol (selector de perfiles del demo) · v2: login con credenciales ·
  * v3: avatares generados con iniciales (se descartan las fotos externas de prueba) ·
- * v4: accesos por usuario (vistas + acciones) y Super Administrador = Administrador de Sistema.
+ * v4: accesos por usuario (vistas + acciones) y Super Administrador = Administrador de Sistema ·
+ * v5: acción "Confirmar y reservar" (`canReserveOrders`) separada de gestionar pedidos.
  */
-const ACCESS_SCHEMA_VERSION = 4
+const ACCESS_SCHEMA_VERSION = 5
+
+/** v4 → v5: quien ya podía confirmar pedidos (gestionarlos) conserva la acción de reservar. */
+const migrateToV5 = (users: User[]): User[] =>
+  users.map((u) =>
+    u.access.permissions.includes('canChangeOrderStatus') && !u.access.permissions.includes('canReserveOrders')
+      ? { ...u, access: { ...u.access, permissions: [...u.access.permissions, 'canReserveOrders'] } }
+      : u,
+  )
 
 const OWNER_EMAIL = 'propietario@compustoresv.com'
 
@@ -154,7 +163,8 @@ export const useAccessStore = create<AccessState>()(
         // v2 → v3: se conservan usuarios y sesión; solo se quitan las fotos externas.
         const state = persisted as Pick<AccessState, 'users' | 'session'>
         const users = state.users.map((u) => (u.avatar.includes('unsplash.com') ? { ...u, avatar: DEFAULT_AVATAR } : u))
-        return { ...state, users: version < 4 ? migrateToV4(users) : users }
+        const v4 = version < 4 ? migrateToV4(users) : (users as User[])
+        return { ...state, users: version < 5 ? migrateToV5(v4) : v4 }
       },
     },
   ),

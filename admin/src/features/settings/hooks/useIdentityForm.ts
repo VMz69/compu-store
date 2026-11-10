@@ -2,7 +2,8 @@ import { useState, type FormEvent } from 'react'
 import { ensurePermission, usePermission } from '@/features/access'
 import { useFormState } from '@/shared/hooks/useFormState'
 import { toast } from '@/shared/store/toast.store'
-import { ESTABLISHMENT_TYPES, toWhatsappNumber, validateIdentity, type IdentityValues } from '../lib/identity'
+import { ESTABLISHMENT_TYPES, formatInvoiceNumber, nextInvoiceNumber, toWhatsappNumber, validateIdentity, type IdentityValues } from '../lib/identity'
+import { useLastInvoiceNumber } from '../lib/invoiceNumberPort'
 import { useSettingsStore } from '../store'
 
 /** Formulario de identidad del emisor: datos comerciales + datos del contribuyente (DTE). */
@@ -12,6 +13,7 @@ export function useIdentityForm() {
   const isLoading = useSettingsStore((s) => s.isLoading)
   const canEdit = usePermission('canEditSettings')
   const [submitted, setSubmitted] = useState(false)
+  const lastIssued = useLastInvoiceNumber()
   const { values, bind } = useFormState<IdentityValues>({
     name: settings.name,
     email: settings.email,
@@ -23,13 +25,16 @@ export function useIdentityForm() {
     nrc: settings.nrc,
     economicActivity: settings.economicActivity,
     establishmentType: settings.establishmentType,
+    // Si la semilla ya quedó atrás (se emitieron facturas), el campo arranca vacío.
+    invoiceSeed: settings.invoiceSeed && (lastIssued === null || settings.invoiceSeed > lastIssued) ? String(settings.invoiceSeed) : '',
   })
-  const errors = submitted ? validateIdentity(values) : {}
+  const errors = submitted ? validateIdentity(values, lastIssued) : {}
+  const next = nextInvoiceNumber(values.invoiceSeed, lastIssued)
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setSubmitted(true)
-    if (Object.keys(validateIdentity(values)).length > 0) return toast('Revisa los datos marcados.', 'warning')
+    if (Object.keys(validateIdentity(values, lastIssued)).length > 0) return toast('Revisa los datos marcados.', 'warning')
     if (!ensurePermission('canEditSettings', 'No tienes permiso para editar la configuración')) return
     await updateSettings({
       name: values.name.trim(),
@@ -42,6 +47,7 @@ export function useIdentityForm() {
       nrc: values.nrc.trim(),
       economicActivity: values.economicActivity.trim(),
       establishmentType: values.establishmentType,
+      invoiceSeed: values.invoiceSeed.trim() ? Number(values.invoiceSeed.trim()) : null,
     })
     toast('Datos del emisor guardados · aplican a los próximos documentos', 'success')
   }
@@ -67,6 +73,11 @@ export function useIdentityForm() {
     isLoading,
     preview,
     establishmentOptions: ESTABLISHMENT_TYPES.map((v) => ({ value: v, label: v })),
+    /** Numeración: último emitido y la próxima factura con la semilla escrita. */
+    invoicing: {
+      lastIssued: lastIssued === null ? null : formatInvoiceNumber(lastIssued),
+      next: next === null ? null : formatInvoiceNumber(next),
+    },
     /** IVA: normativa nacional, solo informativo aquí. */
     taxPercent: Math.round(settings.taxRate * 100),
   }

@@ -1,3 +1,4 @@
+import { matchesQuery } from '@/shared/lib/text'
 import type { BadgeTone, SelectOption } from '@/shared/ui'
 import type {
   InventoryMetrics,
@@ -45,12 +46,10 @@ const matchesStock = (p: Product, filter: StockFilter): boolean => {
 }
 
 export function filterProducts(products: Product[], { category, search, stockFilter }: ProductQuery) {
-  const term = search.toLowerCase().trim()
   return products.filter((p) => {
     const matchesCategory = category === 'all' || p.category.toLowerCase() === category.toLowerCase()
-    const matchesSearch =
-      !term ||
-      [p.name, p.id, p.sku, p.brand, p.model, p.category].some((field) => field.toLowerCase().includes(term))
+    // Búsqueda unificada del sistema (varias palabras, sin tildes).
+    const matchesSearch = matchesQuery([p.name, p.id, p.sku, p.brand, p.model, p.category], search)
     return matchesCategory && matchesSearch && matchesStock(p, stockFilter)
   })
 }

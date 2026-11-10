@@ -1,4 +1,4 @@
-import { AffixInput, Field, IconButton, Input } from '@/shared/ui'
+import { AffixInput, DatePicker, Field, IconButton, Input } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
 import type { ProductFormApi } from '../../../hooks/useProductForm'
 
@@ -56,13 +56,13 @@ export function LotRowsEditor({ api }: { api: ProductFormApi }) {
                     <input type="checkbox" className="w-3 h-3 accent-brand" {...noExpiry} {...t(`catalog.product-form.lots.no-expiry.${index + 1}`)} /> No vence
                   </label>
                 </div>
-                <Input
-                  type="date"
+                <DatePicker
                   aria-label={`Vencimiento del lote ${index + 1}`}
                   disabled={noExpiry.checked}
                   invalid={Boolean(err('expiresAt'))}
-                  className="disabled:opacity-40 disabled:cursor-not-allowed"
+                  placeholder={noExpiry.checked ? 'No vence' : 'Elegir fecha'}
                   {...form.bindLot(lot.id, 'expiresAt')}
+                  {...t(`catalog.product-form.lots.expiry.${index + 1}`)}
                 />
                 {err('expiresAt') && (
                   <span role="alert" className="text-[10px] font-semibold text-red-600 dark:text-red-400 mt-1 block">

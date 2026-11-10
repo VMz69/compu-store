@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom'
+import { useReservationExpiry } from '@/features/sales'
 import { tracer } from '@/ui-traceability'
 import { Sidebar } from './sidebar/Sidebar'
 import { Topbar } from './topbar/Topbar'
@@ -7,6 +8,9 @@ const t = tracer('AdminLayout', 'src/app/layout/AdminLayout.tsx')
 
 /** Shell autenticado: sidebar + área principal (topbar + vista activa). */
 export function AdminLayout() {
+  // Libera las reservas vencidas mientras haya una sesión abierta (ver sales/lib/reservation.ts).
+  useReservationExpiry()
+
   return (
     <>
       <Sidebar />

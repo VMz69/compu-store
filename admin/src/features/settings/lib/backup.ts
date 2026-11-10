@@ -1,3 +1,4 @@
+import { toLocalISO } from '@/shared/lib/date'
 import { getUsersSnapshot } from '@/features/access'
 import { getCatalogSnapshot } from '@/features/catalog'
 import { getCustomersSnapshot } from '@/features/customers'
@@ -32,4 +33,4 @@ export function buildBackup(settings: StoreSettings) {
 }
 
 export const backupFilename = (date: Date = new Date()): string =>
-  `compustore_backup_${date.toISOString().slice(0, 10)}.json`
+  `compustore_backup_${toLocalISO(date)}.json`

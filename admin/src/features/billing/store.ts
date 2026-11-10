@@ -17,7 +17,8 @@ export type NewInvoiceInput = Omit<Invoice, 'id' | 'generationCode' | 'reception
 interface BillingState {
   invoices: Invoice[]
   isLoading: boolean
-  createInvoice: (input: NewInvoiceInput) => Promise<Invoice>
+  /** `internalSeed`: semilla del correlativo (Ajustes › Identidad); ver `nextInternalNumber`. */
+  createInvoice: (input: NewInvoiceInput, internalSeed?: number | null) => Promise<Invoice>
   voidInvoice: (id: string) => void
   reset: () => void
 }
@@ -28,14 +29,14 @@ export const useBillingStore = create<BillingState>()(
       invoices: INVOICES_MOCK,
       isLoading: false,
 
-      createInvoice: async (input) => {
+      createInvoice: async (input, internalSeed = null) => {
         set({ isLoading: true })
         await delay()
         const { invoices } = get()
         const invoice: Invoice = {
           ...input,
           id: nextControlNumber(invoices),
-          internalId: nextInternalId(invoices),
+          internalId: nextInternalId(invoices, internalSeed),
           generationCode: newGenerationCode(),
           receptionSeal: simulatedSeal(),
           status: 'emitida',

@@ -1,4 +1,5 @@
 import { useMemo, useState, type ChangeEvent } from 'react'
+import { matchesQuery } from '@/shared/lib/text'
 import { useEffectivePrice } from '../lib/pricePort'
 import { useCatalogStore } from '../store'
 import type { Product } from '../types'
@@ -38,10 +39,11 @@ export function useProductPicker({ quantities, reserved = {}, limitToStock = fal
   const [category, setCategory] = useState('all')
 
   const filtered = useMemo(() => {
-    const term = search.trim().toLowerCase()
+
     return products
       .filter((p) => category === 'all' || p.category === category)
-      .filter((p) => !term || [p.name, p.sku, p.brand, p.model].some((f) => f.toLowerCase().includes(term)))
+      // Búsqueda unificada del sistema (varias palabras, sin tildes).
+      .filter((p) => matchesQuery([p.name, p.sku, p.brand, p.model], search))
   }, [products, search, category])
 
   const items: PickerItem[] = filtered.map((product) => {
@@ -63,6 +65,7 @@ export function useProductPicker({ quantities, reserved = {}, limitToStock = fal
     category,
     categoryOptions: [{ value: 'all', label: 'Todas las categorías' }, ...categories.map((c) => ({ value: c.id, label: c.name }))],
     onSearch: (e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value),
+    clearSearch: () => setSearch(''),
     onCategory: (e: ChangeEvent<HTMLSelectElement>) => setCategory(e.target.value),
   }
 }

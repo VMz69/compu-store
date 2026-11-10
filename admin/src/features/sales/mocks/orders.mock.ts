@@ -9,7 +9,7 @@ const line = (productId: string, sku: string, name: string, unitPrice: number, q
 const trail = (date: string, by: string, ...statuses: OrderStatusId[]): OrderEvent[] =>
   statuses.map((status, i) => ({ status, at: new Date(new Date(date.replace(' ', 'T')).getTime() + i * 3_600_000).toISOString(), by }))
 
-type Seed = Omit<Order, 'total' | 'notes' | 'quoteId' | 'email' | 'charges'> & Partial<Pick<Order, 'notes' | 'quoteId' | 'email' | 'charges'>>
+type Seed = Omit<Order, 'total' | 'notes' | 'quoteId' | 'email' | 'charges' | 'reservedUntil'> & Partial<Pick<Order, 'notes' | 'quoteId' | 'email' | 'charges' | 'reservedUntil'>>
 
 /**
  * Pedidos de prueba que recorren todo el flujo. Clientes del directorio
@@ -25,7 +25,7 @@ const SEED: Seed[] = [
   },
   {
     id: 'ORD-2026-002', customerId: 'CLI-002', client: 'Carlos Henríquez', phone: '6833-1100', email: 'carlos.henriquez@outlook.com', city: 'San Rafael Cedros',
-    channel: 'WhatsApp', date: '2026-11-02 10:15', status: 'confirmado', paymentMethod: 'Wompi / QR',
+    channel: 'WhatsApp', date: '2026-11-02 10:15', status: 'confirmado', reservedUntil: '2026-11-13', paymentMethod: 'Wompi / QR',
     deliveryMethod: 'Retiro en Sala de Ventas (2da Planta)', invoiceId: null,
     items: [
       line('PRD-006', 'RDG-H510-71', 'Audífonos Gaming Diadema 7.1 Surround', 45),
@@ -35,7 +35,7 @@ const SEED: Seed[] = [
   },
   {
     id: 'ORD-2026-003', customerId: 'CLI-003', client: 'Kevin Rodríguez', phone: '7012-3456', email: 'kevin.rdz@gmail.com', city: 'Cojutepeque',
-    channel: 'Tienda Web', date: '2026-11-02 11:05', status: 'confirmado', paymentMethod: 'Tarjeta de Crédito',
+    channel: 'Tienda Web', date: '2026-11-02 11:05', status: 'confirmado', reservedUntil: '2026-11-11', paymentMethod: 'Tarjeta de Crédito',
     deliveryMethod: 'Envío local Cojutepeque', invoiceId: null,
     items: [line('PRD-003', 'SAM-980-1TB', 'Disco M.2 1 TB SAMSUNG NVMe 980', 75)],
     charges: [
@@ -72,5 +72,5 @@ const SEED: Seed[] = [
 ]
 
 // Más recientes primero, igual que en la vista.
-export const ORDERS_MOCK: Order[] = SEED.map((o) => ({ email: '', notes: '', quoteId: null, charges: [], ...o, total: orderTotals(o.items, o.charges ?? []).total }))
+export const ORDERS_MOCK: Order[] = SEED.map((o) => ({ email: '', notes: '', quoteId: null, charges: [], reservedUntil: null, ...o, total: orderTotals(o.items, o.charges ?? []).total }))
   .sort((a, b) => b.date.localeCompare(a.date))

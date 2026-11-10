@@ -3,6 +3,7 @@ import { tracer } from '@/ui-traceability'
 import { useOrderDetail } from '../../hooks/useOrderDetail'
 import { OrderActionButtons } from '../OrderActionButtons'
 import { OrderStatusBadge } from '../OrderStatusBadge'
+import { ReservationTag } from '../ReservationTag'
 import { OrderLines } from './OrderLines'
 import { OrderTimeline } from './OrderTimeline'
 
@@ -32,6 +33,12 @@ export function OrderDetailModal() {
         <p className="text-[11px] text-slate-500 dark:text-slate-400 flex items-start gap-2">
           <i className={`fa-solid ${status.icon} text-brand mt-0.5`} aria-hidden="true" /> {status.description}
         </p>
+        {detail.reservation && (
+          <p className="flex items-center justify-between gap-2 p-3 rounded-xl border border-brand/30 bg-brand-50/60 dark:bg-brand/10 text-[11px]" {...t('sales.order-detail.reservation')}>
+            <span className="text-slate-700 dark:text-slate-200"><i className="fa-solid fa-lock text-brand mr-1.5" aria-hidden="true" />Reservado hasta <b className="capitalize">{detail.reservation.date}</b> (23:59)</span>
+            <ReservationTag until={detail.reservation.until} />
+          </p>
+        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className={PANEL}>

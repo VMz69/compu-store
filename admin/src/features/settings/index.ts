@@ -1,5 +1,6 @@
 // API pública del feature `settings`. Desde fuera solo se importa este archivo.
 export { useStoreSettings } from './hooks/useStoreSettings'
+export { provideLastInvoiceNumber } from './lib/invoiceNumberPort'
 export { ChannelsPage } from './pages/ChannelsPage'
 export { IdentityPage } from './pages/IdentityPage'
 export { SettingsPage } from './pages/SettingsPage'

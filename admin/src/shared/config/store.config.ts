@@ -20,6 +20,11 @@ export interface StoreSettings {
   nrc: string
   economicActivity: string
   establishmentType: string
+  /**
+   * Semilla del correlativo interno de facturas (ej. 15800 → "015800").
+   * null = continuar la secuencia. Nunca retrocede: rige max(semilla, último emitido + 1).
+   */
+  invoiceSeed: number | null
 }
 
 export const STORE_CONFIG: StoreSettings = {
@@ -40,6 +45,7 @@ export const STORE_CONFIG: StoreSettings = {
   nrc: '367628-0',
   economicActivity: 'Venta al por menor de computadoras y equipo periférico',
   establishmentType: 'Casa matriz',
+  invoiceSeed: null,
 }
 
 /** URL del Front Office (/store). Se configura en `.env` con VITE_STORE_URL. */

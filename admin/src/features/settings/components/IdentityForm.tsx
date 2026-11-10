@@ -1,7 +1,7 @@
 import { Button, Card } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
 import { useIdentityForm } from '../hooks/useIdentityForm'
-import { CommercialFields, TaxpayerFields } from './IdentityFields'
+import { CommercialFields, InvoiceNumberingFields, TaxpayerFields } from './IdentityFields'
 import { IdentityPreview } from './IdentityPreview'
 
 const t = tracer('IdentityForm', 'src/features/settings/components/IdentityForm.tsx')
@@ -17,6 +17,7 @@ export function IdentityForm() {
           <fieldset disabled={!f.canEdit} className="space-y-4">
             <CommercialFields f={f} />
             <TaxpayerFields f={f} />
+            <InvoiceNumberingFields f={f} />
           </fieldset>
 
           <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">

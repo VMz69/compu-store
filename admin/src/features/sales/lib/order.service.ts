@@ -73,3 +73,14 @@ export function nowStamp(date: Date = new Date()): string {
 /** Pedido activo (no cancelado) que ya convirtió una cotización. */
 export const findOrderByQuote = (orders: Order[], quoteId: string): Order | undefined =>
   orders.find((o) => o.quoteId === quoteId && o.status !== 'cancelado')
+
+/**
+ * Campos en los que busca el buscador de Pedidos (y la cola de Facturación):
+ * identificación, cliente, venta, entrega, estado, productos, cargos y vínculos.
+ */
+export const orderSearchFields = (o: Order, statusName: string): Array<string | number | null> => [
+  o.id, o.client, o.phone, o.email, o.city, o.channel, o.paymentMethod, o.deliveryMethod,
+  statusName, o.quoteId, o.invoiceId, o.notes, o.date, o.total.toFixed(2),
+  ...o.items.flatMap((i) => [i.name, i.sku]),
+  ...(o.charges ?? []).map((c) => c.concept),
+]

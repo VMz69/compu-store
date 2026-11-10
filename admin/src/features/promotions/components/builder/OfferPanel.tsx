@@ -1,5 +1,5 @@
 import { cn } from '@/shared/lib/cn'
-import { AffixInput, Button, Field, Input, Textarea } from '@/shared/ui'
+import { AffixInput, Button, DatePicker, Field, Input, Textarea } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
 import type { OfferBuilderApi } from '../../hooks/useOfferBuilder'
 import { OfferProductList } from './OfferProductList'
@@ -41,8 +41,8 @@ export function OfferPanel({ b }: { b: OfferBuilderApi }) {
               {b.errors.discountValue && <p role="alert" className="text-[10px] font-semibold text-red-600 dark:text-red-400">{b.errors.discountValue}</p>}
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <Field label="Desde" variant="caps"><Input type="date" invalid={Boolean(b.errors.dates)} {...b.bind('startDate')} {...t('promotions.builder.start')} /></Field>
-              <Field label="Hasta" variant="caps"><Input type="date" invalid={Boolean(b.errors.dates)} {...b.bind('endDate')} {...t('promotions.builder.end')} /></Field>
+              <Field label="Desde" variant="caps"><DatePicker invalid={Boolean(b.errors.dates)} {...b.bind('startDate')} {...t('promotions.builder.start')} /></Field>
+              <Field label="Hasta" variant="caps"><DatePicker invalid={Boolean(b.errors.dates)} min={b.startDate} {...b.bind('endDate')} {...t('promotions.builder.end')} /></Field>
               {b.errors.dates && <p role="alert" className="col-span-2 text-[10px] font-semibold text-red-600 dark:text-red-400">{b.errors.dates}</p>}
             </div>
           </div>

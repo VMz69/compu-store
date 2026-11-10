@@ -1,5 +1,6 @@
 import type { Order, OrderStatusId } from '../types'
 import { isOrderStatusId } from './orderFlow'
+import { reservationBounds } from './reservation'
 
 /** Estados del modelo anterior (texto libre) → estados del flujo actual. */
 const LEGACY_STATUS: Record<string, OrderStatusId> = {
@@ -55,6 +56,8 @@ export function migrateOrder(raw: LegacyOrder): Order {
     items,
     // v3: los pedidos anteriores no tenían cargos extra (su total ya era el de los productos).
     charges: raw.charges ?? [],
+    // v4: los pedidos ya reservados reciben la vigencia por defecto (no vencen al migrar).
+    reservedUntil: status === 'confirmado' ? (raw.reservedUntil ?? reservationBounds().suggested) : null,
     history: raw.history?.length ? raw.history : [{ status, at: toIso(raw.date), by: 'Migración de datos' }],
   }
 }

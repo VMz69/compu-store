@@ -46,7 +46,7 @@ export function useQuoteBuilder() {
   const generate = async () => {
     setSubmitted(true)
     if (Object.keys(validate()).length > 0) return toast('Revisa el cliente, los productos y los cargos extra.', 'warning')
-    if (!ensurePermission('canManageQuotes', 'Su rol no puede emitir cotizaciones')) return
+    if (!ensurePermission('canManageQuotes', 'No tienes permiso para emitir cotizaciones')) return
     const { customerId, name, phone, email, documentId } = customer.snapshot
     const quote = await createQuote({
       customer: { customerId, name, phone, email, documentId },

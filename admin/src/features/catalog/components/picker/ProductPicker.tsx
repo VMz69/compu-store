@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn'
 import { formatCurrency } from '@/shared/lib/currency'
-import { Badge, EmptyState, SafeImage, SearchInput, Select } from '@/shared/ui'
+import { Badge, EmptyState, LiveSearch, SafeImage, Select } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
 import type { ProductPickerApi } from '../../hooks/useProductPicker'
 import type { Product } from '../../types'
@@ -21,10 +21,12 @@ export function ProductPicker({ picker, onAdd, traceId, target }: ProductPickerP
   return (
     <section className="flex flex-col min-h-0" aria-label="Catálogo de productos" {...t(traceId)}>
       <div className="flex flex-wrap items-center gap-2 mb-3">
-        <SearchInput
+        <LiveSearch
           wrapperClassName="flex-1 min-w-48"
           value={picker.search}
           onChange={picker.onSearch}
+          onClear={picker.clearSearch}
+          resultCount={picker.items.length}
           placeholder="Buscar por nombre, SKU, marca o modelo…"
           aria-label="Buscar productos"
           autoFocus

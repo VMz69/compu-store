@@ -79,7 +79,7 @@ export function useInvoiceEmit() {
     setSubmitted(true)
     if (!order || !isInvoiceable(order)) return
     if (!values.isFinalConsumer && values.name.trim().length < 3) return
-    if (!ensurePermission('canInvoice', 'Su rol no puede emitir facturas')) return
+    if (!ensurePermission('canInvoice', 'No tienes permiso para emitir facturas')) return
     if (!checkAvailability(getCatalogSnapshot().products, lines).every((r) => r.ok)) {
       return toast('Stock insuficiente: revisa el inventario antes de facturar.', 'warning')
     }
@@ -95,7 +95,7 @@ export function useInvoiceEmit() {
         address: settings.address, phone: settings.phones.join(' / '), email: settings.email,
         establishmentType: settings.establishmentType, economicActivity: settings.economicActivity,
       },
-    })
+    }, settings.invoiceSeed)
     deductStock(lines)
     setOrderInvoice(order.id, invoice.id, user?.name ?? 'Equipo CompuStore')
     toast(`Factura ${invoice.internalId} emitida · inventario actualizado`, 'success')
@@ -110,7 +110,7 @@ export function useInvoiceEmit() {
       : order.invoiceId
         ? `Este pedido ya fue facturado (${order.invoiceId}).`
         : !isInvoiceable(order)
-          ? `Un pedido en estado "${orderStatusName(order.status)}" no se puede facturar. Solo se facturan pedidos "Confirmado y Listo".`
+          ? `Un pedido en estado "${orderStatusName(order.status)}" no se puede facturar. Solo se facturan pedidos "Reservado" con la reserva vigente.`
           : null,
     matchedCustomer: match ?? null,
     isFinalConsumer: values.isFinalConsumer,

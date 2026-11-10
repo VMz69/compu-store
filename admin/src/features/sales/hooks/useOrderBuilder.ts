@@ -81,8 +81,8 @@ export function useOrderBuilder() {
     if (saving) return
     setSubmitted(true)
     if (Object.keys(validate()).length > 0) return toast('Revisa el cliente, los productos, la entrega y los cargos extra.', 'warning')
-    if (!ensurePermission('canChangeOrderStatus', isEdit ? 'Su rol no puede editar pedidos' : 'Su rol no puede registrar pedidos')) return
-    if (customer.mode === 'walkin' && !ensurePermission('canManageCustomers', 'Su rol no puede registrar clientes nuevos')) return
+    if (!ensurePermission('canChangeOrderStatus', isEdit ? 'No tienes permiso para editar pedidos' : 'No tienes permiso para registrar pedidos')) return
+    if (customer.mode === 'walkin' && !ensurePermission('canManageCustomers', 'No tienes permiso para registrar clientes nuevos')) return
     setSaving(true)
     try {
       // Cliente nuevo: se da de alta primero para que el pedido quede enlazado a su ficha.

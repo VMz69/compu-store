@@ -2,7 +2,8 @@ import type { ExtraCharge } from '@/shared/lib/charges'
 
 /**
  * Estados del flujo de pedidos (ver `lib/orderFlow.ts`):
- * registrado → confirmado → facturado → entregado · cancelado (terminal).
+ * registrado → confirmado ("Reservado", con vigencia) → facturado → entregado · cancelado (terminal).
+ * Una reserva vencida devuelve el pedido a registrado.
  */
 export type OrderStatusId = 'registrado' | 'confirmado' | 'facturado' | 'entregado' | 'cancelado'
 
@@ -54,6 +55,11 @@ export interface Order {
   items: OrderItem[]
   /** Cargos extra (no son productos: no reservan ni descuentan stock). */
   charges: OrderCharge[]
+  /**
+   * Fecha límite de la reserva "YYYY-MM-DD" (inclusive). Solo aplica en estado
+   * "confirmado" (Reservado); null en los demás. Ver `lib/reservation.ts`.
+   */
+  reservedUntil: string | null
   /** Factura que cerró la venta; la asigna Facturación al emitir y la limpia al anular. */
   invoiceId: string | null
   /** Cotización de origen, si el pedido se convirtió desde una. */
@@ -75,7 +81,7 @@ export interface DeletedOrder extends Order {
 }
 
 /** Datos para registrar: el store asigna id, fecha, total, estado inicial e historial. */
-export type OrderDraft = Omit<Order, 'id' | 'date' | 'total' | 'status' | 'invoiceId' | 'history'>
+export type OrderDraft = Omit<Order, 'id' | 'date' | 'total' | 'status' | 'invoiceId' | 'history' | 'reservedUntil'>
 
 /** Pre-carga del constructor de pedidos (ej. al convertir una cotización). */
 export interface OrderPrefill {

@@ -20,6 +20,8 @@ export type IdentityValues = {
   nrc: string
   economicActivity: string
   establishmentType: string
+  /** Próximo número de factura (correlativo interno). Vacío = continuar la secuencia. */
+  invoiceSeed: string
 }
 
 /** Tipos de establecimiento del catálogo de Hacienda para el DTE. */
@@ -31,7 +33,19 @@ const PHONE = /^[0-9+\-\s]{8,15}$/
 const NRC = /^\d{1,7}-\d$/
 const digits = (v: string) => v.replace(/\D/g, '')
 
-export function validateIdentity(v: IdentityValues): Record<string, string> {
+/** Correlativo interno con 6 dígitos (ej. 15800 → "015800"). */
+export const formatInvoiceNumber = (n: number): string => String(n).padStart(6, '0')
+
+/**
+ * Próxima factura que se emitirá: la semilla solo adelanta la secuencia
+ * (misma regla que `nextInternalNumber` en Facturación).
+ */
+export const nextInvoiceNumber = (seed: string, lastIssued: number | null): number | null => {
+  const s = /^\d+$/.test(seed.trim()) ? Number(seed.trim()) : 0
+  return lastIssued === null ? (s || null) : Math.max(lastIssued + 1, s)
+}
+
+export function validateIdentity(v: IdentityValues, lastIssued: number | null = null): Record<string, string> {
   const e: Record<string, string> = {}
   if (v.name.trim().length < 3) e.name = 'Ingresa el nombre comercial.'
   if (!EMAIL.test(v.email.trim())) e.email = 'Correo no válido.'
@@ -44,6 +58,12 @@ export function validateIdentity(v: IdentityValues): Record<string, string> {
   if (!NRC.test(v.nrc.trim())) e.nrc = 'Formato NRC: 367628-0'
   if (v.economicActivity.trim().length < 5) e.economicActivity = 'Indica la actividad económica (giro).'
   if (!v.establishmentType) e.establishmentType = 'Selecciona el tipo de establecimiento.'
+  const seed = v.invoiceSeed.trim()
+  if (seed) {
+    if (!/^\d{1,6}$/.test(seed) || Number(seed) < 1) e.invoiceSeed = 'Número entero de 1 a 999999.'
+    // Un número ya usado no se puede repetir (incluye facturas anuladas).
+    else if (lastIssued !== null && Number(seed) <= lastIssued) e.invoiceSeed = `Debe ser mayor que el último emitido (${formatInvoiceNumber(lastIssued)}).`
+  }
   return e
 }
 

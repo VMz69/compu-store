@@ -7,6 +7,7 @@ import type { OrderActions } from '../../hooks/useOrderActions'
 import type { Order } from '../../types'
 import { OrderActionButtons } from '../OrderActionButtons'
 import { OrderStatusBadge } from '../OrderStatusBadge'
+import { ReservationTag } from '../ReservationTag'
 
 const t = tracer('OrderRow', 'src/features/sales/components/orders/OrderRow.tsx')
 
@@ -17,7 +18,7 @@ interface OrderRowProps {
 
 /**
  * Fila de pedido. Las acciones dependen del estado (máquina de estados):
- * Registrado → Confirmar · Confirmado y Listo → Facturar · Facturado → Entregar · Cancelar antes de facturar.
+ * Registrado → Confirmar y reservar · Reservado → Facturar · Facturado → Entregar · Cancelar antes de facturar.
  * Toda la fila abre el detalle; las celdas con botones propios se aíslan para no dispararlo.
  */
 export function OrderRow({ order: o, actions }: OrderRowProps) {
@@ -58,7 +59,10 @@ export function OrderRow({ order: o, actions }: OrderRowProps) {
         <p className="text-[10px] text-slate-400">{o.items.reduce((acc, i) => acc + i.quantity, 0)} unid.</p>
       </td>
       <td className="py-3 px-3">
-        <OrderStatusBadge status={o.status} />
+        <div className="flex flex-col items-start gap-1">
+          <OrderStatusBadge status={o.status} />
+          {o.status === 'confirmado' && <ReservationTag until={o.reservedUntil} />}
+        </div>
       </td>
       <td className="py-3 px-3" {...isolate}>
         {o.invoiceId ? (
@@ -72,7 +76,7 @@ export function OrderRow({ order: o, actions }: OrderRowProps) {
             <i className="fa-solid fa-file-invoice" aria-hidden="true" /> Ver factura
           </button>
         ) : (
-          <span className="text-[11px] text-slate-400" title="Se factura cuando el pedido está Confirmado y Listo">—</span>
+          <span className="text-[11px] text-slate-400" title="Se factura cuando el pedido está Reservado">—</span>
         )}
       </td>
       <td className="py-3 px-4 text-right cursor-default" {...isolate}>

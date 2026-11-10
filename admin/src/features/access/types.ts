@@ -20,6 +20,8 @@ export interface RolePermissions {
   canUpdateStock: boolean
   canToggleVisibility: boolean
   canChangeOrderStatus: boolean
+  /** "Confirmar y reservar": aparta stock con vigencia (acción crítica del flujo). */
+  canReserveOrders: boolean
   /** Alta y edición de clientes del directorio. */
   canManageCustomers: boolean
   /** Eliminación de clientes (acción destructiva, más restringida). */

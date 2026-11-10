@@ -1,4 +1,4 @@
-import { OrderStatusBadge, type Order } from '@/features/sales'
+import { OrderStatusBadge, ReservationTag, type Order } from '@/features/sales'
 import { formatCurrency } from '@/shared/lib/currency'
 import { Button, DataTable, EmptyState, type TableHeader } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
@@ -20,14 +20,14 @@ interface PendingOrdersTableProps {
   onInvoice: (orderId: string) => void
 }
 
-/** Cola de pedidos "Confirmado y Listo" que aún no tienen factura. */
+/** Cola de pedidos "Reservado" (reserva vigente) que aún no tienen factura. */
 export function PendingOrdersTable({ orders, canInvoice, onInvoice }: PendingOrdersTableProps) {
   if (orders.length === 0) {
     return (
       <EmptyState
         icon="fa-solid fa-circle-check"
         title="Todo al día: no hay pedidos por facturar."
-        hint="Los pedidos aparecen aquí cuando están en estado Confirmado y Listo."
+        hint="Los pedidos aparecen aquí cuando están Reservados (con la reserva vigente)."
         {...t('billing.pending.empty')}
       />
     )
@@ -52,7 +52,10 @@ export function PendingOrdersTable({ orders, canInvoice, onInvoice }: PendingOrd
             )}
           </td>
           <td className="py-3 px-3">
-            <OrderStatusBadge status={o.status} />
+            <div className="flex flex-col items-start gap-1">
+              <OrderStatusBadge status={o.status} />
+              <ReservationTag until={o.reservedUntil} />
+            </div>
           </td>
           <td className="py-3 px-3 text-right font-black text-slate-800 dark:text-slate-100 tabular-nums">{formatCurrency(o.total)}</td>
           <td className="py-3 px-4 text-right">

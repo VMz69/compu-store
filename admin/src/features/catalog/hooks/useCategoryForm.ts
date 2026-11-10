@@ -27,7 +27,7 @@ export function useCategoryForm() {
     setSubmitted(true)
     if (Object.keys(validateCategory({ id: editing?.id, ...values }, categories)).length > 0) return
     const permission = 'canManageTaxonomy'
-    if (!ensurePermission(permission, editing ? 'Su rol no puede editar categorías' : 'Su rol no puede añadir categorías')) return
+    if (!ensurePermission(permission, editing ? 'No tienes permiso para editar categorías' : 'No tienes permiso para añadir categorías')) return
     const { category, created } = await saveCategory({
       id: editing?.id,
       name: values.name.trim(),

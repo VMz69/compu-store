@@ -79,6 +79,7 @@ export function useUsersAdmin() {
     roleFilter,
     roleOptions: [{ value: 'all', label: 'Todos los roles' }, ...ROLE_LIST.map((r) => ({ value: r.id, label: r.name }))],
     onSearch: (e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value),
+    clearSearch: () => setSearch(''),
     onRoleFilter: (e: ChangeEvent<HTMLSelectElement>) => setRoleFilter(e.target.value as 'all' | RoleId),
     toggleActive,
     promptDelete,

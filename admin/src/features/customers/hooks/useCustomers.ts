@@ -63,7 +63,7 @@ export function useCustomers() {
           : `¿Eliminar a ${customer.name} del directorio?`,
       confirmText: 'Eliminar',
       onConfirm: () => {
-        if (!ensurePermission('canDeleteCustomers', 'Su rol no puede eliminar clientes')) return
+        if (!ensurePermission('canDeleteCustomers', 'No tienes permiso para eliminar clientes')) return
         deleteCustomer(customer.id)
         toast(`Cliente ${customer.name} eliminado`, 'info')
       },
@@ -86,6 +86,7 @@ export function useCustomers() {
       typeOptions: TYPE_OPTIONS,
       statusOptions: STATUS_OPTIONS,
       onSearch: (e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value),
+      clearSearch: () => setSearch(''),
       onType: (e: ChangeEvent<HTMLSelectElement>) => setType(e.target.value as 'all' | CustomerType),
       onStatus: (e: ChangeEvent<HTMLSelectElement>) => setStatus(e.target.value as CustomerStatusFilter),
     },

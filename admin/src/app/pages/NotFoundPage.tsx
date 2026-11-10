@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useHomePath } from '@/features/access'
+import { usePageMeta } from '@/shared/hooks/usePageMeta'
 import { EmptyState, PageContainer } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
 
@@ -7,6 +8,7 @@ const t = tracer('NotFoundPage', 'src/app/pages/NotFoundPage.tsx')
 
 export function NotFoundPage() {
   const homePath = useHomePath()
+  usePageMeta({ title: 'Página no encontrada' })
 
   return (
     <PageContainer {...t('app.not-found')}>

@@ -18,7 +18,7 @@ const STATUS_OPTIONS = [
   ...(Object.keys(QUOTE_STATUS_META) as QuoteStatus[]).map((s) => ({ value: s, label: QUOTE_STATUS_META[s].label })),
 ]
 
-const DENIED = 'Su rol no puede gestionar cotizaciones'
+const DENIED = 'No tienes permiso para gestionar cotizaciones'
 
 /** Listado de cotizaciones: filtros, paginación, totales por fila y acciones. */
 export function useQuotes() {
@@ -71,7 +71,7 @@ export function useQuotes() {
    * Se respetan precios y descuentos cotizados; el stock se valida en el constructor.
    */
   const convert = (quote: Quote) => {
-    if (!ensurePermission('canChangeOrderStatus', 'Su rol no puede registrar pedidos')) return
+    if (!ensurePermission('canChangeOrderStatus', 'No tienes permiso para registrar pedidos')) return
     const current = effectiveStatus(quote, orderOf(quote.id))
     if (!isConvertible(current)) return toast(`La cotización ${quote.id} está ${QUOTE_STATUS_META[current].label.toLowerCase()}: no se puede convertir.`, 'warning')
     const { customerId, name, phone, email } = quote.customer
@@ -90,6 +90,7 @@ export function useQuotes() {
       status,
       statusOptions: STATUS_OPTIONS,
       onSearch: (e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value),
+      clearSearch: () => setSearch(''),
       onStatus: (e: ChangeEvent<HTMLSelectElement>) => setStatusFilter(e.target.value as 'all' | QuoteStatus),
     },
     openNew: () => navigate('/cotizaciones/nueva'),

@@ -21,13 +21,13 @@ export function useProductActions() {
   }
 
   const toggleVisibility = (id: string) => {
-    if (!ensurePermission('canToggleVisibility', 'Su rol no tiene permisos para cambiar visibilidad')) return
+    if (!ensurePermission('canToggleVisibility', 'No tienes permiso para cambiar visibilidad')) return
     const isActive = toggleActive(id)
     toast(`Producto ${isActive ? 'visible' : 'oculto'} en la tienda web`, 'info')
   }
 
   const adjustStock = (id: string, delta: number) => {
-    if (!ensurePermission('canUpdateStock', 'Su rol no tiene permisos para actualizar inventario')) return
+    if (!ensurePermission('canUpdateStock', 'No tienes permiso para actualizar inventario')) return
     adjust(id, delta)
     toast('Stock actualizado correctamente', 'success')
   }
@@ -38,7 +38,7 @@ export function useProductActions() {
       message: `¿Estás seguro de que deseas eliminar permanentemente "${product.name}" del inventario?`,
       confirmText: 'Eliminar',
       onConfirm: () => {
-        if (!ensurePermission('canDeleteProduct', 'Su rol no tiene permisos para eliminar registros')) return
+        if (!ensurePermission('canDeleteProduct', 'No tienes permiso para eliminar registros')) return
         remove(product.id)
         closeModal()
         toast('Producto eliminado permanentemente', 'info')

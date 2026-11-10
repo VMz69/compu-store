@@ -1,15 +1,19 @@
 import type { Order, OrderStatus, OrderStatusId } from '../types'
+import { isReservationActive } from './reservation'
 
 /**
  * Máquina de estados del pedido (regla de negocio; no es configurable como dato).
  *
- *   Registrado ──► Confirmado y Listo ──► Facturado ──► Entregado
- *        │                 │    ▲              │
- *        └──► Cancelado ◄──┘    └── anular ────┘
+ *   Registrado ──► Reservado ──► Facturado ──► Entregado
+ *     │  ▲            │   ▲            │
+ *     │  └─ vence ────┘   └── anular ──┘
+ *     └──► Cancelado ◄────┘
  *
- * - Confirmar RESERVA el stock (disponible = stock − reservado).
+ * - "Confirmar y reservar" (permiso `canReserveOrders`) RESERVA el stock con una
+ *   vigencia elegida por el usuario (ver lib/reservation.ts). Disponible = stock − reservado.
+ * - Si la reserva vence sin facturar, el pedido vuelve SOLO a Registrado (sistema).
  * - Facturar (solo desde Facturación) descuenta inventario y emite el DTE.
- * - Anular la factura devuelve el pedido a "Confirmado y Listo" (re-reserva).
+ * - Anular la factura devuelve el pedido a "Reservado" (re-reserva con vigencia por defecto).
  * - Un pedido facturado no se cancela: primero se anula su factura.
  */
 export const ORDER_STATUSES: OrderStatus[] = [
@@ -22,11 +26,11 @@ export const ORDER_STATUSES: OrderStatus[] = [
     next: ['confirmado', 'cancelado'],
   },
   {
-    id: 'confirmado', name: 'Confirmado y Listo', step: 2, icon: 'fa-box-open',
+    id: 'confirmado', name: 'Reservado', step: 2, icon: 'fa-lock',
     badgeStyle: 'bg-blue-50 text-brand border-brand/30 dark:bg-brand-950/50 dark:text-blue-300 dark:border-brand-800',
-    description: 'Pago o crédito validado y mercadería apartada y embalada, lista para facturar y entregar en mostrador o envío.',
-    effect: 'Reserva el stock: las unidades dejan de estar disponibles para otros pedidos.',
-    trigger: 'Pedidos › Confirmar (o anular la factura en Facturación)',
+    description: 'Pago o crédito validado y mercadería apartada hasta la fecha límite de la reserva, lista para facturar y entregar.',
+    effect: 'Reserva el stock hasta su vencimiento. Si vence sin facturar, el pedido vuelve a Registrado y el stock se libera.',
+    trigger: 'Pedidos › Confirmar y reservar (o anular la factura en Facturación)',
     next: ['facturado', 'cancelado'],
   },
   {
@@ -94,8 +98,6 @@ export const isOrderStatusId = (value: string): value is OrderStatusId => value 
 
 export const canTransition = (from: OrderStatusId, to: OrderStatusId): boolean => statusOf(from).next.includes(to)
 
-/** Estado que aparta inventario. */
-export const RESERVING_STATUS: OrderStatusId = 'confirmado'
 
 /** Estados que cuentan como venta efectiva (ya facturada). */
 export const SOLD_STATUSES: OrderStatusId[] = ['facturado', 'entregado']
@@ -103,11 +105,12 @@ export const SOLD_STATUSES: OrderStatusId[] = ['facturado', 'entregado']
 /** Estados en curso (aún requieren una acción del equipo). */
 export const ACTIVE_STATUSES: OrderStatusId[] = ['registrado', 'confirmado', 'facturado']
 
-export const isInvoiceable = (order: Order): boolean => order.status === 'confirmado' && !order.invoiceId
+/** Facturable: reservado, sin factura y con la reserva vigente. */
+export const isInvoiceable = (order: Order): boolean => isReservationActive(order) && !order.invoiceId
 
 /**
  * Regla de edición: un pedido se puede editar mientras no tenga factura
- * (Registrado o Confirmado y Listo). Facturado/Entregado tienen un documento
+ * (Registrado o Reservado). Facturado/Entregado tienen un documento
  * fiscal emitido y Cancelado es terminal.
  */
 export const EDITABLE_STATUSES: OrderStatusId[] = ['registrado', 'confirmado']
@@ -123,8 +126,8 @@ export function editBlockedReason(order: Order | undefined): string | null {
 export const isEditable = (order: Order): boolean => editBlockedReason(order) === null
 
 /**
- * Regla de eliminación (lógica): solo pedidos SIN factura (Registrado, Confirmado y
- * Listo o Cancelado). Un pedido facturado o entregado tiene un documento fiscal
+ * Regla de eliminación (lógica): solo pedidos SIN factura (Registrado, Reservado
+ * o Cancelado). Un pedido facturado o entregado tiene un documento fiscal
  * emitido y debe conservarse; para corregirlo se anula la factura.
  */
 export function deleteBlockedReason(order: Order | undefined): string | null {

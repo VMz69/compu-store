@@ -1,14 +1,19 @@
-import { useMemo, useState } from 'react'
+import { useDeferredValue, useMemo, useState, type ChangeEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ensurePermission, usePermission } from '@/features/access'
 import { useCatalogStore } from '@/features/catalog'
 import { askConfirm } from '@/shared/store/confirm.store'
 import { toast } from '@/shared/store/toast.store'
-import { analyzeProduct, offerStatus } from '../lib/offerPricing'
+import { matchesQuery } from '@/shared/lib/text'
+import { analyzeProduct, discountText, OFFER_STATUS_META, offerStatus } from '../lib/offerPricing'
 import { usePromotionsStore } from '../store'
 import type { Offer, OfferStatus } from '../types'
 
 export type OfferFilter = 'all' | OfferStatus
+
+const FILTER_TITLES: Record<OfferFilter, string> = {
+  all: 'Todas', vigente: 'Vigentes', programada: 'Programadas', pausada: 'Pausadas', vencida: 'Vencidas',
+}
 
 const ORDER: Record<OfferStatus, number> = { vigente: 0, programada: 1, pausada: 2, vencida: 3 }
 
@@ -21,6 +26,8 @@ export function useOffers() {
   const deleteOffer = usePromotionsStore((s) => s.deleteOffer)
   const canManage = usePermission('canManageOffers')
   const [filter, setFilter] = useState<OfferFilter>('all')
+  const [search, setSearch] = useState('')
+  const query = useDeferredValue(search)
 
   const rows = useMemo(
     () =>
@@ -33,6 +40,12 @@ export function useOffers() {
             offer,
             status: offerStatus(offer),
             productNames: items.map((p) => p.name),
+            /** Campos del buscador en tiempo real. */
+            searchFields: [
+              offer.id, offer.title, offer.badge, offer.description, OFFER_STATUS_META[offerStatus(offer)].label,
+              discountText(offer), offer.startDate, offer.endDate,
+              ...items.flatMap((p) => [p.name, p.sku, p.brand]),
+            ],
             /** Peor margen de la oferta (null si ningún producto tiene costo). */
             minMargin: margins.length ? Math.min(...margins) : null,
             belowCost: analyses.some((a) => a.level === 'below_cost'),
@@ -54,15 +67,25 @@ export function useOffers() {
       message: 'Los productos vuelven a su precio base. Los pedidos y cotizaciones ya registrados conservan su precio.',
       confirmText: 'Eliminar oferta',
       onConfirm: () => {
-        if (!ensurePermission('canManageOffers', 'Su rol no puede eliminar ofertas')) return
+        if (!ensurePermission('canManageOffers', 'No tienes permiso para eliminar ofertas')) return
         deleteOffer(offer.id)
         toast(`Oferta "${offer.title}" eliminada`, 'info')
       },
     })
   }
 
+  const visible = rows.filter((r) => (filter === 'all' || r.status === filter) && matchesQuery(r.searchFields, query))
+
   return {
-    rows: filter === 'all' ? rows : rows.filter((r) => r.status === filter),
+    rows: visible,
+    /** Área activa para la línea de ubicación de la barra (Ofertas › Vigentes). */
+    areaLabel: FILTER_TITLES[filter],
+    search: {
+      value: search,
+      onChange: (e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value),
+      clear: () => setSearch(''),
+      active: search.trim().length > 0,
+    },
     counts,
     filter,
     setFilter,
@@ -71,7 +94,7 @@ export function useOffers() {
     edit: (offer: Offer) => navigate(`/ofertas/${offer.id}/editar`),
     remove,
     togglePause: (offer: Offer) => {
-      if (!ensurePermission('canManageOffers', 'Su rol no puede modificar ofertas')) return
+      if (!ensurePermission('canManageOffers', 'No tienes permiso para modificar ofertas')) return
       const paused = togglePause(offer.id)
       toast(paused ? `Oferta "${offer.title}" pausada: rige el precio base` : `Oferta "${offer.title}" reanudada`, 'info')
     },

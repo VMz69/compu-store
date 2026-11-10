@@ -1,7 +1,7 @@
 import { ChannelsTable, FlowTable, useChannels, useFlowTable } from '@/features/sales'
-import { Button, PageContainer } from '@/shared/ui'
+import { BackLink, Button, PageContainer } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
-import { SettingsSubHeader } from '../components/SettingsSubHeader'
+import { useSettingsPageMeta } from '../hooks/useSettingsPageMeta'
 
 const t = tracer('ChannelsPage', 'src/features/settings/pages/ChannelsPage.tsx')
 
@@ -10,13 +10,13 @@ const SECTION_HINT = 'text-[11px] text-slate-400'
 
 /** Ajustes › Canales y flujo: dos tablas simples (canales de venta y estados del pedido). */
 export function ChannelsPage() {
+  useSettingsPageMeta('Canales de venta y flujo de pedidos')
   const channels = useChannels()
   const flow = useFlowTable()
 
   return (
     <PageContainer spacing="space-y-6" {...t('settings.channels-page')}>
-      <SettingsSubHeader section="Canales y flujo" title="Canales de venta y flujo de pedidos" icon="fa-solid fa-diagram-project text-brand" />
-
+      <BackLink to="/ajustes" label="Ajustes" {...t('settings.back')} />
       <section className="space-y-3" {...t('settings.channels')}>
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>

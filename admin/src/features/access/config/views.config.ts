@@ -36,7 +36,8 @@ export const VIEW_CATALOG: ViewDefinition[] = [
   {
     id: 'pedidos', label: 'Pedidos', icon: 'fa-solid fa-cart-shopping',
     actions: [
-      { permission: 'canChangeOrderStatus', label: 'Registrar y gestionar pedidos', description: 'Crear, editar, confirmar, entregar y cancelar pedidos.' },
+      { permission: 'canChangeOrderStatus', label: 'Registrar y gestionar pedidos', description: 'Crear, editar, entregar y cancelar pedidos.' },
+      { permission: 'canReserveOrders', label: 'Confirmar y reservar', description: 'Aparta el stock del pedido hasta una fecha límite (máx. 15 días).' },
       { permission: 'canDeleteOrders', label: 'Eliminar pedidos', description: 'Eliminación lógica de pedidos sin factura.' },
     ],
   },

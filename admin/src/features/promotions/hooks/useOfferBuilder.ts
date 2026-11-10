@@ -3,16 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ensurePermission } from '@/features/access'
 import { useCatalogStore, type Product } from '@/features/catalog'
 import { useFormState } from '@/shared/hooks/useFormState'
+import { addDaysISO } from '@/shared/lib/date'
 import { toast } from '@/shared/store/toast.store'
 import { analyzeProduct, offerStatus, today, validateOffer } from '../lib/offerPricing'
 import { usePromotionsStore } from '../store'
 import type { DiscountType } from '../types'
-
-const addDays = (iso: string, days: number) => {
-  const d = new Date(`${iso}T00:00:00`)
-  d.setDate(d.getDate() + days)
-  return d.toISOString().slice(0, 10)
-}
 
 /**
  * Constructor de ofertas (/ofertas/nueva y /ofertas/:offerId/editar).
@@ -38,7 +33,7 @@ export function useOfferBuilder() {
     discountType: editing?.discountType ?? 'percent',
     discountValue: editing ? String(editing.discountValue) : '10',
     startDate: editing?.startDate ?? start,
-    endDate: editing?.endDate ?? addDays(start, 14),
+    endDate: editing?.endDate ?? addDaysISO(start, 14),
   })
   const type = values.discountType as DiscountType
   const value = Number(values.discountValue.replace(',', '.'))
@@ -52,7 +47,7 @@ export function useOfferBuilder() {
   const submit = async () => {
     setSubmitted(true)
     if (Object.keys(validateOffer(input, analyses, offers)).length > 0) return toast('Revisa los datos de la oferta.', 'warning')
-    if (!ensurePermission('canManageOffers', 'Su rol no puede gestionar ofertas')) return
+    if (!ensurePermission('canManageOffers', 'No tienes permiso para gestionar ofertas')) return
     const { offer, created } = await saveOffer({
       id: editing?.id, title: values.title.trim(), badge: values.badge.trim(), description: values.description.trim(),
       productIds, discountType: type, discountValue: value, startDate: values.startDate, endDate: values.endDate,
@@ -68,6 +63,8 @@ export function useOfferBuilder() {
     /** Una oferta vencida es historial: solo lectura. */
     readOnly: editing ? offerStatus(editing) === 'vencida' : false,
     bind,
+    /** Para limitar el calendario de "Hasta" (no antes del inicio). */
+    startDate: values.startDate,
     discountType: type,
     setDiscountType: (next: DiscountType) => setField('discountType', next),
     errors,

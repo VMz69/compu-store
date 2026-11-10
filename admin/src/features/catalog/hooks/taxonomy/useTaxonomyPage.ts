@@ -21,6 +21,8 @@ export function useTaxonomyPage() {
 
   return {
     tab,
+    /** Área activa para la línea de ubicación de la barra (Categorías y marcas › Marcas). */
+    areaLabel: tab === 'marcas' ? 'Marcas' : 'Categorías',
     selectTab: (next: TaxonomyTab) => setParams(next === 'marcas' ? { tab: 'marcas' } : {}, { replace: true }),
     counts: { categorias: categoryCount, marcas: brandCount },
     search: search[tab],
@@ -32,4 +34,5 @@ export function useTaxonomyPage() {
   }
 }
 
-export type TaxonomyPageApi = ReturnType<typeof useTaxonomyPage>
+/** La página agrega `resultCount` (resultados visibles de la pestaña activa). */
+export type TaxonomyPageApi = ReturnType<typeof useTaxonomyPage> & { resultCount: number }

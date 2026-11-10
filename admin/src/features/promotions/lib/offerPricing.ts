@@ -1,3 +1,4 @@
+import { toLocalISO } from '@/shared/lib/date'
 import { money } from '@/shared/lib/pricing'
 import type { Product } from '@/features/catalog'
 import type { DiscountType, Offer, OfferStatus } from '../types'
@@ -11,9 +12,8 @@ import type { DiscountType, Offer, OfferStatus } from '../types'
 /** Margen mínimo recomendado: por debajo se advierte (no se bloquea). */
 export const MIN_MARGIN_PERCENT = 5
 
-/** Fecha local de hoy "YYYY-MM-DD". */
-export const today = (date = new Date()): string =>
-  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+/** Fecha local de hoy "YYYY-MM-DD" (helper compartido; acepta una fecha para pruebas). */
+export const today = (date = new Date()): string => toLocalISO(date)
 
 export function offerStatus(offer: Pick<Offer, 'startDate' | 'endDate' | 'paused'>, now = today()): OfferStatus {
   if (offer.endDate < now) return 'vencida'
@@ -27,6 +27,10 @@ export const OFFER_STATUS_META: Record<OfferStatus, { label: string; tone: 'succ
   pausada: { label: 'Pausada', tone: 'warning' },
   vencida: { label: 'Vencida', tone: 'neutral' },
 }
+
+/** Descuento legible para listas y búsqueda: "15%" o "$25.00". */
+export const discountText = (offer: Pick<Offer, 'discountType' | 'discountValue'>): string =>
+  offer.discountType === 'percent' ? `${offer.discountValue}%` : `$${offer.discountValue.toFixed(2)}`
 
 /** Precio con el descuento aplicado (nunca negativo). */
 export const discountedPrice = (base: number, type: DiscountType, value: number): number =>

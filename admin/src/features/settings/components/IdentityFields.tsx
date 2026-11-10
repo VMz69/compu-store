@@ -73,3 +73,31 @@ export function TaxpayerFields({ f }: FieldsProps) {
     </section>
   )
 }
+
+/** Semilla del correlativo de facturas: desde qué número continúa la numeración. */
+export function InvoiceNumberingFields({ f }: FieldsProps) {
+  const { bind, errors: e, invoicing } = f
+  return (
+    <section className="space-y-3 pt-4 border-t border-slate-100 dark:border-slate-800" {...t('settings.identity.invoicing')}>
+      <div>
+        <h4 className={SECTION}>3 · Numeración de facturas</h4>
+        <p className={HINT}>Correlativo interno de la factura. Déjalo vacío para continuar la secuencia actual.</p>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+        <Field label="Próximo número de factura" variant="caps" error={e.invoiceSeed} hint="Opcional · solo puede adelantar la numeración">
+          <Input tone="muted" inputMode="numeric" maxLength={6} placeholder={invoicing.next ?? 'Ej. 015800'} invalid={Boolean(e.invoiceSeed)} {...bind('invoiceSeed')} {...t('settings.identity.invoice-seed')} />
+        </Field>
+        <dl className="md:col-span-2 grid grid-cols-2 gap-3 text-xs" aria-live="polite">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+            <dt className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Último emitido</dt>
+            <dd className="font-black font-mono text-slate-700 dark:text-slate-200">{invoicing.lastIssued ?? '—'}</dd>
+          </div>
+          <div className="p-3 rounded-xl bg-brand-50/60 dark:bg-brand/10 border border-brand/20">
+            <dt className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Próxima factura</dt>
+            <dd className="font-black font-mono text-brand">{invoicing.next ?? '—'}</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+  )
+}

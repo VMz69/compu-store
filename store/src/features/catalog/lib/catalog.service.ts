@@ -70,6 +70,8 @@ const sortProducts = (items: Product[], sortBy: ProductFilters['sortBy']): Produ
 
 /**
  * Punto único de filtrado + ordenamiento del catálogo.
+ * TODO(API): antes de filtrar, aplicar `applyReservations` (lib/reservations.api.ts) para
+ * ocultar productos sin disponible por reservas del back office.
  * `onlyOffers` considera oferta solo si existe `originalPrice` mayor al precio actual.
  */
 export const filterAndSort = (

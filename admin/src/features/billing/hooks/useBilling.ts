@@ -1,13 +1,14 @@
-import { useEffect, useMemo, useState, type ChangeEvent } from 'react'
+import { useDeferredValue, useEffect, useMemo, useState, type ChangeEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { ensurePermission, usePermission, useSession } from '@/features/access'
 import { restoreStock } from '@/features/catalog'
-import { findOrder, isInvoiceable, setOrderInvoice, useSalesStore } from '@/features/sales'
+import { findOrder, isInvoiceable, orderSearchFields, orderStatusName, setOrderInvoice, useSalesStore } from '@/features/sales'
 import { usePagination } from '@/shared/hooks/usePagination'
+import { matchesQuery } from '@/shared/lib/text'
 import { askConfirm } from '@/shared/store/confirm.store'
 import { openModal } from '@/shared/store/modal.store'
 import { toast } from '@/shared/store/toast.store'
-import { filterInvoices, INVOICE_STATUS_META, invoiceTotals, stockLines } from '../lib/invoice.service'
+import { filterInvoices, INVOICE_STATUS_META, invoiceTotals, lastInternalNumber, stockLines } from '../lib/invoice.service'
 import { BILLING_MODALS } from '../modals'
 import { useBillingStore } from '../store'
 import type { Invoice, InvoiceStatus } from '../types'
@@ -31,7 +32,10 @@ const STATUS_OPTIONS = [
 export function useBilling() {
   const [params, setParams] = useSearchParams()
   const [tab, setTab] = useState<BillingTab>(() => (params.has('factura') ? 'issued' : 'pending'))
-  const [search, setSearch] = useState('')
+  // Un texto de búsqueda por pestaña: cambiar de pestaña no pierde lo escrito.
+  const [queries, setQueries] = useState<Record<BillingTab, string>>({ pending: '', issued: '' })
+  const pendingQuery = useDeferredValue(queries.pending)
+  const issuedQuery = useDeferredValue(queries.issued)
   const [status, setStatus] = useState<'all' | InvoiceStatus>('all')
   const orders = useSalesStore((s) => s.orders)
   const invoices = useBillingStore((s) => s.invoices)
@@ -48,16 +52,20 @@ export function useBilling() {
     setParams({}, { replace: true })
   }, [params, setParams])
 
-  const pending = useMemo(() => orders.filter(isInvoiceable), [orders])
-  const issuedRows = useMemo(
-    () => filterInvoices(invoices, search, status).map((invoice) => ({ invoice, totals: invoiceTotals(invoice.items) })),
-    [invoices, search, status],
+  const allPending = useMemo(() => orders.filter(isInvoiceable), [orders])
+  const pending = useMemo(
+    () => allPending.filter((o) => matchesQuery(orderSearchFields(o, orderStatusName(o.status)), pendingQuery)),
+    [allPending, pendingQuery],
   )
-  const { pageItems, pagination } = usePagination(issuedRows, { pageSizeOptions: INVOICE_PAGE_SIZES, resetKey: `${search}|${status}` })
+  const issuedRows = useMemo(
+    () => filterInvoices(invoices, issuedQuery, status).map((invoice) => ({ invoice, totals: invoiceTotals(invoice.items) })),
+    [invoices, issuedQuery, status],
+  )
+  const { pageItems, pagination } = usePagination(issuedRows, { pageSizeOptions: INVOICE_PAGE_SIZES, resetKey: `${issuedQuery}|${status}` })
   const active = invoices.filter((i) => i.status === 'emitida')
 
   /**
-   * Anular: repone el inventario y devuelve el pedido a "Confirmado y Listo"
+   * Anular: repone el inventario y devuelve el pedido a "Reservado" (vigencia por defecto)
    * (su stock queda reservado de nuevo). Regla: si el pedido ya se entregó,
    * no se anula desde aquí (requeriría un flujo de devolución).
    */
@@ -68,10 +76,10 @@ export function useBilling() {
     const units = invoiceTotals(invoice.items).units
     askConfirm({
       title: 'Anular factura',
-      message: `Se anulará la factura ${invoice.internalId} (${invoice.receptor.name}). Se repondrán ${units} unidad(es) al inventario y el pedido ${invoice.orderId} volverá a "Confirmado y Listo" con su stock reservado, para facturarse de nuevo o cancelarse.`,
+      message: `Se anulará la factura ${invoice.internalId} (${invoice.receptor.name}). Se repondrán ${units} unidad(es) al inventario y el pedido ${invoice.orderId} volverá a "Reservado" por 3 días, para facturarse de nuevo o cancelarse.`,
       confirmText: 'Anular factura',
       onConfirm: () => {
-        if (!ensurePermission('canInvoice', 'Su rol no puede anular facturas')) return
+        if (!ensurePermission('canInvoice', 'No tienes permiso para anular facturas')) return
         voidInvoice(invoice.id)
         // Solo productos: los cargos extra (envío, instalación…) no son inventario.
         restoreStock(stockLines(invoice.items))
@@ -92,16 +100,24 @@ export function useBilling() {
     pagination,
     issuedCount: issuedRows.length,
     summary: {
-      pendingCount: pending.length,
-      pendingAmount: pending.reduce((acc, o) => acc + o.total, 0),
+      pendingCount: allPending.length,
+      pendingAmount: allPending.reduce((acc, o) => acc + o.total, 0),
       issuedCount: active.length,
       billedTotal: active.reduce((acc, i) => acc + invoiceTotals(i.items).total, 0),
     },
+    /** Área activa para la línea de ubicación de la barra. */
+    areaLabel: tab === 'pending' ? 'Por facturar' : 'Facturas emitidas',
+    /** Buscador en tiempo real de la pestaña activa. */
+    search: {
+      value: queries[tab],
+      onChange: (e: ChangeEvent<HTMLInputElement>) => setQueries((q) => ({ ...q, [tab]: e.target.value })),
+      clear: () => setQueries((q) => ({ ...q, [tab]: '' })),
+      active: queries[tab].trim().length > 0,
+      resultCount: tab === 'pending' ? pending.length : issuedRows.length,
+    },
     filters: {
-      search,
       status,
       statusOptions: STATUS_OPTIONS,
-      onSearch: (e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value),
       onStatus: (e: ChangeEvent<HTMLSelectElement>) => setStatus(e.target.value as 'all' | InvoiceStatus),
     },
     openEmit: (orderId: string) => openModal(BILLING_MODALS.emit, orderId),
@@ -111,3 +127,9 @@ export function useBilling() {
 }
 
 export type BillingApi = ReturnType<typeof useBilling>
+
+/** Último correlativo interno emitido (implementa el puerto de Ajustes). */
+export function useLastIssuedInvoiceNumber(): number {
+  const invoices = useBillingStore((s) => s.invoices)
+  return lastInternalNumber(invoices)
+}

@@ -40,7 +40,7 @@ export function useBrandsTab(search: string) {
       message: 'La marca no tiene productos asociados y dejará de ofrecerse en el formulario de productos.',
       confirmText: 'Eliminar marca',
       onConfirm: () => {
-        if (!ensurePermission('canManageTaxonomy', 'Su rol no puede eliminar marcas')) return
+        if (!ensurePermission('canManageTaxonomy', 'No tienes permiso para eliminar marcas')) return
         try {
           deleteBrand(brand.id)
           toast(`Marca "${brand.name}" eliminada`, 'info')
@@ -59,7 +59,7 @@ export function useBrandsTab(search: string) {
     edit: (brand: Brand) => openModal(CATALOG_MODALS.brandForm, brand),
     remove,
     toggle: (brand: Brand) => {
-      if (!ensurePermission('canManageTaxonomy', 'Su rol no puede modificar marcas')) return
+      if (!ensurePermission('canManageTaxonomy', 'No tienes permiso para modificar marcas')) return
       const active = toggleBrand(brand.id)
       toast(active ? `Marca "${brand.name}" activada` : `Marca "${brand.name}" desactivada: ya no se ofrece en productos nuevos`, 'info')
     },

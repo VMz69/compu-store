@@ -52,7 +52,7 @@ export function useCustomerForm() {
     event.preventDefault()
     setSubmitted(true)
     if (Object.keys(validateCustomer(values, customers)).length > 0) return
-    if (!ensurePermission('canManageCustomers', 'Su rol no puede gestionar clientes')) return
+    if (!ensurePermission('canManageCustomers', 'No tienes permiso para gestionar clientes')) return
     const result = await saveCustomer({
       id: values.id || undefined,
       type: values.type as CustomerType,

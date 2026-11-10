@@ -41,7 +41,7 @@ export function useCategoriesTab(search: string) {
       message: 'La categoría no tiene productos. Dejará de mostrarse en el catálogo y en el Front Office.',
       confirmText: 'Eliminar categoría',
       onConfirm: () => {
-        if (!ensurePermission('canManageTaxonomy', 'Su rol no puede eliminar categorías')) return
+        if (!ensurePermission('canManageTaxonomy', 'No tienes permiso para eliminar categorías')) return
         try {
           deleteCategory(category.id)
           toast(`Categoría "${category.name}" eliminada`, 'info')

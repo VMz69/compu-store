@@ -1,11 +1,9 @@
 import { useNavigate } from 'react-router-dom'
 import { ensurePermission, usePermission, useSession } from '@/features/access'
-import { getCatalogSnapshot } from '@/features/catalog'
 import { askConfirm } from '@/shared/store/confirm.store'
 import { openModal } from '@/shared/store/modal.store'
 import { toast } from '@/shared/store/toast.store'
 import { ACTION_TARGET, availableActions, deleteBlockedReason, isDeletable, statusOf, type OrderAction } from '../lib/orderFlow'
-import { describeShortages, findShortages, reservedByProduct } from '../lib/stock'
 import { SALES_MODALS } from '../modals'
 import { useSalesStore } from '../store'
 import type { Order } from '../types'
@@ -18,13 +16,13 @@ export interface OrderActionButton {
 }
 
 const BUTTONS: Record<OrderAction, Omit<OrderActionButton, 'action'>> = {
-  confirm: { label: 'Confirmar', icon: 'fa-solid fa-box-open', tone: 'primary' },
+  confirm: { label: 'Confirmar y reservar', icon: 'fa-solid fa-lock', tone: 'primary' },
   invoice: { label: 'Facturar', icon: 'fa-solid fa-file-invoice-dollar', tone: 'primary' },
   deliver: { label: 'Entregar', icon: 'fa-solid fa-truck-ramp-box', tone: 'primary' },
   cancel: { label: 'Cancelar', icon: 'fa-solid fa-ban', tone: 'danger' },
 }
 
-const DENIED = 'Su rol no puede modificar el estado de pedidos'
+const DENIED = 'No tienes permiso para gestionar pedidos.'
 
 /**
  * Comandos del flujo de pedidos con validación de permisos y reglas de negocio.
@@ -36,22 +34,18 @@ export function useOrderActions() {
   const transition = useSalesStore((s) => s.transition)
   const deleteOrder = useSalesStore((s) => s.deleteOrder)
   const canChangeStatus = usePermission('canChangeOrderStatus')
+  const canReserve = usePermission('canReserveOrders')
   const canDeleteOrders = usePermission('canDeleteOrders')
   const canInvoice = usePermission('canInvoice')
   const by = user?.name ?? 'Equipo CompuStore'
 
-  /** Confirmar = reservar stock. Se revalida con los datos más recientes. */
-  const confirm = (order: Order): boolean => {
-    if (!ensurePermission('canChangeOrderStatus', DENIED)) return false
-    const orders = useSalesStore.getState().orders
-    const shortages = findShortages(order.items, getCatalogSnapshot().products, reservedByProduct(orders, order.id))
-    if (shortages.length) {
-      toast(`No se puede confirmar ${order.id}: stock insuficiente. ${describeShortages(shortages)}`, 'warning')
-      return false
-    }
-    const ok = transition(order.id, ACTION_TARGET.confirm, by)
-    if (ok) toast(`Pedido ${order.id} confirmado · stock reservado`, 'success')
-    return ok
+  /**
+   * "Confirmar y reservar": abre el modal donde se elige la vigencia de la reserva.
+   * La validación de stock y el cambio de estado ocurren al confirmar (useReserveOrder).
+   */
+  const confirm = (order: Order) => {
+    if (!ensurePermission('canReserveOrders', 'No tienes permiso para confirmar y reservar pedidos.')) return
+    openModal(SALES_MODALS.reserveOrder, order.id)
   }
 
   const deliver = (order: Order) => {
@@ -89,7 +83,7 @@ export function useOrderActions() {
       confirmText: 'Eliminar pedido',
       reason: { label: 'Motivo de la eliminación', placeholder: 'Ej. Pedido duplicado por error', minLength: 5 },
       onConfirm: (reason) => {
-        if (!ensurePermission('canDeleteOrders', 'Su rol no puede eliminar pedidos')) return
+        if (!ensurePermission('canDeleteOrders', 'No tienes permiso para eliminar pedidos')) return
         try {
           deleteOrder(order.id, by, reason)
           toast(`Pedido ${order.id} eliminado`, 'info')
@@ -114,7 +108,7 @@ export function useOrderActions() {
   /** Botones aplicables al pedido según su estado y los permisos del rol. */
   const actionsFor = (order: Order): OrderActionButton[] =>
     availableActions(order)
-      .filter((a) => (a === 'invoice' ? canInvoice : canChangeStatus))
+      .filter((a) => (a === 'invoice' ? canInvoice : a === 'confirm' ? canReserve : canChangeStatus))
       .map((action) => ({ action, ...BUTTONS[action] }))
 
   return {

@@ -1,4 +1,4 @@
-import { Button, CardTitle, DataTable, EmptyState, SearchInput, Select, type TableHeader } from '@/shared/ui'
+import { BackLink, Button, DataTable, EmptyState, ListToolbar, LiveSearch, PageContainer, Select, type TableHeader } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
 import { useUsersAdmin } from '../../hooks/useUsersAdmin'
 import { UserRow } from './UserRow'
@@ -14,53 +14,48 @@ const HEADERS: TableHeader[] = [
 ]
 const ACTIONS_HEADER: TableHeader = { label: 'Acciones', className: 'px-4 text-right' }
 
-/** Directorio de usuarios del sistema con búsqueda, filtro por rol y CRUD. */
+/** Directorio de usuarios: barra estándar (buscador · rol ··· conteo · alta) + tabla. Sin título propio. */
 export function UsersSection() {
   const admin = useUsersAdmin()
   const headers = admin.canManage ? [...HEADERS, ACTIONS_HEADER] : HEADERS
 
   return (
-    <section className="space-y-3" {...t('settings.users')}>
-      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-3">
-        <div>
-          <CardTitle>Usuarios del sistema</CardTitle>
-          <p className="text-[11px] text-slate-400">
-            {admin.activeCount} activos de {admin.total}. Cada usuario inicia sesión con su correo y contraseña.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <SearchInput
+    <>
+      <ListToolbar
+        traceId="settings.users"
+        back={<BackLink to="/ajustes" label="Ajustes" {...t('settings.back')} />}
+        search={
+          <LiveSearch
             value={admin.search}
             onChange={admin.onSearch}
-            placeholder="Buscar por nombre, correo o teléfono…"
+            onClear={admin.clearSearch}
+            resultCount={admin.rows.length}
+            placeholder="Buscar nombre, correo o teléfono…"
             aria-label="Buscar usuarios"
             {...t('settings.users.search')}
           />
-          <Select
-            tone="filter"
-            options={admin.roleOptions}
-            value={admin.roleFilter}
-            onChange={admin.onRoleFilter}
-            aria-label="Filtrar por rol"
-            {...t('settings.users.role-filter')}
-          />
-          {admin.canManage && (
+        }
+        filters={<Select tone="filter" options={admin.roleOptions} value={admin.roleFilter} onChange={admin.onRoleFilter} aria-label="Filtrar por rol" {...t('settings.users.role-filter')} />}
+        aside={<span className="hidden md:inline text-[11px] font-bold text-slate-400 tabular-nums">{admin.activeCount} activos de {admin.total}</span>}
+        action={
+          admin.canManage && (
             <Button icon="fa-solid fa-user-plus" onClick={admin.openCreate} {...t('settings.users.create')}>
               Nuevo usuario
             </Button>
-          )}
-        </div>
-      </div>
-
-      {admin.rows.length === 0 ? (
-        <EmptyState icon="fa-solid fa-user-slash" title="Ningún usuario coincide con la búsqueda." className="py-10" />
-      ) : (
-        <DataTable headers={headers} {...t('settings.users.table')}>
-          {admin.rows.map((row) => (
-            <UserRow key={row.user.id} row={row} actions={admin} />
-          ))}
-        </DataTable>
-      )}
-    </section>
+          )
+        }
+      />
+      <PageContainer className="flex-1 min-h-0" {...t('settings.users.content')}>
+        {admin.rows.length === 0 ? (
+          <EmptyState icon="fa-solid fa-user-slash" title="Ningún usuario coincide con la búsqueda." className="py-10" />
+        ) : (
+          <DataTable headers={headers} {...t('settings.users.table')}>
+            {admin.rows.map((row) => (
+              <UserRow key={row.user.id} row={row} actions={admin} />
+            ))}
+          </DataTable>
+        )}
+      </PageContainer>
+    </>
   )
 }

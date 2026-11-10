@@ -5,6 +5,7 @@ import { tracer } from '@/ui-traceability'
 import type { ProductActions } from '../../hooks/useProductActions'
 import type { Product } from '../../types'
 import { StockBadge } from '../StockBadge'
+import { ReservedBadge } from '../ReservedBadge'
 import { StockStepper } from '../StockStepper'
 
 const t = tracer('CardBody', 'src/features/catalog/components/grid/CardBody.tsx')
@@ -41,7 +42,10 @@ export function CardBody({ product: p, actions }: CardBodyProps) {
               </span>
             )}
           </div>
-          <StockBadge stock={p.stock} active={p.active} reorderPoint={p.reorderPoint} />
+          <div className="flex flex-col items-end gap-1">
+            <StockBadge stock={p.stock} active={p.active} reorderPoint={p.reorderPoint} />
+            <ReservedBadge productId={p.id} stock={p.stock} />
+          </div>
         </div>
 
         <div

@@ -32,7 +32,7 @@ export function useBrandForm() {
     setSubmitted(true)
     if (Object.keys(validateBrand(fields, brands)).length > 0) return
     const permission = 'canManageTaxonomy'
-    if (!ensurePermission(permission, editing ? 'Su rol no puede editar marcas' : 'Su rol no puede añadir marcas')) return
+    if (!ensurePermission(permission, editing ? 'No tienes permiso para editar marcas' : 'No tienes permiso para añadir marcas')) return
     const { brand, created, renamed } = await saveBrand({
       id: editing?.id,
       name: values.name.trim(),

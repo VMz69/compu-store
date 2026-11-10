@@ -1,14 +1,14 @@
 import { Button, EmptyState, Pagination } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
-import { OrderStatusTabs } from '../components/OrderStatusTabs'
 import { OrdersTable } from '../components/orders/OrdersTable'
+import { OrdersToolbar } from '../components/orders/OrdersToolbar'
 import { useOrderActions } from '../hooks/useOrderActions'
 import { usePaginatedOrders } from '../hooks/usePaginatedOrders'
 
 const t = tracer('OrdersPage', 'src/features/sales/pages/OrdersPage.tsx')
 
 export function OrdersPage() {
-  const { orders, totalCount, pagination, sort, onSort } = usePaginatedOrders()
+  const { orders, totalCount, pagination, sort, onSort, search } = usePaginatedOrders()
   const actions = useOrderActions()
 
   const createButton = (label: string, size: 'sm' | 'md', id: string) =>
@@ -20,23 +20,27 @@ export function OrdersPage() {
 
   return (
     <div className="flex flex-col h-full animate-fade-in" {...t('sales.orders')}>
-      <div
-        className="px-5 py-3 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-        {...t('sales.toolbar')}
-      >
-        <OrderStatusTabs />
-        {createButton('Nuevo Pedido', 'sm', 'sales.toolbar.create')}
-      </div>
+      <OrdersToolbar search={search} resultCount={totalCount} createButton={createButton('Nuevo pedido', 'sm', 'sales.toolbar.create')} />
 
       {/* `key` por página: al cambiar de página el contenedor se remonta y el scroll vuelve arriba. */}
       <div key={pagination.page} className="flex-1 p-5 overflow-y-auto custom-scrollbar" {...t('sales.orders.content')}>
         {totalCount === 0 ? (
-          <EmptyState
-            icon="fa-solid fa-receipt"
-            title="No hay órdenes registradas bajo este filtro."
-            action={createButton('Registrar el primer pedido', 'md', 'sales.empty.create')}
-            {...t('sales.empty')}
-          />
+          search.active ? (
+            <EmptyState
+              icon="fa-solid fa-magnifying-glass"
+              title={`Sin pedidos para «${search.value.trim()}».`}
+              hint="Prueba con otras palabras o cambia la pestaña de estado."
+              action={<Button variant="outline" size="md" onClick={search.clear} {...t('sales.search.clear')}>Limpiar búsqueda</Button>}
+              {...t('sales.search.empty')}
+            />
+          ) : (
+            <EmptyState
+              icon="fa-solid fa-receipt"
+              title="No hay órdenes registradas bajo este filtro."
+              action={createButton('Registrar el primer pedido', 'md', 'sales.empty.create')}
+              {...t('sales.empty')}
+            />
+          )
         ) : (
           <OrdersTable orders={orders} actions={actions} sort={sort} onSort={onSort} />
         )}

@@ -48,7 +48,7 @@ export function useUserAccess(userId: number) {
     if (!user || lockedReason) return
     const error = validateAccess(draft)
     if (error) return toast(error, 'warning')
-    if (!ensurePermission('canManageUsers', 'Su rol no puede gestionar accesos')) return
+    if (!ensurePermission('canManageUsers', 'No tienes permiso para gestionar accesos')) return
     await updateAccess(user.id, draft)
     toast(`Accesos de ${user.name} actualizados`, 'success')
   }

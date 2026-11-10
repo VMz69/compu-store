@@ -3,7 +3,7 @@
 > **Objetivo:** prototipo funcional con datos dummy (inventario, pedidos, facturación, CRM, ofertas, moderación) con trazabilidad desactivable.
 > **Stack:** React 19 · Vite 8 · TS 7 (`tsc`) + TS 6 (tooling) · Tailwind v4 · React Router 7 · Zustand 5 · jsPDF
 > **Fuente visual:** `mocksUI-base/compustore_sv_back_office.html` · **Gemelo:** [`store/arch-fronOffice.md`](../store/arch-fronOffice.md)
-> **Última auditoría:** 2026-11-10 — `tsc`, `eslint src` y `vite build` sin errores; migraciones de datos verificadas (§10).
+> **Última auditoría:** 2026-11-10 (3.ª) — `tsc`, `eslint .` y `vite build` sin errores; límites de líneas cumplidos; trazabilidad completa; un único buscador (`LiveSearch` + `matchesQuery`) en todo el panel; migraciones (§10) y prueba de regresión de flujos (§12) en verde.
 
 ---
 
@@ -34,6 +34,11 @@
 8. **Documentos con snapshot:** pedidos, cotizaciones y facturas copian precios, cliente y emisor al emitirse; editar catálogo, clientes o ajustes no altera lo emitido.
 9. **Nada se borra si tiene historial:** se bloquea con motivo y se ofrece la alternativa (desactivar, reasignar, anular primero) o se usa **eliminación lógica** (pedidos).
 10. **Cambios de esquema persistido** suben `version` del store y traen `migrate` (§10).
+11. **Ventanas emergentes en portal** (`useAnchoredPopover`): calendarios y menús anclados se dibujan en `document.body` con posición fija, para que no los recorten paneles con scroll ni modales; Escape cierra solo la ventana emergente.
+12. **Fechas de negocio = fechas locales `YYYY-MM-DD`** (`shared/lib/date`: `todayISO`, `addDaysISO`, `formatLongISO`…). Nunca `toISOString()` para un día local (en El Salvador, UTC−6, desplaza la fecha).
+13. **Sin selectores nativos de fecha:** se usa `DatePicker`/`Calendar` (tema claro/oscuro, teclado completo, límites).
+14. **Barra de listados (`ListToolbar`, disposición única):** franja de ancho completo bajo la Topbar; arriba, línea de ubicación opcional (*Vista › Área*); debajo, **izquierda: [Áreas (`SegmentedTabs`)] [Filtros]** ··· **derecha: [Auxiliar] [Buscador (`LiveSearch`)] [Acción principal]**. El buscador va siempre a la derecha: es el último elemento de la fila, salvo que exista una acción principal, que entonces cierra la fila. Ancho del buscador: `sm:w-80 xl:w-96`. En pantallas angostas el grupo derecho baja a su propia fila y el buscador ocupa el ancho disponible. Aplicado en Productos, Pedidos, Facturación, Clientes, Categorías y marcas, Ofertas, Cotizaciones, Comentarios y Usuarios. Todas las búsquedas usan `matchesQuery`.
+15. **Título único de la vista (h1) solo en la barra superior.** Las páginas no repiten su título ni usan encabezados propios. Vistas principales: nombre del menú (`VIEW_CATALOG`). Las pestañas/áreas **no** cambian el título de la Topbar: la ubicación del área (*Ofertas › Vigentes*) se muestra en la línea `context` de la `ListToolbar`, con la etiqueta expuesta por el hook dueño del área (`areaLabel`/`activeLabel`). Sub-vistas: `usePageMeta({ title, crumbs, backTo, badge })`; la Topbar muestra ruta, botón volver y etiqueta, y actualiza `document.title`. **Excepción, Ajustes:** `useSettingsPageMeta(title)` deja solo el título en la Topbar; el regreso va **dentro del contenido**, discreto, en la esquina superior izquierda (`BackLink`: “‹ Ajustes”, “‹ Usuarios” en Accesos; en vistas con `ListToolbar`, en su fila superior vía `back`). El atajo de Ajustes de la Topbar también queda resaltado y vuelve al hub.
 
 ---
 
@@ -75,7 +80,7 @@ const t = tracer('ProductCard', 'src/features/catalog/components/grid/ProductCar
 | **Super Administrador** | = **Administrador de Sistema** (`sistemas@`). Acceso total siempre; sus accesos no se editan. Debe existir al menos uno activo (`userRules.ts`). El dueño (`propietario@`) usa la plantilla Gerencia. |
 | **Salvaguardas** | Nadie edita sus propios accesos; mínimo una vista; editar requiere `canManageUsers` (si no, la pantalla queda en solo lectura). |
 
-Permisos por vista: Productos (`canCreateProduct`, `canEditProduct`, `canDeleteProduct`, `canUpdateStock`, `canToggleVisibility`) · Pedidos (`canChangeOrderStatus`, `canDeleteOrders`) · Facturación (`canInvoice`) · Clientes (`canManageCustomers`, `canDeleteCustomers`) · Categorías y marcas (`canManageTaxonomy`) · Ofertas (`canManageOffers`) · Cotizaciones (`canManageQuotes`) · Comentarios (`canModerateReviews`) · Ajustes (`canManageUsers`, `canEditSettings`). Tablero: solo consulta.
+Permisos por vista: Productos (`canCreateProduct`, `canEditProduct`, `canDeleteProduct`, `canUpdateStock`, `canToggleVisibility`) · Pedidos (`canChangeOrderStatus`, **`canReserveOrders`** = Confirmar y reservar, `canDeleteOrders`) · Facturación (`canInvoice`) · Clientes (`canManageCustomers`, `canDeleteCustomers`) · Categorías y marcas (`canManageTaxonomy`) · Ofertas (`canManageOffers`) · Cotizaciones (`canManageQuotes`) · Comentarios (`canModerateReviews`) · Ajustes (`canManageUsers`, `canEditSettings`). Tablero: solo consulta.
 
 ---
 
@@ -89,12 +94,12 @@ src/
 │   ├── router.tsx · nav.config.ts (desde VIEW_CATALOG) · RootLayout · Overlays · ModalHost
 │   ├── guards/                  RequireAuth · RequireView · HomeRedirect
 │   ├── hooks/                   useNavItems · useLayout (sidebar, topbar, atajos)
-│   └── layout/                  AdminLayout · sidebar/ (nav, perfil, cerrar sesión) · topbar/ (tema, atajo Ajustes)
+│   └── layout/                  AdminLayout (monta el barrido de reservas) · sidebar/ (nav, perfil, cerrar sesión) · topbar/ (TopbarTitle = título único, tema, atajo Ajustes)
 ├── shared/                      sin lógica de negocio
-│   ├── ui/                      primitivas (Button, Modal, DataTable ordenable, ExtraChargesEditor, LineItemsEditor…)
-│   ├── hooks/                   useFormState · useLineItems · useExtraCharges · usePagination · useConfirmDialog…
-│   ├── store/                   toast · confirm (con motivo opcional) · modal · layout
-│   ├── lib/                     pricing · charges · sort · date · text (foldText) · pdf · storage · demoData…
+│   ├── ui/                      primitivas (Button, Modal, DataTable ordenable, ListToolbar, LiveSearch, SegmentedTabs, Calendar/DatePicker propios, ExtraChargesEditor…)
+│   ├── hooks/                   useFormState · useLineItems · useExtraCharges · useCalendar · useAnchoredPopover · usePageMeta · usePagination…
+│   ├── store/                   toast · confirm (con motivo opcional) · modal · layout · pageMeta (título de la vista)
+│   ├── lib/                     pricing · charges · sort · date · text (foldText, matchesQuery) · pdf · storage · demoData…
 │   └── config/store.config.ts   identidad comercial de fábrica
 └── features/
     ├── access/       login, sesión, usuarios, plantillas de rol, accesos por vista
@@ -141,7 +146,9 @@ Acceso: cada usuario ve las vistas habilitadas en sus Accesos (§4). Columna "Pl
 | Puerto (declara) | Implementa | Para qué |
 |---|---|---|
 | `customers/lib/statsPort.ts` (`provideCustomerStats`) | `sales` | Métricas de compra por cliente sin que Clientes importe Pedidos |
+| `catalog/lib/reservationPort.ts` (`provideReservedStock`) | `sales` | Unidades reservadas por producto, visibles en Productos (`ReservedBadge`) |
 | `catalog/lib/pricePort.ts` (`provideEffectivePrice`, `useEffectivePrice`) | `promotions` | **Precio vigente** (con oferta) para el selector de productos, Pedidos y Cotizaciones |
+| `settings/lib/invoiceNumberPort.ts` (`provideLastInvoiceNumber`) | `billing` | Último correlativo emitido, visible en Ajustes › Identidad junto a la semilla |
 | `shared/lib/demoData.ts` (`registerDemoData`) | stores (quotes, interactions…) | Respaldo y restablecimiento sin que Ajustes importe cada feature |
 
 El proveedor se registra en el `index.ts` del feature que implementa; sin proveedor, el puerto devuelve un valor neutro.
@@ -152,14 +159,16 @@ El proveedor se registra en el `index.ts` del feature que implementa; sin provee
 
 | Flujo | Reglas clave | Dónde |
 |---|---|---|
-| **Pedidos** | Registrar → Confirmar (reserva stock) → Facturar (descuenta) → Entregar · Cancelar antes de facturar. Editables y eliminables solo **sin factura**. Eliminación **lógica** (`deletedOrders` + motivo); el id nunca se reutiliza. Forma de pago: Efectivo/Transferencia (valores retirados se conservan como "(anterior)"). | `sales/lib/orderFlow.ts`, `store.ts` |
+| **Pedidos** | Registrar → **Confirmar y reservar** (estado *Reservado*) → Facturar (descuenta) → Entregar · Cancelar antes de facturar. Editables y eliminables solo **sin factura**. Eliminación **lógica** (`deletedOrders` + motivo); el id nunca se reutiliza. Forma de pago: Efectivo/Transferencia (valores retirados se conservan como "(anterior)"). | `sales/lib/orderFlow.ts`, `store.ts` |
+| **Reserva** | Modal con calendario propio: vigencia por defecto 3 días, máx. 15, vence a las 23:59 del día elegido. Aparta stock (disponible = stock − reservas **vigentes**); disponible 0 = no se agrega a otros pedidos y se oculta en el Front Office (regla documentada en `store/src/features/catalog/lib/reservations.api.ts`). Al vencer sin facturar, el barrido (`useReservationExpiry`, al abrir el panel y cada minuto) devuelve el pedido a Registrado. Anular factura = re-reserva por 3 días. | `sales/lib/reservation.ts`, `useReserveOrder.ts` |
 | **Cliente en pedido** | Buscador accesible; "Cliente nuevo" se da de alta en el directorio al registrar (valida DUI/NIT, teléfono duplicado → "Usar este cliente"). Cotizaciones mantienen "cliente ocasional". | `customers/hooks/useCustomerSelection.ts` |
 | **Cargos extra** | Envío, instalación… (concepto + monto, máx. 6, ≤ $2 000). Suman al total; pasan de cotización a pedido y a factura como líneas **Servicio** que **nunca mueven inventario**. | `shared/lib/charges.ts`, `billing/lib/invoice.service.ts` |
 | **Ofertas** | Capa de precio (no modifica `Product.price`). % o monto fijo, vigencia por fechas + pausa. **Bloquea** precio bajo costo; advierte margen < 5 %; sin solapamientos por producto. | `promotions/lib/offerPricing.ts` |
 | **Categorías y marcas** | Nombres únicos (sin tildes/mayúsculas); slug fijo; no se elimina con productos; renombrar marca actualiza sus productos; marca inactiva no se ofrece en productos nuevos. | `catalog/lib/taxonomy.ts` |
 | **Canales y flujo** | Canal con pedidos no se elimina (se desactiva); renombrar actualiza pedidos. Del flujo solo se editan nombre y descripción; transiciones y efectos son fijos. | `sales/lib/order.service.ts`, `orderFlow.ts` |
 | **Comentarios** | Pendiente → Publicado / Rechazado (motivo interno) · Eliminar. Señales de posible spam. | `interactions/lib/reviews.service.ts` |
-| **Identidad del emisor** | Datos de encabezado y bloque DTE (razón social, NIT, NRC, giro, establecimiento) validados; IVA no editable; aplica a documentos futuros. | `settings/lib/identity.ts` |
+| **Búsqueda en tiempo real** | `LiveSearch` + `matchesQuery`: cada palabra debe aparecer en algún campo (AND entre palabras), sin tildes/mayúsculas, teléfonos con o sin guion; se combina con pestañas/filtros y vuelve a la página 1. Pedidos (`orderSearchFields`, se conserva al volver de editar), Facturación (por pestaña; `invoiceSearchFields`), Ofertas y Cotizaciones (`filterQuotes`). | `shared/lib/text.ts` |
+| **Identidad del emisor** | Datos de encabezado y bloque DTE (razón social, NIT, NRC, giro, establecimiento) validados; IVA no editable; aplica a documentos futuros. **Semilla del correlativo** de facturas (`invoiceSeed`): solo adelanta la numeración; rige `max(semilla, último emitido + 1)` y nunca se reutiliza un número (incluye anuladas). | `settings/lib/identity.ts` |
 
 ---
 
@@ -167,15 +176,16 @@ El proveedor se registra en el `index.ts` del feature que implementa; sin provee
 
 | Feature | Componentes | Hooks |
 |---|---|---|
-| **access** | LoginCard, ChangePasswordScreen, UsersSection/UserRow, UserFormModal, ResetPasswordModal, AccessSidebar, ViewActionsPanel, RoleBadge | useSession, useLoginForm, useAccessActions, useUsersAdmin, useUserForm, useUserAccess |
-| **catalog** | ProductToolbar, ProductGrid/Card, ProductTable, ProductFormModal (tabs), ProductDetailModal, ProductPicker, TaxonomyToolbar, CategoryCard, BrandsTable/Row, Category/BrandFormModal | useFilteredProducts, useProductForm, useProductPicker, useTaxonomyPage, useCategoriesTab, useBrandsTab, useCategoryForm, useBrandForm |
+| **access** | LoginCard, ChangePasswordScreen, UsersSection/UserRow, UserFormModal, ResetPasswordModal, AccessSummaryBar, AccessSidebar, ViewActionsPanel, RoleBadge | useSession, useLoginForm, useAccessActions, useUsersAdmin, useUserForm, useUserAccess |
+| **catalog** | ProductToolbar, ProductGrid/Card, ProductTable, ProductFormModal (tabs), ProductDetailModal, ProductPicker, StockBadge, ReservedBadge, TaxonomyToolbar, CategoryCard, BrandsTable/Row, Category/BrandFormModal | useFilteredProducts, useProductForm, useProductPicker, useTaxonomyPage, useCategoriesTab, useBrandsTab, useCategoryForm, useBrandForm |
 | **customers** | CustomerRow/FormModal, CustomerPicker (CustomerSearch, SelectedCustomerCard, WalkinCustomerFields, DuplicateCustomerNotice) | useCustomers, useCustomerSelection, useCustomerCombobox |
-| **sales** | OrdersTable/Row (fila clickable, columnas ordenables), OrderSummaryPanel, OrderDetailModal, ChannelsTable, ChannelFormModal, FlowTable, StatusLabelModal | useOrders, useOrderBuilder, useOrderActions, useOrderDetail, usePaginatedOrders, useChannels, useFlowTable |
-| **billing** | InvoicesTable, PendingOrdersTable, InvoiceEmitModal (StockCheck), InvoicePreviewModal | useBilling, useInvoiceEmit, useInvoicePreview |
-| **quotes** | QuoteRow, QuoteSummaryPanel, QuotePreviewModal | useQuotes, useQuoteBuilder, useQuotePreview |
-| **promotions** | OfferRow, OfferPanel, OfferProductList | useOffers, useOfferBuilder, useOfferPriceResolver |
+| **sales** | OrdersToolbar, OrdersTable/Row (fila clickable, columnas ordenables), OrderSummaryPanel, OrderDetailModal, ReserveOrderModal, ReservationTag, ChannelsTable, ChannelFormModal, FlowTable, StatusLabelModal | useOrders, useOrderBuilder, useOrderActions, useOrderDetail, usePaginatedOrders, useReserveOrder, useReservationExpiry, useChannels, useFlowTable |
+| **billing** | BillingToolbar, InvoicesTable, PendingOrdersTable, InvoiceEmitModal (StockCheck), InvoicePreviewModal | useBilling, useInvoiceEmit, useInvoicePreview |
+| **quotes** | QuotesToolbar, QuoteRow, QuoteSummaryPanel, QuotePreviewModal | useQuotes, useQuoteBuilder, useQuotePreview |
+| **promotions** | OffersToolbar, OfferRow, OfferPanel, OfferProductList | useOffers, useOfferBuilder, useOfferPriceResolver |
 | **interactions** | ReviewCard, ReviewsToolbar, Stars | useReviewModeration |
-| **dashboard · settings** | KpiGrid, StockHealthPanel, QuickLinks · SettingsHubCard, SettingsSubHeader, IdentityForm/Fields/Preview | useDashboardMetrics · useSettingsHub, useIdentityForm, useStoreSettings |
+| **shared (destacados)** | ListToolbar, LiveSearch, SegmentedTabs, BackLink, Calendar, DatePicker, Breadcrumb (solo Topbar), DataTable (ordenable), ExtraChargesEditor, LineItemsEditor, ConfirmDialog (motivo opcional) | useCalendar, useAnchoredPopover, usePageMeta, useExtraCharges, useLineItems, usePagination |
+| **dashboard · settings** | KpiGrid, StockHealthPanel, QuickLinks · SettingsHubCard, IdentityForm/Fields/Preview | useDashboardMetrics · useSettingsHub, useSettingsPageMeta, useIdentityForm, useStoreSettings |
 
 Los modales se abren desde el store global (`modal.store`); las confirmaciones usan el `ConfirmDialog` global (admite motivo obligatorio).
 
@@ -185,9 +195,9 @@ Los modales se abren desde el store global (`modal.store`); las confirmaciones u
 
 | Store (`localStorage`) | Versión | Último cambio |
 |---|---|---|
-| `access` | v4 | Accesos por usuario; Super Administrador = Administrador de Sistema (el dueño pasa a Gerencia; se agrega `sistemas@` si no hay superadmin activo) |
+| `access` | v5 | Acción `canReserveOrders` (se otorga a quien ya gestionaba pedidos) · v4: accesos por usuario; Super Administrador = Administrador de Sistema (el dueño pasa a Gerencia; se agrega `sistemas@` si no hay superadmin activo) |
 | `catalog` | v4 | Marcas como entidad (derivadas de las marcas escritas en productos) |
-| `sales` | v3 | Cargos extra; `deletedOrders` y `statusLabels` se completan por defecto al hidratar |
+| `sales` | v4 | Vigencia de reserva (`reservedUntil`; los reservados reciben 3 días) · v3: cargos extra; `deletedOrders` y `statusLabels` por defecto al hidratar |
 | `quotes` | v1 | Cargos extra |
 | `promotions` | v1 | Campañas por categoría → ofertas **pausadas** con los productos de la categoría |
 | `interactions` | — | Store nuevo (comentarios) |
@@ -208,10 +218,12 @@ Regla: nunca descartar datos guardados; completar con valores por defecto y docu
 ## 12. Verificación
 
 1. `pnpm lint` + `pnpm build` (incluye `tsc -b`) sin errores.
-2. Ningún `.tsx` de `components/` o `pages/` supera 150 líneas.
+2. Ningún `.tsx` de `components/` supera 150 líneas; ninguna página supera 60 (extraer `*Toolbar`).
 3. Todo elemento interactivo activo lleva `{...t(...)}`.
-4. Si cambia un esquema persistido: probar su `migrate` con datos de la versión anterior.
-5. Revisión visual contra el demo (claro y oscuro).
+4. Mensajes de rechazo en términos de permiso ("No tienes permiso para…"), nunca "Su rol…".
+5. Si cambia un esquema persistido: probar su `migrate` con datos de la versión anterior.
+6. **Prueba de regresión de flujos** (sin dependencias nuevas): script temporal ejecutado con `npx vite-node`, simulando `window.localStorage` antes de importar los stores (imports dinámicos). Cubre: pedido con cargos → reservar → facturar → anular → vencer → eliminar; precio de oferta; semilla de factura; RBAC efectivo; alta de cliente. Borrar el script al terminar.
+7. Revisión visual contra el demo (claro y oscuro), incluidos calendario y buscadores.
 
 ---
 
@@ -219,6 +231,9 @@ Regla: nunca descartar datos guardados; completar con valores por defecto y docu
 
 - **API inexistente** (`/api` vacío): el Front Office no envía aún comentarios al admin (contrato en `store/src/features/catalog/lib/reviews.api.ts`); respaldo y restablecimiento están desactivados con Ajustes › Mantenimiento.
 - **Bundle principal ≈ 720 kB** (aviso de Vite > 500 kB): candidato a carga diferida de rutas (`React.lazy`) por feature.
+- **Reservas en el Front Office:** el ocultamiento por disponible 0 está documentado pero no conectado (falta la API); el vencimiento lo hace el navegador (en producción: tarea del servidor).
 - **Sello DTE simulado** en facturación (integración con Hacienda pendiente).
 - Ofertas: sin descuento distinto por producto ni borradores.
+- **Datos de ejemplo con fechas fijas** (nov-2026): cuando el reloj pase las fechas de reserva de los pedidos demo, el barrido los devolverá a Registrado al cargar (comportamiento esperado).
+- Sin pruebas automatizadas en el repositorio (la regresión de §12 es manual); candidato: Vitest para `lib/` puras.
 - No hay vista para consultar o restaurar pedidos eliminados (los datos se conservan en `deletedOrders`).

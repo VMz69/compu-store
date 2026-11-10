@@ -2,6 +2,7 @@ import { formatCurrency } from '@/shared/lib/currency'
 import { Badge } from '@/shared/ui'
 import type { ProductDetailApi } from '../../hooks/useProductDetail'
 import { StockBadge } from '../StockBadge'
+import { ReservedBadge } from '../ReservedBadge'
 import { DetailGallery } from './DetailGallery'
 
 type DetailSummaryProps = Pick<ProductDetailApi, 'product' | 'pricing' | 'gallery'>
@@ -39,6 +40,7 @@ export function DetailSummary({ product: p, pricing, gallery }: DetailSummaryPro
 
         <div className="pt-2 flex flex-wrap items-center gap-2">
           <StockBadge stock={p.stock} active={p.active} reorderPoint={p.reorderPoint} />
+          <ReservedBadge productId={p.id} stock={p.stock} />
           <Badge
             tone={p.active ? 'brand' : 'neutral'}
             icon={p.active ? 'fa-solid fa-globe' : 'fa-solid fa-eye-slash'}

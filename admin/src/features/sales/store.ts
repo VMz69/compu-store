@@ -1,10 +1,12 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { formatShortISO, todayISO } from '@/shared/lib/date'
 import { delay } from '@/shared/lib/delay'
 import { STORAGE_KEYS } from '@/shared/lib/storage'
 import { slugify } from '@/shared/lib/text'
 import { orderTotals } from './lib/charges'
 import { migrateOrder } from './lib/migrate'
+import { expiredReservations, reservationBounds, validateReservationDate } from './lib/reservation'
 import { findOrderByQuote, nextOrderId, nowStamp, ordersOfChannel } from './lib/order.service'
 import { applyStatusLabels, canTransition, deleteBlockedReason, editBlockedReason, ORDER_STATUSES, type StatusLabel, type StatusLabels } from './lib/orderFlow'
 import { CHANNELS_MOCK } from './mocks/channels.mock'
@@ -32,9 +34,19 @@ interface SalesState {
    * con quién, cuándo y por qué. Lanza error si tiene factura (ver `deleteBlockedReason`).
    */
   deleteOrder: (orderId: string, by: string, reason: string) => DeletedOrder
+  /**
+   * "Confirmar y reservar": Registrado → Reservado con vigencia hasta `until` (YYYY-MM-DD).
+   * Lanza error si la transición o la fecha no son válidas.
+   */
+  reserve: (orderId: string, until: string, by: string) => void
+  /**
+   * Libera las reservas vencidas: el pedido vuelve a Registrado (acción del sistema).
+   * Devuelve los ids afectados.
+   */
+  expireReservations: (today?: string) => string[]
   /** Aplica una transición válida del flujo. Devuelve `false` si no está permitida. */
   transition: (orderId: string, to: OrderStatusId, by: string, note?: string) => boolean
-  /** Vincula la factura (→ Facturado) o la desvincula al anularla (→ Confirmado y Listo). */
+  /** Vincula la factura (→ Facturado) o la desvincula al anularla (→ Reservado con vigencia por defecto). */
   setInvoice: (orderId: string, invoiceId: string | null, by: string) => void
   /** Alterna el canal y devuelve su nuevo estado. */
   toggleChannel: (channelId: string) => Channel | undefined
@@ -57,9 +69,9 @@ const patchOrder = (orders: Order[], id: string, fn: (o: Order) => Order) => ord
 /**
  * Versión del esquema persistido.
  * v1: estados en texto libre, una sola línea · v2: flujo tipado, cliente enlazado, descuentos, historial
- * · v3: cargos extra (`charges`).
+ * · v3: cargos extra (`charges`) · v4: reserva con vigencia (`reservedUntil`).
  */
-const SALES_SCHEMA_VERSION = 3
+const SALES_SCHEMA_VERSION = 4
 
 export const useSalesStore = create<SalesState>()(
   persist(
@@ -85,6 +97,7 @@ export const useSalesStore = create<SalesState>()(
           total: orderTotals(draft.items, draft.charges).total,
           status: 'registrado',
           invoiceId: null,
+          reservedUntil: null,
           history: [],
         }
         const order = stamp(base, 'registrado', by, draft.quoteId ? `Convertido desde ${draft.quoteId}` : undefined)
@@ -128,11 +141,35 @@ export const useSalesStore = create<SalesState>()(
         return deleted
       },
 
+      reserve: (orderId, until, by) => {
+        const order = get().orders.find((o) => o.id === orderId)
+        if (!order || !canTransition(order.status, 'confirmado')) throw new Error('El pedido ya no está en estado Registrado.')
+        const invalid = validateReservationDate(until)
+        if (invalid) throw new Error(invalid)
+        set((s) => ({
+          orders: patchOrder(s.orders, orderId, (o) => stamp({ ...o, reservedUntil: until }, 'confirmado', by, `Reservado hasta ${formatShortISO(until)}`)),
+        }))
+      },
+
+      expireReservations: (today = todayISO()) => {
+        const expired = expiredReservations(get().orders, today).map((o) => o.id)
+        if (expired.length === 0) return []
+        set((s) => ({
+          orders: s.orders.map((o) =>
+            expired.includes(o.id)
+              ? stamp({ ...o, reservedUntil: null }, 'registrado', 'Sistema', `Reserva vencida (${formatShortISO(o.reservedUntil)}): stock liberado`)
+              : o,
+          ),
+        }))
+        return expired
+      },
+
       transition: (orderId, to, by, note) => {
         const order = get().orders.find((o) => o.id === orderId)
-        // "Facturado" solo se alcanza al emitir la factura (setInvoice), nunca a mano.
-        if (!order || to === 'facturado' || !canTransition(order.status, to)) return false
-        set((s) => ({ orders: patchOrder(s.orders, orderId, (o) => stamp(o, to, by, note)) }))
+        // "Facturado" solo se alcanza al emitir la factura (setInvoice) y "Reservado" con
+        // `reserve` (requiere vigencia); nunca por esta vía.
+        if (!order || to === 'facturado' || to === 'confirmado' || !canTransition(order.status, to)) return false
+        set((s) => ({ orders: patchOrder(s.orders, orderId, (o) => stamp({ ...o, reservedUntil: null }, to, by, note)) }))
         return true
       },
 
@@ -140,8 +177,13 @@ export const useSalesStore = create<SalesState>()(
         set((s) => ({
           orders: patchOrder(s.orders, orderId, (o) =>
             invoiceId
-              ? stamp({ ...o, invoiceId }, 'facturado', by, `Factura ${invoiceId}`)
-              : stamp({ ...o, invoiceId: null }, 'confirmado', by, `Factura ${o.invoiceId} anulada`),
+              ? stamp({ ...o, invoiceId, reservedUntil: null }, 'facturado', by, `Factura ${invoiceId}`)
+              : stamp(
+                  { ...o, invoiceId: null, reservedUntil: reservationBounds().suggested },
+                  'confirmado',
+                  by,
+                  `Factura ${o.invoiceId} anulada · reservado hasta ${formatShortISO(reservationBounds().suggested)}`,
+                ),
           ),
         })),
 

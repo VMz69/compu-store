@@ -32,6 +32,7 @@ export function useProductFilters() {
     categoryOptions,
     stockOptions: STOCK_FILTER_OPTIONS,
     onSearch: (e: ChangeEvent<HTMLInputElement>) => setSearch(e.target.value),
+    clearSearch: () => setSearch(''),
     onCategory: (e: ChangeEvent<HTMLSelectElement>) => setCategory(e.target.value),
     onStock: (e: ChangeEvent<HTMLSelectElement>) => setStockFilter(e.target.value as StockFilter),
     showGrid: () => setViewMode('grid'),
