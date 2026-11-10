@@ -9,8 +9,8 @@ export function IdentityPage() {
   return (
     <PageContainer {...t('settings.identity-page')}>
       <SettingsSubHeader
-        section="Identidad Comercial"
-        title="Identidad Comercial & Sucursal"
+        section="Identidad del emisor"
+        title="Identidad del emisor"
         icon="fa-solid fa-building text-brand"
       />
       <IdentityForm />

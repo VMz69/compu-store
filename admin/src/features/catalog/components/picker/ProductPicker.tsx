@@ -37,7 +37,7 @@ export function ProductPicker({ picker, onAdd, traceId, target }: ProductPickerP
         <EmptyState icon="fa-solid fa-magnifying-glass" title="Sin resultados" hint="Prueba con otro término o categoría." className="py-10" />
       ) : (
         <ul className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-2.5">
-          {picker.items.map(({ product: p, selected, available, blockedReason }) => (
+          {picker.items.map(({ product: p, selected, available, blockedReason, price, offerTitle }) => (
             <li key={p.id}>
               <button
                 type="button"
@@ -59,7 +59,13 @@ export function ProductPicker({ picker, onAdd, traceId, target }: ProductPickerP
                   <p className="text-xs font-bold text-slate-800 dark:text-slate-100 line-clamp-2 leading-tight">{p.name}</p>
                   <p className="text-[10px] font-mono text-slate-400 mt-0.5">{p.sku}</p>
                   <div className="flex flex-wrap items-center gap-1.5 mt-1">
-                    <span className="text-xs font-black text-brand">{formatCurrency(p.price)}</span>
+                    <span className="text-xs font-black text-brand">{formatCurrency(price)}</span>
+                    {offerTitle && (
+                      <>
+                        <s className="text-[10px] text-slate-400">{formatCurrency(p.price)}</s>
+                        <Badge tone="highlight" title={offerTitle}>Oferta</Badge>
+                      </>
+                    )}
                     {picker.limitToStock ? (
                       <Badge tone={available === 0 ? 'danger' : available <= p.reorderPoint ? 'warning' : 'success'}>
                         {available === 0 ? blockedReason : `${available} disp.`}

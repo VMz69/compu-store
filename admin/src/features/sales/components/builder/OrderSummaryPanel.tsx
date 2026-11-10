@@ -1,9 +1,8 @@
 import { CustomerPicker } from '@/features/customers'
 import { formatCurrency } from '@/shared/lib/currency'
-import { Button, LineItemsEditor } from '@/shared/ui'
+import { Button, ExtraChargesEditor, IconButton, LineItemsEditor } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
 import type { OrderBuilderApi } from '../../hooks/useOrderBuilder'
-import { OrderChargesSection } from './OrderChargesSection'
 import { OrderDeliverySection } from './OrderDeliverySection'
 
 const t = tracer('OrderSummaryPanel', 'src/features/sales/components/builder/OrderSummaryPanel.tsx')
@@ -24,7 +23,13 @@ export function OrderSummaryPanel({ b }: { b: OrderBuilderApi }) {
           {...b.lineHandlers}
         />
         <OrderDeliverySection b={b} />
-        <OrderChargesSection b={b} />
+        <ExtraChargesEditor
+          title="4 · Cargos extra"
+          charges={b.charges}
+          errors={b.errors}
+          emptyText="Opcional. Envío, instalación u otros servicios que el cliente paga junto al pedido."
+          traceId="sales.builder.charges"
+        />
       </div>
 
       <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 rounded-b-2xl space-y-3">
@@ -48,11 +53,30 @@ export function OrderSummaryPanel({ b }: { b: OrderBuilderApi }) {
           </div>
         </dl>
         <div className="flex flex-wrap gap-2">
+          {b.canDelete && (
+            <IconButton
+              icon="fa-solid fa-trash-can"
+              label="Eliminar pedido"
+              tone="danger"
+              sizeClass="w-9 h-9 rounded-lg"
+              disabled={b.isLoading}
+              onClick={b.remove}
+              {...t('sales.builder.delete')}
+            />
+          )}
           <Button variant="outline" size="md" onClick={b.cancel} {...t('sales.builder.cancel')}>
             Cancelar
           </Button>
-          <Button size="md" icon="fa-solid fa-clipboard-list" className="flex-1 whitespace-nowrap" isLoading={b.isLoading} onClick={b.register} title="Registra el pedido; podrás confirmarlo desde su detalle" {...t('sales.builder.register')}>
-            Registrar pedido
+          <Button
+            size="md"
+            icon={b.isEdit ? 'fa-solid fa-floppy-disk' : 'fa-solid fa-clipboard-list'}
+            className="flex-1 whitespace-nowrap"
+            isLoading={b.isLoading}
+            onClick={b.register}
+            title={b.isEdit ? 'Guarda los cambios; el pedido conserva su estado' : 'Registra el pedido; podrás confirmarlo desde su detalle'}
+            {...t(b.isEdit ? 'sales.builder.save' : 'sales.builder.register')}
+          >
+            {b.submitLabel}
           </Button>
         </div>
       </div>

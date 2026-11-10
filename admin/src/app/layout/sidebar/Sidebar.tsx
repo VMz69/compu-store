@@ -11,7 +11,8 @@ const t = tracer('Sidebar', 'src/app/layout/sidebar/Sidebar.tsx')
 /** Sidebar compacto/expandible con identidad, navegación por rol y perfil. */
 export function Sidebar() {
   const { isOpen, user, role, logout, storeUrl, logos } = useSidebar()
-  const items = useNavItems()
+  // Las vistas con acceso directo en la barra superior (Ajustes) no se listan aquí.
+  const items = useNavItems().filter((i) => i.placement === 'main')
 
   return (
     <aside

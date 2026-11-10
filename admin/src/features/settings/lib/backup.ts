@@ -9,17 +9,20 @@ export const BACKUP_VERSION = '2026.2'
 
 /** Snapshot integral para exportar en JSON. */
 export function buildBackup(settings: StoreSettings) {
-  const { products, categories } = getCatalogSnapshot()
-  const { orders, orderStatuses, channels } = getSalesSnapshot()
+  const { products, categories, brands } = getCatalogSnapshot()
+  const { orders, deletedOrders, orderStatuses, channels } = getSalesSnapshot()
   return {
     version: BACKUP_VERSION,
     exportDate: new Date().toISOString(),
     settings,
     products,
     orders,
+    /** Pedidos con eliminación lógica (auditoría). */
+    deletedOrders,
     channels,
     orderStatuses,
     categories,
+    brands,
     customers: getCustomersSnapshot(),
     // Los usuarios se exportan SIN hash de contraseña.
     users: getUsersSnapshot(),

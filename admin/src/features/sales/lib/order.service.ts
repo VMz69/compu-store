@@ -36,17 +36,26 @@ export const countByStatus = (orders: Order[], status: OrderStatusId): number =>
 export const filterByStatus = (orders: Order[], status: 'all' | OrderStatusId): Order[] =>
   status === 'all' ? orders : orders.filter((o) => o.status === status)
 
+/** Pedidos de un canal (los pedidos guardan el NOMBRE del canal). */
+export const ordersOfChannel = (orders: Order[], channel: Channel): Order[] => orders.filter((o) => belongsToChannel(o, channel))
+
+/** Un canal con pedidos no se elimina (perdería su historial): se desactiva. */
+export const channelDeleteBlock = (orderCount: number): string | null =>
+  orderCount > 0 ? `Tiene ${orderCount} pedido(s). Desactívalo para que no se use en pedidos nuevos.` : null
+
+export function validateChannel(v: { id?: string; name: string; description: string }, channels: Channel[]): Record<string, string> {
+  const e: Record<string, string> = {}
+  const name = v.name.trim()
+  if (name.length < 3 || name.length > 40) e.name = 'Usa entre 3 y 40 caracteres.'
+  else if (channels.some((c) => c.id !== v.id && c.name.toLowerCase() === name.toLowerCase())) e.name = 'Ya existe un canal con ese nombre.'
+  if (v.description.trim().length > 160) e.description = 'Máximo 160 caracteres.'
+  return e
+}
+
 const belongsToChannel = (order: Order, channel: Channel): boolean => {
   const a = order.channel.toLowerCase()
   const b = channel.name.toLowerCase()
   return a.includes(b) || b.includes(a)
-}
-
-/** Órdenes capturadas y venta efectiva (facturada o entregada) de un canal. */
-export function getChannelStats(channel: Channel, orders: Order[]) {
-  const channelOrders = orders.filter((o) => belongsToChannel(o, channel))
-  const revenue = countIn(channelOrders, SOLD_STATUSES).reduce((acc, o) => acc + o.total, 0)
-  return { orderCount: channelOrders.length, revenue }
 }
 
 export const nextOrderId = (orders: Order[]): string =>

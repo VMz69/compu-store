@@ -7,6 +7,7 @@ import { toast } from '@/shared/store/toast.store'
 import { getCommercialSummary } from '../lib/commercial'
 import { CONDITION_OPTIONS, PRODUCT_FORM_TAB_IDS, sumLotRows, toDraft, toFormValues } from '../lib/productForm'
 import { countErrorsByTab, tabOfError, validateProduct } from '../lib/productValidation'
+import { brandOptions } from '../lib/taxonomy'
 import { useCatalogStore } from '../store'
 import type { Product } from '../types'
 import { useImageGallery } from './form/useImageGallery'
@@ -26,6 +27,7 @@ export function useProductForm() {
   const product = useModalPayload<Product | null>()
   const products = useCatalogStore((s) => s.products)
   const categories = useCatalogStore((s) => s.categories)
+  const brands = useCatalogStore((s) => s.brands)
   const saveProduct = useCatalogStore((s) => s.saveProduct)
   const isLoading = useCatalogStore((s) => s.isLoading)
 
@@ -81,6 +83,8 @@ export function useProductForm() {
     summary: getCommercialSummary(form.values),
     computedStock: sumLotRows(form.values.lots),
     categoryOptions: categories.map((c) => ({ value: c.id, label: c.name })),
+    /** Marcas activas del catálogo (se administran en /categorias?tab=marcas). */
+    brandOptions: brandOptions(brands, initial.brand),
     conditionOptions: CONDITION_OPTIONS,
     onSubmit,
     onClose: requestClose,

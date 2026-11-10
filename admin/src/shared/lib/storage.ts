@@ -8,6 +8,7 @@ export const STORAGE_KEYS = {
   PROMOTIONS: 'compustore_sv_bo_promos_v1',
   QUOTES: 'compustore_sv_bo_quotes_v1',
   SETTINGS: 'compustore_sv_bo_settings_v1',
+  INTERACTIONS: 'compustore_sv_bo_reviews_v1',
   THEME: 'compustore_sv_theme',
 } as const
 

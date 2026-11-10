@@ -1,13 +1,17 @@
 import { useMemo } from 'react'
+import { isPublished } from '../lib/reviews.api'
 import { DEFAULT_REVIEWS } from '../mocks/reviews.mock'
 import { useReviewStore } from '../reviews.store'
 
 /**
- * Reseñas del producto y distribución de estrellas memoizada.
+ * Reseñas PUBLICADAS del producto y distribución de estrellas memoizada.
+ * Las pendientes de moderación (o rechazadas) nunca se muestran ni cuentan.
+ * TODO(API): con backend, el servidor ya devuelve solo las aprobadas (`?status=aprobado`).
  */
 export const useProductReviews = (productId: number) => {
   const storedReviews = useReviewStore((state) => state.reviewsByProduct[productId])
-  const reviews = storedReviews && storedReviews.length > 0 ? storedReviews : DEFAULT_REVIEWS
+  const published = useMemo(() => (storedReviews ?? []).filter(isPublished), [storedReviews])
+  const reviews = published.length > 0 ? published : DEFAULT_REVIEWS
 
   const distribution = useMemo(
     () =>

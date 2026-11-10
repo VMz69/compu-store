@@ -2,10 +2,11 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { delay } from '@/shared/lib/delay'
 import { STORAGE_KEYS } from '@/shared/lib/storage'
+import { normalizeAccess, templateAccess } from './lib/access'
 import { hashPassword, verifyPassword } from './lib/password'
 import { normalizeEmail } from './lib/userRules'
 import { DEFAULT_AVATAR, USERS_MOCK } from './mocks/users.mock'
-import type { LoginResult, NewUserInput, Session, User, UserProfile } from './types'
+import type { LoginResult, NewUserInput, Session, User, UserAccess, UserProfile } from './types'
 
 /**
  * Store de acceso: usuarios del sistema + sesión activa.
@@ -24,7 +25,10 @@ interface AccessState {
   logout: () => void
 
   createUser: (input: NewUserInput) => Promise<User>
+  /** Si cambia el rol, los accesos se reinician a la plantilla del nuevo rol. */
   updateUser: (id: number, profile: UserProfile) => Promise<void>
+  /** Guarda las vistas y acciones del usuario (RBAC por vistas). */
+  updateAccess: (id: number, access: UserAccess) => Promise<void>
   /** Define una contraseña nueva (alta, restablecimiento o cambio propio). */
   setPassword: (id: number, password: string, mustChangePassword: boolean) => Promise<void>
   setActive: (id: number, active: boolean) => void
@@ -39,9 +43,27 @@ const patchUser = (users: User[], id: number, patch: Partial<User>) =>
 /**
  * Versión del esquema persistido.
  * v0: sesión por rol (selector de perfiles del demo) · v2: login con credenciales ·
- * v3: avatares generados con iniciales (se descartan las fotos externas de prueba).
+ * v3: avatares generados con iniciales (se descartan las fotos externas de prueba) ·
+ * v4: accesos por usuario (vistas + acciones) y Super Administrador = Administrador de Sistema.
  */
-const ACCESS_SCHEMA_VERSION = 3
+const ACCESS_SCHEMA_VERSION = 4
+
+const OWNER_EMAIL = 'propietario@compustoresv.com'
+
+/** v3 → v4: accesos desde la plantilla del rol; el dueño deja de ser Super Administrador. */
+function migrateToV4(users: Omit<User, 'access'>[]): User[] {
+  const migrated: User[] = users.map((u) => {
+    const role = u.email === OWNER_EMAIL && u.role === 'superadmin' ? 'gerencia' : u.role
+    return { ...u, role, access: templateAccess(role) }
+  })
+  // Debe existir un Administrador de Sistema: si no queda ninguno, se agrega la cuenta de fábrica.
+  const sysAdmin = USERS_MOCK.find((u) => u.role === 'superadmin')
+  if (sysAdmin && !migrated.some((u) => u.role === 'superadmin' && u.active)) {
+    const id = migrated.some((u) => u.id === sysAdmin.id) ? Math.max(...migrated.map((u) => u.id)) + 1 : sysAdmin.id
+    migrated.unshift({ ...sysAdmin, id })
+  }
+  return migrated
+}
 
 export const useAccessStore = create<AccessState>()(
   persist(
@@ -80,6 +102,7 @@ export const useAccessStore = create<AccessState>()(
           id: Math.max(0, ...get().users.map((u) => u.id)) + 1,
           avatar: DEFAULT_AVATAR,
           passwordHash,
+          access: templateAccess(input.role),
           createdAt: new Date().toISOString(),
           lastLoginAt: null,
         }
@@ -90,10 +113,24 @@ export const useAccessStore = create<AccessState>()(
       updateUser: async (id, profile) => {
         set({ isLoading: true })
         await delay()
-        set((s) => ({
-          users: patchUser(s.users, id, { ...profile, email: normalizeEmail(profile.email) }),
-          isLoading: false,
-        }))
+        set((s) => {
+          const current = s.users.find((u) => u.id === id)
+          const roleChanged = current && current.role !== profile.role
+          return {
+            users: patchUser(s.users, id, {
+              ...profile,
+              email: normalizeEmail(profile.email),
+              ...(roleChanged ? { access: templateAccess(profile.role) } : {}),
+            }),
+            isLoading: false,
+          }
+        })
+      },
+
+      updateAccess: async (id, access) => {
+        set({ isLoading: true })
+        await delay()
+        set((s) => ({ users: patchUser(s.users, id, { access: normalizeAccess(access) }), isLoading: false }))
       },
 
       setPassword: async (id, password, mustChangePassword) => {
@@ -116,10 +153,8 @@ export const useAccessStore = create<AccessState>()(
         if (version < 2) return { users: USERS_MOCK, session: null }
         // v2 → v3: se conservan usuarios y sesión; solo se quitan las fotos externas.
         const state = persisted as Pick<AccessState, 'users' | 'session'>
-        return {
-          ...state,
-          users: state.users.map((u) => (u.avatar.includes('unsplash.com') ? { ...u, avatar: DEFAULT_AVATAR } : u)),
-        }
+        const users = state.users.map((u) => (u.avatar.includes('unsplash.com') ? { ...u, avatar: DEFAULT_AVATAR } : u))
+        return { ...state, users: version < 4 ? migrateToV4(users) : users }
       },
     },
   ),

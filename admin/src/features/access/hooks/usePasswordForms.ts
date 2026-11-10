@@ -62,7 +62,7 @@ export function useResetPasswordForm() {
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!target || !fields.attempt()) return
-    if (!ensurePermission('canManageUsers', 'Solo el Superadmin puede restablecer contraseñas.')) return
+    if (!ensurePermission('canManageUsers', 'No tienes permiso para gestionar usuarios (contraseñas).')) return
     // Si es la propia cuenta, no tiene sentido forzar otro cambio.
     await setPassword(target.id, fields.values.password, isSelf ? false : fields.values.mustChangePassword)
     closeModal()

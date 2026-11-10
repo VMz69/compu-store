@@ -15,7 +15,7 @@ export function useQuotePreview() {
   const orderOf = useQuoteOrderLink()
 
   if (!quote) return null
-  const total = calcTotals(quote.items, quote.issuer.taxRate).total
+  const total = calcTotals(quote.items, quote.charges ?? [], quote.issuer.taxRate).total
 
   return {
     quote,

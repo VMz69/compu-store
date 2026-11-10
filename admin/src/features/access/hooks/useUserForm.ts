@@ -81,7 +81,7 @@ export function useUserForm() {
     event.preventDefault()
     setSubmitted(true)
     if (Object.keys(validate()).length > 0) return
-    if (!ensurePermission('canManageUsers', 'Solo el Superadmin puede gestionar usuarios.')) return
+    if (!ensurePermission('canManageUsers', 'No tienes permiso para gestionar usuarios.')) return
     const profile = {
       name: values.name.trim(),
       email: values.email.trim(),

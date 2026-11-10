@@ -8,7 +8,7 @@ const t = tracer('GeneralTab', 'src/features/catalog/components/form/tabs/Genera
 
 /** Sección 1 · Identificación del producto, galería de imágenes y visibilidad web. */
 export function GeneralTab({ api }: { api: ProductFormApi }) {
-  const { form, gallery, errors, categoryOptions, conditionOptions } = api
+  const { form, gallery, errors, categoryOptions, brandOptions, conditionOptions } = api
   const { bind, values } = form
 
   return (
@@ -52,9 +52,10 @@ export function GeneralTab({ api }: { api: ProductFormApi }) {
             </Field>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Field label="Marca" variant="caps" required error={errors.brand}>
-              <Input
-                placeholder="Ej. HP, Kingston"
+            <Field label="Marca" variant="caps" required error={errors.brand} hint="¿No aparece? Créala en Categorías y marcas.">
+              <Select
+                options={brandOptions}
+                className="w-full"
                 invalid={Boolean(errors.brand)}
                 {...bind('brand')}
                 {...t('catalog.product-form.brand')}

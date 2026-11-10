@@ -1,4 +1,5 @@
 import { useReviewForm } from '../../hooks/useReviewForm'
+import { ReviewPendingNotice } from './ReviewPendingNotice'
 import { uiMeta } from '@/ui-traceability'
 
 const SOURCE = 'src/features/catalog/components/reviews/ReviewForm.tsx'
@@ -22,9 +23,10 @@ export const ReviewForm = ({ productId }: { productId: number }) => {
           Escribe tu opinión
         </h4>
         <p className="text-[11px] text-slate-500 dark:text-slate-400">
-          ¿Compraste este producto? Cuéntanos tu experiencia.
+          ¿Compraste este producto? Cuéntanos tu experiencia. Se publica tras una breve revisión.
         </p>
       </div>
+      <ReviewPendingNotice show={form.sentForReview} onDismiss={form.dismissNotice} />
 
       <form
         className="space-y-3"
@@ -140,7 +142,7 @@ export const ReviewForm = ({ productId }: { productId: number }) => {
           })}
         >
           <i className="fa-solid fa-paper-plane text-[10px]" />
-          <span>Publicar mi Opinión</span>
+          <span>Enviar mi Opinión</span>
         </button>
       </form>
     </div>

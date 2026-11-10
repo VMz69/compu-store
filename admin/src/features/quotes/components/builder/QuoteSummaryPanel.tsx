@@ -1,6 +1,6 @@
 import { CustomerPicker } from '@/features/customers'
 import { formatCurrency } from '@/shared/lib/currency'
-import { Button, Field, LineItemsEditor, Select, Textarea } from '@/shared/ui'
+import { Button, ExtraChargesEditor, Field, LineItemsEditor, Select, Textarea } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
 import type { QuoteBuilderApi } from '../../hooks/useQuoteBuilder'
 
@@ -15,7 +15,7 @@ function TotalRow({ label, value, strong = false }: { label: string; value: stri
   )
 }
 
-/** Panel derecho del constructor: cliente → productos → condiciones → totales → generar. */
+/** Panel derecho del constructor: cliente → productos → cargos extra → condiciones → totales → generar. */
 export function QuoteSummaryPanel({ b }: { b: QuoteBuilderApi }) {
   return (
     <aside className="flex flex-col min-h-0 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm" aria-label="Resumen de la cotización" {...t('quotes.builder.summary')}>
@@ -31,8 +31,16 @@ export function QuoteSummaryPanel({ b }: { b: QuoteBuilderApi }) {
           {...b.lineHandlers}
         />
 
+        <ExtraChargesEditor
+          title="3 · Cargos extra"
+          charges={b.charges}
+          errors={b.errors}
+          emptyText="Opcional. Envío, instalación u otros servicios que se cotizan junto a los productos."
+          traceId="quotes.builder.charges"
+        />
+
         <section className="space-y-3" {...t('quotes.builder.conditions')}>
-          <h3 className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">3 · Condiciones</h3>
+          <h3 className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">4 · Condiciones</h3>
           <Field label="Validez" variant="caps">
             <Select options={b.validityOptions} className="w-full" {...b.bind('validityDays')} {...t('quotes.builder.validity')} />
           </Field>
@@ -46,6 +54,7 @@ export function QuoteSummaryPanel({ b }: { b: QuoteBuilderApi }) {
         <dl className="space-y-1.5">
           <TotalRow label="Subtotal" value={formatCurrency(b.totals.gross)} />
           {b.totals.discount > 0 && <TotalRow label="Descuentos" value={`- ${formatCurrency(b.totals.discount)}`} />}
+          {b.totals.chargesTotal > 0 && <TotalRow label={`Cargos extra (${b.charges.rows.length})`} value={`+ ${formatCurrency(b.totals.chargesTotal)}`} />}
           <TotalRow label={`IVA ${b.taxPercent}% incluido`} value={formatCurrency(b.totals.tax)} />
           <div className="pt-1.5 border-t border-slate-200 dark:border-slate-700">
             <TotalRow label="Total a pagar" value={formatCurrency(b.totals.total)} strong />

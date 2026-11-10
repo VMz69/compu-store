@@ -2,11 +2,13 @@ import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog'
 import { tracer } from '@/ui-traceability'
 import { Button } from './Button'
 import { Modal } from './Modal'
+import { Textarea } from './Textarea'
 
 const t = tracer('ConfirmDialog', 'src/shared/ui/ConfirmDialog.tsx')
 
 export function ConfirmDialog() {
-  const { request, close, accept } = useConfirmDialog()
+  const d = useConfirmDialog()
+  const { request, close, accept } = d
   if (!request) return null
 
   return (
@@ -16,6 +18,24 @@ export function ConfirmDialog() {
       </div>
       <h3 className="text-sm font-black text-slate-800 dark:text-slate-100 mb-1.5">{request.title}</h3>
       <p className="text-xs text-slate-500 dark:text-slate-400 mb-5 leading-relaxed">{request.message}</p>
+      {request.reason && (
+        <label className="block text-left mb-4">
+          <span className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+            {request.reason.label}
+            <span className="text-red-500 ml-0.5" aria-hidden="true">*</span>
+          </span>
+          <Textarea
+            autoFocus
+            className="h-16"
+            maxLength={200}
+            placeholder={request.reason.placeholder}
+            value={d.reason}
+            onChange={d.onReasonChange}
+            {...t('app.confirm.reason')}
+          />
+          {d.remaining > 0 && <span className="block text-[10px] text-slate-400 mt-1">Faltan {d.remaining} caracteres.</span>}
+        </label>
+      )}
       <div className="flex justify-center gap-2">
         <Button
           variant="muted"
@@ -33,6 +53,7 @@ export function ConfirmDialog() {
           shape="xl"
           className="flex-1"
           onClick={accept}
+          disabled={!d.reasonOk}
           {...t('app.confirm.accept')}
         >
           {request.confirmText ?? 'Confirmar'}

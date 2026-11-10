@@ -43,6 +43,7 @@ export function QuoteRow({ row, actions }: QuoteRowProps) {
       </td>
       <td className="py-3 px-3 text-slate-600 dark:text-slate-300 text-[11px]">
         {q.items.length} producto{q.items.length === 1 ? '' : 's'} · {totals.units} unid.
+        {(q.charges?.length ?? 0) > 0 && ` · ${q.charges.length} cargo${q.charges.length === 1 ? '' : 's'} extra`}
       </td>
       <td className="py-3 px-3 text-right font-black text-slate-800 dark:text-slate-100 tabular-nums">{formatCurrency(totals.total)}</td>
       <td className="py-3 px-3">

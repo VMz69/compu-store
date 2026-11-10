@@ -1,13 +1,16 @@
 import type { Role, RoleId } from '../types'
 
-/** Matriz RBAC del demo. La vista de inicio de cada rol es `allowedViews[0]`. */
+/**
+ * PLANTILLAS de acceso por rol. Al crear un usuario (o cambiarle el rol) sus accesos
+ * se copian de aquí; luego se ajustan por usuario en Ajustes › Usuarios › Accesos.
+ */
 export const ROLES: Readonly<Record<RoleId, Role>> = Object.freeze({
   superadmin: {
     id: 'superadmin',
     name: 'Super Administrador',
-    title: 'Propietario / Dueño',
+    title: 'Administrador de Sistema',
     description:
-      'Acceso irrestricto y control total de la plataforma, roles, catálogo y finanzas.',
+      'Administración técnica de la plataforma: acceso total, usuarios, accesos y configuración. Sus permisos no se editan.',
     icon: 'fa-user-shield',
     badgeClass:
       'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/50 dark:text-purple-300 dark:border-purple-800',
@@ -20,7 +23,11 @@ export const ROLES: Readonly<Record<RoleId, Role>> = Object.freeze({
     canChangeOrderStatus: true,
     canManageCustomers: true,
     canDeleteCustomers: true,
+    canDeleteOrders: true,
     canManageQuotes: true,
+    canManageTaxonomy: true,
+    canManageOffers: true,
+    canModerateReviews: true,
     canInvoice: true,
     canManageUsers: true,
     canEditSettings: true,
@@ -43,7 +50,11 @@ export const ROLES: Readonly<Record<RoleId, Role>> = Object.freeze({
     canChangeOrderStatus: true,
     canManageCustomers: true,
     canDeleteCustomers: true,
+    canDeleteOrders: true,
     canManageQuotes: true,
+    canManageTaxonomy: true,
+    canManageOffers: true,
+    canModerateReviews: true,
     canInvoice: true,
     canManageUsers: false,
     canEditSettings: false,
@@ -65,7 +76,11 @@ export const ROLES: Readonly<Record<RoleId, Role>> = Object.freeze({
     canChangeOrderStatus: true,
     canManageCustomers: true,
     canDeleteCustomers: false,
+    canDeleteOrders: false,
     canManageQuotes: true,
+    canManageTaxonomy: true,
+    canManageOffers: true,
+    canModerateReviews: true,
     canInvoice: true,
     canManageUsers: false,
     canEditSettings: false,
@@ -88,7 +103,11 @@ export const ROLES: Readonly<Record<RoleId, Role>> = Object.freeze({
     canChangeOrderStatus: true,
     canManageCustomers: true,
     canDeleteCustomers: false,
+    canDeleteOrders: false,
     canManageQuotes: false,
+    canManageTaxonomy: false,
+    canManageOffers: false,
+    canModerateReviews: false,
     canInvoice: true,
     canManageUsers: false,
     canEditSettings: false,
@@ -111,7 +130,11 @@ export const ROLES: Readonly<Record<RoleId, Role>> = Object.freeze({
     canChangeOrderStatus: false,
     canManageCustomers: true,
     canDeleteCustomers: false,
+    canDeleteOrders: false,
     canManageQuotes: true,
+    canManageTaxonomy: false,
+    canManageOffers: false,
+    canModerateReviews: true,
     canInvoice: false,
     canManageUsers: false,
     canEditSettings: false,

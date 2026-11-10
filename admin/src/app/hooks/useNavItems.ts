@@ -1,5 +1,6 @@
 import { useLocation } from 'react-router-dom'
 import { useSession } from '@/features/access'
+import { usePendingReviewsCount } from '@/features/interactions'
 import { useInvoiceableCount, usePendingOrdersCount } from '@/features/sales'
 import { NAV_ITEMS, type NavBadgeKey } from '../nav.config'
 
@@ -10,6 +11,7 @@ export function useNavItems() {
   const badges: Record<NavBadgeKey, number> = {
     orders: usePendingOrdersCount(),
     toInvoice: useInvoiceableCount(),
+    reviews: usePendingReviewsCount(),
   }
   const currentView = pathname.split('/')[1]
 

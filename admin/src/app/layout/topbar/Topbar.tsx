@@ -3,12 +3,13 @@ import { IconButton } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
 import { useTopbar } from '../../hooks/useLayout'
 import { ThemeToggle } from './ThemeToggle'
+import { TopbarShortcut } from './TopbarShortcut'
 
 const t = tracer('Topbar', 'src/app/layout/topbar/Topbar.tsx')
 
-/** Barra superior: colapsar menú, vista activa, sucursal y tema. */
+/** Barra superior: colapsar menú, vista activa, sucursal, tema y accesos directos (Ajustes). */
 export function Topbar() {
-  const { title, role, isSidebarOpen, toggleSidebar } = useTopbar()
+  const { title, role, isSidebarOpen, toggleSidebar, shortcuts } = useTopbar()
 
   return (
     <header
@@ -39,6 +40,9 @@ export function Topbar() {
           <span>Cojutepeque</span>
         </div>
         <ThemeToggle />
+        {shortcuts.map((item) => (
+          <TopbarShortcut key={item.id} id={item.id} to={item.to} label={item.label} icon={item.icon} isActive={item.isActive} />
+        ))}
       </div>
     </header>
   )

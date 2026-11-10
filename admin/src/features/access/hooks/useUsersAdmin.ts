@@ -1,7 +1,9 @@
 import { useMemo, useState, type ChangeEvent } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { askConfirm } from '@/shared/store/confirm.store'
 import { openModal } from '@/shared/store/modal.store'
 import { toast } from '@/shared/store/toast.store'
+import { isCustomized } from '../lib/access'
 import { ensurePermission } from '../lib/permissions'
 import { deactivateBlockReason, deleteBlockReason } from '../lib/userRules'
 import { ROLE_LIST, ROLES } from '../mocks/roles.mock'
@@ -10,7 +12,7 @@ import { useAccessStore } from '../store'
 import type { RoleId, User } from '../types'
 import { usePermission, useSession } from './useSession'
 
-const DENIED = 'Solo el Superadmin puede gestionar usuarios.'
+const DENIED = 'No tienes permiso para gestionar usuarios.'
 
 /**
  * Administración de usuarios (Ajustes › Usuarios y Roles).
@@ -18,6 +20,7 @@ const DENIED = 'Solo el Superadmin puede gestionar usuarios.'
  * de negocio (no autoeliminarse, no dejar el sistema sin Superadmin activo).
  */
 export function useUsersAdmin() {
+  const navigate = useNavigate()
   const users = useAccessStore((s) => s.users)
   const setActive = useAccessStore((s) => s.setActive)
   const deleteUser = useAccessStore((s) => s.deleteUser)
@@ -39,6 +42,8 @@ export function useUsersAdmin() {
         // Motivos de bloqueo precalculados: la vista deshabilita y explica.
         deleteBlock: deleteBlockReason(user, currentId, users),
         deactivateBlock: deactivateBlockReason(user, currentId, users),
+        /** Sus accesos difieren de la plantilla de su rol. */
+        customAccess: isCustomized(user),
       }))
   }, [users, search, roleFilter, currentId])
 
@@ -80,6 +85,8 @@ export function useUsersAdmin() {
     openCreate: () => openModal(ACCESS_MODALS.userForm, null),
     openEdit: (user: User) => openModal(ACCESS_MODALS.userForm, user),
     openResetPassword: (user: User) => openModal(ACCESS_MODALS.resetPassword, user.id),
+    /** Sub-vista de accesos (RBAC por vistas) del usuario. */
+    openAccess: (user: User) => navigate(`/ajustes/usuarios/${user.id}/accesos`),
   }
 }
 

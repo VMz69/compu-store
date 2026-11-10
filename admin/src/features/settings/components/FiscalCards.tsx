@@ -6,7 +6,8 @@ const t = tracer('FiscalCards', 'src/features/settings/components/FiscalCards.ts
 /** Parámetros fiscales de solo lectura (normativa salvadoreña). */
 export function FiscalCards({ currency }: { currency: string }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl" {...t('settings.fiscal')}>
+    // Fragmento: la página decide la cuadrícula (estas 2 tarjetas + la del contribuyente).
+    <>
       <Card className="p-5 space-y-3.5" {...t('settings.fiscal.currency')}>
         <CardTitle className="flex items-center gap-2">
           <i className="fa-solid fa-dollar-sign text-emerald-500" aria-hidden="true" /> Régimen Monetario
@@ -44,6 +45,6 @@ export function FiscalCards({ currency }: { currency: string }) {
           </div>
         </div>
       </Card>
-    </div>
+    </>
   )
 }

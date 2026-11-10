@@ -1,32 +1,56 @@
-import type { FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { ensurePermission } from '@/features/access'
 import { useFormState } from '@/shared/hooks/useFormState'
-import { closeModal } from '@/shared/store/modal.store'
+import { closeModal, useModalPayload } from '@/shared/store/modal.store'
 import { toast } from '@/shared/store/toast.store'
+import { CATEGORY_ICONS, DEFAULT_CATEGORY_ICON, validateCategory } from '../lib/taxonomy'
 import { useCatalogStore } from '../store'
+import type { Category } from '../types'
 
-type CategoryFormValues = { name: string; icon: string; description: string }
-
+/** Alta/edición de categoría (payload del modal: categoría a editar o null). */
 export function useCategoryForm() {
-  const addCategory = useCatalogStore((s) => s.addCategory)
+  const editing = useModalPayload<Category | null>()
+  const categories = useCatalogStore((s) => s.categories)
+  const saveCategory = useCatalogStore((s) => s.saveCategory)
   const isLoading = useCatalogStore((s) => s.isLoading)
-  const { values, bind } = useFormState<CategoryFormValues>({
-    name: '',
-    icon: 'fa-solid fa-network-wired',
-    description: '',
+  const [submitted, setSubmitted] = useState(false)
+  const { values, bind, setField } = useFormState({
+    name: editing?.name ?? '',
+    icon: editing?.icon ?? CATEGORY_ICONS[0],
+    description: editing?.description ?? '',
   })
+
+  const errors = submitted ? validateCategory({ id: editing?.id, ...values }, categories) : {}
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (!ensurePermission('canCreateProduct', 'Su rol no puede añadir categorías')) return
-    const category = await addCategory({
+    setSubmitted(true)
+    if (Object.keys(validateCategory({ id: editing?.id, ...values }, categories)).length > 0) return
+    const permission = 'canManageTaxonomy'
+    if (!ensurePermission(permission, editing ? 'Su rol no puede editar categorías' : 'Su rol no puede añadir categorías')) return
+    const { category, created } = await saveCategory({
+      id: editing?.id,
       name: values.name.trim(),
-      icon: values.icon.trim() || 'fa-solid fa-folder',
+      icon: values.icon || DEFAULT_CATEGORY_ICON,
       description: values.description.trim(),
     })
     closeModal()
-    toast(`Categoría "${category.name}" agregada`, 'success')
+    toast(created ? `Categoría "${category.name}" creada` : `Categoría "${category.name}" actualizada`, 'success')
   }
 
-  return { bind, onSubmit, onClose: closeModal, isLoading }
+  return {
+    isEdit: Boolean(editing),
+    /** El slug es fijo: forma parte de las URLs del Front Office. */
+    slug: editing?.slug ?? null,
+    values,
+    bind,
+    errors,
+    icons: CATEGORY_ICONS,
+    selectIcon: (icon: string) => setField('icon', icon),
+    onSubmit,
+    onClose: closeModal,
+    isLoading,
+  }
 }
+
+export type CategoryFormApi = ReturnType<typeof useCategoryForm>

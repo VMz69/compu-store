@@ -1,4 +1,5 @@
 import type { BadgeTone } from '@/shared/ui'
+import { sumCharges, type ExtraCharge } from '@/shared/lib/charges'
 import { lineTotal as pricedLineTotal, money, summarizeLines } from '@/shared/lib/pricing'
 import { nextSequentialId } from '@/shared/lib/text'
 import type { Quote, QuoteItem, QuoteStatus, QuoteTotals } from '../types'
@@ -16,13 +17,15 @@ export const DEFAULT_VALIDITY_DAYS = 15
 export const lineTotal = (item: QuoteItem): number => pricedLineTotal(item)
 
 /**
- * Totales del documento. Los precios del catálogo ya incluyen IVA, así que el
- * IVA se "extrae" del total: neto = total / (1 + tasa).
+ * Totales del documento: productos + cargos extra. Los precios ya incluyen IVA,
+ * así que el IVA se "extrae" del total: neto = total / (1 + tasa).
  */
-export function calcTotals(items: QuoteItem[], taxRate: number): QuoteTotals {
-  const { gross, discount, total, units } = summarizeLines(items)
+export function calcTotals(items: QuoteItem[], charges: Pick<ExtraCharge, 'amount'>[], taxRate: number): QuoteTotals {
+  const { gross, discount, total: productsTotal, units } = summarizeLines(items)
+  const chargesTotal = sumCharges(charges)
+  const total = money(productsTotal + chargesTotal)
   const net = money(total / (1 + taxRate))
-  return { gross, discount, total, net, tax: money(total - net), units }
+  return { gross, discount, productsTotal, chargesTotal, total, net, tax: money(total - net), units }
 }
 
 /** Fecha límite de validez (ISO). */

@@ -4,7 +4,7 @@ import { getCatalogSnapshot } from '@/features/catalog'
 import { askConfirm } from '@/shared/store/confirm.store'
 import { openModal } from '@/shared/store/modal.store'
 import { toast } from '@/shared/store/toast.store'
-import { ACTION_TARGET, availableActions, statusOf, type OrderAction } from '../lib/orderFlow'
+import { ACTION_TARGET, availableActions, deleteBlockedReason, isDeletable, statusOf, type OrderAction } from '../lib/orderFlow'
 import { describeShortages, findShortages, reservedByProduct } from '../lib/stock'
 import { SALES_MODALS } from '../modals'
 import { useSalesStore } from '../store'
@@ -34,7 +34,9 @@ export function useOrderActions() {
   const navigate = useNavigate()
   const { user } = useSession()
   const transition = useSalesStore((s) => s.transition)
+  const deleteOrder = useSalesStore((s) => s.deleteOrder)
   const canChangeStatus = usePermission('canChangeOrderStatus')
+  const canDeleteOrders = usePermission('canDeleteOrders')
   const canInvoice = usePermission('canInvoice')
   const by = user?.name ?? 'Equipo CompuStore'
 
@@ -71,6 +73,34 @@ export function useOrderActions() {
       },
     })
 
+  /**
+   * Eliminar (LÓGICO): pide un motivo obligatorio para la auditoría. El pedido sale de
+   * los listados, métricas y reservas de stock, pero se conserva en la papelera del store.
+   * `onDone` permite a la vista cerrarse o navegar tras eliminar.
+   */
+  const remove = (order: Order, onDone?: () => void) => {
+    const blocked = deleteBlockedReason(order)
+    if (blocked) return toast(blocked, 'warning')
+    askConfirm({
+      title: `Eliminar pedido ${order.id}`,
+      message:
+        (order.status === 'confirmado' ? 'Se liberará el stock reservado. ' : '') +
+        `El pedido de ${order.client} dejará de aparecer en Pedidos y en los reportes. Queda archivado para auditoría.`,
+      confirmText: 'Eliminar pedido',
+      reason: { label: 'Motivo de la eliminación', placeholder: 'Ej. Pedido duplicado por error', minLength: 5 },
+      onConfirm: (reason) => {
+        if (!ensurePermission('canDeleteOrders', 'Su rol no puede eliminar pedidos')) return
+        try {
+          deleteOrder(order.id, by, reason)
+          toast(`Pedido ${order.id} eliminado`, 'info')
+          onDone?.()
+        } catch (error) {
+          toast(error instanceof Error ? error.message : 'No se pudo eliminar el pedido.', 'danger')
+        }
+      },
+    })
+  }
+
   /** Facturar vive en Facturación: se abre su modal de emisión con este pedido. */
   const invoice = (order: Order) => navigate(`/facturacion?pedido=${order.id}`)
 
@@ -90,6 +120,9 @@ export function useOrderActions() {
   return {
     canChangeStatus,
     canInvoice,
+    /** Mostrar "Eliminar": el rol tiene permiso y el pedido no tiene factura. */
+    canDelete: (order: Order) => canDeleteOrders && isDeletable(order),
+    remove,
     actionsFor,
     run,
     confirm,

@@ -1,32 +1,25 @@
-import type { Promotion } from '../types'
+import type { Offer } from '../types'
 
-/** Campañas sincronizadas con los banners del Front Office. */
-export const PROMOTIONS_MOCK: Promotion[] = [
+const at = '2026-10-01T09:00:00.000Z'
+
+/** Ofertas de prueba: una vigente, una programada y una vencida (respecto a nov-2026). */
+export const OFFERS_MOCK: Offer[] = [
   {
-    id: 'PRM-001',
-    title: 'AUDÍFONOS GAMERS 7.1',
-    badge: 'OFERTA ESPECIAL GAMER',
-    discountText: '20% DESCUENTO',
-    targetCategory: 'audio',
-    active: true,
+    id: 'PRM-001', title: 'Audífonos gamers 7.1', badge: 'OFERTA ESPECIAL GAMER',
     description: 'Sonido inmersivo y micrófono con cancelación de ruido.',
+    productIds: ['PRD-006', 'PRD-010'], discountType: 'percent', discountValue: 15,
+    startDate: '2026-11-01', endDate: '2026-11-30', paused: false, createdAt: at,
   },
   {
-    id: 'PRM-002',
-    title: 'LAPTOPS REFURBISHED',
-    badge: 'PRODUCTIVIDAD Y ESTUDIO',
-    discountText: 'DESDE $525.00',
-    targetCategory: 'computadoras',
-    active: true,
-    description: 'Equipos empresariales con procesadores Core i5 y garantía real.',
+    id: 'PRM-002', title: 'Periféricos mecánicos RGB', badge: 'ZONA GAMING',
+    description: 'Teclados mecánicos y mouses ergonómicos.',
+    productIds: ['PRD-004', 'PRD-012'], discountType: 'percent', discountValue: 10,
+    startDate: '2026-11-20', endDate: '2026-12-15', paused: false, createdAt: at,
   },
   {
-    id: 'PRM-003',
-    title: 'PERIFÉRICOS MECÁNICOS RGB',
-    badge: 'ZONA GAMING & STREAMING',
-    discountText: 'HASTA 15% OFF',
-    targetCategory: 'gaming',
-    active: true,
-    description: 'Teclados mecánicos Outemu Blue y mouses ergonómicos.',
+    id: 'PRM-003', title: 'Laptops refurbished', badge: 'PRODUCTIVIDAD Y ESTUDIO',
+    description: 'Equipos empresariales con garantía real.',
+    productIds: ['PRD-001'], discountType: 'amount', discountValue: 25,
+    startDate: '2026-10-01', endDate: '2026-10-31', paused: false, createdAt: at,
   },
 ]

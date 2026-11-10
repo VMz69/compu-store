@@ -70,7 +70,27 @@ export interface Category {
   description: string
 }
 
-export type CategoryDraft = Pick<Category, 'name' | 'icon' | 'description'>
+/** Datos editables. Sin `id` se crea; el id y el slug no cambian al editar (URLs del Front Office). */
+export type CategoryDraft = Pick<Category, 'name' | 'icon' | 'description'> & { id?: string }
+
+/**
+ * Marca del catálogo. Los productos guardan el NOMBRE (`Product.brand`): renombrar
+ * una marca actualiza en cascada sus productos.
+ */
+export interface Brand {
+  id: string
+  name: string
+  slug: string
+  /** Sitio oficial (opcional), ej. "https://www.hp.com". */
+  website: string
+  description: string
+  /** Inactiva: se conserva en sus productos, pero no se ofrece para productos nuevos. */
+  active: boolean
+  /** Fecha ISO de registro. */
+  createdAt: string
+}
+
+export type BrandDraft = Pick<Brand, 'name' | 'website' | 'description' | 'active'> & { id?: string }
 
 export type StockFilter = 'all' | 'in_stock' | 'low_stock' | 'out_of_stock' | 'hidden'
 

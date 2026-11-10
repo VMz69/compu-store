@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
 import type { Customer } from '@/features/customers'
 import { getCustomerOrderStats } from '../lib/customerStats'
 import { countByStatus, filterByStatus, findOrderByQuote, getOrderMetrics } from '../lib/order.service'
@@ -38,10 +37,13 @@ export function useInvoiceableCount(): number {
   return orders.filter(isInvoiceable).length
 }
 
-/** Unidades reservadas por producto (pedidos "Confirmado y Listo"). */
-export function useReservedStock(): Record<string, number> {
+/**
+ * Unidades reservadas por producto (pedidos "Confirmado y Listo"). Al editar un
+ * pedido confirmado se excluye su propia reserva: sus unidades siguen disponibles para él.
+ */
+export function useReservedStock(excludeOrderId?: string): Record<string, number> {
   const orders = useSalesStore((s) => s.orders)
-  return useMemo(() => reservedByProduct(orders), [orders])
+  return useMemo(() => reservedByProduct(orders, excludeOrderId), [orders, excludeOrderId])
 }
 
 /** Implementación del puerto de métricas de Clientes (registrada en `index.ts`). */
@@ -67,7 +69,7 @@ export function useOrderStatusTabs() {
       { value: 'all' as OrderStatusFilter, label: `Todos (${orders.length})`, icon: null },
       ...ORDER_STATUSES.map((s) => ({
         value: s.id as OrderStatusFilter,
-        label: `${s.name} (${countByStatus(orders, s.id)})`,
+        label: `${statusOf(s.id).name} (${countByStatus(orders, s.id)})`,
         icon: `fa-solid ${s.icon}`,
       })),
     ],
@@ -77,18 +79,10 @@ export function useOrderStatusTabs() {
   return { tabs, active, select }
 }
 
-/** Pre-filtra Pedidos por estado y navega a la vista (usado desde Ajustes). */
-export function useShowOrdersByStatus() {
-  const navigate = useNavigate()
-  const setStatusFilter = useOrderFiltersStore((s) => s.setStatusFilter)
-
-  return useCallback(
-    (status: OrderStatusId) => {
-      setStatusFilter(status)
-      navigate('/pedidos')
-    },
-    [navigate, setStatusFilter],
-  )
+/** Estado con sus textos personalizados; re-renderiza cuando se editan en Ajustes. */
+export function useStatusMeta(status: OrderStatusId) {
+  useSalesStore((s) => s.statusLabels[status])
+  return statusOf(status)
 }
 
 export const orderStatusName = (status: OrderStatusId): string => statusOf(status).name

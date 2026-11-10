@@ -7,6 +7,10 @@ import { useMaintenance } from '../hooks/useMaintenance'
 
 const t = tracer('MaintenancePage', 'src/features/settings/pages/MaintenancePage.tsx')
 
+/**
+ * ⚠️ DESACTIVADA: sin ruta, sin tarjeta en el hub y sin exportación pública.
+ * Se conserva como oportunidad de escalabilidad futura (ver settings/ESCALABILIDAD.md).
+ */
 export function MaintenancePage() {
   const { summary, canEdit, exportBackup, promptReset } = useMaintenance()
 
@@ -17,7 +21,7 @@ export function MaintenancePage() {
         title="Mantenimiento del Sistema & Gobernanza de Datos"
         icon="fa-solid fa-database text-amber-500"
       />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-4xl">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5" {...t('settings.maintenance')}>
         <BackupCard summary={summary} onExport={exportBackup} />
         <ResetCard canEdit={canEdit} onReset={promptReset} />
       </div>

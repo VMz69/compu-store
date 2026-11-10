@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { ensurePermission, useSession } from '@/features/access'
-import { useCatalogStore, type Product } from '@/features/catalog'
+import { useCatalogStore, useEffectivePrice, type Product } from '@/features/catalog'
 import { useCustomerSelection } from '@/features/customers'
+import { useExtraCharges } from '@/shared/hooks/useExtraCharges'
 import { useFormState } from '@/shared/hooks/useFormState'
 import { useLineItems } from '@/shared/hooks/useLineItems'
 import { lineTotal } from '@/shared/lib/pricing'
@@ -10,33 +11,45 @@ import { openModal } from '@/shared/store/modal.store'
 import { toast } from '@/shared/store/toast.store'
 import { orderTotals } from '../lib/charges'
 import { DEFAULT_CITY, DELIVERY_METHODS, PAYMENT_METHODS } from '../lib/order.service'
+import { editBlockedReason } from '../lib/orderFlow'
+import { optionsWithLegacy, orderSeed } from '../lib/orderSeed'
 import { validateOrder } from '../lib/orderValidation'
 import { SALES_MODALS } from '../modals'
 import { clearOrderPrefill, peekOrderPrefill } from '../prefill.store'
 import { useSalesStore } from '../store'
-import type { OrderItem } from '../types'
-import { useOrderCharges } from './useOrderCharges'
+import type { OrderDraft, OrderItem } from '../types'
+import { useOrderActions } from './useOrderActions'
 import { useReservedStock } from './useOrders'
 
 /**
- * Constructor de pedidos (/pedidos/nuevo), análogo al de cotizaciones.
- * Flujo: cliente → productos (limitados al stock disponible) → entrega y pago →
- * "Registrar" (estado Registrado); la confirmación y reserva de stock se hacen desde el detalle.
- * Si viene de una cotización, se pre-carga con sus precios y descuentos.
+ * Constructor de pedidos, análogo al de cotizaciones. Dos modos con la misma vista:
+ *  · /pedidos/nuevo: registra un pedido (estado Registrado). Si viene de una
+ *    cotización, se pre-carga con sus precios y descuentos.
+ *  · /pedidos/:orderId/editar: edita un pedido sin factura (ver `editBlockedReason`).
+ * Flujo: cliente → productos (limitados al stock disponible) → entrega y pago → cargos extra.
  */
 export function useOrderBuilder() {
   const navigate = useNavigate()
+  const { orderId } = useParams<{ orderId: string }>()
   const { user } = useSession()
-  const [prefill] = useState(peekOrderPrefill)
+  const [prefill] = useState(() => (orderId ? null : peekOrderPrefill()))
   useEffect(() => clearOrderPrefill(), [])
 
+  // Pedido a editar: se toma una sola vez (la vista no debe cambiar mientras se edita).
+  const [editing] = useState(() => (orderId ? useSalesStore.getState().orders.find((o) => o.id === orderId) : undefined))
+  const isEdit = Boolean(orderId)
+
   const products = useCatalogStore((s) => s.products)
+  const priceOf = useEffectivePrice()
   const channels = useSalesStore((s) => s.channels)
   const addOrder = useSalesStore((s) => s.addOrder)
+  const updateOrder = useSalesStore((s) => s.updateOrder)
   const isLoading = useSalesStore((s) => s.isLoading)
-  const reserved = useReservedStock()
+  const actions = useOrderActions()
+  // Al editar un pedido confirmado, su propia reserva no cuenta en su contra.
+  const reserved = useReservedStock(editing?.id)
   const [submitted, setSubmitted] = useState(false)
-  /** Candado de envío: cubre el alta del cliente + el registro del pedido (evita dobles clics). */
+  /** Candado de envío: cubre el alta del cliente + el guardado del pedido (evita dobles clics). */
   const [saving, setSaving] = useState(false)
 
   const availableOf = (productId: string) => {
@@ -44,60 +57,61 @@ export function useOrderBuilder() {
     return product ? Math.max(0, product.stock - (reserved[productId] ?? 0)) : 0
   }
 
-  const customer = useCustomerSelection(prefill?.customer, { registerNew: true })
-  const lines = useLineItems<OrderItem>(prefill?.items ?? [], availableOf)
-  const extra = useOrderCharges()
   const activeChannels = channels.filter((c) => c.active)
-  const form = useFormState({
-    channel: activeChannels[0]?.name ?? '',
-    paymentMethod: PAYMENT_METHODS[0],
-    deliveryMethod: DELIVERY_METHODS[0],
-    city: '',
-    notes: prefill?.notes ?? '',
-  })
+  const [seed] = useState(() => orderSeed(editing, prefill, activeChannels[0]?.name ?? ''))
+  const customer = useCustomerSelection(seed.customer, { registerNew: true })
+  const lines = useLineItems<OrderItem>(seed.items, availableOf)
+  const extra = useExtraCharges(seed.charges)
+  const form = useFormState(seed.fields)
   const { values } = form
 
   const validate = () => ({ ...customer.validate(), ...validateOrder(values, lines.items, availableOf), ...extra.validate() })
   const errors = submitted ? validate() : {}
 
   const addProduct = (p: Product) => {
-    const added = lines.add({ productId: p.id, sku: p.sku, name: p.name, unitPrice: p.price, quantity: 1, discountPercent: 0 })
+    // Precio vigente: si el producto está en una oferta vigente, entra con ese precio.
+    const { price, offer } = priceOf(p)
+    const isNew = !lines.items.some((i) => i.productId === p.id)
+    const added = lines.add({ productId: p.id, sku: p.sku, name: p.name, unitPrice: price, quantity: 1, discountPercent: 0 })
     if (!added) toast(`No hay más unidades disponibles de ${p.name}.`, 'warning')
+    else if (offer && isNew) toast(`Precio de oferta aplicado: ${offer.title}`, 'info')
   }
 
   const submit = async () => {
     if (saving) return
     setSubmitted(true)
     if (Object.keys(validate()).length > 0) return toast('Revisa el cliente, los productos, la entrega y los cargos extra.', 'warning')
-    if (!ensurePermission('canChangeOrderStatus', 'Su rol no puede registrar pedidos')) return
-    const isNewCustomer = customer.mode === 'walkin'
-    if (isNewCustomer && !ensurePermission('canManageCustomers', 'Su rol no puede registrar clientes nuevos')) return
+    if (!ensurePermission('canChangeOrderStatus', isEdit ? 'Su rol no puede editar pedidos' : 'Su rol no puede registrar pedidos')) return
+    if (customer.mode === 'walkin' && !ensurePermission('canManageCustomers', 'Su rol no puede registrar clientes nuevos')) return
     setSaving(true)
     try {
       // Cliente nuevo: se da de alta primero para que el pedido quede enlazado a su ficha.
       const snap = await customer.commit()
       if (snap.created) toast(`Cliente ${snap.created.name} agregado al directorio`, 'info')
-      const order = await addOrder(
-        {
-          customerId: snap.customerId, client: snap.name, phone: snap.phone, email: snap.email,
-          city: values.city.trim() || snap.city || DEFAULT_CITY,
-          channel: values.channel, paymentMethod: values.paymentMethod, deliveryMethod: values.deliveryMethod.trim(),
-          notes: values.notes.trim(), items: lines.items, charges: extra.charges, quoteId: prefill?.quoteId ?? null,
-        },
-        user?.name ?? 'Equipo CompuStore',
-      )
-      toast(`Pedido ${order.id} registrado`, 'success')
+      const draft: OrderDraft = {
+        customerId: snap.customerId, client: snap.name, phone: snap.phone, email: snap.email,
+        city: values.city.trim() || snap.city || DEFAULT_CITY,
+        channel: values.channel, paymentMethod: values.paymentMethod, deliveryMethod: values.deliveryMethod.trim(),
+        notes: values.notes.trim(), items: lines.items, charges: extra.charges, quoteId: editing?.quoteId ?? prefill?.quoteId ?? null,
+      }
+      const by = user?.name ?? 'Equipo CompuStore'
+      const order = editing ? await updateOrder(editing.id, draft, by) : await addOrder(draft, by)
+      toast(editing ? `Pedido ${order.id} actualizado` : `Pedido ${order.id} registrado`, 'success')
       navigate('/pedidos')
       openModal(SALES_MODALS.orderDetail, order.id)
     } catch (error) {
-      toast(error instanceof Error ? error.message : 'No se pudo registrar el pedido.', 'danger')
+      toast(error instanceof Error ? error.message : 'No se pudo guardar el pedido.', 'danger')
     } finally {
       setSaving(false)
     }
   }
 
   return {
-    quoteId: prefill?.quoteId ?? null,
+    isEdit,
+    orderId: editing?.id ?? orderId ?? null,
+    /** En edición: motivo por el que el pedido no se puede editar (la vista lo muestra en vez del formulario). */
+    blockedReason: isEdit ? editBlockedReason(editing) : null,
+    quoteId: editing?.quoteId ?? prefill?.quoteId ?? null,
     customer,
     bind: form.bind,
     errors,
@@ -111,9 +125,16 @@ export function useOrderBuilder() {
     charges: extra,
     totals: orderTotals(lines.items, extra.charges),
     cityPlaceholder: customer.snapshot.city || DEFAULT_CITY,
-    channelOptions: activeChannels.map((c) => ({ value: c.name, label: `${c.name} (${c.badge || 'Activo'})` })),
-    paymentOptions: PAYMENT_METHODS.map((m) => ({ value: m, label: m })),
-    deliveryOptions: DELIVERY_METHODS.map((m) => ({ value: m, label: m })),
+    channelOptions: optionsWithLegacy(activeChannels.map((c) => c.name), seed.fields.channel, (name) => {
+      const channel = activeChannels.find((c) => c.name === name)
+      return `${name} (${channel?.badge || 'Activo'})`
+    }),
+    paymentOptions: optionsWithLegacy(PAYMENT_METHODS, seed.fields.paymentMethod),
+    deliveryOptions: optionsWithLegacy(DELIVERY_METHODS, seed.fields.deliveryMethod),
+    submitLabel: isEdit ? 'Guardar cambios' : 'Registrar pedido',
+    /** Solo en edición: eliminación lógica del pedido (vuelve a la lista al confirmarse). */
+    canDelete: editing ? actions.canDelete(editing) : false,
+    remove: () => editing && actions.remove(editing, () => navigate('/pedidos')),
     addProduct,
     register: submit,
     cancel: () => navigate('/pedidos'),

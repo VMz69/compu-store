@@ -57,7 +57,38 @@ export const ORDER_STATUSES: OrderStatus[] = [
 
 const BY_ID = Object.fromEntries(ORDER_STATUSES.map((s) => [s.id, s])) as Record<OrderStatusId, OrderStatus>
 
-export const statusOf = (id: OrderStatusId): OrderStatus => BY_ID[id] ?? BY_ID.registrado
+/**
+ * Lo ÚNICO configurable del flujo: el nombre visible y la descripción de cada estado
+ * (Ajustes › Canales y flujo). Ids, orden, transiciones y efectos son fijos (código).
+ * El store de ventas aplica aquí los textos guardados al cargar y al editarlos.
+ */
+export type StatusLabel = Pick<OrderStatus, 'name' | 'description'>
+export type StatusLabels = Partial<Record<OrderStatusId, StatusLabel>>
+
+let labels: StatusLabels = {}
+export const applyStatusLabels = (next: StatusLabels): void => {
+  labels = next
+}
+
+/** Estado con sus textos personalizados (si los hay). */
+export const statusOf = (id: OrderStatusId): OrderStatus => {
+  const base = BY_ID[id] ?? BY_ID.registrado
+  const custom = labels[base.id]
+  return custom ? { ...base, ...custom } : base
+}
+
+/** Todos los estados en orden del flujo (cancelado al final), con textos personalizados. */
+export const flowStatuses = (): OrderStatus[] =>
+  [...ORDER_STATUSES].sort((a, b) => (a.step || 99) - (b.step || 99)).map((s) => statusOf(s.id))
+
+export function validateStatusLabel(id: OrderStatusId, v: StatusLabel): Record<string, string> {
+  const e: Record<string, string> = {}
+  const name = v.name.trim()
+  if (name.length < 3 || name.length > 30) e.name = 'Usa entre 3 y 30 caracteres.'
+  else if (ORDER_STATUSES.some((s) => s.id !== id && statusOf(s.id).name.toLowerCase() === name.toLowerCase())) e.name = 'Otro estado ya usa ese nombre.'
+  if (v.description.trim().length > 200) e.description = 'Máximo 200 caracteres.'
+  return e
+}
 
 export const isOrderStatusId = (value: string): value is OrderStatusId => value in BY_ID
 
@@ -73,6 +104,37 @@ export const SOLD_STATUSES: OrderStatusId[] = ['facturado', 'entregado']
 export const ACTIVE_STATUSES: OrderStatusId[] = ['registrado', 'confirmado', 'facturado']
 
 export const isInvoiceable = (order: Order): boolean => order.status === 'confirmado' && !order.invoiceId
+
+/**
+ * Regla de edición: un pedido se puede editar mientras no tenga factura
+ * (Registrado o Confirmado y Listo). Facturado/Entregado tienen un documento
+ * fiscal emitido y Cancelado es terminal.
+ */
+export const EDITABLE_STATUSES: OrderStatusId[] = ['registrado', 'confirmado']
+
+/** Motivo por el que el pedido no se puede editar, o null si sí se puede. */
+export function editBlockedReason(order: Order | undefined): string | null {
+  if (!order) return 'El pedido no existe o fue eliminado.'
+  if (order.invoiceId) return `El pedido ya tiene la factura ${order.invoiceId}. Para corregirlo, anula la factura primero.`
+  if (!EDITABLE_STATUSES.includes(order.status)) return `Un pedido en estado "${statusOf(order.status).name}" ya no se puede editar.`
+  return null
+}
+
+export const isEditable = (order: Order): boolean => editBlockedReason(order) === null
+
+/**
+ * Regla de eliminación (lógica): solo pedidos SIN factura (Registrado, Confirmado y
+ * Listo o Cancelado). Un pedido facturado o entregado tiene un documento fiscal
+ * emitido y debe conservarse; para corregirlo se anula la factura.
+ */
+export function deleteBlockedReason(order: Order | undefined): string | null {
+  if (!order) return 'El pedido no existe o ya fue eliminado.'
+  if (order.invoiceId) return `El pedido tiene la factura ${order.invoiceId}: no se puede eliminar. Anula la factura primero.`
+  if (order.status === 'facturado' || order.status === 'entregado') return `Un pedido "${statusOf(order.status).name}" no se puede eliminar.`
+  return null
+}
+
+export const isDeletable = (order: Order): boolean => deleteBlockedReason(order) === null
 
 /** Acciones manuales desde Pedidos. "Facturar" vive en Facturación. */
 export type OrderAction = 'confirm' | 'invoice' | 'deliver' | 'cancel'

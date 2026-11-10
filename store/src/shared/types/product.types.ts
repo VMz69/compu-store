@@ -56,6 +56,12 @@ export interface Promotion {
   gradient: string
 }
 
+/**
+ * Estado de moderación. El back office (/admin › Comentarios) aprueba o rechaza;
+ * el Front Office solo muestra los `aprobado`.
+ */
+export type ReviewStatus = 'pendiente' | 'aprobado' | 'rechazado'
+
 export interface Review {
   id: number
   author: string
@@ -65,6 +71,8 @@ export interface Review {
   title: string
   comment: string
   verified: boolean
+  /** Ausente en las reseñas de muestra (ya publicadas): se asume `aprobado`. */
+  status?: ReviewStatus
 }
 
 export interface ProductFilters {

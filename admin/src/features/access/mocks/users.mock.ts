@@ -1,3 +1,4 @@
+import { templateAccess } from '../lib/access'
 import type { User } from '../types'
 
 /**
@@ -10,13 +11,32 @@ export const DEMO_PASSWORD = 'Compu2026!'
 /** Sin foto: `UserAvatar` genera la imagen con las iniciales (shared/lib/initialsAvatar). */
 export const DEFAULT_AVATAR = ''
 
-export const USERS_MOCK: User[] = [
+type SeedUser = Omit<User, 'access'>
+
+/**
+ * El dueño (propietario@) usa la plantilla de Gerencia General. La cuenta de
+ * Super Administrador es del Administrador de Sistema (soporte técnico de la plataforma).
+ */
+const SEED: SeedUser[] = [
+  {
+    id: 6,
+    name: 'Ing. Diego Rivas',
+    email: 'sistemas@compustoresv.com',
+    phone: '7230-1188',
+    role: 'superadmin',
+    avatar: DEFAULT_AVATAR,
+    active: true,
+    passwordHash: 'sha256$d4e8b1f60a2c9375$3e32f4e5ba49ed6560963069420eb89bf1ebbeb9eac85e5c35288b036d0f8775',
+    mustChangePassword: false,
+    createdAt: '2026-01-02T09:00:00.000Z',
+    lastLoginAt: '2026-11-09T07:45:00.000Z',
+  },
   {
     id: 1,
     name: 'Lic. Carlos Mendoza',
     email: 'propietario@compustoresv.com',
     phone: '7038-8225',
-    role: 'superadmin',
+    role: 'gerencia',
     avatar: DEFAULT_AVATAR,
     active: true,
     passwordHash: 'sha256$a3f9c1d27e4b8a06$4c983017af3e96d55247c1afb4b9f70a5a71d27b0e20b2f8a47a73bf528835fa',
@@ -78,3 +98,6 @@ export const USERS_MOCK: User[] = [
     lastLoginAt: null,
   },
 ]
+
+/** Cada usuario arranca con los accesos de la plantilla de su rol. */
+export const USERS_MOCK: User[] = SEED.map((u) => ({ ...u, access: templateAccess(u.role) }))

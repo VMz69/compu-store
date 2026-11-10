@@ -1,3 +1,5 @@
+import type { ExtraCharge } from '@/shared/lib/charges'
+
 /** Estado guardado. "vencida" no se guarda: se deriva de la fecha de validez. */
 export type QuoteStoredStatus = 'emitida' | 'aceptada' | 'rechazada'
 
@@ -44,6 +46,8 @@ export interface Quote {
   id: string
   customer: QuoteCustomer
   items: QuoteItem[]
+  /** Cargos extra cotizados (envío, instalación…): suman al total y pasan al pedido al convertir. */
+  charges: ExtraCharge[]
   notes: string
   /** Días de validez desde la emisión. */
   validityDays: number
@@ -60,7 +64,11 @@ export interface QuoteTotals {
   gross: number
   /** Total de descuentos aplicados. */
   discount: number
-  /** Total a pagar (IVA incluido). */
+  /** Productos con descuentos (sin cargos). */
+  productsTotal: number
+  /** Suma de cargos extra. */
+  chargesTotal: number
+  /** Total a pagar: productos + cargos extra (IVA incluido). */
   total: number
   /** Base imponible (total sin IVA). */
   net: number

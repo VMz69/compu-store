@@ -10,35 +10,38 @@ const RATING_LABELS: Record<number, string> = {
   5: '¡Excelente!',
 }
 
+/** Mínimo de caracteres para que la opinión sea útil a otros clientes. */
+const MIN_COMMENT = 10
+
 /**
- * Formulario controlado de reseñas con validación mínima y publicación en el store.
+ * Formulario controlado de reseñas. Al enviar, la opinión queda PENDIENTE de
+ * moderación en el back office: no se publica hasta que se apruebe.
  */
 export const useReviewForm = (productId: number) => {
-  const addReview = useReviewStore((state) => state.addReview)
+  const submitReview = useReviewStore((state) => state.submitReview)
   const pushToast = useToastStore((state) => state.pushToast)
   const [rating, setRating] = useState(5)
   const [author, setAuthor] = useState('')
   const [city, setCity] = useState('')
   const [comment, setComment] = useState('')
+  /** Se acaba de enviar una opinión: se muestra el aviso "en revisión". */
+  const [sentForReview, setSentForReview] = useState(false)
 
   const submit = () => {
     if (!author.trim() || !comment.trim()) {
       pushToast('Por favor ingresa tu nombre y tu comentario.', 'warning')
       return
     }
+    if (comment.trim().length < MIN_COMMENT) {
+      pushToast(`Cuéntanos un poco más (mínimo ${MIN_COMMENT} caracteres).`, 'warning')
+      return
+    }
 
-    addReview(productId, {
-      id: Date.now(),
-      author: author.trim(),
-      city: city.trim() || 'El Salvador',
-      rating,
-      date: 'Hace un momento',
-      title: 'Opinión verificada',
-      comment: comment.trim(),
-      verified: true,
-    })
+    // TODO(API): será asíncrono (`await`) y con manejo de error de red.
+    submitReview(productId, { rating, author: author.trim(), city: city.trim(), comment: comment.trim() })
 
-    pushToast('¡Muchas gracias! Tu opinión ha sido publicada exitosamente.', 'success')
+    pushToast('¡Gracias! Tu opinión fue enviada y se publicará tras ser revisada.', 'success')
+    setSentForReview(true)
     setAuthor('')
     setCity('')
     setComment('')
@@ -55,6 +58,8 @@ export const useReviewForm = (productId: number) => {
     setCity,
     comment,
     setComment,
+    sentForReview,
+    dismissNotice: () => setSentForReview(false),
     submit,
   }
 }

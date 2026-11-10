@@ -2,5 +2,6 @@
 export const SALES_MODALS = {
   orderDetail: 'order-detail',
   channelForm: 'channel-form',
-  statusDetail: 'status-detail',
+  /** Editar nombre/descripción de un estado del flujo. Payload: id del estado. */
+  statusLabel: 'status-label',
 } as const

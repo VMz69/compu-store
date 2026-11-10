@@ -24,8 +24,16 @@ export interface RolePermissions {
   canManageCustomers: boolean
   /** Eliminación de clientes (acción destructiva, más restringida). */
   canDeleteCustomers: boolean
+  /** Eliminación (lógica) de pedidos sin factura. Acción destructiva, más restringida. */
+  canDeleteOrders: boolean
   /** Emitir cotizaciones, cambiar su estado y eliminarlas. */
   canManageQuotes: boolean
+  /** Categorías y marcas: crear, editar y eliminar. */
+  canManageTaxonomy: boolean
+  /** Ofertas: crear, editar, pausar y eliminar. */
+  canManageOffers: boolean
+  /** Comentarios del Front Office: aprobar, rechazar y eliminar. */
+  canModerateReviews: boolean
   /** Emitir y anular facturas (descuenta y repone stock). */
   canInvoice: boolean
   /** CRUD de usuarios del sistema y sus contraseñas. */
@@ -48,6 +56,16 @@ export interface Role extends RolePermissions {
   allowedViews: ViewId[]
 }
 
+/**
+ * Accesos de un usuario (RBAC por vistas): qué vistas ve y qué acciones puede hacer.
+ * Se inicializan con la plantilla de su rol y se ajustan por usuario.
+ * El Super Administrador siempre tiene acceso total (no se guarda ni se edita).
+ */
+export interface UserAccess {
+  views: ViewId[]
+  permissions: Permission[]
+}
+
 /** Colaborador con acceso al back office. */
 export interface User {
   id: number
@@ -55,7 +73,9 @@ export interface User {
   /** Correo único: es el identificador de inicio de sesión. */
   email: string
   phone: string
+  /** Plantilla de accesos (y etiqueta del puesto). */
   role: RoleId
+  access: UserAccess
   avatar: string
   /** Un usuario inactivo no puede iniciar sesión (y pierde la sesión abierta). */
   active: boolean

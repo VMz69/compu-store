@@ -1,27 +1,36 @@
 import { create } from 'zustand'
 
+export interface ConfirmReason {
+  label: string
+  placeholder?: string
+  /** Mínimo de caracteres (sin espacios extremos) para habilitar la confirmación. */
+  minLength?: number
+}
+
 export interface ConfirmRequest {
   title: string
   message: string
   confirmText?: string
-  onConfirm: () => void | Promise<void>
+  /** Pide un motivo antes de confirmar (ej. auditoría de eliminaciones); se entrega a `onConfirm`. */
+  reason?: ConfirmReason
+  onConfirm: (reason: string) => void | Promise<void>
 }
 
 interface ConfirmState {
   request: ConfirmRequest | null
   open: (request: ConfirmRequest) => void
   close: () => void
-  accept: () => void
+  accept: (reason?: string) => void
 }
 
 export const useConfirmStore = create<ConfirmState>()((set, get) => ({
   request: null,
   open: (request) => set({ request }),
   close: () => set({ request: null }),
-  accept: () => {
+  accept: (reason = '') => {
     const current = get().request
     set({ request: null })
-    void current?.onConfirm()
+    void current?.onConfirm(reason.trim())
   },
 }))
 

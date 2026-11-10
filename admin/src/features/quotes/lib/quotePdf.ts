@@ -20,7 +20,7 @@ import { calcTotals, lineTotal, validUntil } from './quote.service'
  */
 export async function buildQuotePdf(quote: Quote) {
   const kit = await createPdf({ title: `Cotización ${quote.id}`, author: quote.issuer.name, subject: quote.customer.name })
-  const totals = calcTotals(quote.items, quote.issuer.taxRate)
+  const totals = calcTotals(quote.items, quote.charges ?? [], quote.issuer.taxRate)
   const taxPercent = Math.round(quote.issuer.taxRate * 100)
   const c = quote.customer
 
@@ -49,15 +49,27 @@ export async function buildQuotePdf(quote: Quote) {
 
   y = drawItemsTable(kit, y, {
     head: [['#', 'SKU', 'Descripción', 'Cant.', 'P. unitario', 'Desc.', 'Total']],
-    body: quote.items.map((item, i) => [
-      String(i + 1),
-      item.sku,
-      item.name,
-      String(item.quantity),
-      formatCurrency(item.unitPrice),
-      item.discountPercent > 0 ? `${item.discountPercent}%` : '—',
-      formatCurrency(lineTotal(item)),
-    ]),
+    body: [
+      ...quote.items.map((item, i) => [
+        String(i + 1),
+        item.sku,
+        item.name,
+        String(item.quantity),
+        formatCurrency(item.unitPrice),
+        item.discountPercent > 0 ? `${item.discountPercent}%` : '—',
+        formatCurrency(lineTotal(item)),
+      ]),
+      // Cargos extra: líneas de servicio (sin SKU).
+      ...(quote.charges ?? []).map((c, i) => [
+        String(quote.items.length + i + 1),
+        'SERVICIO',
+        c.concept,
+        '1',
+        formatCurrency(c.amount),
+        '—',
+        formatCurrency(c.amount),
+      ]),
+    ],
     columnStyles: {
       0: { cellWidth: 8, halign: 'center' },
       1: { cellWidth: 28, font: 'courier', fontSize: 7.5 },
@@ -72,6 +84,7 @@ export async function buildQuotePdf(quote: Quote) {
   y = drawTotals(kit, y, [
     { label: 'Subtotal', value: formatCurrency(totals.gross) },
     ...(totals.discount > 0 ? [{ label: 'Descuentos', value: `- ${formatCurrency(totals.discount)}` }] : []),
+    ...(totals.chargesTotal > 0 ? [{ label: 'Cargos extra', value: `+ ${formatCurrency(totals.chargesTotal)}` }] : []),
     { label: 'Base imponible (sin IVA)', value: formatCurrency(totals.net) },
     { label: `IVA ${taxPercent}% incluido`, value: formatCurrency(totals.tax) },
     { label: 'TOTAL A PAGAR', value: formatCurrency(totals.total), strong: true },

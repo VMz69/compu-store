@@ -1,4 +1,4 @@
-import { Modal, ModalFooter, ModalHeader } from '@/shared/ui'
+import { Button, Modal, ModalFooter, ModalHeader } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
 import { useOrderDetail } from '../../hooks/useOrderDetail'
 import { OrderActionButtons } from '../OrderActionButtons'
@@ -61,10 +61,24 @@ export function OrderDetailModal() {
       </div>
 
       <ModalFooter>
-        <a href={detail.notifyLink} target="_blank" rel="noreferrer" className="text-xs font-bold text-whatsapp hover:underline flex items-center gap-1.5" {...t('sales.order-detail.notify')}>
-          <i className="fa-brands fa-whatsapp text-sm" aria-hidden="true" /> Notificar
-        </a>
-        <OrderActionButtons buttons={detail.buttons} onRun={detail.run} traceId={`sales.order-detail.actions.${o.id}`} size="md" emptyLabel="" />
+        <div className="flex items-center gap-3">
+          <a href={detail.notifyLink} target="_blank" rel="noreferrer" className="text-xs font-bold text-whatsapp hover:underline flex items-center gap-1.5" {...t('sales.order-detail.notify')}>
+            <i className="fa-brands fa-whatsapp text-sm" aria-hidden="true" /> Notificar
+          </a>
+          {detail.canDelete && (
+            <button type="button" onClick={detail.remove} className="text-xs font-bold text-red-500 hover:text-red-600 hover:underline flex items-center gap-1.5" {...t(`sales.order-detail.delete.${o.id}`)}>
+              <i className="fa-solid fa-trash-can text-[11px]" aria-hidden="true" /> Eliminar
+            </button>
+          )}
+        </div>
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          {detail.canEdit && (
+            <Button variant="outline" size="md" icon="fa-solid fa-pen" onClick={detail.edit} title="Abre el pedido en el constructor para modificarlo" {...t(`sales.order-detail.edit.${o.id}`)}>
+              Editar
+            </Button>
+          )}
+          <OrderActionButtons buttons={detail.buttons} onRun={detail.run} traceId={`sales.order-detail.actions.${o.id}`} size="md" emptyLabel="" />
+        </div>
       </ModalFooter>
     </Modal>
   )

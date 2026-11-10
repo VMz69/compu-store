@@ -53,7 +53,7 @@ export function LotRowsEditor({ api }: { api: ProductFormApi }) {
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Vencimiento</span>
                   <label className="flex items-center gap-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 cursor-pointer">
-                    <input type="checkbox" className="w-3 h-3 accent-brand" {...noExpiry} /> No vence
+                    <input type="checkbox" className="w-3 h-3 accent-brand" {...noExpiry} {...t(`catalog.product-form.lots.no-expiry.${index + 1}`)} /> No vence
                   </label>
                 </div>
                 <Input

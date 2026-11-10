@@ -1,6 +1,6 @@
-import type { ViewId } from '@/features/access'
+import { VIEW_CATALOG, type ViewId } from '@/features/access'
 
-export type NavBadgeKey = 'orders' | 'toInvoice'
+export type NavBadgeKey = 'orders' | 'toInvoice' | 'reviews'
 
 export interface NavItemConfig {
   id: ViewId
@@ -9,18 +9,24 @@ export interface NavItemConfig {
   icon: string
   /** Contador de pendientes a mostrar como badge. */
   badge?: NavBadgeKey
+  /** "topbar": no va en el sidebar; tiene acceso directo en la barra superior (ej. Ajustes). */
+  placement: 'main' | 'topbar'
 }
 
-/** Ítems del sidebar. Se filtran por `role.allowedViews`. */
-export const NAV_ITEMS: NavItemConfig[] = [
-  { id: 'tablero', icon: 'fa-solid fa-border-all', label: 'Tablero' },
-  { id: 'productos', icon: 'fa-solid fa-box-open', label: 'Productos' },
-  { id: 'pedidos', icon: 'fa-solid fa-cart-shopping', label: 'Pedidos', badge: 'orders' },
-  { id: 'facturacion', icon: 'fa-solid fa-file-invoice', label: 'Facturación', badge: 'toInvoice' },
-  { id: 'clientes', icon: 'fa-solid fa-address-book', label: 'Clientes' },
-  { id: 'categorias', icon: 'fa-solid fa-layer-group', label: 'Categorías' },
-  { id: 'ofertas', icon: 'fa-solid fa-tags', label: 'Ofertas Web' },
-  { id: 'cotizaciones', icon: 'fa-solid fa-file-invoice-dollar', label: 'Cotizaciones' },
-  { id: 'interacciones', icon: 'fa-solid fa-comments', label: 'Interacciones' },
-  { id: 'ajustes', icon: 'fa-solid fa-gear', label: 'Ajustes' },
-]
+/** Contadores por vista (lo propio del menú; nombre e ícono vienen del catálogo de vistas). */
+const BADGES: Partial<Record<ViewId, NavBadgeKey>> = {
+  pedidos: 'orders',
+  facturacion: 'toInvoice',
+  interacciones: 'reviews',
+}
+
+/** Vistas fuera del sidebar, con acceso directo en la barra superior (configuración, no operación diaria). */
+const TOPBAR: ViewId[] = ['ajustes']
+
+/**
+ * Ítems del sidebar, en el orden del catálogo de vistas de Accesos (única fuente).
+ * Se filtran por las vistas habilitadas del usuario (`role.allowedViews`).
+ */
+export const NAV_ITEMS: NavItemConfig[] = VIEW_CATALOG.map(({ id, label, icon }) => ({
+  id, label, icon, badge: BADGES[id], placement: TOPBAR.includes(id) ? 'topbar' : 'main',
+}))

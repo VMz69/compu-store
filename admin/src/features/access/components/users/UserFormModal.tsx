@@ -29,7 +29,7 @@ export function UserFormModal() {
               <Input type="tel" placeholder="Ej. 7038-8225" invalid={Boolean(f.errors.phone)} {...f.bind('phone')} {...t('access.user-form.phone')} />
             </Field>
           </div>
-          <Field label="Rol operativo (RBAC)" variant="caps" required error={f.errors.role} hint="Define qué vistas y acciones tendrá disponibles.">
+          <Field label="Rol (plantilla de accesos)" variant="caps" required error={f.errors.role} hint="Copia sus vistas y acciones. Cambiar el rol reinicia los accesos; se ajustan en Accesos.">
             <Select options={f.roleOptions} className="w-full" invalid={Boolean(f.errors.role)} {...f.bind('role')} {...t('access.user-form.role')} />
           </Field>
           <div>

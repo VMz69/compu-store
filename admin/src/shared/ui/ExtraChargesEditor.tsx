@@ -1,34 +1,45 @@
+import type { ExtraChargesApi } from '@/shared/hooks/useExtraCharges'
 import { formatCurrency } from '@/shared/lib/currency'
-import { AffixInput, IconButton, Input } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
-import type { OrderBuilderApi } from '../../hooks/useOrderBuilder'
+import { AffixInput } from './AffixInput'
+import { IconButton } from './IconButton'
+import { Input } from './Input'
 
-const t = tracer('OrderChargesSection', 'src/features/sales/components/builder/OrderChargesSection.tsx')
+const t = tracer('ExtraChargesEditor', 'src/shared/ui/ExtraChargesEditor.tsx')
 
 const ERROR = 'text-[10px] font-semibold text-red-600 dark:text-red-400'
 
-/** Paso 4 · Cargos extra al pago (envío, instalación…): suman al total y se facturan como servicio. */
-export function OrderChargesSection({ b }: { b: OrderBuilderApi }) {
-  const c = b.charges
+interface ExtraChargesEditorProps {
+  title: string
+  charges: ExtraChargesApi
+  errors: Record<string, string | undefined>
+  /** Texto cuando no hay cargos (explica para qué sirven en este documento). */
+  emptyText: string
+  /** Prefijo de trazabilidad (ej. "sales.builder.charges"). */
+  traceId: string
+}
+
+/** Cargos extra de un documento (envío, instalación…): concepto + monto, con atajos. Compartido por pedidos y cotizaciones. */
+export function ExtraChargesEditor({ title, charges: c, errors, emptyText, traceId }: ExtraChargesEditorProps) {
 
   return (
-    <section className="space-y-2.5" {...t('sales.builder.charges')}>
+    <section className="space-y-2.5" {...t(traceId)}>
       <div className="flex items-center justify-between gap-2">
-        <h3 className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">4 · Cargos extra</h3>
+        <h3 className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">{title}</h3>
         {c.total > 0 && <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300 tabular-nums">+{formatCurrency(c.total)}</span>}
       </div>
 
       {c.rows.length === 0 && (
-        <p className="text-[11px] text-slate-400">Opcional. Envío, instalación u otros servicios que el cliente paga junto al pedido.</p>
+        <p className="text-[11px] text-slate-400">{emptyText}</p>
       )}
 
       {c.rows.length > 0 && (
         <ul className="space-y-2">
           {c.rows.map((row, i) => {
-            const conceptError = b.errors[`charges.${row.id}.concept`]
-            const amountError = b.errors[`charges.${row.id}.amount`]
+            const conceptError = errors[`charges.${row.id}.concept`]
+            const amountError = errors[`charges.${row.id}.amount`]
             return (
-              <li key={row.id} className="space-y-0.5" {...t(`sales.builder.charge.${row.id}`)}>
+              <li key={row.id} className="space-y-0.5" {...t(`${traceId}.${row.id}`)}>
                 <div className="flex items-start gap-2">
                   <Input
                     aria-label={`Concepto del cargo ${i + 1}`}
@@ -37,7 +48,7 @@ export function OrderChargesSection({ b }: { b: OrderBuilderApi }) {
                     className="flex-1"
                     invalid={Boolean(conceptError)}
                     {...c.bind(row.id, 'concept')}
-                    {...t(`sales.builder.charge.${row.id}.concept`)}
+                    {...t(`${traceId}.${row.id}.concept`)}
                   />
                   <div className="w-28 shrink-0">
                     <AffixInput
@@ -48,10 +59,10 @@ export function OrderChargesSection({ b }: { b: OrderBuilderApi }) {
                       className="text-right"
                       invalid={Boolean(amountError)}
                       {...c.bind(row.id, 'amount')}
-                      {...t(`sales.builder.charge.${row.id}.amount`)}
+                      {...t(`${traceId}.${row.id}.amount`)}
                     />
                   </div>
-                  <IconButton icon="fa-solid fa-xmark" label="Quitar cargo" tone="plain" sizeClass="w-8 h-8" onClick={() => c.remove(row.id)} {...t(`sales.builder.charge.${row.id}.remove`)} />
+                  <IconButton icon="fa-solid fa-xmark" label="Quitar cargo" tone="plain" sizeClass="w-8 h-8" onClick={() => c.remove(row.id)} {...t(`${traceId}.${row.id}.remove`)} />
                 </div>
                 {(conceptError || amountError) && (
                   <p role="alert" className={ERROR}>{[conceptError, amountError].filter(Boolean).join(' · ')}</p>
@@ -61,7 +72,7 @@ export function OrderChargesSection({ b }: { b: OrderBuilderApi }) {
           })}
         </ul>
       )}
-      {b.errors.charges && <p role="alert" className={ERROR}>{b.errors.charges}</p>}
+      {errors.charges && <p role="alert" className={ERROR}>{errors.charges}</p>}
 
       {c.canAdd && (
         <div className="flex flex-wrap items-center gap-1.5">
@@ -71,12 +82,12 @@ export function OrderChargesSection({ b }: { b: OrderBuilderApi }) {
               type="button"
               onClick={() => c.add(preset)}
               className="text-[11px] font-bold px-2.5 py-1 rounded-full border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-brand hover:text-brand transition-colors"
-              {...t(`sales.builder.charge.preset.${preset}`)}
+              {...t(`${traceId}.preset.${preset}`)}
             >
               + {preset}
             </button>
           ))}
-          <button type="button" onClick={() => c.add()} className="text-[11px] font-bold px-2.5 py-1 text-brand hover:text-brand-hover" {...t('sales.builder.charge.add')}>
+          <button type="button" onClick={() => c.add()} className="text-[11px] font-bold px-2.5 py-1 text-brand hover:text-brand-hover" {...t(`${traceId}.add`)}>
             <i className="fa-solid fa-plus mr-1" aria-hidden="true" />
             Otro cargo
           </button>

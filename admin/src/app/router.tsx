@@ -5,10 +5,10 @@ import { CategoriesPage, ProductsPage } from '@/features/catalog'
 import { CustomersPage } from '@/features/customers'
 import { DashboardPage } from '@/features/dashboard'
 import { InteractionsPage } from '@/features/interactions'
-import { PromotionsPage } from '@/features/promotions'
+import { OfferBuilderPage, PromotionsPage } from '@/features/promotions'
 import { NewQuotePage, QuotesPage } from '@/features/quotes'
-import { NewOrderPage, OrdersPage } from '@/features/sales'
-import { ChannelsPage, FiscalPage, IdentityPage, MaintenancePage, SettingsPage, UsersPage } from '@/features/settings'
+import { EditOrderPage, NewOrderPage, OrdersPage } from '@/features/sales'
+import { ChannelsPage, IdentityPage, SettingsPage, UserAccessPage, UsersPage } from '@/features/settings'
 import { HomeRedirect } from './guards/HomeRedirect'
 import { RequireAuth } from './guards/RequireAuth'
 import { RequireView } from './guards/RequireView'
@@ -35,12 +35,20 @@ export const router = createBrowserRouter([
                 children: [
                   { index: true, element: <RequireView view="pedidos"><OrdersPage /></RequireView> },
                   { path: 'nuevo', element: <RequireView view="pedidos"><NewOrderPage /></RequireView> },
+                  { path: ':orderId/editar', element: <RequireView view="pedidos"><EditOrderPage /></RequireView> },
                 ],
               },
               { path: 'facturacion', element: <RequireView view="facturacion"><BillingPage /></RequireView> },
               { path: 'clientes', element: <RequireView view="clientes"><CustomersPage /></RequireView> },
               { path: 'categorias', element: <RequireView view="categorias"><CategoriesPage /></RequireView> },
-              { path: 'ofertas', element: <RequireView view="ofertas"><PromotionsPage /></RequireView> },
+              {
+                path: 'ofertas',
+                children: [
+                  { index: true, element: <RequireView view="ofertas"><PromotionsPage /></RequireView> },
+                  { path: 'nueva', element: <RequireView view="ofertas"><OfferBuilderPage /></RequireView> },
+                  { path: ':offerId/editar', element: <RequireView view="ofertas"><OfferBuilderPage /></RequireView> },
+                ],
+              },
               {
                 path: 'cotizaciones',
                 children: [
@@ -55,9 +63,8 @@ export const router = createBrowserRouter([
                   { index: true, element: <RequireView view="ajustes"><SettingsPage /></RequireView> },
                   { path: 'canales', element: <RequireView view="ajustes"><ChannelsPage /></RequireView> },
                   { path: 'usuarios', element: <RequireView view="ajustes"><UsersPage /></RequireView> },
+                  { path: 'usuarios/:userId/accesos', element: <RequireView view="ajustes"><UserAccessPage /></RequireView> },
                   { path: 'identidad', element: <RequireView view="ajustes"><IdentityPage /></RequireView> },
-                  { path: 'parametros', element: <RequireView view="ajustes"><FiscalPage /></RequireView> },
-                  { path: 'mantenimiento', element: <RequireView view="ajustes"><MaintenancePage /></RequireView> },
                 ],
               },
               { path: '*', element: <NotFoundPage /> },

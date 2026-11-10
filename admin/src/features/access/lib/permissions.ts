@@ -1,17 +1,17 @@
 import { toast } from '@/shared/store/toast.store'
-import { ROLES } from '../mocks/roles.mock'
 import { useAccessStore } from '../store'
 import type { Permission, Role } from '../types'
+import { effectiveRole } from './access'
 
 /**
  * Rol de la sesión activa leído fuera de React (para hooks de acciones).
- * El rol se toma SIEMPRE del usuario vigente: si un administrador le cambia el
- * rol o lo desactiva, el cambio aplica de inmediato sin volver a iniciar sesión.
+ * Se toma SIEMPRE del usuario vigente (rol + sus accesos por vista): si un administrador
+ * le cambia los accesos o lo desactiva, aplica de inmediato sin volver a iniciar sesión.
  */
 export const getCurrentRole = (): Role | null => {
   const { session, users } = useAccessStore.getState()
   const user = session ? users.find((u) => u.id === session.userId) : undefined
-  return user?.active ? ROLES[user.role] : null
+  return user?.active ? effectiveRole(user) : null
 }
 
 /**

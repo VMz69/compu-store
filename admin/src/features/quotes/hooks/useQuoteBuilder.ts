@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ensurePermission, useSession } from '@/features/access'
-import type { Product } from '@/features/catalog'
+import { useEffectivePrice, type Product } from '@/features/catalog'
 import { useCustomerSelection } from '@/features/customers'
 import { useStoreSettings } from '@/features/settings'
+import { useExtraCharges } from '@/shared/hooks/useExtraCharges'
 import { useFormState } from '@/shared/hooks/useFormState'
 import { useLineItems } from '@/shared/hooks/useLineItems'
 import { openModal } from '@/shared/store/modal.store'
@@ -20,6 +21,7 @@ import type { QuoteItem } from '../types'
  * Comparte cliente y líneas con el constructor de pedidos (mismos hooks).
  */
 export function useQuoteBuilder() {
+  const priceOf = useEffectivePrice()
   const navigate = useNavigate()
   const createQuote = useQuotesStore((s) => s.createQuote)
   const isLoading = useQuotesStore((s) => s.isLoading)
@@ -29,6 +31,7 @@ export function useQuoteBuilder() {
   const customer = useCustomerSelection()
   // Se cotiza sin tope de stock: se permite "bajo pedido".
   const lines = useLineItems<QuoteItem>([])
+  const extra = useExtraCharges()
   const [submitted, setSubmitted] = useState(false)
   const form = useFormState({ notes: '', validityDays: String(DEFAULT_VALIDITY_DAYS) })
   const { values } = form
@@ -36,18 +39,19 @@ export function useQuoteBuilder() {
   const validate = () => {
     const e = customer.validate()
     if (lines.items.length === 0) e.items = 'Agrega al menos un producto.'
-    return e
+    return { ...e, ...extra.validate() }
   }
   const errors = submitted ? validate() : {}
 
   const generate = async () => {
     setSubmitted(true)
-    if (Object.keys(validate()).length > 0) return toast('Completa el cliente y los productos.', 'warning')
+    if (Object.keys(validate()).length > 0) return toast('Revisa el cliente, los productos y los cargos extra.', 'warning')
     if (!ensurePermission('canManageQuotes', 'Su rol no puede emitir cotizaciones')) return
     const { customerId, name, phone, email, documentId } = customer.snapshot
     const quote = await createQuote({
       customer: { customerId, name, phone, email, documentId },
       items: lines.items,
+      charges: extra.charges,
       notes: values.notes.trim(),
       validityDays: Number(values.validityDays),
       createdBy: user?.name ?? 'Equipo CompuStore',
@@ -68,11 +72,13 @@ export function useQuoteBuilder() {
     })),
     lineHandlers: { onStep: lines.step, onQuantity: lines.onQuantity, onDiscount: lines.onDiscount, onRemove: lines.remove },
     quantities: lines.quantities,
-    totals: calcTotals(lines.items, settings.taxRate),
+    charges: extra,
+    totals: calcTotals(lines.items, extra.charges, settings.taxRate),
     taxPercent: Math.round(settings.taxRate * 100),
     errors,
+    /** Se cotiza al precio vigente (con oferta si aplica). */
     addProduct: (p: Product) =>
-      lines.add({ productId: p.id, sku: p.sku, name: p.name, unitPrice: p.price, quantity: 1, discountPercent: 0 }),
+      lines.add({ productId: p.id, sku: p.sku, name: p.name, unitPrice: priceOf(p).price, quantity: 1, discountPercent: 0 }),
     generate,
     cancel: () => navigate('/cotizaciones'),
     isLoading,

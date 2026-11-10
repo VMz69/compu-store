@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ProductPicker, useProductPicker } from '@/features/catalog'
-import { Badge, Breadcrumb } from '@/shared/ui'
+import { Badge, Breadcrumb, Button, EmptyState } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
 import { OrderSummaryPanel } from '../components/builder/OrderSummaryPanel'
 import { useOrderBuilder } from '../hooks/useOrderBuilder'
@@ -8,8 +8,9 @@ import { useOrderBuilder } from '../hooks/useOrderBuilder'
 const t = tracer('NewOrderPage', 'src/features/sales/pages/NewOrderPage.tsx')
 
 /**
- * /pedidos/nuevo · Constructor a dos columnas (mismo patrón que /cotizaciones/nueva).
- * Izquierda: catálogo con stock disponible (stock − reservado). Derecha: resumen y registro.
+ * /pedidos/nuevo y /pedidos/:orderId/editar · Constructor a dos columnas (mismo patrón
+ * que /cotizaciones/nueva). Izquierda: catálogo con stock disponible (stock − reservado).
+ * Derecha: resumen y registro (o guardado de cambios).
  */
 export function NewOrderPage() {
   const builder = useOrderBuilder()
@@ -27,20 +28,30 @@ export function NewOrderPage() {
           <i className="fa-solid fa-arrow-left text-xs" aria-hidden="true" />
         </Link>
         <div className="min-w-0">
-          <Breadcrumb items={[{ label: 'Pedidos', to: '/pedidos' }, { label: 'Nuevo' }]} />
+          <Breadcrumb items={[{ label: 'Pedidos', to: '/pedidos' }, { label: builder.isEdit ? `Editar ${builder.orderId}` : 'Nuevo' }]} />
           <h3 className="text-sm font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            Nuevo pedido
+            {builder.isEdit ? `Editar pedido ${builder.orderId}` : 'Nuevo pedido'}
             {builder.quoteId && <Badge tone="brand" icon="fa-solid fa-file-signature">Desde {builder.quoteId}</Badge>}
           </h3>
         </div>
       </div>
 
+      {builder.blockedReason ? (
+        <EmptyState
+          icon="fa-solid fa-lock"
+          title="Este pedido no se puede editar"
+          hint={builder.blockedReason}
+          action={<Button variant="outline" size="md" onClick={builder.cancel} {...t('sales.builder.blocked.back')}>Volver a pedidos</Button>}
+          {...t('sales.builder.blocked')}
+        />
+      ) : (
       <div className="flex-1 min-h-0 overflow-y-auto lg:overflow-hidden custom-scrollbar p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_480px] xl:grid-cols-[minmax(0,1fr)_540px] gap-5">
         <div className="lg:overflow-y-auto custom-scrollbar lg:pr-1">
           <ProductPicker picker={picker} onAdd={builder.addProduct} traceId="sales.builder.picker" target="el pedido" />
         </div>
         <OrderSummaryPanel b={builder} />
       </div>
+      )}
     </div>
   )
 }

@@ -1,4 +1,5 @@
-import { ROLES } from '../mocks/roles.mock'
+import { useMemo } from 'react'
+import { effectiveRole } from '../lib/access'
 import { useAccessStore } from '../store'
 import type { Permission, ViewId } from '../types'
 
@@ -11,7 +12,8 @@ export function useSession() {
   const user = useAccessStore((s) => (session ? s.users.find((u) => u.id === session.userId) : undefined))
 
   const isAuthenticated = Boolean(user?.active)
-  const role = isAuthenticated && user ? ROLES[user.role] : null
+  // Rol efectivo: plantilla del rol + vistas y acciones del propio usuario.
+  const role = useMemo(() => (isAuthenticated && user ? effectiveRole(user) : null), [isAuthenticated, user])
 
   return {
     isAuthenticated,

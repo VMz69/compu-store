@@ -43,7 +43,7 @@ export function ImageDropzone({ gallery, alt }: ImageDropzoneProps) {
         )}
         {...t('catalog.product-form.image.drop')}
       >
-        <input className="sr-only" {...picker.inputProps} />
+        <input className="sr-only" {...picker.inputProps} {...t('catalog.product-form.image.input')} />
         {cover ? (
           <>
             <SafeImage key={cover} src={cover} alt={alt || 'Portada'} className="w-full h-full object-cover" />

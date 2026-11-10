@@ -1,3 +1,5 @@
+import type { ExtraCharge } from '@/shared/lib/charges'
+
 /**
  * Estados del flujo de pedidos (ver `lib/orderFlow.ts`):
  * registrado → confirmado → facturado → entregado · cancelado (terminal).
@@ -20,12 +22,7 @@ export interface OrderItem {
  * Cargo adicional al pago del pedido que no sale del inventario (envío, instalación,
  * configuración…). Suma al total y se factura como línea de servicio.
  */
-export interface OrderCharge {
-  id: string
-  concept: string
-  /** Monto en dólares con IVA incluido, > 0. */
-  amount: number
-}
+export type OrderCharge = ExtraCharge
 
 /** Evento del historial (trazabilidad: quién movió el pedido y cuándo). */
 export interface OrderEvent {
@@ -64,6 +61,19 @@ export interface Order {
   history: OrderEvent[]
 }
 
+/**
+ * Pedido eliminado. ⚠️ Eliminación LÓGICA: el registro no se borra; se mueve a la
+ * colección `deletedOrders` del store con quién, cuándo y por qué, para auditoría.
+ * Al salir de `orders` deja de contar en listados, métricas, reservas de stock y
+ * facturación, y su id nunca se reutiliza.
+ */
+export interface DeletedOrder extends Order {
+  /** Fecha ISO de eliminación. */
+  deletedAt: string
+  deletedBy: string
+  deleteReason: string
+}
+
 /** Datos para registrar: el store asigna id, fecha, total, estado inicial e historial. */
 export type OrderDraft = Omit<Order, 'id' | 'date' | 'total' | 'status' | 'invoiceId' | 'history'>
 
@@ -72,6 +82,8 @@ export interface OrderPrefill {
   quoteId: string | null
   customer: { customerId: string | null; name: string; phone: string; email: string }
   items: OrderItem[]
+  /** Cargos extra cotizados: pasan al pedido. */
+  charges?: OrderCharge[]
   notes: string
 }
 

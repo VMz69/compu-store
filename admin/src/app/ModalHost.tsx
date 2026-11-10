@@ -1,14 +1,13 @@
 import { ACCESS_MODALS, ResetPasswordModal, UserFormModal } from '@/features/access'
 import { BILLING_MODALS, InvoiceEmitModal, InvoicePreviewModal } from '@/features/billing'
-import { CATALOG_MODALS, CategoryFormModal, ProductDetailModal, ProductFormModal } from '@/features/catalog'
+import { BrandFormModal, CATALOG_MODALS, CategoryFormModal, ProductDetailModal, ProductFormModal } from '@/features/catalog'
 import { CustomerFormModal, CUSTOMERS_MODALS } from '@/features/customers'
-import { OfferFormModal, PROMOTIONS_MODALS } from '@/features/promotions'
 import { QuotePreviewModal, QUOTES_MODALS } from '@/features/quotes'
 import {
   ChannelFormModal,
   OrderDetailModal,
   SALES_MODALS,
-  StatusDetailModal,
+  StatusLabelModal,
 } from '@/features/sales'
 import { useModalStore } from '@/shared/store/modal.store'
 
@@ -23,20 +22,20 @@ export function ModalHost() {
       return <ProductDetailModal />
     case CATALOG_MODALS.categoryForm:
       return <CategoryFormModal />
+    case CATALOG_MODALS.brandForm:
+      return <BrandFormModal />
     case SALES_MODALS.orderDetail:
       return <OrderDetailModal />
     case SALES_MODALS.channelForm:
       return <ChannelFormModal />
-    case SALES_MODALS.statusDetail:
-      return <StatusDetailModal />
+    case SALES_MODALS.statusLabel:
+      return <StatusLabelModal />
     case ACCESS_MODALS.userForm:
       return <UserFormModal />
     case ACCESS_MODALS.resetPassword:
       return <ResetPasswordModal />
     case CUSTOMERS_MODALS.customerForm:
       return <CustomerFormModal />
-    case PROMOTIONS_MODALS.offerForm:
-      return <OfferFormModal />
     case QUOTES_MODALS.preview:
       return <QuotePreviewModal />
     case BILLING_MODALS.emit:

@@ -1,4 +1,7 @@
 import { formatCurrency } from '@/shared/lib/currency'
+import { localStampParts } from '@/shared/lib/date'
+import { clickable, isolate } from '@/shared/lib/events'
+import { IconButton } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
 import type { OrderActions } from '../../hooks/useOrderActions'
 import type { Order } from '../../types'
@@ -15,20 +18,28 @@ interface OrderRowProps {
 /**
  * Fila de pedido. Las acciones dependen del estado (máquina de estados):
  * Registrado → Confirmar · Confirmado y Listo → Facturar · Facturado → Entregar · Cancelar antes de facturar.
+ * Toda la fila abre el detalle; las celdas con botones propios se aíslan para no dispararlo.
  */
 export function OrderRow({ order: o, actions }: OrderRowProps) {
+  const when = localStampParts(o.date)
   return (
-    <tr className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors" {...t(`sales.table.row.${o.id}`)}>
+    <tr
+      className="group cursor-pointer hover:bg-slate-50/70 dark:hover:bg-slate-800/40 focus-visible:outline-none focus-visible:bg-brand-50/60 dark:focus-visible:bg-brand/10 transition-colors"
+      title={`Ver detalle del pedido ${o.id}`}
+      // Se conserva el rol de fila (semántica de tabla); solo se toma foco y Enter/Espacio.
+      {...clickable(() => actions.openDetail(o.id))}
+      role={undefined}
+      {...t(`sales.table.row.${o.id}`)}
+    >
       <td className="py-3 px-4">
-        <button
-          type="button"
-          className="font-mono font-bold text-brand hover:underline flex items-center gap-1.5"
-          onClick={() => actions.openDetail(o.id)}
-          {...t(`sales.table.detail.${o.id}`)}
-        >
+        <span className="font-mono font-bold text-brand group-hover:underline flex items-center gap-1.5" {...t(`sales.table.detail.${o.id}`)}>
           <i className="fa-solid fa-receipt text-[11px]" aria-hidden="true" /> {o.id}
-        </button>
+        </span>
         {o.quoteId && <p className="text-[10px] text-slate-400">Desde {o.quoteId}</p>}
+      </td>
+      <td className="py-3 px-3 whitespace-nowrap">
+        <time dateTime={o.date.replace(' ', 'T')} className="block font-semibold text-slate-700 dark:text-slate-200">{when.date}</time>
+        <p className="text-[10px] text-slate-400">{when.time}</p>
       </td>
       <td className="py-3 px-3">
         <p className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
@@ -41,7 +52,6 @@ export function OrderRow({ order: o, actions }: OrderRowProps) {
       </td>
       <td className="py-3 px-3">
         <p className="font-semibold text-slate-700 dark:text-slate-200">{o.channel}</p>
-        <p className="text-[10px] text-slate-400">{o.date}</p>
       </td>
       <td className="py-3 px-3 text-right">
         <p className="font-black text-slate-800 dark:text-slate-100 tabular-nums">{formatCurrency(o.total)}</p>
@@ -50,7 +60,7 @@ export function OrderRow({ order: o, actions }: OrderRowProps) {
       <td className="py-3 px-3">
         <OrderStatusBadge status={o.status} />
       </td>
-      <td className="py-3 px-3">
+      <td className="py-3 px-3" {...isolate}>
         {o.invoiceId ? (
           <button
             type="button"
@@ -65,13 +75,26 @@ export function OrderRow({ order: o, actions }: OrderRowProps) {
           <span className="text-[11px] text-slate-400" title="Se factura cuando el pedido está Confirmado y Listo">—</span>
         )}
       </td>
-      <td className="py-3 px-4 text-right">
-        <OrderActionButtons
-          buttons={actions.actionsFor(o)}
-          onRun={(action) => actions.run(action, o)}
-          traceId={`sales.table.actions.${o.id}`}
-          emptyLabel={o.status === 'entregado' ? 'Ciclo cerrado' : o.status === 'cancelado' ? 'Cancelado' : 'Sólo lectura'}
-        />
+      <td className="py-3 px-4 text-right cursor-default" {...isolate}>
+        <div className="flex items-center justify-end gap-1.5">
+          <OrderActionButtons
+            buttons={actions.actionsFor(o)}
+            onRun={(action) => actions.run(action, o)}
+            traceId={`sales.table.actions.${o.id}`}
+            emptyLabel={o.status === 'entregado' ? 'Ciclo cerrado' : o.status === 'cancelado' ? 'Cancelado' : 'Sólo lectura'}
+          />
+          {actions.canDelete(o) && (
+            <IconButton
+              icon="fa-solid fa-trash-can"
+              label={`Eliminar pedido ${o.id}`}
+              tone="plain"
+              sizeClass="w-7 h-7"
+              className="hover:text-red-500! hover:bg-red-50! dark:hover:bg-red-950/40!"
+              onClick={() => actions.remove(o)}
+              {...t(`sales.table.delete.${o.id}`)}
+            />
+          )}
+        </div>
       </td>
     </tr>
   )

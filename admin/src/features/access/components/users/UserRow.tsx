@@ -9,7 +9,7 @@ const t = tracer('UserRow', 'src/features/access/components/users/UserRow.tsx')
 
 interface UserRowProps {
   row: UserRowData
-  actions: Pick<UsersAdminApi, 'canManage' | 'openEdit' | 'openResetPassword' | 'toggleActive' | 'promptDelete'>
+  actions: Pick<UsersAdminApi, 'canManage' | 'openEdit' | 'openResetPassword' | 'toggleActive' | 'promptDelete' | 'openAccess'>
 }
 
 /** Fila de usuario. Las acciones bloqueadas por reglas se muestran deshabilitadas con su motivo. */
@@ -32,7 +32,10 @@ export function UserRow({ row, actions }: UserRowProps) {
       </td>
       <td className="py-3 px-3 text-slate-600 dark:text-slate-300 whitespace-nowrap">{user.phone || '—'}</td>
       <td className="py-3 px-3">
-        <RoleBadge role={role} withIcon />
+        <div className="flex flex-col items-start gap-1">
+          <RoleBadge role={role} withIcon />
+          {row.customAccess && <span className="text-[10px] font-bold text-purple-600 dark:text-purple-300"><i className="fa-solid fa-sliders mr-1" aria-hidden="true" />Accesos personalizados</span>}
+        </div>
       </td>
       <td className="py-3 px-3">
         <div className="flex flex-col items-start gap-1">
@@ -61,7 +64,8 @@ export function UserRow({ row, actions }: UserRowProps) {
       {actions.canManage && (
         <td className="py-3 px-4">
           <div className="flex items-center justify-end gap-1.5">
-            <IconButton icon="fa-solid fa-pen" label="Editar usuario" tone="brand" onClick={() => actions.openEdit(user)} {...t(`settings.users.edit.${user.id}`)} />
+            <IconButton icon="fa-solid fa-user-lock" label="Accesos (vistas y acciones)" tone="brand" onClick={() => actions.openAccess(user)} {...t(`settings.users.access.${user.id}`)} />
+            <IconButton icon="fa-solid fa-pen" label="Editar usuario" tone="neutral" onClick={() => actions.openEdit(user)} {...t(`settings.users.edit.${user.id}`)} />
             <IconButton icon="fa-solid fa-key" label="Restablecer contraseña" tone="neutral" onClick={() => actions.openResetPassword(user)} {...t(`settings.users.reset-password.${user.id}`)} />
             <IconButton
               icon="fa-solid fa-trash"

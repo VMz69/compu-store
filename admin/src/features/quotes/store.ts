@@ -49,6 +49,12 @@ export const useQuotesStore = create<QuotesState>()(
     {
       name: STORAGE_KEYS.QUOTES,
       partialize: (s) => ({ quotes: s.quotes }),
+      // v1: cargos extra (`charges`). Las cotizaciones anteriores no tenían cargos.
+      version: 1,
+      migrate: (persisted) => {
+        const state = persisted as { quotes?: (Omit<Quote, 'charges'> & { charges?: Quote['charges'] })[] }
+        return { quotes: state.quotes ? state.quotes.map((q) => ({ ...q, charges: q.charges ?? [] })) : QUOTES_MOCK }
+      },
     },
   ),
 )

@@ -5,13 +5,16 @@ import { STORAGE_KEYS } from '@/shared/lib/storage'
 import { nextSequentialId, slugify } from '@/shared/lib/text'
 import { deductFromProducts, restockProducts, type StockLine } from './lib/inventory'
 import { normalizeProduct } from './lib/normalize'
+import { deriveBrands, productsInCategory, productsOfBrand, uniqueSlug } from './lib/taxonomy'
+import { BRANDS_MOCK } from './mocks/brands.mock'
 import { CATEGORIES_MOCK } from './mocks/categories.mock'
 import { PRODUCTS_MOCK } from './mocks/products.mock'
-import type { Category, CategoryDraft, Product, ProductDraft } from './types'
+import type { Brand, BrandDraft, Category, CategoryDraft, Product, ProductDraft } from './types'
 
 interface CatalogState {
   products: Product[]
   categories: Category[]
+  brands: Brand[]
   isLoading: boolean
   saveProduct: (draft: ProductDraft) => Promise<'created' | 'updated'>
   deleteProduct: (id: string) => void
@@ -19,7 +22,15 @@ interface CatalogState {
   adjustStock: (id: string, delta: number) => void
   /** Alterna la visibilidad web y devuelve el nuevo estado. */
   toggleActive: (id: string) => boolean
-  addCategory: (draft: CategoryDraft) => Promise<Category>
+  /** Crea (sin `id`) o edita una categoría. El id y el slug son inmutables. */
+  saveCategory: (draft: CategoryDraft) => Promise<{ category: Category; created: boolean }>
+  /** Lanza error si la categoría tiene productos (la regla completa vive en la vista). */
+  deleteCategory: (id: string) => void
+  /** Crea o edita una marca. Renombrar actualiza en cascada `brand` de sus productos. */
+  saveBrand: (draft: BrandDraft) => Promise<{ brand: Brand; created: boolean; renamed: number }>
+  /** Lanza error si la marca tiene productos (en ese caso se desactiva). */
+  deleteBrand: (id: string) => void
+  toggleBrand: (id: string) => boolean
   reset: () => void
 }
 
@@ -30,14 +41,16 @@ const updateProduct = (products: Product[], id: string, patch: (p: Product) => P
  * Versión del esquema persistido.
  * v1: modelo original del demo · v2: SKU, costo, IVA, especificaciones clave/valor y lotes.
  * v3: galería de imágenes (`images[]`); `imageUrl` pasa a ser la portada derivada.
+ * v4: marcas como entidad (`brands[]`), derivadas de las marcas escritas en los productos.
  */
-const CATALOG_SCHEMA_VERSION = 3
+const CATALOG_SCHEMA_VERSION = 4
 
 export const useCatalogStore = create<CatalogState>()(
   persist(
     (set, get) => ({
       products: PRODUCTS_MOCK,
       categories: CATEGORIES_MOCK,
+      brands: BRANDS_MOCK,
       isLoading: false,
 
       saveProduct: async (draft) => {
@@ -78,29 +91,76 @@ export const useCatalogStore = create<CatalogState>()(
         return next
       },
 
-      addCategory: async (draft) => {
+      saveCategory: async ({ id, ...data }) => {
         set({ isLoading: true })
         await delay()
         const { categories } = get()
-        const base = slugify(draft.name) || 'categoria'
-        const slug = categories.some((c) => c.id === base) ? `${base}-${categories.length + 1}` : base
-        const category: Category = { id: slug, slug, ...draft }
+        const current = id ? categories.find((c) => c.id === id) : undefined
+        if (current) {
+          const category = { ...current, ...data }
+          set({ categories: categories.map((c) => (c.id === id ? category : c)), isLoading: false })
+          return { category, created: false }
+        }
+        const slug = uniqueSlug(data.name, categories.map((c) => c.id), 'categoria')
+        const category: Category = { id: slug, slug, ...data }
         set({ categories: [...categories, category], isLoading: false })
-        return category
+        return { category, created: true }
       },
 
-      reset: () => set({ products: PRODUCTS_MOCK, categories: CATEGORIES_MOCK }),
+      deleteCategory: (id) => {
+        if (productsInCategory(get().products, id).length > 0) throw new Error('La categoría tiene productos asignados.')
+        set((s) => ({ categories: s.categories.filter((c) => c.id !== id) }))
+      },
+
+      saveBrand: async ({ id, ...data }) => {
+        set({ isLoading: true })
+        await delay()
+        const { brands, products } = get()
+        const current = id ? brands.find((b) => b.id === id) : undefined
+        if (current) {
+          const brand = { ...current, ...data }
+          // Cascada: los productos guardan el nombre de la marca.
+          const affected = current.name === brand.name ? [] : productsOfBrand(products, current.name).map((p) => p.id)
+          set({
+            brands: brands.map((b) => (b.id === id ? brand : b)),
+            products: affected.length ? products.map((p) => (affected.includes(p.id) ? { ...p, brand: brand.name } : p)) : products,
+            isLoading: false,
+          })
+          return { brand, created: false, renamed: affected.length }
+        }
+        const slug = uniqueSlug(data.name, brands.map((b) => b.id), 'marca')
+        const brand: Brand = { id: slug, slug, ...data, createdAt: new Date().toISOString() }
+        set({ brands: [...brands, brand], isLoading: false })
+        return { brand, created: true, renamed: 0 }
+      },
+
+      deleteBrand: (id) => {
+        const brand = get().brands.find((b) => b.id === id)
+        if (brand && productsOfBrand(get().products, brand.name).length > 0) throw new Error('La marca tiene productos asignados.')
+        set((s) => ({ brands: s.brands.filter((b) => b.id !== id) }))
+      },
+
+      toggleBrand: (id) => {
+        const next = !get().brands.find((b) => b.id === id)?.active
+        set((s) => ({ brands: s.brands.map((b) => (b.id === id ? { ...b, active: next } : b)) }))
+        return next
+      },
+
+      reset: () => set({ products: PRODUCTS_MOCK, categories: CATEGORIES_MOCK, brands: BRANDS_MOCK }),
     }),
     {
       name: STORAGE_KEYS.CATALOG,
       version: CATALOG_SCHEMA_VERSION,
-      partialize: (s) => ({ products: s.products, categories: s.categories }),
+      partialize: (s) => ({ products: s.products, categories: s.categories, brands: s.brands }),
       // Completa los productos guardados con el modelo anterior en vez de descartarlos.
       migrate: (persisted) => {
-        const state = persisted as Partial<Pick<CatalogState, 'products' | 'categories'>>
+        const state = persisted as Partial<Pick<CatalogState, 'products' | 'categories' | 'brands'>>
+        const products = (state.products ?? PRODUCTS_MOCK).map(normalizeProduct)
         return {
-          products: (state.products ?? PRODUCTS_MOCK).map(normalizeProduct),
+          products,
           categories: state.categories ?? CATEGORIES_MOCK,
+          // v4: las marcas escritas a mano en los productos guardados pasan a ser entidades.
+          brands: state.brands ?? (state.products ? deriveBrands(products) : BRANDS_MOCK),
         }
       },
     },
@@ -109,8 +169,8 @@ export const useCatalogStore = create<CatalogState>()(
 
 /** Lecturas fuera de React para otros features (respaldo, registro de pedidos). */
 export const getCatalogSnapshot = () => {
-  const { products, categories } = useCatalogStore.getState()
-  return { products, categories }
+  const { products, categories, brands } = useCatalogStore.getState()
+  return { products, categories, brands }
 }
 
 export const findProduct = (id: string): Product | undefined =>

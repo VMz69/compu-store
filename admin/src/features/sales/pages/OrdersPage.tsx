@@ -8,7 +8,7 @@ import { usePaginatedOrders } from '../hooks/usePaginatedOrders'
 const t = tracer('OrdersPage', 'src/features/sales/pages/OrdersPage.tsx')
 
 export function OrdersPage() {
-  const { orders, totalCount, pagination } = usePaginatedOrders()
+  const { orders, totalCount, pagination, sort, onSort } = usePaginatedOrders()
   const actions = useOrderActions()
 
   const createButton = (label: string, size: 'sm' | 'md', id: string) =>
@@ -38,7 +38,7 @@ export function OrdersPage() {
             {...t('sales.empty')}
           />
         ) : (
-          <OrdersTable orders={orders} actions={actions} />
+          <OrdersTable orders={orders} actions={actions} sort={sort} onSort={onSort} />
         )}
       </div>
 

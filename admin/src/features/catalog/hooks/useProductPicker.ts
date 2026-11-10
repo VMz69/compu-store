@@ -1,4 +1,5 @@
 import { useMemo, useState, type ChangeEvent } from 'react'
+import { useEffectivePrice } from '../lib/pricePort'
 import { useCatalogStore } from '../store'
 import type { Product } from '../types'
 
@@ -23,12 +24,16 @@ export interface PickerItem {
   available: number
   /** Motivo por el que no se puede agregar (o `null`). */
   blockedReason: string | null
+  /** Precio vigente (con oferta si aplica) y nombre de la oferta. */
+  price: number
+  offerTitle: string | null
 }
 
 /** Catálogo filtrable para elegir productos en cotizaciones y pedidos. */
 export function useProductPicker({ quantities, reserved = {}, limitToStock = false }: ProductPickerOptions) {
   const products = useCatalogStore((s) => s.products)
   const categories = useCatalogStore((s) => s.categories)
+  const priceOf = useEffectivePrice()
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('all')
 
@@ -47,7 +52,8 @@ export function useProductPicker({ quantities, reserved = {}, limitToStock = fal
       : available === 0
         ? product.stock > 0 ? 'Todo el stock está reservado' : 'Agotado'
         : selected >= available ? 'Máximo disponible agregado' : null
-    return { product, selected, available, blockedReason }
+    const { price, offer } = priceOf(product)
+    return { product, selected, available, blockedReason, price, offerTitle: offer?.title ?? null }
   })
 
   return {

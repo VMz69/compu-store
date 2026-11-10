@@ -22,10 +22,11 @@ const fromDirectory = (customerId: string, name: string, phone: string, email = 
  * Cotizaciones de prueba. Clientes y productos existen en sus respectivos
  * mocks; las fechas cubren todos los estados (incluida una vencida).
  */
-export const QUOTES_MOCK: Quote[] = [
+const SEED: (Omit<Quote, 'charges'> & Partial<Pick<Quote, 'charges'>>)[] = [
   {
     id: 'COT-2026-006',
     customer: fromDirectory('CLI-006', 'Despacho Jurídico Portillo & Asociados', '7845-1290', 'rportillo@portilloabogados.sv', '0702-110520-101-7'),
+    charges: [{ id: 'CHG-1', concept: 'Configuración e instalación en oficina', amount: 30 }],
     items: [
       item('PRD-009', 'HP-450G8-I5', 'Laptop HP ProBook 450 G8 Core i5', 799, 3, 5),
       item('PRD-005', 'LOG-M185-GR', 'Mouse Inalámbrico Logitech M185', 20, 3),
@@ -79,3 +80,5 @@ export const QUOTES_MOCK: Quote[] = [
     validityDays: 15, status: 'aceptada', createdAt: '2026-10-05T15:00:00.000Z', createdBy: 'Licda. Sofía Alvarado', issuer: ISSUER,
   },
 ]
+
+export const QUOTES_MOCK: Quote[] = SEED.map((q) => ({ ...q, charges: q.charges ?? [] }))

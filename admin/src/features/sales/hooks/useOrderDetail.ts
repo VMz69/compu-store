@@ -1,8 +1,9 @@
+import { useNavigate } from 'react-router-dom'
 import { buildWhatsAppLink } from '@/shared/lib/whatsapp'
 import { lineTotal } from '@/shared/lib/pricing'
 import { orderTotals } from '../lib/charges'
 import { closeModal, useModalPayload } from '@/shared/store/modal.store'
-import { statusOf } from '../lib/orderFlow'
+import { isEditable, statusOf } from '../lib/orderFlow'
 import { useSalesStore } from '../store'
 import { useOrderActions } from './useOrderActions'
 
@@ -11,6 +12,7 @@ export function useOrderDetail() {
   const orderId = useModalPayload<string>()
   const order = useSalesStore((s) => s.orders.find((o) => o.id === orderId))
   const actions = useOrderActions()
+  const navigate = useNavigate()
 
   if (!order) return null
 
@@ -26,6 +28,15 @@ export function useOrderDetail() {
       // Facturar navega a otra vista: el comprobante se cierra primero.
       if (action === 'invoice') closeModal()
       actions.run(action, order)
+    },
+    /** Editar: solo sin factura (Registrado o Confirmado y Listo) y con permiso sobre pedidos. */
+    canEdit: actions.canChangeStatus && isEditable(order),
+    canDelete: actions.canDelete(order),
+    /** Eliminación lógica; al confirmarse, el comprobante se cierra. */
+    remove: () => actions.remove(order, closeModal),
+    edit: () => {
+      closeModal()
+      navigate(`/pedidos/${order.id}/editar`)
     },
     viewInvoice: () => {
       closeModal()

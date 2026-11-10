@@ -91,5 +91,3 @@ export function getPricing(product: Product) {
   return { hasDiscount, discountAmount, discountPercent, stockValue: product.price * product.stock }
 }
 
-export const countByCategory = (products: Product[], categoryId: string): number =>
-  products.filter((p) => p.category.toLowerCase() === categoryId.toLowerCase()).length

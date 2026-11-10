@@ -6,13 +6,14 @@ import { useCustomerOrderStats } from './hooks/useOrders'
 provideCustomerStats(useCustomerOrderStats)
 
 export { ChannelFormModal } from './components/channels/ChannelFormModal'
-export { ChannelsSection } from './components/channels/ChannelsSection'
+export { ChannelsTable } from './components/channels/ChannelsTable'
+export { FlowTable } from './components/flow/FlowTable'
+export { StatusLabelModal } from './components/flow/StatusLabelModal'
 export { OrderDetailModal } from './components/detail/OrderDetailModal'
 export { OrderStatusBadge } from './components/OrderStatusBadge'
 export { RecentOrdersTable } from './components/orders/RecentOrdersTable'
-export { PipelineSection } from './components/pipeline/PipelineSection'
-export { StatusDetailModal } from './components/pipeline/StatusDetailModal'
 export { useChannels } from './hooks/useChannels'
+export { useFlowTable } from './hooks/useFlowTable'
 export { useOrderActions } from './hooks/useOrderActions'
 export {
   orderStatusName,
@@ -22,10 +23,10 @@ export {
   useQuoteOrderLink,
   useRecentOrders,
   useReservedStock,
-  useShowOrdersByStatus,
 } from './hooks/useOrders'
 export { isInvoiceable, ORDER_STATUSES } from './lib/orderFlow'
 export { SALES_MODALS } from './modals'
+export { EditOrderPage } from './pages/EditOrderPage'
 export { NewOrderPage } from './pages/NewOrderPage'
 export { OrdersPage } from './pages/OrdersPage'
 export { startOrderFromQuote } from './prefill.store'

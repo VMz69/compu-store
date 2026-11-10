@@ -16,7 +16,8 @@ export function SettingsHubCard({ card, stats }: { card: HubCardConfig; stats: H
   return (
     <div
       className={cn(
-        'rounded-2xl p-5 shadow-sm hover:shadow-soft-card transition-all flex flex-col justify-between group',
+        'h-full rounded-2xl p-5 shadow-sm hover:shadow-soft-card transition-all flex flex-col justify-between group',
+        card.spanClass,
         card.featured
           ? 'bg-linear-to-br from-white via-white to-brand-50/20 dark:from-slate-900 dark:via-slate-900 dark:to-brand-950/20 border-2 border-brand/30 dark:border-brand-800/60'
           : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800',

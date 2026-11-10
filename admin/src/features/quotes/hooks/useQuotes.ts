@@ -38,7 +38,7 @@ export function useQuotes() {
         quote,
         orderId: orderOf(quote.id),
         status: effectiveStatus(quote, orderOf(quote.id)),
-        totals: calcTotals(quote.items, quote.issuer.taxRate),
+        totals: calcTotals(quote.items, quote.charges ?? [], quote.issuer.taxRate),
         validUntil: validUntil(quote),
       })),
     [quotes, search, status, orderOf],
@@ -75,7 +75,7 @@ export function useQuotes() {
     const current = effectiveStatus(quote, orderOf(quote.id))
     if (!isConvertible(current)) return toast(`La cotización ${quote.id} está ${QUOTE_STATUS_META[current].label.toLowerCase()}: no se puede convertir.`, 'warning')
     const { customerId, name, phone, email } = quote.customer
-    startOrderFromQuote({ quoteId: quote.id, customer: { customerId, name, phone, email }, items: quote.items, notes: quote.notes })
+    startOrderFromQuote({ quoteId: quote.id, customer: { customerId, name, phone, email }, items: quote.items, charges: quote.charges ?? [], notes: quote.notes })
     navigate('/pedidos/nuevo')
   }
 
