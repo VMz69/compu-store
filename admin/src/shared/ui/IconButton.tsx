@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes } from 'react'
 import { cn } from '@/shared/lib/cn'
 
-export type IconButtonTone = 'neutral' | 'brand' | 'danger' | 'plain'
+export type IconButtonTone = 'neutral' | 'brand' | 'danger' | 'plain' | 'overlay'
 
 const TONES: Record<IconButtonTone, string> = {
   neutral:
@@ -11,6 +11,8 @@ const TONES: Record<IconButtonTone, string> = {
   danger:
     'bg-red-50 dark:bg-red-950/40 hover:bg-red-500 text-red-500 hover:text-white border border-red-200 dark:border-red-900/40 shadow-2xs',
   plain: 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800',
+  /** Sobre fondos oscuros o imágenes (visor, miniaturas). */
+  overlay: 'text-white/80 hover:text-white hover:bg-white/15 disabled:opacity-30 disabled:pointer-events-none',
 }
 
 export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

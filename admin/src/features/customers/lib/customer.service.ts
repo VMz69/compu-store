@@ -1,5 +1,5 @@
-import type { Order } from '@/features/sales'
-import type { Customer, CustomerStats, CustomerStatusFilter, CustomerType } from '../types'
+import { foldText } from '@/shared/lib/text'
+import type { Customer, CustomerStatusFilter, CustomerType } from '../types'
 
 /**
  * Lógica pura del directorio de clientes (sin React ni store).
@@ -20,36 +20,36 @@ interface CustomerQuery {
 }
 
 export function filterCustomers(customers: Customer[], { search, type, status }: CustomerQuery): Customer[] {
-  const term = search.trim().toLowerCase()
-  const digits = normalizePhone(search)
   return customers.filter((c) => {
     if (type !== 'all' && c.type !== type) return false
     if (status === 'active' && !c.active) return false
     if (status === 'inactive' && c.active) return false
-    if (!term) return true
-    return (
-      [c.name, c.email, c.city, c.documentId, c.id].some((f) => f.toLowerCase().includes(term)) ||
-      (digits.length >= 3 && normalizePhone(c.phone).includes(digits))
-    )
+    return matchesCustomer(c, search)
   })
 }
 
-/**
- * Pedidos de un cliente. Mientras los pedidos no guarden `customerId`, se
- * relacionan por teléfono (prioritario) o por nombre exacto.
- * TODO(API): reemplazar por `order.customerId === customer.id`.
- */
-const belongsTo = (order: Order, customer: Customer): boolean =>
-  normalizePhone(order.phone) === normalizePhone(customer.phone) ||
-  order.client.trim().toLowerCase() === customer.name.trim().toLowerCase()
+/** Coincidencia sin acentos por nombre, correo, ciudad, DUI/NIT o id; por teléfono desde 3 dígitos. */
+export function matchesCustomer(c: Customer, search: string): boolean {
+  const term = foldText(search)
+  if (!term) return true
+  const digits = normalizePhone(search)
+  return (
+    [c.name, c.email, c.city, c.documentId, c.id].some((f) => foldText(f).includes(term)) ||
+    (digits.length >= 3 && normalizePhone(c.phone).includes(digits))
+  )
+}
 
-export function getCustomerStats(customer: Customer, orders: Order[]): CustomerStats {
-  const own = orders.filter((o) => belongsTo(o, customer))
-  return {
-    orderCount: own.length,
-    totalSpent: own.filter((o) => o.status === 'Entregado').reduce((acc, o) => acc + o.total, 0),
-    lastOrderDate: own.reduce<string | null>((latest, o) => (!latest || o.date > latest ? o.date : latest), null),
-  }
+/**
+ * Resultados del buscador de clientes: los que empiezan por el término van primero
+ * (más predecible al teclear un nombre), luego orden alfabético.
+ */
+export function searchCustomers(customers: Customer[], search: string, limit = 8): Customer[] {
+  const term = foldText(search)
+  const rank = (c: Customer) => (term && foldText(c.name).startsWith(term) ? 0 : 1)
+  return customers
+    .filter((c) => matchesCustomer(c, search))
+    .sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name, 'es'))
+    .slice(0, limit)
 }
 
 /* ------------------------------------------------------------------ */

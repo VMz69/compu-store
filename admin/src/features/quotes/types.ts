@@ -1,8 +1,12 @@
 /** Estado guardado. "vencida" no se guarda: se deriva de la fecha de validez. */
 export type QuoteStoredStatus = 'emitida' | 'aceptada' | 'rechazada'
 
-/** Estado que se muestra (incluye el derivado "vencida"). */
-export type QuoteStatus = QuoteStoredStatus | 'vencida'
+/**
+ * Estado que se muestra. Derivados (no se guardan):
+ * - "convertida": tiene un pedido activo (Pedidos guarda el vínculo `order.quoteId`).
+ * - "vencida": emitida y fuera de su validez.
+ */
+export type QuoteStatus = QuoteStoredStatus | 'vencida' | 'convertida'
 
 /** Línea de la cotización. Copia nombre/SKU/precio al cotizar: si el catálogo cambia, el documento no. */
 export interface QuoteItem {

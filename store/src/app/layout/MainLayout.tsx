@@ -47,7 +47,7 @@ export const MainLayout = () => {
       </div>
 
       <FloatingWhatsApp hiddenOnMobile={hasMobileActionBar} />
-      <ToastContainer />
+      <ToastContainer aboveActionBar={hasMobileActionBar} />
     </div>
   )
 }

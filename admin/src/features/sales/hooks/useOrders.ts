@@ -1,8 +1,13 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { countByStatus, filterByStatus, getOrderMetrics, FALLBACK_STATUS_STYLE, isInvoiceable } from '../lib/order.service'
-import { useOrderFiltersStore } from '../filters.store'
+import type { Customer } from '@/features/customers'
+import { getCustomerOrderStats } from '../lib/customerStats'
+import { countByStatus, filterByStatus, findOrderByQuote, getOrderMetrics } from '../lib/order.service'
+import { isInvoiceable, ORDER_STATUSES, statusOf } from '../lib/orderFlow'
+import { reservedByProduct } from '../lib/stock'
+import { useOrderFiltersStore, type OrderStatusFilter } from '../filters.store'
 import { useSalesStore } from '../store'
+import type { OrderStatusId } from '../types'
 
 /** Pedidos visibles según la pestaña de estado activa. */
 export function useFilteredOrders() {
@@ -21,10 +26,10 @@ export function useRecentOrders(limit = 4) {
   return useMemo(() => orders.slice(0, limit), [orders, limit])
 }
 
-/** Pedidos en estado "Pendiente" (badge del sidebar). */
+/** Pedidos "Registrados" pendientes de confirmar (badge del sidebar). */
 export function usePendingOrdersCount(): number {
   const orders = useSalesStore((s) => s.orders)
-  return countByStatus(orders, 'Pendiente')
+  return countByStatus(orders, 'registrado')
 }
 
 /** Pedidos listos para facturar (badge "Facturación" del sidebar). */
@@ -33,29 +38,40 @@ export function useInvoiceableCount(): number {
   return orders.filter(isInvoiceable).length
 }
 
-/** Ícono y estilo del badge para un estado (por nombre o id). */
-export function useStatusStyle(status: string) {
-  const found = useSalesStore((s) => s.statuses.find((x) => x.name === status || x.id === status))
-  return found ? { icon: found.icon, badgeStyle: found.badgeStyle } : FALLBACK_STATUS_STYLE
+/** Unidades reservadas por producto (pedidos "Confirmado y Listo"). */
+export function useReservedStock(): Record<string, number> {
+  const orders = useSalesStore((s) => s.orders)
+  return useMemo(() => reservedByProduct(orders), [orders])
+}
+
+/** Implementación del puerto de métricas de Clientes (registrada en `index.ts`). */
+export function useCustomerOrderStats() {
+  const orders = useSalesStore((s) => s.orders)
+  return useCallback((customer: Customer) => getCustomerOrderStats(customer, orders), [orders])
+}
+
+/** Pedido activo generado desde cada cotización (para el estado "Convertida"). */
+export function useQuoteOrderLink() {
+  const orders = useSalesStore((s) => s.orders)
+  return useCallback((quoteId: string) => findOrderByQuote(orders, quoteId)?.id ?? null, [orders])
 }
 
 /** Pestañas de estado con conteo para la vista Pedidos. */
 export function useOrderStatusTabs() {
   const orders = useSalesStore((s) => s.orders)
-  const statuses = useSalesStore((s) => s.statuses)
   const active = useOrderFiltersStore((s) => s.statusFilter)
   const select = useOrderFiltersStore((s) => s.setStatusFilter)
 
   const tabs = useMemo(
     () => [
-      { value: 'all', label: `Todos (${orders.length})`, icon: null },
-      ...statuses.map((s) => ({
-        value: s.name,
-        label: `${s.name} (${countByStatus(orders, s.name)})`,
+      { value: 'all' as OrderStatusFilter, label: `Todos (${orders.length})`, icon: null },
+      ...ORDER_STATUSES.map((s) => ({
+        value: s.id as OrderStatusFilter,
+        label: `${s.name} (${countByStatus(orders, s.id)})`,
         icon: `fa-solid ${s.icon}`,
       })),
     ],
-    [orders, statuses],
+    [orders],
   )
 
   return { tabs, active, select }
@@ -66,8 +82,13 @@ export function useShowOrdersByStatus() {
   const navigate = useNavigate()
   const setStatusFilter = useOrderFiltersStore((s) => s.setStatusFilter)
 
-  return (status: string) => {
-    setStatusFilter(status)
-    navigate('/pedidos')
-  }
+  return useCallback(
+    (status: OrderStatusId) => {
+      setStatusFilter(status)
+      navigate('/pedidos')
+    },
+    [navigate, setStatusFilter],
+  )
 }
+
+export const orderStatusName = (status: OrderStatusId): string => statusOf(status).name

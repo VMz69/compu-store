@@ -17,7 +17,7 @@ const SOURCE = 'src/features/catalog/pages/ProductDetail.tsx'
 export const ProductDetail = () => {
   const { id } = useParams()
   const detail = useProductDetail(id)
-  const tabs = useProductTabs()
+  const tabs = useProductTabs(id)
   const { shareProduct } = useShareProduct()
 
   if (!detail.product) {
@@ -43,15 +43,15 @@ export const ProductDetail = () => {
   const product = detail.product
 
   return (
-    <div className="space-y-4 sm:space-y-8">
+    <div className="space-y-4 sm:space-y-6">
       <ProductDetailHeader productName={product.name} categoryLabel={detail.categoryLabel} categorySlug={detail.categorySlug} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start xl:items-stretch">
         <section
-          className="lg:col-span-8 xl:col-span-9 bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-slate-200/90 dark:border-slate-800 shadow-soft-card dark:shadow-none"
+          className="lg:col-span-8 xl:col-span-9 xl:flex xl:flex-col bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-slate-200/90 dark:border-slate-800 shadow-soft-card dark:shadow-none"
           {...uiMeta({ id: 'producto.hero-card', component: 'ProductDetail', source: SOURCE })}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-5 sm:gap-6 xl:gap-10 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-5 sm:gap-6 xl:gap-10 items-start xl:flex-1 xl:items-stretch">
             <ProductGallery key={product.id} productName={product.name} images={detail.images} discount={detail.discount} />
             <ProductInfo
               product={product}
@@ -66,7 +66,7 @@ export const ProductDetail = () => {
         </section>
 
         <ProductBuyBox
-          product={product}
+          product={product} discount={detail.discount}
           availableStock={detail.availableStock}
           quantity={detail.quantity}
           whatsappUrl={detail.whatsappUrl}

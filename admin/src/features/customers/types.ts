@@ -27,10 +27,23 @@ export type CustomerDraft = Omit<Customer, 'id' | 'createdAt'> & { id?: string }
 
 export type CustomerStatusFilter = 'all' | 'active' | 'inactive'
 
+/**
+ * Datos del cliente tal como quedan en un documento (cotización o pedido).
+ * `customerId` enlaza con el directorio; `null` = cliente ocasional.
+ */
+export interface CustomerSnapshot {
+  customerId: string | null
+  name: string
+  phone: string
+  email: string
+  documentId: string
+  city: string
+}
+
 /** Métricas de compra derivadas de los pedidos (no se guardan: se calculan). */
 export interface CustomerStats {
   orderCount: number
-  /** Total facturado de pedidos entregados. */
+  /** Total de pedidos facturados o entregados (venta efectiva). */
   totalSpent: number
   /** Fecha del último pedido ("YYYY-MM-DD HH:mm") o null. */
   lastOrderDate: string | null

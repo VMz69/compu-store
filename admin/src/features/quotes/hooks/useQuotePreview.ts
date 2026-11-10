@@ -1,3 +1,4 @@
+import { useQuoteOrderLink } from '@/features/sales'
 import { usePdfDocument } from '@/shared/hooks/usePdfDocument'
 import { formatCurrency } from '@/shared/lib/currency'
 import { buildWhatsAppLink } from '@/shared/lib/whatsapp'
@@ -11,13 +12,14 @@ export function useQuotePreview() {
   const quoteId = useModalPayload<string>()
   const quote = useQuotesStore((s) => s.quotes.find((q) => q.id === quoteId))
   const pdf = usePdfDocument(quote, buildQuotePdf)
+  const orderOf = useQuoteOrderLink()
 
   if (!quote) return null
   const total = calcTotals(quote.items, quote.issuer.taxRate).total
 
   return {
     quote,
-    status: effectiveStatus(quote),
+    status: effectiveStatus(quote, orderOf(quote.id)),
     total,
     pdf,
     filename: quotePdfFilename(quote),

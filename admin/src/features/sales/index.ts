@@ -1,22 +1,33 @@
-// API pública del feature `sales`. Desde fuera solo se importa este archivo.
+// API pública del feature `sales` (/pedidos). Desde fuera solo se importa este archivo.
+import { provideCustomerStats } from '@/features/customers'
+import { useCustomerOrderStats } from './hooks/useOrders'
+
+// Implementa el puerto de métricas de Clientes (Clientes no importa Pedidos).
+provideCustomerStats(useCustomerOrderStats)
+
 export { ChannelFormModal } from './components/channels/ChannelFormModal'
 export { ChannelsSection } from './components/channels/ChannelsSection'
 export { OrderDetailModal } from './components/detail/OrderDetailModal'
-export { OrderFormModal } from './components/form/OrderFormModal'
+export { OrderStatusBadge } from './components/OrderStatusBadge'
 export { RecentOrdersTable } from './components/orders/RecentOrdersTable'
 export { PipelineSection } from './components/pipeline/PipelineSection'
 export { StatusDetailModal } from './components/pipeline/StatusDetailModal'
 export { useChannels } from './hooks/useChannels'
 export { useOrderActions } from './hooks/useOrderActions'
 export {
-  useOrderMetrics,
+  orderStatusName,
   useInvoiceableCount,
+  useOrderMetrics,
   usePendingOrdersCount,
+  useQuoteOrderLink,
   useRecentOrders,
+  useReservedStock,
   useShowOrdersByStatus,
 } from './hooks/useOrders'
+export { isInvoiceable, ORDER_STATUSES } from './lib/orderFlow'
 export { SALES_MODALS } from './modals'
+export { NewOrderPage } from './pages/NewOrderPage'
 export { OrdersPage } from './pages/OrdersPage'
-export { INVOICE_VOIDED_STATUS, INVOICED_STATUS, isInvoiceable } from './lib/order.service'
-export { getSalesSnapshot, resetSales, setOrderInvoice, useSalesStore } from './store'
-export type { Channel, Order, OrderMetrics, OrderStatus } from './types'
+export { startOrderFromQuote } from './prefill.store'
+export { findOrder, getSalesSnapshot, resetSales, setOrderInvoice, useSalesStore } from './store'
+export type { Channel, Order, OrderItem, OrderMetrics, OrderPrefill, OrderStatus, OrderStatusId } from './types'

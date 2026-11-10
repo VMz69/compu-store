@@ -7,13 +7,12 @@ import { QuotePreviewModal, QUOTES_MODALS } from '@/features/quotes'
 import {
   ChannelFormModal,
   OrderDetailModal,
-  OrderFormModal,
   SALES_MODALS,
   StatusDetailModal,
 } from '@/features/sales'
 import { useModalStore } from '@/shared/store/modal.store'
 
-/** Resuelve el modal activo del store global (14 modales del sistema). */
+/** Resuelve el modal activo del store global (13 modales del sistema). */
 export function ModalHost() {
   const type = useModalStore((s) => s.type)
 
@@ -24,8 +23,6 @@ export function ModalHost() {
       return <ProductDetailModal />
     case CATALOG_MODALS.categoryForm:
       return <CategoryFormModal />
-    case SALES_MODALS.orderForm:
-      return <OrderFormModal />
     case SALES_MODALS.orderDetail:
       return <OrderDetailModal />
     case SALES_MODALS.channelForm:

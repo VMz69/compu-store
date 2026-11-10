@@ -11,7 +11,7 @@ const PANEL = 'p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-sla
 export function StatusDetailModal() {
   const detail = useStatusDetail()
   if (!detail) return null
-  const { status: s, orders, onClose, onShowOrders } = detail
+  const { status: s, nextNames, orders, onClose, onShowOrders } = detail
 
   return (
     <Modal onClose={onClose} widthClass="w-[min(94vw,520px)]" {...t(`settings.status-detail.${s.id}`)}>
@@ -21,7 +21,7 @@ export function StatusDetailModal() {
             {s.step > 0 ? `P${s.step}` : '✕'}
           </span>
           <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-100">
-            Transición Operativa · {s.name}
+            Estado del flujo · {s.name}
           </h3>
         </div>
       </ModalHeader>
@@ -32,6 +32,17 @@ export function StatusDetailModal() {
           <p className={`${PANEL} text-slate-700 dark:text-slate-200 font-medium leading-relaxed`}>{s.description}</p>
         </div>
 
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className={PANEL}>
+            <span className={SECTION_LABEL}>Efecto</span>
+            <p className="text-[11px] text-slate-700 dark:text-slate-200 mt-1 leading-snug">{s.effect}</p>
+          </div>
+          <div className={PANEL}>
+            <span className={SECTION_LABEL}>Se alcanza desde</span>
+            <p className="text-[11px] text-slate-700 dark:text-slate-200 mt-1 leading-snug">{s.trigger}</p>
+          </div>
+        </div>
+
         <div className="grid grid-cols-2 gap-3">
           <div className={PANEL}>
             <span className={SECTION_LABEL}>Órdenes en este Estado</span>
@@ -40,8 +51,8 @@ export function StatusDetailModal() {
           <div className={PANEL}>
             <span className={SECTION_LABEL}>Siguiente Paso Permitido</span>
             <p className="text-xs font-bold text-brand mt-1.5 flex flex-wrap gap-1">
-              {s.nextPossible.length > 0 ? (
-                s.nextPossible.map((next) => (
+              {nextNames.length > 0 ? (
+                nextNames.map((next) => (
                   <span key={next} className="px-1.5 py-0.5 rounded bg-brand/10 text-brand text-[10px]">
                     ➔ {next}
                   </span>

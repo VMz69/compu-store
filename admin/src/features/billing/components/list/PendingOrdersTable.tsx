@@ -1,4 +1,4 @@
-import type { Order } from '@/features/sales'
+import { OrderStatusBadge, type Order } from '@/features/sales'
 import { formatCurrency } from '@/shared/lib/currency'
 import { Button, DataTable, EmptyState, type TableHeader } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
@@ -20,14 +20,14 @@ interface PendingOrdersTableProps {
   onInvoice: (orderId: string) => void
 }
 
-/** Cola de pedidos confirmados que aún no tienen factura. */
+/** Cola de pedidos "Confirmado y Listo" que aún no tienen factura. */
 export function PendingOrdersTable({ orders, canInvoice, onInvoice }: PendingOrdersTableProps) {
   if (orders.length === 0) {
     return (
       <EmptyState
         icon="fa-solid fa-circle-check"
         title="Todo al día: no hay pedidos por facturar."
-        hint="Los pedidos aparecen aquí cuando están Confirmados o Listos para Retiro."
+        hint="Los pedidos aparecen aquí cuando están en estado Confirmado y Listo."
         {...t('billing.pending.empty')}
       />
     )
@@ -48,7 +48,9 @@ export function PendingOrdersTable({ orders, canInvoice, onInvoice }: PendingOrd
           <td className="py-3 px-3 text-[11px] text-slate-600 dark:text-slate-300 max-w-xs">
             <span className="line-clamp-2">{o.items.map((i) => `${i.quantity}× ${i.name}`).join(', ')}</span>
           </td>
-          <td className="py-3 px-3 text-[11px] font-semibold text-slate-600 dark:text-slate-300">{o.status}</td>
+          <td className="py-3 px-3">
+            <OrderStatusBadge status={o.status} />
+          </td>
           <td className="py-3 px-3 text-right font-black text-slate-800 dark:text-slate-100 tabular-nums">{formatCurrency(o.total)}</td>
           <td className="py-3 px-4 text-right">
             {canInvoice ? (

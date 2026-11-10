@@ -1,47 +1,90 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { delay } from '@/shared/lib/delay'
+import { summarizeLines } from '@/shared/lib/pricing'
 import { STORAGE_KEYS } from '@/shared/lib/storage'
 import { slugify } from '@/shared/lib/text'
-import { nextOrderId, nowStamp } from './lib/order.service'
+import { migrateOrder } from './lib/migrate'
+import { findOrderByQuote, nextOrderId, nowStamp } from './lib/order.service'
+import { canTransition, ORDER_STATUSES } from './lib/orderFlow'
 import { CHANNELS_MOCK } from './mocks/channels.mock'
-import { MOCK_ORDER_INVOICES, ORDERS_MOCK } from './mocks/orders.mock'
-import { STATUSES_MOCK } from './mocks/statuses.mock'
-import type { Channel, ChannelDraft, Order, OrderDraft, OrderStatus } from './types'
+import { ORDERS_MOCK } from './mocks/orders.mock'
+import type { Channel, ChannelDraft, Order, OrderDraft, OrderStatusId } from './types'
 
 interface SalesState {
   orders: Order[]
-  statuses: OrderStatus[]
   channels: Channel[]
   isLoading: boolean
-  addOrder: (draft: OrderDraft) => Promise<Order>
-  setOrderStatus: (orderId: string, status: string) => void
+  /** Registra el pedido en estado "Registrado". Lanza error si la cotización ya se convirtió. */
+  addOrder: (draft: OrderDraft, by: string) => Promise<Order>
+  /** Aplica una transición válida del flujo. Devuelve `false` si no está permitida. */
+  transition: (orderId: string, to: OrderStatusId, by: string, note?: string) => boolean
+  /** Vincula la factura (→ Facturado) o la desvincula al anularla (→ Confirmado y Listo). */
+  setInvoice: (orderId: string, invoiceId: string | null, by: string) => void
   /** Alterna el canal y devuelve su nuevo estado. */
   toggleChannel: (channelId: string) => Channel | undefined
   saveChannel: (draft: ChannelDraft) => Promise<'created' | 'updated'>
-  /** Vincula (o desvincula con `null`) la factura del pedido y fija su estado. */
-  setInvoice: (orderId: string, invoiceId: string | null, status: string) => void
   reset: () => void
 }
+
+const stamp = (order: Order, status: OrderStatusId, by: string, note?: string): Order => ({
+  ...order,
+  status,
+  history: [...order.history, { status, at: new Date().toISOString(), by, ...(note ? { note } : {}) }],
+})
+
+const patchOrder = (orders: Order[], id: string, fn: (o: Order) => Order) => orders.map((o) => (o.id === id ? fn(o) : o))
+
+/**
+ * Versión del esquema persistido.
+ * v1: estados en texto libre, una sola línea · v2: flujo tipado, cliente enlazado, descuentos, historial.
+ */
+const SALES_SCHEMA_VERSION = 2
 
 export const useSalesStore = create<SalesState>()(
   persist(
     (set, get) => ({
       orders: ORDERS_MOCK,
-      statuses: STATUSES_MOCK,
       channels: CHANNELS_MOCK,
       isLoading: false,
 
-      addOrder: async (draft) => {
+      addOrder: async (draft, by) => {
+        // Regla: una cotización se convierte en un solo pedido activo.
+        if (draft.quoteId && findOrderByQuote(get().orders, draft.quoteId)) {
+          throw new Error(`La cotización ${draft.quoteId} ya tiene un pedido activo.`)
+        }
         set({ isLoading: true })
         await delay()
-        const order: Order = { id: nextOrderId(get().orders), date: nowStamp(), invoiceId: null, ...draft }
+        const base: Order = {
+          ...draft,
+          id: nextOrderId(get().orders),
+          date: nowStamp(),
+          total: summarizeLines(draft.items).total,
+          status: 'registrado',
+          invoiceId: null,
+          history: [],
+        }
+        const order = stamp(base, 'registrado', by, draft.quoteId ? `Convertido desde ${draft.quoteId}` : undefined)
         set((s) => ({ orders: [order, ...s.orders], isLoading: false }))
         return order
       },
 
-      setOrderStatus: (orderId, status) =>
-        set((s) => ({ orders: s.orders.map((o) => (o.id === orderId ? { ...o, status } : o)) })),
+      transition: (orderId, to, by, note) => {
+        const order = get().orders.find((o) => o.id === orderId)
+        // "Facturado" solo se alcanza al emitir la factura (setInvoice), nunca a mano.
+        if (!order || to === 'facturado' || !canTransition(order.status, to)) return false
+        set((s) => ({ orders: patchOrder(s.orders, orderId, (o) => stamp(o, to, by, note)) }))
+        return true
+      },
+
+      setInvoice: (orderId, invoiceId, by) =>
+        set((s) => ({
+          orders: patchOrder(s.orders, orderId, (o) =>
+            invoiceId
+              ? stamp({ ...o, invoiceId }, 'facturado', by, `Factura ${invoiceId}`)
+              : stamp({ ...o, invoiceId: null }, 'confirmado', by, `Factura ${o.invoiceId} anulada`),
+          ),
+        })),
 
       toggleChannel: (channelId) => {
         set((s) => ({
@@ -64,35 +107,35 @@ export const useSalesStore = create<SalesState>()(
         return exists ? 'updated' : 'created'
       },
 
-      setInvoice: (orderId, invoiceId, status) =>
-        set((s) => ({ orders: s.orders.map((o) => (o.id === orderId ? { ...o, invoiceId, status } : o)) })),
-
-      reset: () => set({ orders: ORDERS_MOCK, statuses: STATUSES_MOCK, channels: CHANNELS_MOCK }),
+      reset: () => set({ orders: ORDERS_MOCK, channels: CHANNELS_MOCK }),
     }),
     {
       name: STORAGE_KEYS.SALES,
-      partialize: (s) => ({ orders: s.orders, statuses: s.statuses, channels: s.channels }),
-      // v1: los pedidos guardados antes de Facturación no tenían `invoiceId`.
-      version: 1,
+      partialize: (s) => ({ orders: s.orders, channels: s.channels }),
+      version: SALES_SCHEMA_VERSION,
+      // Convierte los pedidos del modelo anterior en vez de descartarlos.
       migrate: (persisted) => {
-        const state = persisted as Pick<SalesState, 'orders' | 'statuses' | 'channels'>
+        const state = persisted as { orders?: Parameters<typeof migrateOrder>[0][]; channels?: Channel[] }
         return {
-          ...state,
-          orders: (state.orders ?? ORDERS_MOCK).map((o) => ({ ...o, invoiceId: o.invoiceId ?? MOCK_ORDER_INVOICES[o.id] ?? null })),
+          orders: state.orders ? state.orders.map(migrateOrder) : ORDERS_MOCK,
+          channels: state.channels ?? CHANNELS_MOCK,
         }
       },
     },
   ),
 )
 
-/** Usado por Facturación al emitir o anular una factura. */
-export const setOrderInvoice = (orderId: string, invoiceId: string | null, status: string): void =>
-  useSalesStore.getState().setInvoice(orderId, invoiceId, status)
+/** Usado por Facturación al emitir (`invoiceId`) o anular (`null`) una factura. */
+export const setOrderInvoice = (orderId: string, invoiceId: string | null, by: string): void =>
+  useSalesStore.getState().setInvoice(orderId, invoiceId, by)
+
+export const findOrder = (orderId: string): Order | undefined =>
+  useSalesStore.getState().orders.find((o) => o.id === orderId)
 
 /** Lecturas fuera de React para otros features (respaldo y restablecimiento). */
 export const getSalesSnapshot = () => {
-  const { orders, statuses, channels } = useSalesStore.getState()
-  return { orders, orderStatuses: statuses, channels }
+  const { orders, channels } = useSalesStore.getState()
+  return { orders, orderStatuses: ORDER_STATUSES, channels }
 }
 
 export const resetSales = (): void => useSalesStore.getState().reset()

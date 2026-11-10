@@ -23,12 +23,12 @@ export function useDashboardMetrics() {
   const kpis: KpiItem[] = [
     {
       id: 'revenue', label: 'Ventas Cobradas', value: formatCurrency(ord.revenue),
-      hint: `${ord.delivered} pedidos completados`, hintIcon: 'fa-solid fa-arrow-trend-up', hintTone: 'success',
+      hint: `${ord.invoiced + ord.delivered} pedidos facturados`, hintIcon: 'fa-solid fa-arrow-trend-up', hintTone: 'success',
       icon: 'fa-solid fa-cash-register', iconTone: 'success',
     },
     {
-      id: 'active-orders', label: 'Pedidos Activos', value: String(ord.pending + ord.readyForPickup),
-      hint: `${ord.readyForPickup} listos para retiro`, hintIcon: 'fa-solid fa-clock', hintTone: 'warning',
+      id: 'active-orders', label: 'Pedidos Activos', value: String(ord.active),
+      hint: `${ord.registered} por confirmar · ${ord.confirmed} listos · ${ord.invoiced} por entregar`, hintIcon: 'fa-solid fa-clock', hintTone: 'warning',
       icon: 'fa-solid fa-truck-ramp-box', iconTone: 'warning',
     },
     {

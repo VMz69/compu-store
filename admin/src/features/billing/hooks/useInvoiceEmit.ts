@@ -1,18 +1,17 @@
 import { useState, type FormEvent } from 'react'
 import { ensurePermission, useSession } from '@/features/access'
 import { checkAvailability, deductStock, getCatalogSnapshot, useCatalogStore } from '@/features/catalog'
-import { useCustomersStore } from '@/features/customers'
-import { INVOICED_STATUS, isInvoiceable, setOrderInvoice, useSalesStore } from '@/features/sales'
+import { normalizePhone, useCustomersStore } from '@/features/customers'
+import { isInvoiceable, orderStatusName, setOrderInvoice, useSalesStore } from '@/features/sales'
 import { useStoreSettings } from '@/features/settings'
 import { useFormState } from '@/shared/hooks/useFormState'
+import { lineDiscount } from '@/shared/lib/pricing'
 import { closeModal, openModal, useModalPayload } from '@/shared/store/modal.store'
 import { toast } from '@/shared/store/toast.store'
 import { invoiceTotals, PAYMENT_CONDITIONS, paymentConditionFrom } from '../lib/invoice.service'
 import { BILLING_MODALS } from '../modals'
 import { useBillingStore } from '../store'
 import type { InvoiceItem, InvoiceReceptor, PaymentCondition } from '../types'
-
-const digits = (phone: string) => phone.replace(/\D/g, '')
 
 /**
  * Emisión de factura desde un pedido (payload del modal: id del pedido).
@@ -21,7 +20,8 @@ const digits = (phone: string) => phone.replace(/\D/g, '')
  *  1. Revalida el stock con los datos más recientes (otra venta pudo agotarlo).
  *  2. Crea la factura (número de control, código de generación, sello).
  *  3. Descuenta el inventario (por lotes si aplica).
- *  4. Cierra el pedido: lo vincula a la factura y lo pasa a "Entregado".
+ *  4. Vincula la factura al pedido y lo pasa a "Facturado" (libera la reserva;
+ *     la entrega se marca después en Pedidos).
  *  5. Abre la vista previa del PDF.
  */
 export function useInvoiceEmit() {
@@ -35,8 +35,12 @@ export function useInvoiceEmit() {
   const { user } = useSession()
   const [submitted, setSubmitted] = useState(false)
 
-  // Si el teléfono del pedido está en el directorio, se precargan sus datos fiscales.
-  const match = order ? customers.find((c) => digits(c.phone) === digits(order.phone)) : undefined
+  // Cliente enlazado al pedido (o, si fue ocasional, por teléfono): se precargan sus datos fiscales.
+  const match = !order
+    ? undefined
+    : order.customerId
+      ? customers.find((c) => c.id === order.customerId)
+      : customers.find((c) => normalizePhone(c.phone) === normalizePhone(order.phone))
   const { values, bind, bindCheck } = useFormState({
     isFinalConsumer: !match,
     name: match?.name ?? order?.client ?? '',
@@ -48,7 +52,8 @@ export function useInvoiceEmit() {
   })
 
   const items: InvoiceItem[] = (order?.items ?? []).map((i) => ({
-    productId: i.productId, description: i.name, unit: 'Unidad', quantity: i.quantity, unitPrice: i.price, discount: 0,
+    // El descuento pactado en el pedido (o la cotización) pasa a la factura en dólares.
+    productId: i.productId, description: i.name, unit: 'Unidad', quantity: i.quantity, unitPrice: i.unitPrice, discount: lineDiscount(i),
   }))
   const lines = items.map((i) => ({ productId: i.productId, quantity: i.quantity }))
   const names = Object.fromEntries(items.map((i) => [i.productId, i.description]))
@@ -86,7 +91,7 @@ export function useInvoiceEmit() {
       },
     })
     deductStock(lines)
-    setOrderInvoice(order.id, invoice.id, INVOICED_STATUS)
+    setOrderInvoice(order.id, invoice.id, user?.name ?? 'Equipo CompuStore')
     toast(`Factura ${invoice.internalId} emitida · inventario actualizado`, 'success')
     openModal(BILLING_MODALS.preview, invoice.id)
   }
@@ -99,7 +104,7 @@ export function useInvoiceEmit() {
       : order.invoiceId
         ? `Este pedido ya fue facturado (${order.invoiceId}).`
         : !isInvoiceable(order)
-          ? `Un pedido en estado "${order.status}" no se puede facturar. Confírmalo primero.`
+          ? `Un pedido en estado "${orderStatusName(order.status)}" no se puede facturar. Solo se facturan pedidos "Confirmado y Listo".`
           : null,
     matchedCustomer: match ?? null,
     isFinalConsumer: values.isFinalConsumer,

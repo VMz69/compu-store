@@ -39,7 +39,7 @@ export const Header = () => {
         >
           <Logo
             isDark={isDark}
-            className="h-8 w-auto max-w-full object-left sm:h-10 md:h-12"
+            className="h-11 w-auto max-w-full object-left md:h-14"
           />
         </Link>
 
@@ -77,9 +77,9 @@ export const Header = () => {
               source: SOURCE,
             })}
           >
-            <div className="relative flex h-9 w-9 items-center justify-center rounded-full transition-colors group-hover:bg-slate-100 min-[400px]:h-10 min-[400px]:w-10 dark:group-hover:bg-slate-800">
+            <div className="relative flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full transition-colors group-hover:bg-slate-100 dark:group-hover:bg-slate-800">
               <i
-                className={`${favoritesCount > 0 ? 'fa-solid text-red-500' : 'fa-regular'} fa-heart text-2xl transition-colors`}
+                className={`${favoritesCount > 0 ? 'fa-solid text-red-500' : 'fa-regular'} fa-heart text-xl sm:text-2xl transition-colors`}
               />
               <span className="absolute -top-1 -right-1 bg-brand text-white text-[10px] font-black px-1.5 rounded-full border-2 border-white dark:border-slate-900 min-w-[18px] text-center">
                 {favoritesCount}

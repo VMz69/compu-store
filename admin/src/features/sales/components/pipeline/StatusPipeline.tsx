@@ -10,7 +10,7 @@ type StatusPipelineProps = Pick<PipelineApi, 'steps' | 'cancel' | 'showOrders' |
 export function StatusPipeline({ steps, cancel, showOrders, openDetail }: StatusPipelineProps) {
   return (
     <Card className="p-4 overflow-x-auto hide-scrollbar" {...t('settings.pipeline')}>
-      <div className="flex items-center justify-between min-w-[640px] gap-2">
+      <div className="flex items-center justify-between min-w-[760px] gap-2">
         {steps.map(({ status, count }, index) => (
           <div key={status.id} className="flex-1 flex items-center">
             <div
@@ -24,16 +24,19 @@ export function StatusPipeline({ steps, cancel, showOrders, openDetail }: Status
                 type="button"
                 title="Ver detalle del estado"
                 className="w-full font-bold text-xs text-slate-800 dark:text-slate-100 flex items-center justify-center gap-1 hover:text-brand"
-                onClick={() => openDetail(status.name)}
+                onClick={() => openDetail(status.id)}
                 {...t(`settings.pipeline.detail.${status.id}`)}
               >
                 <i className={`fa-solid ${status.icon} text-[10px] text-brand`} aria-hidden="true" /> {status.name}
               </button>
               <span className="block text-[10px] text-slate-400 mt-0.5">{count} órdenes</span>
+              <span className="block text-[10px] text-slate-500 dark:text-slate-400 mt-1 leading-snug line-clamp-2" title={status.effect}>
+                {status.effect}
+              </span>
               <button
                 type="button"
                 className="mt-2 text-[10px] font-bold text-brand hover:underline inline-flex items-center gap-1"
-                onClick={() => showOrders(status.name)}
+                onClick={() => showOrders(status.id)}
                 {...t(`settings.pipeline.orders.${status.id}`)}
               >
                 Ver en Pedidos <i className="fa-solid fa-arrow-right text-[8px]" aria-hidden="true" />
@@ -59,7 +62,7 @@ export function StatusPipeline({ steps, cancel, showOrders, openDetail }: Status
               type="button"
               title="Ver detalle del estado"
               className="w-full font-bold text-xs text-red-700 dark:text-red-400 flex items-center justify-center gap-1 hover:underline"
-              onClick={() => openDetail(cancel.name)}
+              onClick={() => openDetail(cancel.id)}
               {...t('settings.pipeline.cancel.detail')}
             >
               <i className={`fa-solid ${cancel.icon} text-[10px]`} aria-hidden="true" /> {cancel.name}
@@ -68,7 +71,7 @@ export function StatusPipeline({ steps, cancel, showOrders, openDetail }: Status
             <button
               type="button"
               className="mt-2 text-[10px] font-bold text-red-600 hover:underline inline-flex items-center gap-1"
-              onClick={() => showOrders(cancel.name)}
+              onClick={() => showOrders(cancel.id)}
               {...t('settings.pipeline.cancel.orders')}
             >
               Ver Cancelados <i className="fa-solid fa-arrow-right text-[8px]" aria-hidden="true" />

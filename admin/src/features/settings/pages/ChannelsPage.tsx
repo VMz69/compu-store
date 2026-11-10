@@ -13,7 +13,7 @@ export function ChannelsPage() {
     <PageContainer spacing="space-y-6" {...t('settings.channels-page')}>
       <SettingsSubHeader
         section="Canales & Transiciones Operativas"
-        title="Canales de Venta & Pipeline Operativo de Pedidos"
+        title="Canales de Venta & Flujo General de Pedidos"
         icon="fa-solid fa-diagram-project text-brand"
         action={
           channels.canEdit && (

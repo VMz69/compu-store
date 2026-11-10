@@ -1,6 +1,6 @@
 import { uid } from '@/shared/lib/uid'
 import type { Category, Product, ProductCondition, ProductDraft } from '../types'
-import { PLACEHOLDER_IMAGE } from './catalog.service'
+import { PLACEHOLDER_IMAGE, resolveGallery, toImageRows, type ImageRow } from './productImages'
 import { DEFAULT_REORDER_POINT, DEFAULT_TAX_RATE } from './normalize'
 
 /* ------------------------------------------------------------------ */
@@ -56,7 +56,8 @@ export interface ProductFormValues {
   brand: string
   model: string
   condition: ProductCondition
-  imageUrl: string
+  /** Galería ordenada; la primera fila es la portada. */
+  images: ImageRow[]
   active: boolean
   cost: string
   price: string
@@ -100,7 +101,7 @@ export function toFormValues(product: Product | null, categories: Category[]): P
     brand: p?.brand ?? '',
     model: p?.model ?? '',
     condition: p?.condition ?? 'nuevo',
-    imageUrl: p?.imageUrl ?? '',
+    images: toImageRows(p ? resolveGallery(p) : []),
     active: p?.active ?? true,
     cost: numberOrEmpty(p?.cost ?? null),
     price: numberOrEmpty(p?.price ?? null),
@@ -142,6 +143,7 @@ export function toDraft(v: ProductFormValues): ProductDraft {
         expiresAt: lot.noExpiry || !lot.expiresAt ? null : lot.expiresAt,
       }))
     : []
+  const images = v.images.map((row) => row.src.trim()).filter(Boolean)
   return {
     id: v.id || undefined,
     sku: v.sku.trim().toUpperCase(),
@@ -150,7 +152,8 @@ export function toDraft(v: ProductFormValues): ProductDraft {
     brand: v.brand.trim(),
     model: v.model.trim(),
     condition: v.condition,
-    imageUrl: v.imageUrl.trim() || PLACEHOLDER_IMAGE,
+    images,
+    imageUrl: images[0] ?? PLACEHOLDER_IMAGE,
     active: v.active,
     cost: toOptionalNumber(v.cost),
     price: toNumber(v.price),

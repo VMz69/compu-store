@@ -1,5 +1,6 @@
 import type { Product } from '../types'
 import type { ProductFormTab, ProductFormValues } from './productForm'
+import { formatMegabytes, localGalleryBytes, MAX_LOCAL_GALLERY_BYTES, MAX_PRODUCT_IMAGES } from './productImages'
 
 /**
  * Errores por ruta de campo. Las filas usan rutas compuestas:
@@ -30,6 +31,13 @@ export function validateProduct(v: ProductFormValues, products: Product[]): Prod
   if (sku && !SKU_PATTERN.test(sku)) e.sku = 'Usa letras, números y guiones (2–32 caracteres).'
   else if (sku && products.some((p) => p.sku.toUpperCase() === sku && p.id !== v.id)) {
     e.sku = 'Este SKU ya está asignado a otro producto.'
+  }
+
+  const sources = v.images.map((row) => row.src)
+  if (sources.length > MAX_PRODUCT_IMAGES) e.images = `Máximo ${MAX_PRODUCT_IMAGES} imágenes por producto.`
+  else if (new Set(sources).size !== sources.length) e.images = 'Hay imágenes repetidas en la galería.'
+  else if (localGalleryBytes(sources) > MAX_LOCAL_GALLERY_BYTES) {
+    e.images = `Las imágenes locales superan ${formatMegabytes(MAX_LOCAL_GALLERY_BYTES)}. Usa URLs o archivos más livianos.`
   }
 
   // Precios y costos
@@ -63,7 +71,7 @@ export function validateProduct(v: ProductFormValues, products: Product[]): Prod
 
 /** Sección a la que pertenece cada campo raíz (para marcar tabs con error). */
 const FIELD_TAB: Record<string, ProductFormTab> = {
-  name: 'general', category: 'general', brand: 'general', sku: 'general', model: 'general',
+  name: 'general', category: 'general', brand: 'general', sku: 'general', model: 'general', images: 'general',
   price: 'pricing', cost: 'pricing', originalPrice: 'pricing', taxRate: 'pricing',
   specs: 'specs',
   stock: 'logistics', reorderPoint: 'logistics', lots: 'logistics',

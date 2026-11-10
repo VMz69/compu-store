@@ -38,7 +38,7 @@ export const SearchDropdown = ({
       {...uiMeta({ id: 'layout.search.dropdown', component: 'SearchDropdown', source: SOURCE })}
     >
       {hasResults ? (
-        <ul className="max-h-80 overflow-y-auto py-1.5" role="listbox">
+        <ul className="max-h-80 lg:max-h-[26rem] overflow-y-auto py-1.5" role="listbox">
           {suggestions.map((product) => (
             <SearchResultItem
               key={product.id}

@@ -1,22 +1,16 @@
 import { formatCurrency } from '@/shared/lib/currency'
-import { Badge, SafeImage } from '@/shared/ui'
+import { Badge } from '@/shared/ui'
 import type { ProductDetailApi } from '../../hooks/useProductDetail'
 import { StockBadge } from '../StockBadge'
+import { DetailGallery } from './DetailGallery'
 
-type DetailSummaryProps = Pick<ProductDetailApi, 'product' | 'pricing'>
+type DetailSummaryProps = Pick<ProductDetailApi, 'product' | 'pricing' | 'gallery'>
 
-/** Imagen + resumen comercial: marca, rating, nombre, precios y estado web. */
-export function DetailSummary({ product: p, pricing }: DetailSummaryProps) {
+/** Galería + resumen comercial: marca, rating, nombre, precios y estado web. */
+export function DetailSummary({ product: p, pricing, gallery }: DetailSummaryProps) {
   return (
     <div className="flex flex-col sm:flex-row gap-4 items-start">
-      <div className="relative w-full sm:w-48 h-44 rounded-xl bg-slate-100 dark:bg-slate-800 overflow-hidden border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0">
-        <SafeImage src={p.imageUrl} alt={p.name} className="w-full h-full object-cover" />
-        {p.badge && (
-          <span className="absolute top-2 left-2 bg-amber-400 text-amber-950 text-[9px] font-extrabold px-2 py-0.5 rounded-md shadow-xs">
-            {p.badge}
-          </span>
-        )}
-      </div>
+      <DetailGallery product={p} gallery={gallery} />
 
       <div className="flex-1 space-y-2">
         <div className="flex items-center gap-2">

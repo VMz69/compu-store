@@ -7,7 +7,8 @@ const t = tracer('StatusCriteriaTable', 'src/features/sales/components/pipeline/
 
 const HEADERS: TableHeader[] = [
   { label: 'Paso / Estado', className: 'px-4' },
-  { label: 'Criterio Operativo' },
+  { label: 'Criterio y disparador' },
+  { label: 'Efecto en inventario / facturación' },
   { label: 'Próximas Transiciones' },
   { label: 'Órdenes', className: 'px-3 text-center' },
   { label: 'Acción', className: 'px-4 text-right' },
@@ -19,11 +20,12 @@ type StatusCriteriaTableProps = Pick<PipelineApi, 'criteria' | 'showOrders' | 'o
 export function StatusCriteriaTable({ criteria, showOrders, openDetail }: StatusCriteriaTableProps) {
   return (
     <DataTable headers={HEADERS} {...t('settings.criteria')}>
-      {criteria.map(({ status, count }) => (
+      {criteria.map(({ status, count, nextNames }) => (
         <StatusCriteriaRow
           key={status.id}
           status={status}
           count={count}
+          nextNames={nextNames}
           onShowOrders={showOrders}
           onOpenDetail={openDetail}
         />

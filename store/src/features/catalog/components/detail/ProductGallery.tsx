@@ -16,10 +16,10 @@ export const ProductGallery = ({ productName, images, discount }: ProductGallery
 
   return (
     <div
-      className="min-w-0 space-y-2.5"
+      className="min-w-0 flex flex-col"
       {...uiMeta({ id: 'producto.detalle.galeria', component: 'ProductGallery', source: SOURCE })}
     >
-      <div className="flex flex-col-reverse sm:flex-row gap-3">
+      <div className="flex flex-col-reverse sm:flex-row gap-3 xl:flex-1">
         {gallery.hasMultiple ? (
           <ProductGalleryThumbs
             images={gallery.images}
@@ -34,7 +34,8 @@ export const ProductGallery = ({ productName, images, discount }: ProductGallery
           type="button"
           onClick={gallery.openLightbox}
           aria-label={`Ver fotos de ${productName} en pantalla completa`}
-          className="relative flex-1 min-w-0 aspect-[4/3] xl:aspect-square rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 p-6 flex items-center justify-center overflow-hidden group cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+          title="Clic para ver en pantalla completa"
+          className="relative flex-1 min-w-0 aspect-[4/3] xl:aspect-auto xl:min-h-80 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 p-6 flex items-center justify-center overflow-hidden group cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
           {...uiMeta({
             id: 'producto.detalle.galeria.principal',
             component: 'ProductGallery',
@@ -65,11 +66,6 @@ export const ProductGallery = ({ productName, images, discount }: ProductGallery
           </span>
         </button>
       </div>
-
-      <p className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-400 dark:text-slate-500 sm:pl-[84px]">
-        <i className="fa-solid fa-magnifying-glass-plus" />
-        <span>Haz clic en la foto para verla en pantalla completa</span>
-      </p>
 
       <ProductLightbox productName={productName} gallery={gallery} />
     </div>

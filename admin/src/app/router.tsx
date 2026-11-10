@@ -7,7 +7,7 @@ import { DashboardPage } from '@/features/dashboard'
 import { InteractionsPage } from '@/features/interactions'
 import { PromotionsPage } from '@/features/promotions'
 import { NewQuotePage, QuotesPage } from '@/features/quotes'
-import { OrdersPage } from '@/features/sales'
+import { NewOrderPage, OrdersPage } from '@/features/sales'
 import { ChannelsPage, FiscalPage, IdentityPage, MaintenancePage, SettingsPage, UsersPage } from '@/features/settings'
 import { HomeRedirect } from './guards/HomeRedirect'
 import { RequireAuth } from './guards/RequireAuth'
@@ -30,7 +30,13 @@ export const router = createBrowserRouter([
               { index: true, element: <HomeRedirect /> },
               { path: 'tablero', element: <RequireView view="tablero"><DashboardPage /></RequireView> },
               { path: 'productos', element: <RequireView view="productos"><ProductsPage /></RequireView> },
-              { path: 'pedidos', element: <RequireView view="pedidos"><OrdersPage /></RequireView> },
+              {
+                path: 'pedidos',
+                children: [
+                  { index: true, element: <RequireView view="pedidos"><OrdersPage /></RequireView> },
+                  { path: 'nuevo', element: <RequireView view="pedidos"><NewOrderPage /></RequireView> },
+                ],
+              },
               { path: 'facturacion', element: <RequireView view="facturacion"><BillingPage /></RequireView> },
               { path: 'clientes', element: <RequireView view="clientes"><CustomersPage /></RequireView> },
               { path: 'categorias', element: <RequireView view="categorias"><CategoriesPage /></RequireView> },

@@ -11,9 +11,9 @@ const HEADERS: TableHeader[] = [
   { label: 'Cliente' },
   { label: 'Canal & Fecha' },
   { label: 'Total USD', className: 'px-3 text-right' },
-  { label: 'Estado Actual' },
+  { label: 'Estado' },
   { label: 'Factura' },
-  { label: 'Transición Operativa', className: 'px-4 text-right' },
+  { label: 'Siguiente paso', className: 'px-4 text-right' },
 ]
 
 interface OrdersTableProps {

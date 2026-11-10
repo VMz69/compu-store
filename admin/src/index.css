@@ -42,6 +42,8 @@
   --shadow-brand-glow: 0 0 20px rgba(1, 104, 245, 0.28);
   --shadow-dropdown: 0 10px 30px -5px rgba(12, 25, 44, 0.15);
   --shadow-modal: 0 25px 50px -12px rgba(12, 25, 44, 0.25);
+  /* Modo oscuro: sombra profunda + halo de marca sutil para separar el panel del fondo. */
+  --shadow-modal-dark: 0 30px 60px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.04), 0 0 40px -8px rgba(1, 104, 245, 0.18);
 
   --animate-fade-in: fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 

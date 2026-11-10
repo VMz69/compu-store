@@ -1,19 +1,20 @@
 import { Field, Input, Select, SwitchField } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
 import type { ProductFormApi } from '../../../hooks/useProductForm'
-import { ImageDropzone } from './ImageDropzone'
+import { ImageDropzone } from './images/ImageDropzone'
+import { ImageGallery } from './images/ImageGallery'
 
 const t = tracer('GeneralTab', 'src/features/catalog/components/form/tabs/GeneralTab.tsx')
 
-/** Sección 1 · Identificación del producto, imagen y visibilidad web. */
+/** Sección 1 · Identificación del producto, galería de imágenes y visibilidad web. */
 export function GeneralTab({ api }: { api: ProductFormApi }) {
-  const { form, image, errors, categoryOptions, conditionOptions } = api
+  const { form, gallery, errors, categoryOptions, conditionOptions } = api
   const { bind, values } = form
 
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-5">
-        <ImageDropzone imageUrl={values.imageUrl} alt={values.name} picker={image} onChange={form.setImage} />
+        <ImageDropzone gallery={gallery} alt={values.name} />
 
         <div className="space-y-4">
           <Field label="Nombre del producto" variant="caps" required error={errors.name}>
@@ -73,6 +74,8 @@ export function GeneralTab({ api }: { api: ProductFormApi }) {
           </div>
         </div>
       </div>
+
+      <ImageGallery gallery={gallery} alt={values.name} error={errors.images} />
 
       <SwitchField
         icon="fa-solid fa-globe text-brand"

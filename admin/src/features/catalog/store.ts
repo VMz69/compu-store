@@ -29,8 +29,9 @@ const updateProduct = (products: Product[], id: string, patch: (p: Product) => P
 /**
  * Versión del esquema persistido.
  * v1: modelo original del demo · v2: SKU, costo, IVA, especificaciones clave/valor y lotes.
+ * v3: galería de imágenes (`images[]`); `imageUrl` pasa a ser la portada derivada.
  */
-const CATALOG_SCHEMA_VERSION = 2
+const CATALOG_SCHEMA_VERSION = 3
 
 export const useCatalogStore = create<CatalogState>()(
   persist(

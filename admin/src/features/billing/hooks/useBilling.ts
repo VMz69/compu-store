@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState, type ChangeEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { ensurePermission, usePermission } from '@/features/access'
+import { ensurePermission, usePermission, useSession } from '@/features/access'
 import { restoreStock } from '@/features/catalog'
-import { INVOICE_VOIDED_STATUS, isInvoiceable, setOrderInvoice, useSalesStore } from '@/features/sales'
+import { findOrder, isInvoiceable, setOrderInvoice, useSalesStore } from '@/features/sales'
 import { usePagination } from '@/shared/hooks/usePagination'
 import { askConfirm } from '@/shared/store/confirm.store'
 import { openModal } from '@/shared/store/modal.store'
@@ -37,6 +37,7 @@ export function useBilling() {
   const invoices = useBillingStore((s) => s.invoices)
   const voidInvoice = useBillingStore((s) => s.voidInvoice)
   const canInvoice = usePermission('canInvoice')
+  const { user } = useSession()
 
   useEffect(() => {
     const orderId = params.get('pedido')
@@ -55,18 +56,26 @@ export function useBilling() {
   const { pageItems, pagination } = usePagination(issuedRows, { pageSizeOptions: INVOICE_PAGE_SIZES, resetKey: `${search}|${status}` })
   const active = invoices.filter((i) => i.status === 'emitida')
 
+  /**
+   * Anular: repone el inventario y devuelve el pedido a "Confirmado y Listo"
+   * (su stock queda reservado de nuevo). Regla: si el pedido ya se entregó,
+   * no se anula desde aquí (requeriría un flujo de devolución).
+   */
   const promptVoid = (invoice: Invoice) => {
+    if (findOrder(invoice.orderId)?.status === 'entregado') {
+      return toast(`El pedido ${invoice.orderId} ya fue entregado: la factura no se puede anular desde el flujo normal.`, 'warning')
+    }
     const units = invoiceTotals(invoice.items).units
     askConfirm({
       title: 'Anular factura',
-      message: `Se anulará la factura ${invoice.internalId} (${invoice.receptor.name}). Se repondrán ${units} unidad(es) al inventario y el pedido ${invoice.orderId} volverá a "${INVOICE_VOIDED_STATUS}" para facturarse de nuevo.`,
+      message: `Se anulará la factura ${invoice.internalId} (${invoice.receptor.name}). Se repondrán ${units} unidad(es) al inventario y el pedido ${invoice.orderId} volverá a "Confirmado y Listo" con su stock reservado, para facturarse de nuevo o cancelarse.`,
       confirmText: 'Anular factura',
       onConfirm: () => {
         if (!ensurePermission('canInvoice', 'Su rol no puede anular facturas')) return
         voidInvoice(invoice.id)
         restoreStock(invoice.items.map((i) => ({ productId: i.productId, quantity: i.quantity })))
-        const order = useSalesStore.getState().orders.find((o) => o.id === invoice.orderId)
-        if (order?.invoiceId === invoice.id) setOrderInvoice(order.id, null, INVOICE_VOIDED_STATUS)
+        const order = findOrder(invoice.orderId)
+        if (order?.invoiceId === invoice.id) setOrderInvoice(order.id, null, user?.name ?? 'Equipo CompuStore')
         toast(`Factura ${invoice.internalId} anulada · stock repuesto`, 'info')
       },
     })

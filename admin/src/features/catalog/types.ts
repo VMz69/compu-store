@@ -48,7 +48,10 @@ export interface Product {
   active: boolean
   badge: string | null
   rating: number
+  /** Portada: siempre `images[0]` (o el placeholder). Derivado; lo sincroniza `normalizeProduct`. */
   imageUrl: string
+  /** Galería ordenada (máx. 8). La primera imagen es la portada. */
+  images: string[]
   description: string
   compatibility: string
   connectivity: string

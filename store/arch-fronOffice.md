@@ -55,7 +55,7 @@ src/
 ├── ui-traceability/             uiMeta + kill-switch
 ├── app/                         ensamblaje
 │   ├── router.tsx               rutas
-│   ├── nav.config.ts            enlaces del footer
+│   ├── nav.config.ts            enlaces del footer · `INFO_LINKS` (Nosotros/Contacto de la navbar)
 │   ├── hooks/                   header, navbar, overlay móvil, scroll, insets del layout
 │   ├── lib/route.service.ts     normaliza la vista inicial
 │   └── layout/                  MainLayout · header/ (TopBar, Header) · navbar/ · footer/ · ToastContainer · FloatingWhatsApp
@@ -103,7 +103,7 @@ src/
 | Feature | Componentes | Hooks / estado |
 |---|---|---|
 | **app** (layout) | `header/` TopBar, Header · `navbar/` Navbar, ExploreMenu (+Panel), MobileMenu (+Catalog, Info), MobileMenuBackdrop · `footer/` · FloatingWhatsApp, ToastContainer | useNavbar, useHeaderState, useMobileMenuOverlay, useMobileSearchCollapse, useLayoutInsets, useScrollToTop |
-| **catalog** | `grid/` ProductCard (+Media, Info, Actions), ProductGrid · `detail/` Gallery (+Thumbs, Lightbox), Info (+Actions), BuyBox, MobileBar, Tabs, RelatedList · `reviews/` ReviewCard, ReviewForm, RatingSummary · `browse/` CategoryCard, BrandCard · FilterBar | useFilters, useCatalogStats, useProductDetail, useProductGallery, useShareProduct, useMobileActionBar, useFavorites · `filters` / `favorites` / `reviews.store` |
+| **catalog** | `grid/` ProductCard (+Media, Info, Actions), ProductGrid · `detail/` Gallery (+Thumbs, Lightbox), Info (+Actions), BuyBox, MobileBar, Tabs, RelatedList · `reviews/` ReviewCard, ReviewForm, RatingSummary · `browse/` CategoryCard, BrandCard · FilterBar | useFilters, useCatalogStats, useProductDetail, useProductTabs, useProductGallery, useShareProduct, useMobileActionBar, useFavorites, useFavoritesView · `filters` / `favorites` / `reviews.store` |
 | **cart** | CartItem, CartSummary, CheckoutForm, CartWidget | useCart, useCartView · `store.ts` |
 | **search** | SearchInput, SearchDropdown, SearchResultItem | useSearchInput, useSearchSuggestions, useSearchDropdown, useSearchLock |
 | **home** | HeroSlider, TrustPillars, CategoryTile, BrandTile | useHomeData, useHeroSlider |
@@ -130,7 +130,13 @@ Para cambiar el ancho de la app se edita solo el token.
 **Mobile-first denso.** El valor base es el de móvil (compacto) y `sm:` restaura el espaciado amplio;
 tablet y desktop no dependen de los valores base. Pautas en móvil: separación entre secciones
 `space-y-4…8`, tarjetas `p-3/p-4` con `rounded-2xl`, títulos de sección `text-xl`. El gutter lateral
-(16 px) y las zonas táctiles (≥ 40 px) no se reducen.
+(16 px) no se reduce; las zonas táctiles se mantienen ≥ 40 px salvo los iconos del header (ver abajo).
+
+**Header.** Logo `h-11` (móvil y `sm`) → `md:h-14`, con `max-w-full` para encogerse sin deformarse en
+pantallas muy estrechas (320 px). Iconos de tema, favoritos y carrito: 32 px en móvil → `sm:` 40 px (por
+debajo de 44 px recomendados; no reducir más). Buscador desktop `max-w-3xl 2xl:max-w-4xl`; su desplegable
+hereda el ancho (`left-0 right-0`) y en desktop llega a `max-h-[26rem]`. El botón ✕ de limpiar se ubica a la
+izquierda de «Buscar» por variante (`clearClass`).
 
 **Grillas de producto.** `ProductGrid` por defecto: `2 → md:3 → lg:4 → 2xl:5` columnas. Las vitrinas con
 cantidad fija (portada: 4 ítems) fijan `lg:4` vía `gridClassName` para no dejar huecos. En móvil,
@@ -151,17 +157,55 @@ cambiar de ruta, con click fuera y con `Esc` (`useNavbar`).
 
 | Ancho | Distribución |
 |---|---|
-| ≥ xl | tarjeta (galería con miniaturas verticales \| info) + BuyBox lateral `sticky` |
+| ≥ xl | tarjeta (galería con miniaturas verticales \| info) + BuyBox lateral, **ambas a igual altura** (`items-stretch`): la galería llena el alto y el bloque de garantías de BuyBox se ancla al fondo, así las bases quedan alineadas |
 | lg | tarjeta (galería sobre info) + BuyBox `sticky` |
 | < lg | apilado; las acciones de compra viven solo en `ProductMobileBar` (fija inferior) y BuyBox queda como ficha (stock, cantidad, vendedor, garantías) |
 
-- Galería: miniaturas, contador, visor a pantalla completa (`ProductLightbox`: flechas, miniaturas, `Esc`, bloqueo de scroll).
+- Precio: se muestra **una sola vez por breakpoint** — ≥ lg en `ProductBuyBox` (monto · `-%` · «Antes» · ahorro en verde); < lg junto al título en `ProductInfo`. Compartir y favorito van en la fila del título.
+- Galería: miniaturas, contador, visor a pantalla completa (`ProductLightbox`: flechas, miniaturas, `Esc`, bloqueo de
+  scroll); al cerrar, el foco vuelve a la foto que lo abrió.
+- Pestañas: `useProductTabs(id)` vuelve a «Descripción General» al cambiar de producto (el estado vive en `ui.store`).
 - Compartir: copia la URL al portapapeles (con respaldo para contextos no seguros) y confirma con toast.
 - `ProductMobileBar` activa `isMobileActionBarVisible` (`useMobileActionBar`): `MainLayout` reserva espacio
   inferior y oculta `FloatingWhatsApp` bajo `lg` (`useLayoutInsets`). No se monta si el producto está agotado.
 
 **Elementos fijos.** Los overlays `fixed` montados dentro de una página (`ProductLightbox`, `ProductMobileBar`)
 se renderizan con `createPortal` en `document.body`, porque la animación de entrada de `main`
-(`.view-container`, `transform`) desplazaría su posición. Capas: header `z-40` · barra móvil `z-30` ·
-WhatsApp flotante `z-20` · menús/toasts `z-50` · lightbox `z-[70]`.
+(`.view-container`, `transform`) desplazaría su posición.
+
+| Capa | z-index |
+|---|---|
+| Barra de compra móvil · WhatsApp flotante | `z-20` (bajo los fondos de overlay) |
+| Fondos de menú móvil y buscador móvil | `z-30` |
+| Header sticky | `z-40` |
+| Menús, `ConfirmDialog`, toasts | `z-50` |
+| Visor de fotos | `z-[70]` |
+
+Con la barra móvil activa, `ToastContainer` (`aboveActionBar`) sube a `calc(6.5rem + safe-area)` bajo `lg`.
+Las acciones destructivas (vaciar carrito / favoritos) siempre pasan por `ConfirmDialog` + toast.
+
+---
+
+## 8. Calidad y auditoría
+
+**Antes de entregar:** `pnpm lint` · `pnpm build` (incluye `tsc -b`) · ningún `.tsx` > 150 líneas ni página > 100 ·
+`SOURCE` de cada archivo = su ruta real.
+
+**Auditoría 2026-11-09** (estática + prueba de humo en Chrome headless):
+
+- Sin errores de TypeScript/ESLint; sin imports sin resolver; ningún feature importa a otro saltándose su
+  `index.ts`; `shared/` no importa de `features/` ni `app/`; sin ids `data-ui-id` estáticos duplicados.
+- 18 rutas (incluidas las de «no encontrado» y la redirección `*`) cargan sin errores de consola ni excepciones;
+  sin scroll horizontal en móvil.
+- Corregido: barra móvil por encima del fondo de los overlays (`z-30` → `z-20`) · pestaña de detalle arrastrada
+  entre productos · foco perdido al cerrar el visor · toasts solapados con la barra móvil en dispositivos con
+  safe-area.
+
+**Pendientes conocidos (no bloqueantes):**
+
+- `shared/ui/Badge` y `shared/ui/Button` no se usan todavía (primitivas del design system).
+- Assets sin uso en `src/assets/` (`hero.png`, `react.svg`, `vite.svg`, `icono-bg*.png`, `logo-bgWhite.png`,
+  `logo-fullBlue.png`); no entran al bundle porque no se importan.
+- `ProductLightbox` devuelve el foco pero no lo atrapa dentro del diálogo (sin *focus trap*).
+- Las imágenes de producto son de placehold.co (mocks): requieren conexión.
 

@@ -25,7 +25,7 @@ export function OrdersPage() {
         {...t('sales.toolbar')}
       >
         <OrderStatusTabs />
-        {createButton('Registrar Pedido', 'sm', 'sales.toolbar.create')}
+        {createButton('Nuevo Pedido', 'sm', 'sales.toolbar.create')}
       </div>
 
       {/* `key` por página: al cambiar de página el contenedor se remonta y el scroll vuelve arriba. */}
@@ -34,7 +34,7 @@ export function OrdersPage() {
           <EmptyState
             icon="fa-solid fa-receipt"
             title="No hay órdenes registradas bajo este filtro."
-            action={createButton('Registrar Nuevo Pedido', 'md', 'sales.empty.create')}
+            action={createButton('Registrar el primer pedido', 'md', 'sales.empty.create')}
             {...t('sales.empty')}
           />
         ) : (

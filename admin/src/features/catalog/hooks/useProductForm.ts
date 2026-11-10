@@ -9,7 +9,7 @@ import { CONDITION_OPTIONS, PRODUCT_FORM_TAB_IDS, sumLotRows, toDraft, toFormVal
 import { countErrorsByTab, tabOfError, validateProduct } from '../lib/productValidation'
 import { useCatalogStore } from '../store'
 import type { Product } from '../types'
-import { useImagePicker } from './form/useImagePicker'
+import { useImageGallery } from './form/useImageGallery'
 import { useProductFormState } from './form/useProductFormState'
 
 /**
@@ -33,7 +33,7 @@ export function useProductForm() {
   const [initial] = useState(() => toFormValues(product, categories))
   const form = useProductFormState(initial)
   const tabs = useTabs(PRODUCT_FORM_TAB_IDS)
-  const image = useImagePicker(form.setImage)
+  const gallery = useImageGallery(form.values.images, form.updateImages)
   const [submitted, setSubmitted] = useState(false)
 
   const isEdit = Boolean(product)
@@ -75,7 +75,7 @@ export function useProductForm() {
       : 'Completa las 4 secciones. Los campos con * son obligatorios.',
     form,
     tabs,
-    image,
+    gallery,
     errors,
     errorCounts: countErrorsByTab(errors),
     summary: getCommercialSummary(form.values),

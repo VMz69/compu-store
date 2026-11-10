@@ -1,10 +1,9 @@
 import { formatCurrency } from '@/shared/lib/currency'
-import { Button } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
 import type { OrderActions } from '../../hooks/useOrderActions'
 import type { Order } from '../../types'
+import { OrderActionButtons } from '../OrderActionButtons'
 import { OrderStatusBadge } from '../OrderStatusBadge'
-import { OrderStatusSelect } from '../OrderStatusSelect'
 
 const t = tracer('OrderRow', 'src/features/sales/components/orders/OrderRow.tsx')
 
@@ -14,10 +13,8 @@ interface OrderRowProps {
 }
 
 /**
- * Fila de pedido. La columna "Factura" conecta con Facturación:
- * - Facturado → enlace al PDF de la factura.
- * - Facturable → botón "Facturar" (abre la emisión en Facturación).
- * - Pendiente/Cancelado → no aplica (se explica en el tooltip).
+ * Fila de pedido. Las acciones dependen del estado (máquina de estados):
+ * Registrado → Confirmar · Confirmado y Listo → Facturar · Facturado → Entregar · Cancelar antes de facturar.
  */
 export function OrderRow({ order: o, actions }: OrderRowProps) {
   return (
@@ -31,9 +28,13 @@ export function OrderRow({ order: o, actions }: OrderRowProps) {
         >
           <i className="fa-solid fa-receipt text-[11px]" aria-hidden="true" /> {o.id}
         </button>
+        {o.quoteId && <p className="text-[10px] text-slate-400">Desde {o.quoteId}</p>}
       </td>
       <td className="py-3 px-3">
-        <p className="font-bold text-slate-800 dark:text-slate-100">{o.client}</p>
+        <p className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+          {o.client}
+          {!o.customerId && <span className="text-[9px] font-bold text-slate-400 uppercase">Ocasional</span>}
+        </p>
         <p className="text-[10px] text-slate-400">
           {o.phone} · {o.city}
         </p>
@@ -42,8 +43,9 @@ export function OrderRow({ order: o, actions }: OrderRowProps) {
         <p className="font-semibold text-slate-700 dark:text-slate-200">{o.channel}</p>
         <p className="text-[10px] text-slate-400">{o.date}</p>
       </td>
-      <td className="py-3 px-3 text-right font-black text-slate-800 dark:text-slate-100">
-        {formatCurrency(o.total)}
+      <td className="py-3 px-3 text-right">
+        <p className="font-black text-slate-800 dark:text-slate-100 tabular-nums">{formatCurrency(o.total)}</p>
+        <p className="text-[10px] text-slate-400">{o.items.reduce((acc, i) => acc + i.quantity, 0)} unid.</p>
       </td>
       <td className="py-3 px-3">
         <OrderStatusBadge status={o.status} />
@@ -57,30 +59,19 @@ export function OrderRow({ order: o, actions }: OrderRowProps) {
             onClick={() => actions.viewInvoice(o.invoiceId ?? '')}
             {...t(`sales.table.invoice.view.${o.id}`)}
           >
-            <i className="fa-solid fa-file-invoice" aria-hidden="true" /> Facturado
+            <i className="fa-solid fa-file-invoice" aria-hidden="true" /> Ver factura
           </button>
-        ) : actions.isInvoiceable(o) && actions.canInvoice ? (
-          <Button variant="tint" size="xs" icon="fa-solid fa-file-invoice-dollar" onClick={() => actions.invoice(o.id)} {...t(`sales.table.invoice.create.${o.id}`)}>
-            Facturar
-          </Button>
         ) : (
-          <span className="text-[11px] text-slate-400" title="Se factura cuando el pedido está confirmado">
-            —
-          </span>
+          <span className="text-[11px] text-slate-400" title="Se factura cuando el pedido está Confirmado y Listo">—</span>
         )}
       </td>
       <td className="py-3 px-4 text-right">
-        {actions.canChangeStatus ? (
-          <OrderStatusSelect
-            orderId={o.id}
-            value={o.status}
-            options={actions.statusOptions}
-            onChange={actions.changeStatus}
-            lockedReason={o.invoiceId ? 'Pedido facturado: anula la factura para modificar su estado' : undefined}
-          />
-        ) : (
-          <span className="text-xs text-slate-400">Sólo lectura</span>
-        )}
+        <OrderActionButtons
+          buttons={actions.actionsFor(o)}
+          onRun={(action) => actions.run(action, o)}
+          traceId={`sales.table.actions.${o.id}`}
+          emptyLabel={o.status === 'entregado' ? 'Ciclo cerrado' : o.status === 'cancelado' ? 'Cancelado' : 'Sólo lectura'}
+        />
       </td>
     </tr>
   )

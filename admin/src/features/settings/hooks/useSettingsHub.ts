@@ -1,6 +1,6 @@
 import { ROLE_LIST, useAccessStore } from '@/features/access'
 import { useCatalogStore } from '@/features/catalog'
-import { useSalesStore } from '@/features/sales'
+import { ORDER_STATUSES, useSalesStore } from '@/features/sales'
 import { HUB_CARDS, type HubCardConfig } from '../config/hub.config'
 import { useSettingsStore } from '../store'
 
@@ -15,7 +15,6 @@ export interface HubStat {
 export function useSettingsHub() {
   const settings = useSettingsStore((s) => s.settings)
   const channels = useSalesStore((s) => s.channels)
-  const statusCount = useSalesStore((s) => s.statuses.length)
   const orderCount = useSalesStore((s) => s.orders.length)
   const productCount = useCatalogStore((s) => s.products.length)
   const users = useAccessStore((s) => s.users)
@@ -24,7 +23,7 @@ export function useSettingsHub() {
   const stats: Record<HubCardConfig['id'], HubStat[]> = {
     canales: [
       { label: 'Canales', value: `${activeChannels} / ${channels.length} Activos` },
-      { label: 'Pipeline', value: `${statusCount} Estados` },
+      { label: 'Flujo', value: `${ORDER_STATUSES.length} Estados` },
       { label: 'Órdenes', value: `${orderCount} Registradas`, valueClass: 'text-brand' },
     ],
     usuarios: [

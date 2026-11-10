@@ -1,7 +1,14 @@
 import { uiMeta } from '@/ui-traceability'
 import { SearchDropdown } from './SearchDropdown'
 import { useSearchDropdown } from '../hooks/useSearchDropdown'
-import { containerClass, iconWrapperClass, inputClass, placeholderText, submitClass } from './searchInput.styles'
+import {
+  clearClass,
+  containerClass,
+  iconWrapperClass,
+  inputClass,
+  placeholderText,
+  submitClass,
+} from './searchInput.styles'
 import type { Product } from '@/shared/types'
 
 const SOURCE = 'src/features/search/components/SearchInput.tsx'
@@ -78,7 +85,7 @@ export const SearchInput = ({
             onClick={onClear}
             title="Limpiar búsqueda"
             tabIndex={isCollapsed ? -1 : undefined}
-            className="absolute inset-y-0 right-16 flex items-center pr-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+            className={clearClass(isDesktop)}
             {...uiMeta({
               id: `${traceId}.clear`,
               component: 'SearchInput',

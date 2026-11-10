@@ -1,3 +1,7 @@
+/** Texto plegado para búsquedas: minúsculas y sin acentos ("María" → "maria"). */
+export const foldText = (value: string): string =>
+  value.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim()
+
 /** Slug en minúsculas sin acentos ni símbolos (ej. "Redes & Conectividad" → "redes-conectividad"). */
 export const slugify = (value: string): string =>
   value

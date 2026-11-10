@@ -1,4 +1,5 @@
 import type { Product, ProductCondition, ProductLot, ProductSpec } from '../types'
+import { PLACEHOLDER_IMAGE, resolveGallery } from './productImages'
 
 /** Punto de reorden por defecto (equivale al umbral global que existía antes). */
 export const DEFAULT_REORDER_POINT = 3
@@ -34,6 +35,7 @@ const normalizeSpecs = (specs: unknown): ProductSpec[] => {
 export function normalizeProduct(raw: Partial<Product> & Pick<Product, 'id' | 'name'>): Product {
   const lots = raw.lots ?? []
   const lotControl = Boolean(raw.lotControl) && lots.length > 0
+  const images = resolveGallery(raw)
   return {
     sku: raw.sku || raw.id,
     slug: raw.slug ?? '',
@@ -49,12 +51,14 @@ export function normalizeProduct(raw: Partial<Product> & Pick<Product, 'id' | 'n
     active: raw.active ?? true,
     badge: raw.badge ?? null,
     rating: raw.rating ?? 5,
-    imageUrl: raw.imageUrl ?? '',
     description: raw.description ?? '',
     compatibility: raw.compatibility ?? '',
     connectivity: raw.connectivity ?? '',
     ...raw,
     specs: normalizeSpecs(raw.specs),
+    // La portada se deriva siempre de la galería (una sola fuente de verdad).
+    images,
+    imageUrl: images[0] ?? PLACEHOLDER_IMAGE,
     lotControl,
     lots,
     // Con control de lotes, el stock siempre se deriva de los lotes.

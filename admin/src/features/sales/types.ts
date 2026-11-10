@@ -1,46 +1,82 @@
+/**
+ * Estados del flujo de pedidos (ver `lib/orderFlow.ts`):
+ * registrado → confirmado → facturado → entregado · cancelado (terminal).
+ */
+export type OrderStatusId = 'registrado' | 'confirmado' | 'facturado' | 'entregado' | 'cancelado'
+
+/** Línea del pedido. Copia SKU, nombre y precio: si el catálogo cambia, el pedido no. */
 export interface OrderItem {
   productId: string
+  sku: string
   name: string
   quantity: number
-  price: number
+  /** Precio unitario con IVA incluido al registrar (o el cotizado). */
+  unitPrice: number
+  /** Descuento por línea, 0–100. */
+  discountPercent: number
+}
+
+/** Evento del historial (trazabilidad: quién movió el pedido y cuándo). */
+export interface OrderEvent {
+  status: OrderStatusId
+  /** Fecha ISO. */
+  at: string
+  by: string
+  note?: string
 }
 
 export interface Order {
   id: string
+  /** Cliente del directorio; `null` = cliente ocasional. */
+  customerId: string | null
   client: string
   phone: string
+  email: string
   city: string
   /** Nombre del canal de venta (ej. "WhatsApp"). */
   channel: string
   /** Fecha local "YYYY-MM-DD HH:mm". */
   date: string
+  /** Total con descuentos e IVA incluido (snapshot al registrar). */
   total: number
-  /** Nombre del estado operativo (ej. "Pendiente"). */
-  status: string
+  status: OrderStatusId
   paymentMethod: string
   deliveryMethod: string
+  notes: string
   items: OrderItem[]
-  /**
-   * Número de control de la factura que cerró el pedido; `null` si aún no se factura.
-   * Lo asigna Facturación al emitir y lo limpia al anular.
-   */
+  /** Factura que cerró la venta; la asigna Facturación al emitir y la limpia al anular. */
   invoiceId: string | null
+  /** Cotización de origen, si el pedido se convirtió desde una. */
+  quoteId: string | null
+  history: OrderEvent[]
 }
 
-export type OrderDraft = Omit<Order, 'id' | 'date' | 'invoiceId'>
+/** Datos para registrar: el store asigna id, fecha, total, estado inicial e historial. */
+export type OrderDraft = Omit<Order, 'id' | 'date' | 'total' | 'status' | 'invoiceId' | 'history'>
+
+/** Pre-carga del constructor de pedidos (ej. al convertir una cotización). */
+export interface OrderPrefill {
+  quoteId: string | null
+  customer: { customerId: string | null; name: string; phone: string; email: string }
+  items: OrderItem[]
+  notes: string
+}
 
 export interface OrderStatus {
-  id: string
+  id: OrderStatusId
   name: string
-  /** Paso secuencial del pipeline; 0 = rama terminal de cancelación. */
+  /** Paso secuencial del flujo; 0 = rama terminal de cancelación. */
   step: number
   /** Ícono FontAwesome (solo el nombre, ej. "fa-clock"). */
   icon: string
-  color: string
   /** Clases completas del badge (light + dark). */
   badgeStyle: string
   description: string
-  nextPossible: string[]
+  /** Efecto del estado sobre otros módulos (inventario, facturación…). */
+  effect: string
+  /** Quién o qué lleva el pedido a este estado. */
+  trigger: string
+  next: OrderStatusId[]
 }
 
 export interface Channel {
@@ -65,9 +101,13 @@ export interface ChannelDraft {
 
 export interface OrderMetrics {
   total: number
-  pending: number
-  readyForPickup: number
+  registered: number
+  confirmed: number
+  invoiced: number
   delivered: number
+  cancelled: number
+  /** Pedidos en curso (registrados, confirmados o facturados sin entregar). */
+  active: number
+  /** Venta efectiva: pedidos facturados o entregados. */
   revenue: number
-  grossTotal: number
 }

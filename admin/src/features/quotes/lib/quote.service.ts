@@ -1,4 +1,5 @@
 import type { BadgeTone } from '@/shared/ui'
+import { lineTotal as pricedLineTotal, money, summarizeLines } from '@/shared/lib/pricing'
 import { nextSequentialId } from '@/shared/lib/text'
 import type { Quote, QuoteItem, QuoteStatus, QuoteTotals } from '../types'
 
@@ -11,29 +12,17 @@ export const QUOTE_ID_PREFIX = 'COT-2026-'
 export const VALIDITY_OPTIONS = [7, 15, 30]
 export const DEFAULT_VALIDITY_DAYS = 15
 
-/** Redondeo monetario a 2 decimales (evita 0.1 + 0.2 = 0.30000000000000004). */
-const money = (value: number): number => Math.round(value * 100) / 100
-
-/** Total de una línea con su descuento aplicado (IVA incluido). */
-export const lineTotal = (item: QuoteItem): number =>
-  money(item.unitPrice * item.quantity * (1 - item.discountPercent / 100))
+/** Total de una línea con su descuento aplicado (IVA incluido). Misma aritmética que pedidos. */
+export const lineTotal = (item: QuoteItem): number => pricedLineTotal(item)
 
 /**
  * Totales del documento. Los precios del catálogo ya incluyen IVA, así que el
  * IVA se "extrae" del total: neto = total / (1 + tasa).
  */
 export function calcTotals(items: QuoteItem[], taxRate: number): QuoteTotals {
-  const gross = money(items.reduce((acc, i) => acc + i.unitPrice * i.quantity, 0))
-  const total = money(items.reduce((acc, i) => acc + lineTotal(i), 0))
+  const { gross, discount, total, units } = summarizeLines(items)
   const net = money(total / (1 + taxRate))
-  return {
-    gross,
-    discount: money(gross - total),
-    total,
-    net,
-    tax: money(total - net),
-    units: items.reduce((acc, i) => acc + i.quantity, 0),
-  }
+  return { gross, discount, total, net, tax: money(total - net), units }
 }
 
 /** Fecha límite de validez (ISO). */
@@ -43,17 +32,25 @@ export const validUntil = (quote: Pick<Quote, 'createdAt' | 'validityDays'>): st
   return date.toISOString()
 }
 
-/** Una cotización emitida cuya validez ya pasó se muestra como "vencida". */
-export function effectiveStatus(quote: Quote, now: Date = new Date()): QuoteStatus {
+/**
+ * Estado mostrado. Prioridad: convertida (tiene pedido activo) → vencida
+ * (emitida fuera de validez) → estado guardado.
+ */
+export function effectiveStatus(quote: Quote, orderId: string | null = null, now: Date = new Date()): QuoteStatus {
+  if (orderId) return 'convertida'
   if (quote.status === 'emitida' && new Date(validUntil(quote)) < now) return 'vencida'
   return quote.status
 }
+
+/** Regla de conversión: solo cotizaciones vigentes (emitidas o aceptadas) sin pedido activo. */
+export const isConvertible = (status: QuoteStatus): boolean => status === 'emitida' || status === 'aceptada'
 
 export const QUOTE_STATUS_META: Record<QuoteStatus, { label: string; tone: BadgeTone; icon: string }> = {
   emitida: { label: 'Emitida', tone: 'brand', icon: 'fa-solid fa-paper-plane' },
   aceptada: { label: 'Aceptada', tone: 'success', icon: 'fa-solid fa-circle-check' },
   rechazada: { label: 'Rechazada', tone: 'danger', icon: 'fa-solid fa-circle-xmark' },
   vencida: { label: 'Vencida', tone: 'neutral', icon: 'fa-solid fa-hourglass-end' },
+  convertida: { label: 'Convertida en pedido', tone: 'success', icon: 'fa-solid fa-cart-shopping' },
 }
 
 export const nextQuoteId = (quotes: Quote[]): string =>
@@ -62,10 +59,15 @@ export const nextQuoteId = (quotes: Quote[]): string =>
     QUOTE_ID_PREFIX,
   )
 
-export function filterQuotes(quotes: Quote[], search: string, status: 'all' | QuoteStatus): Quote[] {
+export function filterQuotes(
+  quotes: Quote[],
+  search: string,
+  status: 'all' | QuoteStatus,
+  orderOf: (quoteId: string) => string | null = () => null,
+): Quote[] {
   const term = search.trim().toLowerCase()
   return quotes.filter((q) => {
-    if (status !== 'all' && effectiveStatus(q) !== status) return false
+    if (status !== 'all' && effectiveStatus(q, orderOf(q.id)) !== status) return false
     if (!term) return true
     return [q.id, q.customer.name, q.customer.phone, q.createdBy].some((f) => f.toLowerCase().includes(term))
   })

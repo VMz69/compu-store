@@ -9,6 +9,8 @@ const SOURCE = 'src/features/catalog/components/detail/ProductBuyBox.tsx'
 
 interface ProductBuyBoxProps {
   product: Product
+  /** Porcentaje de descuento entero (0 = sin oferta). */
+  discount: number
   availableStock: number
   quantity: number
   whatsappUrl: string
@@ -19,6 +21,7 @@ interface ProductBuyBoxProps {
 
 export const ProductBuyBox = ({
   product,
+  discount,
   availableStock,
   quantity,
   whatsappUrl,
@@ -31,18 +34,32 @@ export const ProductBuyBox = ({
 
   return (
     <aside
-      className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-36 bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 dark:border-slate-800 shadow-soft-card dark:shadow-none space-y-4 sm:space-y-5"
+      className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-36 xl:static xl:flex xl:flex-col bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 dark:border-slate-800 shadow-soft-card dark:shadow-none space-y-4 sm:space-y-5"
       aria-label="Opciones de compra"
       {...uiMeta({ id: `${traceId}.buybox`, component: 'ProductBuyBox', source: SOURCE })}
     >
-      <div className="hidden lg:block">
-        <span className="text-3xl font-black text-brand-dark dark:text-sky-400">
-          {formatCurrency(product.price)}
-        </span>
-        {product.originalPrice ? (
-          <span className="block text-xs text-slate-400 mt-0.5">
-            Antes <span className="line-through font-bold">{formatCurrency(product.originalPrice)}</span>
+      {/* Único precio en desktop: monto → % de descuento → precio anterior y ahorro. */}
+      <div className="hidden lg:block space-y-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-3xl xl:text-4xl font-black tracking-tight text-brand-dark dark:text-sky-400">
+            {formatCurrency(product.price)}
           </span>
+          {discount > 0 ? (
+            <span className="text-xs font-black text-amber-950 bg-amber-400 px-2 py-0.5 rounded-md">
+              -{discount}%
+            </span>
+          ) : null}
+        </div>
+        {product.originalPrice ? (
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+            <span>
+              Antes <span className="line-through font-semibold">{formatCurrency(product.originalPrice)}</span>
+            </span>
+            <span className="inline-flex items-center gap-1 font-bold text-emerald-700 dark:text-emerald-400">
+              <i className="fa-solid fa-tag text-[10px]" />
+              Ahorras {formatCurrency(product.originalPrice - product.price)}
+            </span>
+          </p>
         ) : null}
       </div>
 
@@ -104,7 +121,7 @@ export const ProductBuyBox = ({
         </div>
       ) : null}
 
-      <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
+      <div className="xl:mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
         <p className="text-xs text-slate-500 dark:text-slate-400">
           Vendido y garantizado por{' '}
           <span className="font-bold text-brand">{STORE_CONFIG.name}</span>

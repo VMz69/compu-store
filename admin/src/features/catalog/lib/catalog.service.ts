@@ -13,7 +13,7 @@ import type {
  */
 const isLowStock = (p: Product): boolean => p.stock > 0 && p.stock <= p.reorderPoint
 
-export const PLACEHOLDER_IMAGE = 'https://placehold.co/400x300/f8fafc/0168f5?text=CompuStore+SV'
+export { PLACEHOLDER_IMAGE } from './productImages'
 
 export const STOCK_FILTER_OPTIONS: SelectOption[] = [
   { value: 'all', label: 'Todos los estados' },

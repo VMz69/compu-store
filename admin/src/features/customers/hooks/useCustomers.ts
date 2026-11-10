@@ -1,12 +1,12 @@
 import { useMemo, useState, type ChangeEvent } from 'react'
 import { ensurePermission, usePermission } from '@/features/access'
-import { useSalesStore } from '@/features/sales'
 import { usePagination } from '@/shared/hooks/usePagination'
 import { buildWhatsAppLink } from '@/shared/lib/whatsapp'
 import { askConfirm } from '@/shared/store/confirm.store'
 import { openModal } from '@/shared/store/modal.store'
 import { toast } from '@/shared/store/toast.store'
-import { CUSTOMER_TYPE_LABELS, filterCustomers, getCustomerStats } from '../lib/customer.service'
+import { CUSTOMER_TYPE_LABELS, filterCustomers } from '../lib/customer.service'
+import { useCustomerStats } from '../lib/statsPort'
 import { CUSTOMERS_MODALS } from '../modals'
 import { useCustomersStore } from '../store'
 import type { Customer, CustomerStatusFilter, CustomerType } from '../types'
@@ -31,7 +31,8 @@ const STATUS_OPTIONS = [
 export function useCustomers() {
   const customers = useCustomersStore((s) => s.customers)
   const deleteCustomer = useCustomersStore((s) => s.deleteCustomer)
-  const orders = useSalesStore((s) => s.orders)
+  // Métricas provistas por Pedidos a través del puerto (sin importar el feature).
+  const statsOf = useCustomerStats()
   const canManage = usePermission('canManageCustomers')
   const canDelete = usePermission('canDeleteCustomers')
   const [search, setSearch] = useState('')
@@ -42,10 +43,10 @@ export function useCustomers() {
     () =>
       filterCustomers(customers, { search, type, status }).map((customer) => ({
         customer,
-        stats: getCustomerStats(customer, orders),
+        stats: statsOf(customer),
         whatsappLink: buildWhatsAppLink(customer.phone, `Hola ${customer.name}, te saludamos de CompuStore SV.`),
       })),
-    [customers, orders, search, type, status],
+    [customers, statsOf, search, type, status],
   )
   const { pageItems, pagination } = usePagination(rows, {
     pageSizeOptions: CUSTOMER_PAGE_SIZES,
@@ -53,7 +54,7 @@ export function useCustomers() {
   })
 
   const promptDelete = (customer: Customer) => {
-    const { orderCount } = getCustomerStats(customer, orders)
+    const { orderCount } = statsOf(customer)
     askConfirm({
       title: 'Eliminar cliente',
       message:

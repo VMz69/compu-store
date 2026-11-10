@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn'
 import { tracer } from '@/ui-traceability'
-import type { OrderStatus } from '../../types'
+import type { OrderStatus, OrderStatusId } from '../../types'
 import { OrderStatusBadge } from '../OrderStatusBadge'
 
 const t = tracer('StatusCriteriaRow', 'src/features/sales/components/pipeline/StatusCriteriaRow.tsx')
@@ -8,11 +8,13 @@ const t = tracer('StatusCriteriaRow', 'src/features/sales/components/pipeline/St
 interface StatusCriteriaRowProps {
   status: OrderStatus
   count: number
-  onShowOrders: (status: string) => void
-  onOpenDetail: (status: string) => void
+  nextNames: string[]
+  onShowOrders: (status: OrderStatusId) => void
+  onOpenDetail: (status: OrderStatusId) => void
 }
 
-export function StatusCriteriaRow({ status: s, count, onShowOrders, onOpenDetail }: StatusCriteriaRowProps) {
+/** Fila de criterios: descripción, efecto en otros módulos, disparador y transiciones permitidas. */
+export function StatusCriteriaRow({ status: s, count, nextNames, onShowOrders, onOpenDetail }: StatusCriteriaRowProps) {
   const isTerminalCancel = s.step === 0
 
   return (
@@ -22,7 +24,7 @@ export function StatusCriteriaRow({ status: s, count, onShowOrders, onOpenDetail
           type="button"
           title="Ver detalle del estado"
           className="flex items-center gap-2 rounded-md hover:opacity-80"
-          onClick={() => onOpenDetail(s.name)}
+          onClick={() => onOpenDetail(s.id)}
           {...t(`settings.criteria.detail.${s.id}`)}
         >
           <span
@@ -35,16 +37,23 @@ export function StatusCriteriaRow({ status: s, count, onShowOrders, onOpenDetail
           >
             {isTerminalCancel ? '✕' : s.step}
           </span>
-          <OrderStatusBadge status={s.name} />
+          <OrderStatusBadge status={s.id} />
         </button>
       </td>
       <td className="py-3 px-3 max-w-xs">
         <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug">{s.description}</p>
+        <p className="text-[10px] text-slate-400 mt-1">
+          <i className="fa-solid fa-hand-pointer mr-1" aria-hidden="true" />
+          {s.trigger}
+        </p>
+      </td>
+      <td className="py-3 px-3 max-w-xs">
+        <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug">{s.effect}</p>
       </td>
       <td className="py-3 px-3">
         <div className="flex flex-wrap gap-1">
-          {s.nextPossible.length > 0 ? (
-            s.nextPossible.map((next) => (
+          {nextNames.length > 0 ? (
+            nextNames.map((next) => (
               <span
                 key={next}
                 className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
@@ -71,7 +80,7 @@ export function StatusCriteriaRow({ status: s, count, onShowOrders, onOpenDetail
         <button
           type="button"
           className="px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-bold inline-flex items-center gap-1 transition-colors shadow-2xs"
-          onClick={() => onShowOrders(s.name)}
+          onClick={() => onShowOrders(s.id)}
           {...t(`settings.criteria.orders.${s.id}`)}
         >
           <i className="fa-solid fa-list-check text-[10px]" aria-hidden="true" /> Ver Pedidos

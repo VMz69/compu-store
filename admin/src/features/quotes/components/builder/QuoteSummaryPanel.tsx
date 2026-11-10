@@ -1,9 +1,8 @@
+import { CustomerPicker } from '@/features/customers'
 import { formatCurrency } from '@/shared/lib/currency'
-import { Button, Field, Select, Textarea } from '@/shared/ui'
+import { Button, Field, LineItemsEditor, Select, Textarea } from '@/shared/ui'
 import { tracer } from '@/ui-traceability'
 import type { QuoteBuilderApi } from '../../hooks/useQuoteBuilder'
-import { QuoteCustomerSection } from './QuoteCustomerSection'
-import { QuoteItemsList } from './QuoteItemsList'
 
 const t = tracer('QuoteSummaryPanel', 'src/features/quotes/components/builder/QuoteSummaryPanel.tsx')
 
@@ -21,8 +20,16 @@ export function QuoteSummaryPanel({ b }: { b: QuoteBuilderApi }) {
   return (
     <aside className="flex flex-col min-h-0 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm" aria-label="Resumen de la cotización" {...t('quotes.builder.summary')}>
       <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 space-y-5">
-        <QuoteCustomerSection b={b} />
-        <QuoteItemsList b={b} />
+        <CustomerPicker selection={b.customer} errors={b.errors} title="1 · Cliente" traceId="quotes.builder.customer" />
+        <LineItemsEditor
+          title="2 · Productos"
+          lines={b.lines}
+          units={b.totals.units}
+          error={b.errors.items}
+          emptyText="Elige productos del catálogo para agregarlos aquí."
+          traceId="quotes.builder.items"
+          {...b.lineHandlers}
+        />
 
         <section className="space-y-3" {...t('quotes.builder.conditions')}>
           <h3 className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">3 · Condiciones</h3>

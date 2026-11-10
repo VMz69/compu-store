@@ -21,7 +21,7 @@ export function Modal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
       <div
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs"
+        className="absolute inset-0 bg-slate-900/50 dark:bg-slate-950/75 backdrop-blur-md backdrop-saturate-50"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -29,7 +29,7 @@ export function Modal({
         role="dialog"
         aria-modal="true"
         className={cn(
-          'relative bg-white dark:bg-slate-900 rounded-2xl shadow-modal flex flex-col overflow-hidden z-10 border border-slate-200 dark:border-slate-800',
+          'relative bg-white dark:bg-slate-900 rounded-2xl shadow-modal dark:shadow-modal-dark flex flex-col overflow-hidden z-10 border border-slate-200 dark:border-slate-700 dark:ring-1 dark:ring-white/5',
           widthClass,
           className,
         )}

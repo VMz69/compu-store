@@ -34,7 +34,7 @@ export const ProductMobileBar = ({
     <div
       role="region"
       aria-label="Acciones de compra"
-      className="lg:hidden fixed inset-x-0 bottom-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 shadow-[0_-8px_24px_-12px_rgba(12,25,44,0.18)] px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+      className="lg:hidden fixed inset-x-0 bottom-0 z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 shadow-[0_-8px_24px_-12px_rgba(12,25,44,0.18)] px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
       {...uiMeta({ id: traceId, component: 'ProductMobileBar', source: SOURCE })}
     >
       <div className="max-w-xl mx-auto flex items-center gap-2.5">

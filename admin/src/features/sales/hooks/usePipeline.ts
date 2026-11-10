@@ -1,54 +1,56 @@
 import { useMemo } from 'react'
 import { closeModal, openModal, useModalPayload } from '@/shared/store/modal.store'
 import { countByStatus } from '../lib/order.service'
+import { isOrderStatusId, ORDER_STATUSES, statusOf } from '../lib/orderFlow'
 import { SALES_MODALS } from '../modals'
 import { useSalesStore } from '../store'
+import type { OrderStatusId } from '../types'
 import { useShowOrdersByStatus } from './useOrders'
 
-const CANCEL_FALLBACK = { name: 'Cancelado', icon: 'fa-ban' }
+const CANCEL = statusOf('cancelado')
 
-/** Pipeline secuencial de estados + rama terminal de cancelación + tabla de criterios. */
+/** Flujo secuencial de estados + rama terminal de cancelación + tabla de criterios. */
 export function usePipeline() {
-  const statuses = useSalesStore((s) => s.statuses)
   const orders = useSalesStore((s) => s.orders)
   const showOrders = useShowOrdersByStatus()
 
   return useMemo(() => {
-    const withCount = statuses.map((status) => ({ status, count: countByStatus(orders, status.name) }))
-    const cancel = statuses.find((s) => s.step === 0) ?? CANCEL_FALLBACK
+    const withCount = ORDER_STATUSES.map((status) => ({
+      status,
+      count: countByStatus(orders, status.id),
+      nextNames: status.next.map((id) => statusOf(id).name),
+    }))
     return {
       steps: withCount.filter((x) => x.status.step > 0).sort((a, b) => a.status.step - b.status.step),
-      cancel: { name: cancel.name, icon: cancel.icon, count: countByStatus(orders, cancel.name) },
+      cancel: { id: CANCEL.id, name: CANCEL.name, icon: CANCEL.icon, count: countByStatus(orders, CANCEL.id) },
       criteria: withCount,
       showOrders,
-      openDetail: (statusName: string) => openModal(SALES_MODALS.statusDetail, statusName),
+      openDetail: (statusId: OrderStatusId) => openModal(SALES_MODALS.statusDetail, statusId),
     }
-  }, [statuses, orders, showOrders])
+  }, [orders, showOrders])
 }
 
 export type PipelineApi = ReturnType<typeof usePipeline>
 
-/** Detalle de un estado operativo (payload = nombre del estado). */
+/** Detalle de un estado del flujo (payload = id del estado). */
 export function useStatusDetail() {
-  const statusName = useModalPayload<string>()
-  const status = useSalesStore((s) => s.statuses.find((x) => x.id === statusName || x.name === statusName))
+  const statusId = useModalPayload<string>()
   const orders = useSalesStore((s) => s.orders)
   const showOrders = useShowOrdersByStatus()
+  const status = isOrderStatusId(statusId) ? statusOf(statusId) : null
 
-  const inStatus = useMemo(
-    () => (status ? orders.filter((o) => o.status === status.name) : []),
-    [orders, status],
-  )
+  const inStatus = useMemo(() => (status ? orders.filter((o) => o.status === status.id) : []), [orders, status])
 
   if (!status) return null
 
   return {
     status,
+    nextNames: status.next.map((id) => statusOf(id).name),
     orders: inStatus,
     onClose: closeModal,
     onShowOrders: () => {
       closeModal()
-      showOrders(status.name)
+      showOrders(status.id)
     },
   }
 }

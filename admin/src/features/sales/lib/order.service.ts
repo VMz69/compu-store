@@ -1,49 +1,38 @@
 import { nextSequentialId } from '@/shared/lib/text'
-import type { Channel, Order, OrderMetrics, OrderStatus } from '../types'
+import type { Channel, Order, OrderMetrics, OrderStatusId } from '../types'
+import { ACTIVE_STATUSES, SOLD_STATUSES } from './orderFlow'
 
 export const ORDER_ID_PREFIX = 'ORD-2026-'
 
-/**
- * Estados desde los que un pedido se puede facturar (dar salida).
- * "Pendiente" aún no tiene pago validado y "Cancelado" no se factura.
- */
-export const INVOICEABLE_STATUSES = ['Confirmado', 'Listo para Retiro', 'Entregado']
+export const PAYMENT_METHODS = ['Efectivo', 'Tarjeta de Crédito', 'Transferencia', 'Wompi / QR', 'Crédito Fiscal 30 Días']
 
-/** Estado al que pasa un pedido al facturarse (la mercadería sale del inventario). */
-export const INVOICED_STATUS = 'Entregado'
+export const DELIVERY_METHODS = [
+  'Retiro en Sala de Ventas (2da Planta)',
+  'Envío local Cojutepeque',
+  'Envío departamental (encomienda)',
+]
 
-/** Estado al que vuelve un pedido si se anula su factura (la mercadería regresa). */
-export const INVOICE_VOIDED_STATUS = 'Listo para Retiro'
+export const DEFAULT_CITY = 'Cojutepeque'
 
-export const isInvoiceable = (order: Order): boolean =>
-  !order.invoiceId && INVOICEABLE_STATUSES.includes(order.status)
-
-export const PAYMENT_METHODS = ['Efectivo', 'Tarjeta de Crédito', 'Transferencia', 'Wompi / QR']
-
-export const DEFAULT_DELIVERY = 'Retiro en Sala de Ventas (2da Planta)'
-
-/** Estilo de respaldo si un pedido referencia un estado inexistente. */
-export const FALLBACK_STATUS_STYLE = {
-  icon: 'fa-circle',
-  badgeStyle: 'bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
-}
+const countIn = (orders: Order[], statuses: OrderStatusId[]) => orders.filter((o) => statuses.includes(o.status))
 
 export function getOrderMetrics(orders: Order[]): OrderMetrics {
-  const delivered = orders.filter((o) => o.status === 'Entregado')
   return {
     total: orders.length,
-    pending: orders.filter((o) => o.status === 'Pendiente' || o.status === 'Confirmado').length,
-    readyForPickup: orders.filter((o) => o.status === 'Listo para Retiro').length,
-    delivered: delivered.length,
-    revenue: delivered.reduce((acc, o) => acc + o.total, 0),
-    grossTotal: orders.reduce((acc, o) => acc + o.total, 0),
+    registered: countByStatus(orders, 'registrado'),
+    confirmed: countByStatus(orders, 'confirmado'),
+    invoiced: countByStatus(orders, 'facturado'),
+    delivered: countByStatus(orders, 'entregado'),
+    cancelled: countByStatus(orders, 'cancelado'),
+    active: countIn(orders, ACTIVE_STATUSES).length,
+    revenue: countIn(orders, SOLD_STATUSES).reduce((acc, o) => acc + o.total, 0),
   }
 }
 
-export const countByStatus = (orders: Order[], status: string): number =>
+export const countByStatus = (orders: Order[], status: OrderStatusId): number =>
   orders.filter((o) => o.status === status).length
 
-export const filterByStatus = (orders: Order[], status: string): Order[] =>
+export const filterByStatus = (orders: Order[], status: 'all' | OrderStatusId): Order[] =>
   status === 'all' ? orders : orders.filter((o) => o.status === status)
 
 const belongsToChannel = (order: Order, channel: Channel): boolean => {
@@ -52,17 +41,12 @@ const belongsToChannel = (order: Order, channel: Channel): boolean => {
   return a.includes(b) || b.includes(a)
 }
 
-/** Órdenes capturadas y facturación liquidada (entregadas) de un canal. */
+/** Órdenes capturadas y venta efectiva (facturada o entregada) de un canal. */
 export function getChannelStats(channel: Channel, orders: Order[]) {
   const channelOrders = orders.filter((o) => belongsToChannel(o, channel))
-  const revenue = channelOrders
-    .filter((o) => o.status === 'Entregado')
-    .reduce((acc, o) => acc + o.total, 0)
+  const revenue = countIn(channelOrders, SOLD_STATUSES).reduce((acc, o) => acc + o.total, 0)
   return { orderCount: channelOrders.length, revenue }
 }
-
-export const statusOptionLabel = (status: OrderStatus): string =>
-  status.step > 0 ? `${status.step}. ${status.name}` : status.name
 
 export const nextOrderId = (orders: Order[]): string =>
   nextSequentialId(
@@ -75,3 +59,7 @@ export function nowStamp(date: Date = new Date()): string {
   const pad = (n: number) => String(n).padStart(2, '0')
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`
 }
+
+/** Pedido activo (no cancelado) que ya convirtió una cotización. */
+export const findOrderByQuote = (orders: Order[], quoteId: string): Order | undefined =>
+  orders.find((o) => o.quoteId === quoteId && o.status !== 'cancelado')

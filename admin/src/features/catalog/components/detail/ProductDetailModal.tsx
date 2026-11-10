@@ -10,12 +10,12 @@ const t = tracer('ProductDetailModal', 'src/features/catalog/components/detail/P
 export function ProductDetailModal() {
   const detail = useProductDetail()
   if (!detail) return null
-  const { product, pricing, severity, canEdit, canDelete, onEdit, onDelete, onClose } = detail
+  const { product, pricing, severity, gallery, canEdit, canDelete, onEdit, onDelete, onClose } = detail
 
   return (
     <Modal
       onClose={onClose}
-      widthClass="w-[min(94vw,620px)]"
+      widthClass="w-[min(94vw,660px)]"
       className="max-h-[92vh]"
       {...t(`catalog.product-detail.${product.id}`)}
     >
@@ -31,7 +31,7 @@ export function ProductDetailModal() {
       </ModalHeader>
 
       <div className="p-5 sm:p-6 overflow-y-auto custom-scrollbar space-y-5 text-xs">
-        <DetailSummary product={product} pricing={pricing} />
+        <DetailSummary product={product} pricing={pricing} gallery={gallery} />
         <DetailMetrics product={product} pricing={pricing} severity={severity} />
         <DetailSpecs product={product} />
       </div>

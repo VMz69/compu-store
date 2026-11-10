@@ -8,6 +8,7 @@ import {
   type ProductScalarField,
   type SpecRow,
 } from '../../lib/productForm'
+import type { ImageRow } from '../../lib/productImages'
 
 type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
 type LotTextField = 'lotNumber' | 'quantity' | 'expiresAt'
@@ -50,7 +51,9 @@ export function useProductFormState(initial: ProductFormValues) {
       checked: values.active,
       onChange: (e: ChangeEvent<HTMLInputElement>) => patch({ active: e.target.checked }),
     },
-    setImage: (imageUrl: string) => patch({ imageUrl }),
+    /** Galería: recibe una transformación pura de la lista (ver `lib/productImages`). */
+    updateImages: (update: (rows: ImageRow[]) => ImageRow[]) =>
+      setValues((v) => ({ ...v, images: update(v.images) })),
 
     // Especificaciones clave/valor
     addSpec: () => setValues((v) => ({ ...v, specs: [...v.specs, emptySpecRow()] })),

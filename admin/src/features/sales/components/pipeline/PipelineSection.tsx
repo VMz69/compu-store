@@ -15,11 +15,12 @@ export function PipelineSection() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
         <div>
           <CardTitle className="flex items-center gap-2">
-            <i className="fa-solid fa-arrows-split-up-and-left text-brand" aria-hidden="true" /> Pipeline de
-            Transición Operativa (Estados de Pedidos)
+            <i className="fa-solid fa-arrows-split-up-and-left text-brand" aria-hidden="true" /> Flujo general de
+            pedidos
           </CardTitle>
           <p className="text-[11px] text-slate-400">
-            Ciclo de vida secuencial que condiciona los selectores de cambio de estado en la vista de Pedidos.
+            Registrado → Confirmado y Listo → Facturado → Entregado. Cada paso tiene efectos sobre inventario,
+            facturación, clientes y cotizaciones; las acciones de Pedidos solo ofrecen las transiciones permitidas.
           </p>
         </div>
         <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 dark:text-slate-400">

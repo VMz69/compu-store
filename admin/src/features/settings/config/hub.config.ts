@@ -26,7 +26,7 @@ export const HUB_CARDS: HubCardConfig[] = [
       'bg-purple-50 text-purple-700 dark:bg-purple-950/50 dark:text-purple-300 border-purple-200 dark:border-purple-800',
     title: 'Canales & Transiciones Operativas',
     description:
-      'Control de canales omnicanal (WhatsApp, Tienda Web, Sala de Ventas, Corporativo) y del ciclo secuencial de estados por los que avanza cada orden.',
+      'Canales omnicanal (WhatsApp, Tienda Web, Sala de Ventas, Corporativo) y flujo general de pedidos: Registrado → Confirmado y Listo → Facturado → Entregado.',
     cta: 'Administrar Canales y Flujos',
     featured: true,
   },
