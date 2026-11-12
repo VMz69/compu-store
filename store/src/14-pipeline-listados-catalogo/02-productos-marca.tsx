@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
-import { ProductGrid } from '../components/grid/ProductGrid'
+import { ProductGrid } from '../features/catalog/components/grid/ProductGrid'
 import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { EmptyState } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { FilterBar } from '@/10-pipeline-consulta-catalogo/00-director-consulta-catalogo'

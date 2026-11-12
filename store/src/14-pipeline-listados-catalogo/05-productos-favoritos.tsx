@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import { ProductGrid } from '../components/grid/ProductGrid'
+import { ProductGrid } from '../features/catalog/components/grid/ProductGrid'
 import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { ConfirmDialog } from '@/05-pipeline-controles-compra/00-director-controles-compra'
-import { useFavoritesView } from '../hooks/useFavoritesView'
+import { useFavoritesView } from './04-estado-lista-favoritos'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/pages/FavoritesView.tsx'

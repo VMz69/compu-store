@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { products } from '@/06-pipeline-datos-mock/00-director-datos-mock'
-import { useFavStore } from '../favorites.store'
-import { useFavorites } from './useFavorites'
+import { useFavStore } from '../features/catalog/favorites.store'
+import { useFavorites } from '../features/catalog/hooks/useFavorites'
 import { useToastStore } from '@/03-pipeline-notificaciones/00-director-notificaciones'
 
 /**
