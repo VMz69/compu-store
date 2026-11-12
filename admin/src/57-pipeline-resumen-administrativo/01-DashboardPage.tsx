@@ -1,10 +1,10 @@
 import { PageContainer } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import { BranchBanner } from '../components/BranchBanner'
-import { KpiGrid } from '../components/KpiGrid'
-import { RecentOrdersPanel } from '../components/RecentOrdersPanel'
-import { StockHealthPanel } from '../components/StockHealthPanel'
-import { useDashboardMetrics } from '../hooks/useDashboardMetrics'
+import { BranchBanner } from './04-BranchBanner'
+import { KpiGrid } from './03-KpiGrid'
+import { RecentOrdersPanel } from '../58-pipeline-seguimiento-comercial/03-RecentOrdersPanel'
+import { StockHealthPanel } from '../58-pipeline-seguimiento-comercial/04-StockHealthPanel'
+import { useDashboardMetrics } from './02-useDashboardMetrics'
 
 const t = tracer('DashboardPage', 'src/features/dashboard/pages/DashboardPage.tsx')
 

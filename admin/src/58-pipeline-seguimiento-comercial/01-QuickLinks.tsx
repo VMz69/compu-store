@@ -1,6 +1,6 @@
 import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { tracer } from '@/00-trazabilidad'
-import { QUICK_LINKS } from '../config/quickLinks.config'
+import { QUICK_LINKS } from './02-quickLinks.config'
 
 const t = tracer('QuickLinks', 'src/features/dashboard/components/QuickLinks.tsx')
 
