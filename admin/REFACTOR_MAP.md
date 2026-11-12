@@ -32,7 +32,7 @@ Cada fila corresponde a un paso y un commit independiente. Después de mover se 
 | raiz | validado | 0 | 0 | idéntico |
 | datos-mock | validado | 0 | 0 | idéntico |
 | transversal | validado | 0 | 0 | idéntico |
-| aplicacion | pendiente | pendiente | pendiente | pendiente |
+| aplicacion | validado | 0 | 0 | idéntico |
 | acceso | pendiente | pendiente | pendiente | pendiente |
 | catalogo | pendiente | pendiente | pendiente | pendiente |
 | clientes | pendiente | pendiente | pendiente | pendiente |

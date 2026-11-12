@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { tracer } from '@/00-trazabilidad'
-import type { NavItem } from '../../hooks/useNavItems'
+import type { NavItem } from './04-useNavItems'
 
 const t = tracer('SidebarNavItem', 'src/app/layout/sidebar/SidebarNavItem.tsx')
 

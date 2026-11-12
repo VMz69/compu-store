@@ -9,12 +9,12 @@ import { OfferBuilderPage, PromotionsPage } from '@/00-director-ofertas'
 import { NewQuotePage, QuotesPage } from '@/00-director-cotizaciones'
 import { EditOrderPage, NewOrderPage, OrdersPage } from '@/00-director-ventas'
 import { ChannelsPage, IdentityPage, SettingsPage, UserAccessPage, UsersPage } from '@/00-director-ajustes'
-import { HomeRedirect } from './guards/HomeRedirect'
-import { RequireAuth } from './guards/RequireAuth'
-import { RequireView } from './guards/RequireView'
-import { AdminLayout } from './layout/AdminLayout'
-import { NotFoundPage } from './pages/NotFoundPage'
-import { RootLayout } from './RootLayout'
+import { HomeRedirect } from './04-HomeRedirect'
+import { RequireAuth } from './02-RequireAuth'
+import { RequireView } from './03-RequireView'
+import { AdminLayout } from '../02-pipeline-marco-administrativo/00-director-marco-administrativo'
+import { NotFoundPage } from './05-NotFoundPage'
+import { RootLayout } from '../02-pipeline-marco-administrativo/03-RootLayout'
 
 export const router = createBrowserRouter([
   {

@@ -1,8 +1,8 @@
 import { Outlet } from 'react-router-dom'
 import { useReservationExpiry } from '@/00-director-ventas'
 import { tracer } from '@/00-trazabilidad'
-import { Sidebar } from './sidebar/Sidebar'
-import { Topbar } from './topbar/Topbar'
+import { Sidebar } from '../03-pipeline-navegacion-administrativa/00-director-navegacion-administrativa'
+import { Topbar } from '../04-pipeline-cabecera-administrativa/00-director-cabecera-administrativa'
 
 const t = tracer('AdminLayout', 'src/app/layout/AdminLayout.tsx')
 

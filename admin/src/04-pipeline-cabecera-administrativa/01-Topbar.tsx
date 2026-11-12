@@ -1,9 +1,9 @@
 import { IconButton } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import { useTopbar } from '../../hooks/useLayout'
-import { ThemeToggle } from './ThemeToggle'
-import { TopbarShortcut } from './TopbarShortcut'
-import { TopbarTitle } from './TopbarTitle'
+import { useTopbar } from '../02-pipeline-marco-administrativo/02-useLayout'
+import { ThemeToggle } from './04-ThemeToggle'
+import { TopbarShortcut } from './03-TopbarShortcut'
+import { TopbarTitle } from './02-TopbarTitle'
 
 const t = tracer('Topbar', 'src/app/layout/topbar/Topbar.tsx')
 

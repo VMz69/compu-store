@@ -1,10 +1,10 @@
 import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { SafeImage } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import { useSidebar } from '../../hooks/useLayout'
-import { useNavItems } from '../../hooks/useNavItems'
-import { SidebarNavItem } from './SidebarNavItem'
-import { SidebarProfile } from './SidebarProfile'
+import { useSidebar } from '../02-pipeline-marco-administrativo/02-useLayout'
+import { useNavItems } from './04-useNavItems'
+import { SidebarNavItem } from './02-SidebarNavItem'
+import { SidebarProfile } from './03-SidebarProfile'
 
 const t = tracer('Sidebar', 'src/app/layout/sidebar/Sidebar.tsx')
 
