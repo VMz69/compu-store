@@ -2,7 +2,7 @@ import { FooterBrand } from './FooterBrand'
 import { FooterLinks } from './FooterLinks'
 import { FooterSocial } from './FooterSocial'
 import { FooterStoreInfo } from './FooterStoreInfo'
-import { STORE_CONFIG } from '@/shared/config/store.config'
+import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/app/layout/footer/Footer.tsx'

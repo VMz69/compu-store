@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom'
 import { useMobileActionBar } from '../../hooks/useMobileActionBar'
-import { formatCurrency } from '@/shared/lib/formatters'
+import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/components/detail/ProductMobileBar.tsx'

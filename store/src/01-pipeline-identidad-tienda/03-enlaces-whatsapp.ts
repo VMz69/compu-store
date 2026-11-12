@@ -1,4 +1,4 @@
-import { STORE_CONFIG } from '@/shared/config/store.config'
+import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/01-identidad.config'
 
 /**
  * Enlaces de WhatsApp genéricos (sin lógica de negocio).

@@ -1,4 +1,4 @@
-import { buildAssistantUrl } from '@/shared/lib/whatsapp'
+import { buildAssistantUrl } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/app/layout/FloatingWhatsApp.tsx'

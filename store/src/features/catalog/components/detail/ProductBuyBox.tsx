@@ -1,7 +1,7 @@
 import { ProductTrustChips } from './ProductTrustChips'
 import { QuantitySelector } from '@/shared/ui/QuantitySelector'
-import { formatCurrency } from '@/shared/lib/formatters'
-import { STORE_CONFIG } from '@/shared/config/store.config'
+import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
+import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
 

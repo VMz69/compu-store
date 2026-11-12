@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { CartWidget, useCart } from '@/00-director-carrito'
-import { Logo } from '@/shared/ui/Logo'
+import { Logo } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { SearchInput, useSearchInput, useSearchSuggestions } from '@/00-director-busqueda'
 import { ThemeToggle } from './ThemeToggle'
 import { useHeaderState } from '../../hooks/useHeaderState'

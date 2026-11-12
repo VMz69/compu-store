@@ -4,7 +4,7 @@ import { products } from '../mocks/products.mock'
 import { getAvailableStock, useCart, useCartStore } from '@/00-director-carrito'
 import { useFavorites } from './useFavorites'
 import { useProductReviews } from './useProductReviews'
-import { calculateDiscountPercentage } from '@/shared/lib/formatters'
+import { calculateDiscountPercentage } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { getProductById, getProductImages, getRelatedProducts } from '../lib/catalog.service'
 import { buildSingleProductUrl } from '../lib/whatsapp'
 

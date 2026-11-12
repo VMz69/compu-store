@@ -1,5 +1,5 @@
-import { STORE_CONFIG } from '@/shared/config/store.config'
-import { buildWhatsAppUrl } from '@/shared/lib/whatsapp'
+import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
+import { buildWhatsAppUrl } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 
 /** Mensaje y enlace de WhatsApp para el formulario de contacto. */
 

@@ -3,7 +3,7 @@ import { ContactForm } from '../components/ContactForm'
 import { ContactInfoCards } from '../components/ContactInfoCards'
 import { ContactMap } from '../components/ContactMap'
 import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
-import { STORE_CONFIG } from '@/shared/config/store.config'
+import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/info/pages/ContactView.tsx'

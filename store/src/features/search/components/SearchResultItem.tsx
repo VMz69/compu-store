@@ -1,4 +1,4 @@
-import { formatCurrency } from '@/shared/lib/formatters'
+import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import { useSearchResultItem } from '../hooks/useSearchResultItem'
 import type { Product } from '@/00-director-modelos'

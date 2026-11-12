@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { MOBILE_SECTION_TITLE } from './navbar.styles'
-import { STORE_CONFIG } from '@/shared/config/store.config'
+import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/app/layout/navbar/MobileMenuInfo.tsx'

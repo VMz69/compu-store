@@ -1,6 +1,6 @@
-import { STORE_CONFIG } from '@/shared/config/store.config'
-import { formatCurrency } from '@/shared/lib/formatters'
-import { buildWhatsAppUrl } from '@/shared/lib/whatsapp'
+import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
+import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
+import { buildWhatsAppUrl } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import type { CartItem, DeliveryMethod } from '../types'
 import { calculateItemCount, calculateSubtotal, getLineTotal } from './cart.service'
 

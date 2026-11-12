@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { getAvailableStock, useCart, useCartStore } from '@/00-director-carrito'
 import { useFavorites } from './useFavorites'
-import { calculateDiscountPercentage } from '@/shared/lib/formatters'
+import { calculateDiscountPercentage } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import type { Product } from '@/00-director-modelos'
 
 /**

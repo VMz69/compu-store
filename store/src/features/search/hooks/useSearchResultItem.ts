@@ -1,5 +1,5 @@
 import { getAvailableStock, useCartStore } from '@/00-director-carrito'
-import { calculateDiscountPercentage } from '@/shared/lib/formatters'
+import { calculateDiscountPercentage } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import type { Product } from '@/00-director-modelos'
 
 /** Estado derivado de una fila del desplegable: oferta, descuento y disponibilidad en carrito. */

@@ -1,4 +1,4 @@
-import { formatSku } from '@/shared/lib/formatters'
+import { formatSku } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
 

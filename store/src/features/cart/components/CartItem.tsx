@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { getLineTotal } from '../lib/cart.service'
-import { formatCurrency } from '@/shared/lib/formatters'
+import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { CartItem as CartItemType } from '../types'
 

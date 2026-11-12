@@ -573,3 +573,4 @@ Se corrigió únicamente el auditor externo en /tmp para comprobar las sentencia
 del director, sin cambiar el plan ni código de aplicación. Se reintenta el mismo
 paso; sus movimientos siguen siendo independientes y conservan el grafo original.
 
+| `01-pipeline-identidad-tienda` | 4 | OK (0) | OK (0) | OK (0) |

@@ -1,6 +1,6 @@
 import { useHelpfulReview } from '../../hooks/useHelpfulReview'
 import { RatingStars } from '@/shared/ui/RatingStars'
-import { getInitials } from '@/shared/lib/formatters'
+import { getInitials } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Review } from '@/00-director-modelos'
 

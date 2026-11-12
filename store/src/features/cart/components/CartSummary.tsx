@@ -1,5 +1,5 @@
 import { CheckoutForm } from './CheckoutForm'
-import { formatCurrency } from '@/shared/lib/formatters'
+import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { DeliveryMethod } from '../types'
 

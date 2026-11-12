@@ -1,6 +1,6 @@
 import { ProductInfoActions } from './ProductInfoActions'
 import { RatingStars } from '@/shared/ui/RatingStars'
-import { formatCurrency, formatSku } from '@/shared/lib/formatters'
+import { formatCurrency, formatSku } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
 
