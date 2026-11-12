@@ -1,4 +1,4 @@
-import { TRUST_PILLARS } from '../config/trustPillars.config'
+import { TRUST_PILLARS } from './01-pilares-confianza.config'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/home/components/TrustPillars.tsx'

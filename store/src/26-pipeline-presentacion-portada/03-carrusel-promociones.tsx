@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useHeroSlider } from '../hooks/useHeroSlider'
+import { useHeroSlider } from './02-estado-promociones'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/home/components/HeroSlider.tsx'

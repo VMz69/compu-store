@@ -605,3 +605,4 @@ Se reanuda por lotes más cortos, con los mismos movimientos y validaciones.
 | `23-pipeline-oferta-producto` | 4 | OK (0) | OK (0) | OK (0) |
 | `24-pipeline-compra-producto` | 4 | OK (0) | OK (0) | OK (0) |
 | `25-pipeline-detalle-producto` | 3 | OK (0) | OK (0) | OK (0) |
+| `26-pipeline-presentacion-portada` | 4 | OK (0) | OK (0) | OK (0) |
