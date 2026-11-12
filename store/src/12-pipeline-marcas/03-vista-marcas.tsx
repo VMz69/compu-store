@@ -1,7 +1,7 @@
-import { BrandCard } from '../components/browse/BrandCard'
+import { BrandCard } from './02-tarjeta-marca'
 import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { PageBanner } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
-import { useBrandsPage } from '../hooks/useBrandsPage'
+import { useBrandsPage } from './01-estado-marcas'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/pages/BrandsView.tsx'

@@ -584,3 +584,4 @@ paso; sus movimientos siguen siendo independientes y conservan el grafo original
 | `09-pipeline-checkout-whatsapp` | 3 | OK (0) | OK (0) | OK (0) |
 | `10-pipeline-consulta-catalogo` | 5 | OK (0) | OK (0) | OK (0) |
 | `11-pipeline-categorias` | 4 | OK (0) | OK (0) | OK (0) |
+| `12-pipeline-marcas` | 3 | OK (0) | OK (0) | OK (0) |

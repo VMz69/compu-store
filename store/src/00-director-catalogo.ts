@@ -8,7 +8,7 @@ export { useFilters } from '@/10-pipeline-consulta-catalogo/00-director-consulta
 export { filterAndSort, getDeals } from '@/10-pipeline-consulta-catalogo/00-director-consulta-catalogo'
 export { products } from '@/06-pipeline-datos-mock/00-director-datos-mock'
 export { BrandDetail } from './features/catalog/pages/BrandDetail'
-export { BrandsView } from './features/catalog/pages/BrandsView'
+export { BrandsView } from '@/12-pipeline-marcas/00-director-marcas'
 export { CatalogHub } from '@/11-pipeline-categorias/00-director-categorias'
 export { CategoryView } from './features/catalog/pages/CategoryView'
 export { FavoritesView } from './features/catalog/pages/FavoritesView'
