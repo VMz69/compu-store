@@ -3,7 +3,7 @@ export { FilterBar } from '@/10-pipeline-consulta-catalogo/00-director-consulta-
 export { ProductGrid } from './features/catalog/components/grid/ProductGrid'
 export { useFilterStore } from '@/10-pipeline-consulta-catalogo/00-director-consulta-catalogo'
 export { useCatalogStats } from '@/11-pipeline-categorias/00-director-categorias'
-export { useFavorites } from './features/catalog/hooks/useFavorites'
+export { useFavorites } from '@/15-pipeline-preferencias-producto/00-director-preferencias-producto'
 export { useFilters } from '@/10-pipeline-consulta-catalogo/00-director-consulta-catalogo'
 export { filterAndSort, getDeals } from '@/10-pipeline-consulta-catalogo/00-director-consulta-catalogo'
 export { products } from '@/06-pipeline-datos-mock/00-director-datos-mock'

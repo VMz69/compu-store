@@ -587,3 +587,4 @@ paso; sus movimientos siguen siendo independientes y conservan el grafo original
 | `12-pipeline-marcas` | 3 | OK (0) | OK (0) | OK (0) |
 | `13-pipeline-seleccion-catalogo` | 3 | OK (0) | OK (0) | OK (0) |
 | `14-pipeline-listados-catalogo` | 5 | OK (0) | OK (0) | OK (0) |
+| `15-pipeline-preferencias-producto` | 3 | OK (0) | OK (0) | OK (0) |

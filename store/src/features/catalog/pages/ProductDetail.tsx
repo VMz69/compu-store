@@ -9,7 +9,7 @@ import { RelatedList } from '../components/detail/RelatedList'
 import { EmptyState } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { useProductDetail } from '../hooks/useProductDetail'
 import { useProductTabs } from '../hooks/useProductTabs'
-import { useShareProduct } from '../hooks/useShareProduct'
+import { useShareProduct } from '@/15-pipeline-preferencias-producto/00-director-preferencias-producto'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/pages/ProductDetail.tsx'
