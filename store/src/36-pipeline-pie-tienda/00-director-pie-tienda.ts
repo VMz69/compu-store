@@ -1,0 +1,5 @@
+export * from './01-identidad-pie'
+export * from './02-enlaces-pie'
+export * from './03-redes-sociales'
+export * from './04-informacion-pie'
+export * from './05-pie-tienda'

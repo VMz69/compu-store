@@ -1,7 +1,7 @@
-import { FooterBrand } from './FooterBrand'
-import { FooterLinks } from './FooterLinks'
-import { FooterSocial } from './FooterSocial'
-import { FooterStoreInfo } from './FooterStoreInfo'
+import { FooterBrand } from './01-identidad-pie'
+import { FooterLinks } from './02-enlaces-pie'
+import { FooterSocial } from './03-redes-sociales'
+import { FooterStoreInfo } from './04-informacion-pie'
 import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 

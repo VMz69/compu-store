@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom'
-import { Footer } from './footer/Footer'
+import { Footer } from '@/36-pipeline-pie-tienda/00-director-pie-tienda'
 import { FloatingWhatsApp } from '@/02-pipeline-preferencias-interfaz/00-director-preferencias-interfaz'
 import { Header } from '@/33-pipeline-cabecera-tienda/00-director-cabecera-tienda'
 import { MobileMenuBackdrop } from './navbar/MobileMenuBackdrop'
