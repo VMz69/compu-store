@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
-import { CartItem } from '../components/CartItem'
-import { CartSummary } from '../components/CartSummary'
+import { CartItem } from './02-linea-carrito'
+import { CartSummary } from '../features/cart/components/CartSummary'
 import { ConfirmDialog } from '@/05-pipeline-controles-compra/00-director-controles-compra'
 import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { EmptyState } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
-import { useCartView } from '../hooks/useCartView'
+import { useCartView } from './03-estado-vista-carrito'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/cart/pages/CartView.tsx'
