@@ -4,9 +4,9 @@ import {
   addItem as addCartItem,
   removeItem as removeCartItem,
   updateQuantity as updateCartQuantity,
-} from './lib/cart.service'
+} from './02-calculos-carrito'
 import type { Product } from '@/00-director-modelos'
-import type { CartItem, DeliveryMethod } from './types'
+import type { CartItem, DeliveryMethod } from './01-modelos-carrito'
 
 /**
  * Estado persistido del carrito.

@@ -1,8 +1,8 @@
 import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { buildWhatsAppUrl } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
-import type { CartItem, DeliveryMethod } from '../types'
-import { calculateItemCount, calculateSubtotal, getLineTotal } from './cart.service'
+import type { CartItem, DeliveryMethod } from '@/07-pipeline-estado-carrito/00-director-estado-carrito'
+import { calculateItemCount, calculateSubtotal, getLineTotal } from '@/07-pipeline-estado-carrito/00-director-estado-carrito'
 
 /** Mensaje y enlace de WhatsApp para confirmar el pedido del carrito. */
 

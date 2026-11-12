@@ -579,3 +579,4 @@ paso; sus movimientos siguen siendo independientes y conservan el grafo original
 | `04-pipeline-presentacion-secciones` | 4 | OK (0) | OK (0) | OK (0) |
 | `05-pipeline-controles-compra` | 5 | OK (0) | OK (0) | OK (0) |
 | `06-pipeline-datos-mock` | 5 | OK (0) | OK (0) | OK (0) |
+| `07-pipeline-estado-carrito` | 4 | OK (0) | OK (0) | OK (0) |

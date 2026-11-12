@@ -1,5 +1,5 @@
 import type { Product } from '@/00-director-modelos'
-import type { CartItem } from '../types'
+import type { CartItem } from './01-modelos-carrito'
 
 /**
  * Dominio del carrito. Todas las operaciones son puras: reciben el estado

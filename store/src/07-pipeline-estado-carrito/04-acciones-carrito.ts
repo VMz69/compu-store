@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
-import { calculateItemCount, calculateSubtotal } from '../lib/cart.service'
-import { useCartStore } from '../store'
+import { calculateItemCount, calculateSubtotal } from './02-calculos-carrito'
+import { useCartStore } from './03-carrito.store'
 import { useToastStore } from '@/03-pipeline-notificaciones/00-director-notificaciones'
 import type { Product } from '@/00-director-modelos'
 

@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import { getLineTotal } from '../lib/cart.service'
+import { getLineTotal } from '@/07-pipeline-estado-carrito/00-director-estado-carrito'
 import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
-import type { CartItem as CartItemType } from '../types'
+import type { CartItem as CartItemType } from '@/07-pipeline-estado-carrito/00-director-estado-carrito'
 
 const SOURCE = 'src/features/cart/components/CartItem.tsx'
 
