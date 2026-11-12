@@ -3,7 +3,7 @@ import { ProductBuyBox } from '@/23-pipeline-oferta-producto/00-director-oferta-
 import { ProductDetailHeader } from '../components/detail/ProductDetailHeader'
 import { ProductGallery } from '@/18-pipeline-galeria-producto/00-director-galeria-producto'
 import { ProductInfo } from '@/23-pipeline-oferta-producto/00-director-oferta-producto'
-import { ProductMobileBar } from '../components/detail/ProductMobileBar'
+import { ProductMobileBar } from '@/24-pipeline-compra-producto/00-director-compra-producto'
 import { ProductTabs } from '@/22-pipeline-informacion-producto/00-director-informacion-producto'
 import { RelatedList } from '@/17-pipeline-vitrina-productos/00-director-vitrina-productos'
 import { EmptyState } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'

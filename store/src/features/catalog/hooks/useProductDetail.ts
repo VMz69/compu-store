@@ -6,7 +6,7 @@ import { useFavorites } from '@/15-pipeline-preferencias-producto/00-director-pr
 import { useProductReviews } from '@/20-pipeline-estado-resenas/00-director-estado-resenas'
 import { calculateDiscountPercentage } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { getProductById, getProductImages, getRelatedProducts } from '@/10-pipeline-consulta-catalogo/00-director-consulta-catalogo'
-import { buildSingleProductUrl } from '../lib/whatsapp'
+import { buildSingleProductUrl } from '@/24-pipeline-compra-producto/00-director-compra-producto'
 
 /**
  * Compone la vista de detalle: producto, galería, stock, cantidad, relacionados, reseñas y WhatsApp.
