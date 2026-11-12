@@ -1,5 +1,5 @@
 import { uiMeta } from '@/04-trazabilidad-ui'
-import { SearchDropdown } from './SearchDropdown'
+import { SearchDropdown } from '@/30-pipeline-sugerencias-busqueda/00-director-sugerencias-busqueda'
 import { useSearchDropdown } from '../hooks/useSearchDropdown'
 import {
   clearClass,
