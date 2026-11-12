@@ -1,5 +1,5 @@
 import { ProductOverviewTab } from './ProductOverviewTab'
-import { ProductReviewsTab } from '../reviews/ProductReviewsTab'
+import { ProductReviewsTab } from '@/21-pipeline-publicacion-resenas/00-director-publicacion-resenas'
 import { ProductSpecsTab } from './ProductSpecsTab'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { ProductDetailTab } from '@/02-pipeline-preferencias-interfaz/00-director-preferencias-interfaz'

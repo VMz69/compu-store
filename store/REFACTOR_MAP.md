@@ -600,3 +600,4 @@ Se reanuda por lotes más cortos, con los mismos movimientos y validaciones.
 
 | `19-pipeline-calificaciones` | 4 | OK (0) | OK (0) | OK (0) |
 | `20-pipeline-estado-resenas` | 4 | OK (0) | OK (0) | OK (0) |
+| `21-pipeline-publicacion-resenas` | 3 | OK (0) | OK (0) | OK (0) |

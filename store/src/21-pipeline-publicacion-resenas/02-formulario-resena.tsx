@@ -1,5 +1,5 @@
 import { useReviewForm } from '@/20-pipeline-estado-resenas/00-director-estado-resenas'
-import { ReviewPendingNotice } from './ReviewPendingNotice'
+import { ReviewPendingNotice } from './01-aviso-moderacion'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/components/reviews/ReviewForm.tsx'
