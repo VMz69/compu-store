@@ -114,22 +114,45 @@ Permisos por vista: Productos (`canCreateProduct`, `canEditProduct`, `canDeleteP
 
 ## 5. Topología FLOA
 
-La estructura estándar de Vite fuera de `src/` se conserva. Hay 492 archivos en src/: los 404 originales y 88 directores nuevos de reexportación. El listado completo de rutas está en [REFACTOR_MAP.md](./REFACTOR_MAP.md).
+La estructura estándar de Vite fuera de `src/` se conserva. Este árbol enumera los 492 archivos actuales de `admin/src/`: los 404 originales y 88 directores nuevos de reexportación, distribuidos en 88 pipelines planos, la raíz de integración y la documentación histórica. Se incluyen todas las carpetas y archivos, con sus nombres físicos actuales. El mapeo de rutas anteriores está en [REFACTOR_MAP.md](./REFACTOR_MAP.md).
 
 ```txt
 src/
-├── main.tsx                         entrada Vite / StrictMode
-├── 00-orquestador-principal.tsx      RouterProvider (antes App.tsx)
-├── 00-entorno.d.ts                   variables VITE_ tipadas
-├── 00-estilos-globales.css           estilos y tokens existentes
-├── 00-trazabilidad.ts                contrato UI y kill switch
-├── 00-director-acceso.ts             API pública de acceso
-├── 00-director-catalogo.ts           API pública de catálogo
-├── 00-director-ventas.ts             API + registros de reservas y métricas
-├── 00-director-ofertas.ts            API + registro del precio vigente
-├── 00-director-facturacion.ts        API + registro del correlativo
-├── 00-director-*.ts                  otros dominios y contratos transversales
-├── 00-documentacion/                HTML históricos y ESCALABILIDAD.md
+├── 00-director-acceso.ts
+├── 00-director-ajustes.ts
+├── 00-director-catalogo.ts
+├── 00-director-clientes.ts
+├── 00-director-cotizaciones.ts
+├── 00-director-estado.ts
+├── 00-director-facturacion.ts
+├── 00-director-interaccion.ts
+├── 00-director-interacciones.ts
+├── 00-director-interfaz.ts
+├── 00-director-ofertas.ts
+├── 00-director-tablero.ts
+├── 00-director-utilidades.ts
+├── 00-director-ventas.ts
+├── 00-documentacion/
+│   ├── 01-catalog-components-00Tree.html
+│   ├── 02-catalog-components-detail-00Tree.html
+│   ├── 03-catalog-components-form-00Tree.html
+│   ├── 04-catalog-components-form-tabs-00Tree.html
+│   ├── 05-catalog-components-form-tabs-images-00Tree.html
+│   ├── 06-catalog-components-grid-00Tree.html
+│   ├── 07-catalog-components-picker-00Tree.html
+│   ├── 08-catalog-components-table-00Tree.html
+│   ├── 09-catalog-components-taxonomy-00Tree.html
+│   ├── 10-catalog-components-toolbar-00Tree.html
+│   ├── 11-catalog-hooks-00Tree.html
+│   ├── 12-catalog-hooks-form-00Tree.html
+│   ├── 13-catalog-lib-00Tree.html
+│   ├── 14-catalog-mocks-00Tree.html
+│   ├── 15-catalog-pages-00Tree.html
+│   └── 16-settings-ESCALABILIDAD.md
+├── 00-entorno.d.ts
+├── 00-estilos-globales.css
+├── 00-orquestador-principal.tsx
+├── 00-trazabilidad.ts
 ├── 01-pipeline-rutas-protegidas/
 │   ├── 00-director-rutas-protegidas.ts
 │   ├── 01-router.tsx
@@ -137,6 +160,83 @@ src/
 │   ├── 03-RequireView.tsx
 │   ├── 04-HomeRedirect.tsx
 │   └── 05-NotFoundPage.tsx
+├── 02-pipeline-marco-administrativo/
+│   ├── 00-director-marco-administrativo.ts
+│   ├── 01-AdminLayout.tsx
+│   ├── 02-useLayout.ts
+│   ├── 03-RootLayout.tsx
+│   ├── 04-Overlays.tsx
+│   └── 05-ModalHost.tsx
+├── 03-pipeline-navegacion-administrativa/
+│   ├── 00-director-navegacion-administrativa.ts
+│   ├── 01-Sidebar.tsx
+│   ├── 02-SidebarNavItem.tsx
+│   ├── 03-SidebarProfile.tsx
+│   ├── 04-useNavItems.ts
+│   └── 05-nav.config.ts
+├── 04-pipeline-cabecera-administrativa/
+│   ├── 00-director-cabecera-administrativa.ts
+│   ├── 01-Topbar.tsx
+│   ├── 02-TopbarTitle.tsx
+│   ├── 03-TopbarShortcut.tsx
+│   └── 04-ThemeToggle.tsx
+├── 05-pipeline-inicio-sesion/
+│   ├── 00-director-inicio-sesion.ts
+│   ├── 01-LoginPage.tsx
+│   ├── 02-useLoginForm.ts
+│   ├── 03-LoginCard.tsx
+│   └── 04-DemoCredentials.tsx
+├── 06-pipeline-sesion-permisos/
+│   ├── 00-director-sesion-permisos.ts
+│   ├── 01-useSession.ts
+│   ├── 02-permissions.ts
+│   ├── 03-access.ts
+│   ├── 04-store.ts
+│   └── 05-types.ts
+├── 07-pipeline-administracion-usuarios/
+│   ├── 00-director-administracion-usuarios.ts
+│   ├── 01-UsersSection.tsx
+│   ├── 02-useUsersAdmin.ts
+│   ├── 03-useAccessActions.ts
+│   ├── 04-UserRow.tsx
+│   └── 05-RoleBadge.tsx
+├── 08-pipeline-edicion-usuarios/
+│   ├── 00-director-edicion-usuarios.ts
+│   ├── 01-UserFormModal.tsx
+│   ├── 02-useUserForm.ts
+│   ├── 03-userRules.ts
+│   ├── 04-UserAvatar.tsx
+│   └── 05-modals.ts
+├── 09-pipeline-accesos-por-vista/
+│   ├── 00-director-accesos-por-vista.ts
+│   ├── 01-useUserAccess.ts
+│   ├── 02-views.config.ts
+│   ├── 03-AccessSidebar.tsx
+│   ├── 04-AccessSummaryBar.tsx
+│   └── 05-ViewActionsPanel.tsx
+├── 10-pipeline-cambio-contrasena/
+│   ├── 00-director-cambio-contrasena.ts
+│   ├── 01-ChangePasswordScreen.tsx
+│   ├── 02-usePasswordForms.ts
+│   ├── 03-NewPasswordFields.tsx
+│   └── 04-password.ts
+├── 11-pipeline-restablecimiento-contrasena/
+│   ├── 00-director-restablecimiento-contrasena.ts
+│   ├── 01-ResetPasswordModal.tsx
+│   ├── 02-PasswordInput.tsx
+│   └── 03-PasswordStrength.tsx
+├── 12-pipeline-listado-productos/
+│   ├── 00-director-listado-productos.ts
+│   ├── 01-ProductsPage.tsx
+│   ├── 02-useFilteredProducts.ts
+│   ├── 03-usePaginatedProducts.ts
+│   └── 04-ProductsEmptyState.tsx
+├── 13-pipeline-filtros-productos/
+│   ├── 00-director-filtros-productos.ts
+│   ├── 01-useProductFilters.ts
+│   ├── 02-filters.store.ts
+│   ├── 03-ProductToolbar.tsx
+│   └── 04-ViewModeToggle.tsx
 ├── 14-pipeline-tarjetas-productos/
 │   ├── 00-director-tarjetas-productos.ts
 │   ├── 01-ProductGrid.tsx
@@ -144,7 +244,461 @@ src/
 │   ├── 03-CardMedia.tsx
 │   ├── 04-CardBody.tsx
 │   └── 05-CardFooter.tsx
-└── …                                restantes pipelines, todos al mismo nivel
+├── 15-pipeline-tabla-existencias/
+│   ├── 00-director-tabla-existencias.ts
+│   ├── 01-ProductTable.tsx
+│   ├── 02-ProductTableRow.tsx
+│   ├── 03-StockBadge.tsx
+│   ├── 04-StockStepper.tsx
+│   └── 05-ReservedBadge.tsx
+├── 16-pipeline-consulta-producto/
+│   ├── 00-director-consulta-producto.ts
+│   ├── 01-ProductDetailModal.tsx
+│   ├── 02-useProductDetail.ts
+│   ├── 03-DetailSummary.tsx
+│   └── 04-DetailMetrics.tsx
+├── 17-pipeline-ficha-producto/
+│   ├── 00-director-ficha-producto.ts
+│   ├── 01-DetailGallery.tsx
+│   ├── 02-DetailSpecs.tsx
+│   └── 03-productImages.ts
+├── 18-pipeline-edicion-producto/
+│   ├── 00-director-edicion-producto.ts
+│   ├── 01-ProductFormModal.tsx
+│   ├── 02-useProductForm.ts
+│   ├── 03-useProductFormState.ts
+│   ├── 04-ProductFormTabs.tsx
+│   └── 05-ProductFormFooter.tsx
+├── 19-pipeline-datos-comerciales-producto/
+│   ├── 00-director-datos-comerciales-producto.ts
+│   ├── 01-GeneralTab.tsx
+│   ├── 02-PricingTab.tsx
+│   ├── 03-CommercialSummary.tsx
+│   ├── 04-LogisticsTab.tsx
+│   └── 05-LotRowsEditor.tsx
+├── 20-pipeline-validacion-producto/
+│   ├── 00-director-validacion-producto.ts
+│   ├── 01-productForm.ts
+│   ├── 02-productValidation.ts
+│   ├── 03-normalize.ts
+│   ├── 04-SpecsTab.tsx
+│   └── 05-SpecRowsEditor.tsx
+├── 21-pipeline-imagenes-producto/
+│   ├── 00-director-imagenes-producto.ts
+│   ├── 01-ImageGallery.tsx
+│   ├── 02-ImageDropzone.tsx
+│   ├── 03-ImageThumb.tsx
+│   └── 04-useImageGallery.ts
+├── 22-pipeline-captura-imagen-producto/
+│   ├── 00-director-captura-imagen-producto.ts
+│   ├── 01-ImageUrlInput.tsx
+│   ├── 02-useImageUrlEntry.ts
+│   └── 03-useImagePicker.ts
+├── 23-pipeline-seleccion-productos/
+│   ├── 00-director-seleccion-productos.ts
+│   ├── 01-ProductPicker.tsx
+│   ├── 02-useProductPicker.ts
+│   ├── 03-pricePort.ts
+│   └── 04-commercial.ts
+├── 24-pipeline-inventario-productos/
+│   ├── 00-director-inventario-productos.ts
+│   ├── 01-useProductActions.ts
+│   ├── 02-useInventoryMetrics.ts
+│   ├── 03-inventory.ts
+│   ├── 04-reservationPort.ts
+│   └── 05-modals.ts
+├── 25-pipeline-persistencia-catalogo/
+│   ├── 00-director-persistencia-catalogo.ts
+│   ├── 01-store.ts
+│   ├── 02-catalog.service.ts
+│   ├── 03-taxonomy.ts
+│   └── 04-types.ts
+├── 26-pipeline-categorias-productos/
+│   ├── 00-director-categorias-productos.ts
+│   ├── 01-CategoriesPage.tsx
+│   ├── 02-useTaxonomyPage.ts
+│   ├── 03-useCategoriesTab.ts
+│   ├── 04-useShowCategoryProducts.ts
+│   └── 05-TaxonomyToolbar.tsx
+├── 27-pipeline-edicion-categorias/
+│   ├── 00-director-edicion-categorias.ts
+│   ├── 01-CategoryFormModal.tsx
+│   ├── 02-useCategoryForm.ts
+│   └── 03-CategoryCard.tsx
+├── 28-pipeline-marcas-productos/
+│   ├── 00-director-marcas-productos.ts
+│   ├── 01-BrandFormModal.tsx
+│   ├── 02-useBrandForm.ts
+│   ├── 03-useBrandsTab.ts
+│   ├── 04-BrandRow.tsx
+│   └── 05-BrandsTable.tsx
+├── 29-pipeline-directorio-clientes/
+│   ├── 00-director-directorio-clientes.ts
+│   ├── 01-CustomersPage.tsx
+│   ├── 02-useCustomers.ts
+│   ├── 03-CustomersToolbar.tsx
+│   └── 04-CustomerRow.tsx
+├── 30-pipeline-registro-clientes/
+│   ├── 00-director-registro-clientes.ts
+│   ├── 01-CustomerFormModal.tsx
+│   ├── 02-useCustomerForm.ts
+│   ├── 03-customer.service.ts
+│   └── 04-modals.ts
+├── 31-pipeline-seleccion-clientes/
+│   ├── 00-director-seleccion-clientes.ts
+│   ├── 01-CustomerPicker.tsx
+│   ├── 02-useCustomerSelection.ts
+│   ├── 03-useCustomerCombobox.ts
+│   ├── 04-CustomerSearch.tsx
+│   └── 05-WalkinCustomerFields.tsx
+├── 32-pipeline-identificacion-clientes/
+│   ├── 00-director-identificacion-clientes.ts
+│   ├── 01-CustomerOption.tsx
+│   ├── 02-CustomerInitials.tsx
+│   ├── 03-SelectedCustomerCard.tsx
+│   └── 04-DuplicateCustomerNotice.tsx
+├── 33-pipeline-historial-clientes/
+│   ├── 00-director-historial-clientes.ts
+│   ├── 01-store.ts
+│   ├── 02-statsPort.ts
+│   └── 03-types.ts
+├── 34-pipeline-listado-pedidos/
+│   ├── 00-director-listado-pedidos.ts
+│   ├── 01-OrdersPage.tsx
+│   ├── 02-usePaginatedOrders.ts
+│   ├── 03-OrdersTable.tsx
+│   ├── 04-OrderRow.tsx
+│   └── 05-OrdersToolbar.tsx
+├── 35-pipeline-consulta-pedidos/
+│   ├── 00-director-consulta-pedidos.ts
+│   ├── 01-useOrders.ts
+│   ├── 02-filters.store.ts
+│   ├── 03-orderSort.ts
+│   ├── 04-OrderStatusTabs.tsx
+│   └── 05-RecentOrdersTable.tsx
+├── 36-pipeline-preparacion-pedidos/
+│   ├── 00-director-preparacion-pedidos.ts
+│   ├── 01-NewOrderPage.tsx
+│   ├── 02-EditOrderPage.tsx
+│   ├── 03-useOrderBuilder.ts
+│   ├── 04-OrderDeliverySection.tsx
+│   └── 05-OrderSummaryPanel.tsx
+├── 37-pipeline-detalle-pedidos/
+│   ├── 00-director-detalle-pedidos.ts
+│   ├── 01-OrderDetailModal.tsx
+│   ├── 02-useOrderDetail.ts
+│   ├── 03-OrderLines.tsx
+│   ├── 04-OrderTimeline.tsx
+│   └── 05-OrderActionButtons.tsx
+├── 38-pipeline-reserva-pedidos/
+│   ├── 00-director-reserva-pedidos.ts
+│   ├── 01-ReserveOrderModal.tsx
+│   ├── 02-useReserveOrder.ts
+│   ├── 03-useReservationExpiry.ts
+│   ├── 04-reservation.ts
+│   └── 05-ReservationTag.tsx
+├── 39-pipeline-transiciones-pedidos/
+│   ├── 00-director-transiciones-pedidos.ts
+│   ├── 01-useOrderActions.ts
+│   ├── 02-orderFlow.ts
+│   ├── 03-stock.ts
+│   ├── 04-OrderStatusBadge.tsx
+│   └── 05-modals.ts
+├── 40-pipeline-canales-venta/
+│   ├── 00-director-canales-venta.ts
+│   ├── 01-ChannelsTable.tsx
+│   ├── 02-ChannelFormModal.tsx
+│   ├── 03-useChannels.ts
+│   └── 04-useChannelForm.ts
+├── 41-pipeline-etapas-venta/
+│   ├── 00-director-etapas-venta.ts
+│   ├── 01-FlowTable.tsx
+│   ├── 02-StatusLabelModal.tsx
+│   └── 03-useFlowTable.ts
+├── 42-pipeline-persistencia-pedidos/
+│   ├── 00-director-persistencia-pedidos.ts
+│   ├── 01-store.ts
+│   ├── 02-order.service.ts
+│   ├── 03-migrate.ts
+│   ├── 04-orderSeed.ts
+│   └── 05-types.ts
+├── 43-pipeline-reglas-pedidos/
+│   ├── 00-director-reglas-pedidos.ts
+│   ├── 01-prefill.store.ts
+│   ├── 02-orderValidation.ts
+│   ├── 03-customerStats.ts
+│   └── 04-charges.ts
+├── 44-pipeline-listado-facturacion/
+│   ├── 00-director-listado-facturacion.ts
+│   ├── 01-BillingPage.tsx
+│   ├── 02-useBilling.ts
+│   ├── 03-BillingToolbar.tsx
+│   ├── 04-InvoicesTable.tsx
+│   └── 05-PendingOrdersTable.tsx
+├── 45-pipeline-emision-facturas/
+│   ├── 00-director-emision-facturas.ts
+│   ├── 01-InvoiceEmitModal.tsx
+│   ├── 02-useInvoiceEmit.ts
+│   ├── 03-ReceptorFields.tsx
+│   ├── 04-StockCheck.tsx
+│   └── 05-modals.ts
+├── 46-pipeline-documento-factura/
+│   ├── 00-director-documento-factura.ts
+│   ├── 01-InvoicePreviewModal.tsx
+│   ├── 02-useInvoicePreview.ts
+│   ├── 03-invoicePdf.ts
+│   └── 04-InvoiceStatusBadge.tsx
+├── 47-pipeline-persistencia-facturas/
+│   ├── 00-director-persistencia-facturas.ts
+│   ├── 01-store.ts
+│   ├── 02-invoice.service.ts
+│   └── 03-types.ts
+├── 48-pipeline-listado-cotizaciones/
+│   ├── 00-director-listado-cotizaciones.ts
+│   ├── 01-QuotesPage.tsx
+│   ├── 02-useQuotes.ts
+│   ├── 03-QuoteRow.tsx
+│   ├── 04-QuotesToolbar.tsx
+│   └── 05-QuoteStatusBadge.tsx
+├── 49-pipeline-preparacion-cotizaciones/
+│   ├── 00-director-preparacion-cotizaciones.ts
+│   ├── 01-NewQuotePage.tsx
+│   ├── 02-useQuoteBuilder.ts
+│   └── 03-QuoteSummaryPanel.tsx
+├── 50-pipeline-documento-cotizacion/
+│   ├── 00-director-documento-cotizacion.ts
+│   ├── 01-QuotePreviewModal.tsx
+│   ├── 02-useQuotePreview.ts
+│   ├── 03-quotePdf.ts
+│   └── 04-modals.ts
+├── 51-pipeline-persistencia-cotizaciones/
+│   ├── 00-director-persistencia-cotizaciones.ts
+│   ├── 01-store.ts
+│   ├── 02-quote.service.ts
+│   └── 03-types.ts
+├── 52-pipeline-listado-ofertas/
+│   ├── 00-director-listado-ofertas.ts
+│   ├── 01-PromotionsPage.tsx
+│   ├── 02-useOffers.ts
+│   ├── 03-OfferRow.tsx
+│   └── 04-OffersToolbar.tsx
+├── 53-pipeline-preparacion-ofertas/
+│   ├── 00-director-preparacion-ofertas.ts
+│   ├── 01-OfferBuilderPage.tsx
+│   ├── 02-useOfferBuilder.ts
+│   ├── 03-OfferPanel.tsx
+│   └── 04-OfferProductList.tsx
+├── 54-pipeline-precio-ofertas/
+│   ├── 00-director-precio-ofertas.ts
+│   ├── 01-useOfferPriceResolver.ts
+│   ├── 02-offerPricing.ts
+│   ├── 03-store.ts
+│   └── 04-types.ts
+├── 55-pipeline-moderacion-comentarios/
+│   ├── 00-director-moderacion-comentarios.ts
+│   ├── 01-InteractionsPage.tsx
+│   ├── 02-useReviewModeration.ts
+│   ├── 03-ReviewCard.tsx
+│   ├── 04-ReviewsToolbar.tsx
+│   └── 05-Stars.tsx
+├── 56-pipeline-persistencia-comentarios/
+│   ├── 00-director-persistencia-comentarios.ts
+│   ├── 01-store.ts
+│   ├── 02-reviews.service.ts
+│   └── 03-types.ts
+├── 57-pipeline-resumen-administrativo/
+│   ├── 00-director-resumen-administrativo.ts
+│   ├── 01-DashboardPage.tsx
+│   ├── 02-useDashboardMetrics.ts
+│   ├── 03-KpiGrid.tsx
+│   └── 04-BranchBanner.tsx
+├── 58-pipeline-seguimiento-comercial/
+│   ├── 00-director-seguimiento-comercial.ts
+│   ├── 01-QuickLinks.tsx
+│   ├── 02-quickLinks.config.ts
+│   ├── 03-RecentOrdersPanel.tsx
+│   └── 04-StockHealthPanel.tsx
+├── 59-pipeline-centro-ajustes/
+│   ├── 00-director-centro-ajustes.ts
+│   ├── 01-SettingsPage.tsx
+│   ├── 02-useSettingsHub.ts
+│   ├── 03-hub.config.ts
+│   ├── 04-hub.future.ts
+│   └── 05-SettingsHubCard.tsx
+├── 60-pipeline-administracion-negocio/
+│   ├── 00-director-administracion-negocio.ts
+│   ├── 01-UsersPage.tsx
+│   ├── 02-UserAccessPage.tsx
+│   ├── 03-ChannelsPage.tsx
+│   └── 04-useSettingsPageMeta.ts
+├── 61-pipeline-identidad-comercial/
+│   ├── 00-director-identidad-comercial.ts
+│   ├── 01-IdentityPage.tsx
+│   ├── 02-IdentityForm.tsx
+│   ├── 03-IdentityFields.tsx
+│   ├── 04-IdentityPreview.tsx
+│   └── 05-useIdentityForm.ts
+├── 62-pipeline-parametros-emisor/
+│   ├── 00-director-parametros-emisor.ts
+│   ├── 01-useStoreSettings.ts
+│   ├── 02-store.ts
+│   ├── 03-identity.ts
+│   └── 04-invoiceNumberPort.ts
+├── 63-pipeline-mantenimiento-datos/
+│   ├── 00-director-mantenimiento-datos.ts
+│   ├── 01-MaintenancePage.tsx
+│   ├── 02-useMaintenance.ts
+│   ├── 03-backup.ts
+│   ├── 04-BackupCard.tsx
+│   └── 05-ResetCard.tsx
+├── 64-pipeline-parametros-fiscales/
+│   ├── 00-director-parametros-fiscales.ts
+│   ├── 01-FiscalPage.tsx
+│   ├── 02-FiscalCards.tsx
+│   └── 03-TaxpayerCard.tsx
+├── 65-pipeline-campos-administrativos/
+│   ├── 00-director-campos-administrativos.ts
+│   ├── 01-Input.tsx
+│   ├── 02-Textarea.tsx
+│   ├── 03-Select.tsx
+│   ├── 04-Field.tsx
+│   └── 05-controlStyles.ts
+├── 66-pipeline-acciones-administrativas/
+│   ├── 00-director-acciones-administrativas.ts
+│   ├── 01-Button.tsx
+│   ├── 02-IconButton.tsx
+│   ├── 03-FormActions.tsx
+│   └── 04-Checkbox.tsx
+├── 67-pipeline-indicadores-administrativos/
+│   ├── 00-director-indicadores-administrativos.ts
+│   ├── 01-Badge.tsx
+│   ├── 02-Avatar.tsx
+│   ├── 03-KpiCard.tsx
+│   └── 04-ProgressBar.tsx
+├── 68-pipeline-marcos-contenido/
+│   ├── 00-director-marcos-contenido.ts
+│   ├── 01-PageContainer.tsx
+│   ├── 02-Card.tsx
+│   ├── 03-EmptyState.tsx
+│   └── 04-AffixInput.tsx
+├── 69-pipeline-navegacion-listados/
+│   ├── 00-director-navegacion-listados.ts
+│   ├── 01-ListToolbar.tsx
+│   ├── 02-LiveSearch.tsx
+│   ├── 03-SegmentedTabs.tsx
+│   ├── 04-BackLink.tsx
+│   └── 05-Breadcrumb.tsx
+├── 70-pipeline-orden-paginacion/
+│   ├── 00-director-orden-paginacion.ts
+│   ├── 01-DataTable.tsx
+│   ├── 02-SortHeaderButton.tsx
+│   ├── 03-Pagination.tsx
+│   ├── 04-usePagination.ts
+│   └── 05-pagination.ts
+├── 71-pipeline-seleccion-fechas/
+│   ├── 00-director-seleccion-fechas.ts
+│   ├── 01-DatePicker.tsx
+│   ├── 02-Calendar.tsx
+│   ├── 03-useCalendar.ts
+│   ├── 04-useAnchoredPopover.ts
+│   └── 05-date.ts
+├── 72-pipeline-confirmaciones-globales/
+│   ├── 00-director-confirmaciones-globales.ts
+│   ├── 01-ConfirmDialog.tsx
+│   ├── 02-useConfirmDialog.ts
+│   └── 03-confirm.store.ts
+├── 73-pipeline-modales-globales/
+│   ├── 00-director-modales-globales.ts
+│   ├── 01-Modal.tsx
+│   ├── 02-useEscapeKey.ts
+│   └── 03-modal.store.ts
+├── 74-pipeline-tema-administrativo/
+│   ├── 00-director-tema-administrativo.ts
+│   ├── 01-useTheme.ts
+│   ├── 02-theme.store.ts
+│   ├── 03-Switch.tsx
+│   └── 04-SwitchField.tsx
+├── 75-pipeline-estado-navegacion/
+│   ├── 00-director-estado-navegacion.ts
+│   ├── 01-usePageMeta.ts
+│   ├── 02-pageMeta.store.ts
+│   └── 03-layout.store.ts
+├── 76-pipeline-avisos-globales/
+│   ├── 00-director-avisos-globales.ts
+│   ├── 01-Toaster.tsx
+│   ├── 02-toast.store.ts
+│   ├── 03-useToggle.ts
+│   └── 04-useTabs.ts
+├── 77-pipeline-edicion-formularios/
+│   ├── 00-director-edicion-formularios.ts
+│   ├── 01-LineItemsEditor.tsx
+│   ├── 02-useLineItems.ts
+│   └── 03-useFormState.ts
+├── 78-pipeline-cargos-documentos/
+│   ├── 00-director-cargos-documentos.ts
+│   ├── 01-ExtraChargesEditor.tsx
+│   ├── 02-useExtraCharges.ts
+│   └── 03-charges.ts
+├── 79-pipeline-consulta-documentos/
+│   ├── 00-director-consulta-documentos.ts
+│   ├── 01-PdfPreviewModal.tsx
+│   ├── 02-usePdfDocument.ts
+│   ├── 03-pdf.ts
+│   └── 04-numberToWords.ts
+├── 80-pipeline-galeria-imagenes/
+│   ├── 00-director-galeria-imagenes.ts
+│   ├── 01-ImageLightbox.tsx
+│   ├── 02-LightboxToolbar.tsx
+│   ├── 03-LightboxThumbnails.tsx
+│   └── 04-useLightbox.ts
+├── 81-pipeline-visualizacion-imagenes/
+│   ├── 00-director-visualizacion-imagenes.ts
+│   ├── 01-SafeImage.tsx
+│   ├── 02-useImageViewer.ts
+│   ├── 03-useImageZoom.ts
+│   ├── 04-image.ts
+│   └── 05-initialsAvatar.ts
+├── 82-pipeline-calculo-importes/
+│   ├── 00-director-calculo-importes.ts
+│   ├── 01-pricing.ts
+│   ├── 02-currency.ts
+│   └── 03-sort.ts
+├── 83-pipeline-recursos-publicos/
+│   ├── 00-director-recursos-publicos.ts
+│   ├── 01-publicUrl.ts
+│   ├── 02-cn.ts
+│   ├── 03-events.ts
+│   └── 04-whatsapp.ts
+├── 84-pipeline-persistencia-demo/
+│   ├── 00-director-persistencia-demo.ts
+│   ├── 01-demoData.ts
+│   ├── 02-storage.ts
+│   ├── 03-download.ts
+│   └── 04-delay.ts
+├── 85-pipeline-identificadores-texto/
+│   ├── 00-director-identificadores-texto.ts
+│   ├── 01-text.ts
+│   ├── 02-uid.ts
+│   └── 03-store.config.ts
+├── 86-pipeline-datos-demo-personas/
+│   ├── 00-director-datos-demo-personas.ts
+│   ├── 01-roles.mock.ts
+│   ├── 02-users.mock.ts
+│   ├── 03-customers.mock.ts
+│   └── 04-reviews.mock.ts
+├── 87-pipeline-datos-demo-productos/
+│   ├── 00-director-datos-demo-productos.ts
+│   ├── 01-products.mock.ts
+│   ├── 02-categories.mock.ts
+│   ├── 03-brands.mock.ts
+│   └── 04-promotions.mock.ts
+├── 88-pipeline-datos-demo-documentos/
+│   ├── 00-director-datos-demo-documentos.ts
+│   ├── 01-orders.mock.ts
+│   ├── 02-channels.mock.ts
+│   ├── 03-invoices.mock.ts
+│   └── 04-quotes.mock.ts
+└── main.tsx
 ```
 
 | Rango | Dominio / responsabilidad | Pipelines |
