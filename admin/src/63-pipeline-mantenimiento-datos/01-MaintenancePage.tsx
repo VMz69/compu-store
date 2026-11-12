@@ -1,9 +1,9 @@
 import { BackLink, PageContainer } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import { BackupCard } from '../components/BackupCard'
-import { ResetCard } from '../components/ResetCard'
-import { useSettingsPageMeta } from '../hooks/useSettingsPageMeta'
-import { useMaintenance } from '../hooks/useMaintenance'
+import { BackupCard } from './04-BackupCard'
+import { ResetCard } from './05-ResetCard'
+import { useSettingsPageMeta } from '../60-pipeline-administracion-negocio/04-useSettingsPageMeta'
+import { useMaintenance } from './00-director-mantenimiento-datos'
 
 const t = tracer('MaintenancePage', 'src/features/settings/pages/MaintenancePage.tsx')
 

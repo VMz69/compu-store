@@ -1,8 +1,8 @@
 import { Button, Card } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import { useIdentityForm } from '../hooks/useIdentityForm'
-import { CommercialFields, InvoiceNumberingFields, TaxpayerFields } from './IdentityFields'
-import { IdentityPreview } from './IdentityPreview'
+import { useIdentityForm } from './05-useIdentityForm'
+import { CommercialFields, InvoiceNumberingFields, TaxpayerFields } from './03-IdentityFields'
+import { IdentityPreview } from './04-IdentityPreview'
 
 const t = tracer('IdentityForm', 'src/features/settings/components/IdentityForm.tsx')
 

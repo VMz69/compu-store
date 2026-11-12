@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom'
 import { AccessSidebar, AccessSummaryBar, useUserAccess, ViewActionsPanel } from '@/00-director-acceso'
 import { BackLink, Button, EmptyState, PageContainer } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import { useSettingsPageMeta } from '../hooks/useSettingsPageMeta'
+import { useSettingsPageMeta } from './04-useSettingsPageMeta'
 
 const t = tracer('UserAccessPage', 'src/features/settings/pages/UserAccessPage.tsx')
 

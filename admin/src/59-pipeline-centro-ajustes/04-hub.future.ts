@@ -1,4 +1,4 @@
-import type { HubCardConfig } from './hub.config'
+import type { HubCardConfig } from './03-hub.config'
 
 /**
  * ⚠️ TARJETAS DESACTIVADAS — este archivo NO se importa en ningún lado.

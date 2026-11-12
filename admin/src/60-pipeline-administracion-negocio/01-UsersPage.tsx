@@ -1,6 +1,6 @@
 import { UsersSection } from '@/00-director-acceso'
 import { tracer } from '@/00-trazabilidad'
-import { useSettingsPageMeta } from '../hooks/useSettingsPageMeta'
+import { useSettingsPageMeta } from './04-useSettingsPageMeta'
 
 const t = tracer('UsersPage', 'src/features/settings/pages/UsersPage.tsx')
 

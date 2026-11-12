@@ -1,6 +1,6 @@
 import { Card, CardTitle } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import type { IdentityFormApi } from '../hooks/useIdentityForm'
+import type { IdentityFormApi } from './05-useIdentityForm'
 
 const t = tracer('IdentityPreview', 'src/features/settings/components/IdentityPreview.tsx')
 

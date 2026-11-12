@@ -42,7 +42,7 @@ Cada fila corresponde a un paso y un commit independiente. Después de mover se 
 | ofertas | validado | 0 | 0 | idéntico |
 | interacciones | validado | 0 | 0 | idéntico |
 | tablero | validado | 0 | 0 | idéntico |
-| ajustes | pendiente | pendiente | pendiente | pendiente |
+| ajustes | validado | 0 | 0 | idéntico |
 
 ## Decisiones conservadoras y conflictos con FLOA
 

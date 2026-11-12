@@ -1,7 +1,7 @@
 import { BackLink, PageContainer } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import { IdentityForm } from '../components/IdentityForm'
-import { useSettingsPageMeta } from '../hooks/useSettingsPageMeta'
+import { IdentityForm } from './02-IdentityForm'
+import { useSettingsPageMeta } from '../60-pipeline-administracion-negocio/04-useSettingsPageMeta'
 
 const t = tracer('IdentityPage', 'src/features/settings/pages/IdentityPage.tsx')
 

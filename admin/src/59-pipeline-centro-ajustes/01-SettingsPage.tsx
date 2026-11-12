@@ -1,7 +1,7 @@
 import { PageContainer } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import { SettingsHubCard } from '../components/SettingsHubCard'
-import { useSettingsHub } from '../hooks/useSettingsHub'
+import { SettingsHubCard } from './05-SettingsHubCard'
+import { useSettingsHub } from './02-useSettingsHub'
 
 const t = tracer('SettingsPage', 'src/features/settings/pages/SettingsPage.tsx')
 

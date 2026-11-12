@@ -8,8 +8,8 @@ import { resetRegisteredDemoData } from '@/84-pipeline-persistencia-demo/00-dire
 import { downloadJson } from '@/84-pipeline-persistencia-demo/03-download'
 import { askConfirm } from '@/72-pipeline-confirmaciones-globales/03-confirm.store'
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
-import { backupFilename, buildBackup } from '../lib/backup'
-import { useSettingsStore } from '../store'
+import { backupFilename, buildBackup } from './03-backup'
+import { useSettingsStore } from '../62-pipeline-parametros-emisor/02-store'
 
 /** Respaldo JSON y restablecimiento de fábrica del demo. */
 export function useMaintenance() {

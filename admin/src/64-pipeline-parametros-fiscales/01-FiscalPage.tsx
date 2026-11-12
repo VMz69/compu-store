@@ -1,9 +1,9 @@
 import { BackLink, PageContainer } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import { FiscalCards } from '../components/FiscalCards'
-import { useSettingsPageMeta } from '../hooks/useSettingsPageMeta'
-import { TaxpayerCard } from '../components/TaxpayerCard'
-import { useStoreSettings } from '../hooks/useStoreSettings'
+import { FiscalCards } from './00-director-parametros-fiscales'
+import { useSettingsPageMeta } from '../60-pipeline-administracion-negocio/04-useSettingsPageMeta'
+import { TaxpayerCard } from './03-TaxpayerCard'
+import { useStoreSettings } from '../62-pipeline-parametros-emisor/00-director-parametros-emisor'
 
 const t = tracer('FiscalPage', 'src/features/settings/pages/FiscalPage.tsx')
 

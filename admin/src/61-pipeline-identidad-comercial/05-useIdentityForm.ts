@@ -2,9 +2,9 @@ import { useState, type FormEvent } from 'react'
 import { ensurePermission, usePermission } from '@/00-director-acceso'
 import { useFormState } from '@/77-pipeline-edicion-formularios/03-useFormState'
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
-import { ESTABLISHMENT_TYPES, formatInvoiceNumber, nextInvoiceNumber, toWhatsappNumber, validateIdentity, type IdentityValues } from '../lib/identity'
-import { useLastInvoiceNumber } from '../lib/invoiceNumberPort'
-import { useSettingsStore } from '../store'
+import { ESTABLISHMENT_TYPES, formatInvoiceNumber, nextInvoiceNumber, toWhatsappNumber, validateIdentity, type IdentityValues } from '../62-pipeline-parametros-emisor/03-identity'
+import { useLastInvoiceNumber } from '../62-pipeline-parametros-emisor/04-invoiceNumberPort'
+import { useSettingsStore } from '../62-pipeline-parametros-emisor/02-store'
 
 /** Formulario de identidad del emisor: datos comerciales + datos del contribuyente (DTE). */
 export function useIdentityForm() {

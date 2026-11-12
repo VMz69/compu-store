@@ -1,7 +1,7 @@
 import { ROLE_LIST, useAccessStore } from '@/00-director-acceso'
 import { ORDER_STATUSES, useSalesStore } from '@/00-director-ventas'
-import { HUB_CARDS, type HubCardConfig } from '../config/hub.config'
-import { useSettingsStore } from '../store'
+import { HUB_CARDS, type HubCardConfig } from './03-hub.config'
+import { useSettingsStore } from '../62-pipeline-parametros-emisor/02-store'
 
 export interface HubStat {
   label: string

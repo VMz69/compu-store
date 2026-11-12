@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { tracer } from '@/00-trazabilidad'
-import type { HubCardConfig } from '../config/hub.config'
-import type { HubStat } from '../hooks/useSettingsHub'
+import type { HubCardConfig } from './03-hub.config'
+import type { HubStat } from './02-useSettingsHub'
 
 const t = tracer('SettingsHubCard', 'src/features/settings/components/SettingsHubCard.tsx')
 

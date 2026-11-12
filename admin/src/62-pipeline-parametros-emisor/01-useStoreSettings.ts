@@ -1,4 +1,4 @@
-import { useSettingsStore } from '../store'
+import { useSettingsStore } from './02-store'
 
 /** Identidad comercial vigente (editable desde Ajustes › Identidad). */
 export function useStoreSettings() {
