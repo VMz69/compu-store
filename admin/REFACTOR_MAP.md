@@ -1066,4 +1066,10 @@ Todas las rutas de las tablas son relativas a `admin/src/`. Las filas «creado»
 
 ## Cierre
 
-Migración en curso; las filas de ejecución reflejan los pasos ya comprobados.
+- Movidos: 403 archivos originales mediante `git mv`; `main.tsx` conserva su ubicación. Se añaden 88 directores de reexportación, para un total final de 492 archivos en src/.
+- Historial: mapa inicial, 14 pasos independientes de migración y cierre de auditoría; sin cambios en main.
+- Verificación final: `pnpm exec tsc -b --force --pretty false` → `0`, `pnpm lint` → `0`, `pnpm build` tras borrar únicamente `admin/dist/` → `0` (código de salida).
+- Auditoría: todos los originales presentes, sin imports locales rotos; contenido idéntico salvo rutas de import/export. Los directores nuevos son reexportaciones puras utilizadas. Se conservan las relaciones originales entre módulos, incluidos ciclos y registros con efectos al cargar.
+- Comparación con la salida de producción de la línea base: los 21 archivos coinciden byte a byte (incluidos JS, CSS, HTML y recursos públicos); SHA-256 idénticos.
+- Reversiones: ninguna.
+- Sin pruebas de navegador; la preservación se acredita con contenido, grafo de dependencias y comparación de artefactos, además de los comandos de calidad disponibles.
