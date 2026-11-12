@@ -1,6 +1,6 @@
 import { foldText } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
 import type { BadgeTone } from '@/00-director-interfaz'
-import type { ProductReview, ReviewStatus } from '../types'
+import type { ProductReview, ReviewStatus } from './03-types'
 
 /** Lógica pura de moderación (sin React ni store). */
 

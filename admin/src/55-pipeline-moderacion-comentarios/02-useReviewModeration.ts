@@ -2,9 +2,9 @@ import { useMemo, useState } from 'react'
 import { ensurePermission, usePermission, useSession } from '@/00-director-acceso'
 import { askConfirm } from '@/72-pipeline-confirmaciones-globales/03-confirm.store'
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
-import { filterReviews, REJECT_REASONS, reviewMetrics, spamSignals } from '../lib/reviews.service'
-import { useReviewsStore } from '../store'
-import type { ProductReview, ReviewStatus } from '../types'
+import { filterReviews, REJECT_REASONS, reviewMetrics, spamSignals } from '../56-pipeline-persistencia-comentarios/02-reviews.service'
+import { useReviewsStore } from '../56-pipeline-persistencia-comentarios/00-director-persistencia-comentarios'
+import type { ProductReview, ReviewStatus } from '../56-pipeline-persistencia-comentarios/03-types'
 
 export type ReviewFilter = 'all' | ReviewStatus
 

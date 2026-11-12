@@ -2,8 +2,8 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { registerDemoData } from '@/84-pipeline-persistencia-demo/00-director-persistencia-demo'
 import { STORAGE_KEYS } from '@/84-pipeline-persistencia-demo/02-storage'
-import { REVIEWS_MOCK } from '../../86-pipeline-datos-demo-personas/04-reviews.mock'
-import type { ProductReview } from './types'
+import { REVIEWS_MOCK } from '../86-pipeline-datos-demo-personas/04-reviews.mock'
+import type { ProductReview } from './03-types'
 
 /**
  * Comentarios de productos a moderar.

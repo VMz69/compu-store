@@ -2,9 +2,9 @@ import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { formatDateTime } from '@/71-pipeline-seleccion-fechas/05-date'
 import { Badge, Button, Card, IconButton } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import type { ReviewModerationApi } from '../hooks/useReviewModeration'
-import { REVIEW_STATUS_META } from '../lib/reviews.service'
-import { Stars } from './Stars'
+import type { ReviewModerationApi } from './02-useReviewModeration'
+import { REVIEW_STATUS_META } from '../56-pipeline-persistencia-comentarios/02-reviews.service'
+import { Stars } from './05-Stars'
 
 const t = tracer('ReviewCard', 'src/features/interactions/components/ReviewCard.tsx')
 

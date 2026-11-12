@@ -1,4 +1,4 @@
-import type { ProductReview } from '../features/interactions/types'
+import type { ProductReview } from '../56-pipeline-persistencia-comentarios/03-types'
 
 const review = (
   id: string, productId: string, productName: string, author: string, city: string, rating: number,

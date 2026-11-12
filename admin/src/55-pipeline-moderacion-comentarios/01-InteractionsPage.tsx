@@ -1,8 +1,8 @@
 import { EmptyState, KpiCard, PageContainer } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import { ReviewCard } from '../components/ReviewCard'
-import { ReviewsToolbar } from '../components/ReviewsToolbar'
-import { useReviewModeration } from '../hooks/useReviewModeration'
+import { ReviewCard } from './03-ReviewCard'
+import { ReviewsToolbar } from './04-ReviewsToolbar'
+import { useReviewModeration } from './02-useReviewModeration'
 
 const t = tracer('InteractionsPage', 'src/features/interactions/pages/InteractionsPage.tsx')
 
