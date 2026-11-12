@@ -1,4 +1,4 @@
-import type { Channel } from '../types'
+import type { Channel } from '../features/sales/types'
 
 /** Canales omnicanal de venta. */
 export const CHANNELS_MOCK: Channel[] = [

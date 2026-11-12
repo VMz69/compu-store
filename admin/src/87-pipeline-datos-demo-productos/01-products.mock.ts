@@ -1,5 +1,5 @@
-import { normalizeProduct } from '../lib/normalize'
-import type { Product } from '../types'
+import { normalizeProduct } from '../features/catalog/lib/normalize'
+import type { Product } from '../features/catalog/types'
 
 const image = (text: string) => `https://placehold.co/400x300/f8fafc/0168f5?text=${text}`
 

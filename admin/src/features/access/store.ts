@@ -5,7 +5,7 @@ import { STORAGE_KEYS } from '@/shared/lib/storage'
 import { normalizeAccess, templateAccess } from './lib/access'
 import { hashPassword, verifyPassword } from './lib/password'
 import { normalizeEmail } from './lib/userRules'
-import { DEFAULT_AVATAR, USERS_MOCK } from './mocks/users.mock'
+import { DEFAULT_AVATAR, USERS_MOCK } from '../../86-pipeline-datos-demo-personas/02-users.mock'
 import type { LoginResult, NewUserInput, Session, User, UserAccess, UserProfile } from './types'
 
 /**

@@ -1,5 +1,5 @@
 import { ALL_PERMISSIONS, ALL_VIEWS, VIEW_CATALOG } from '../config/views.config'
-import { ROLES } from '../mocks/roles.mock'
+import { ROLES } from '../../../86-pipeline-datos-demo-personas/00-director-datos-demo-personas'
 import type { Permission, Role, RoleId, User, UserAccess, ViewId } from '../types'
 
 /**

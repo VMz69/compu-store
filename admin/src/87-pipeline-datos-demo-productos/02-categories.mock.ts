@@ -1,4 +1,4 @@
-import type { Category } from '../types'
+import type { Category } from '../features/catalog/types'
 
 export const CATEGORIES_MOCK: Category[] = [
   {

@@ -1,5 +1,5 @@
 import { STORE_CONFIG } from '@/shared/config/store.config'
-import type { Invoice, InvoiceIssuer } from '../types'
+import type { Invoice, InvoiceIssuer } from '../features/billing/types'
 
 /** Emisor de las facturas de prueba (datos fiscales de fábrica). */
 export const MOCK_ISSUER: InvoiceIssuer = {

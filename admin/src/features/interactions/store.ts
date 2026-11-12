@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { registerDemoData } from '@/shared/lib/demoData'
 import { STORAGE_KEYS } from '@/shared/lib/storage'
-import { REVIEWS_MOCK } from './mocks/reviews.mock'
+import { REVIEWS_MOCK } from '../../86-pipeline-datos-demo-personas/04-reviews.mock'
 import type { ProductReview } from './types'
 
 /**

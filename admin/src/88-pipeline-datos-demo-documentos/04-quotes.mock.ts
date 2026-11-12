@@ -1,5 +1,5 @@
 import { STORE_CONFIG } from '@/shared/config/store.config'
-import type { Quote, QuoteCustomer, QuoteItem } from '../types'
+import type { Quote, QuoteCustomer, QuoteItem } from '../features/quotes/types'
 
 /** Emisor por defecto de las cotizaciones de prueba. */
 const ISSUER = {

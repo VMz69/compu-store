@@ -1,4 +1,4 @@
-import type { Role, RoleId } from '../types'
+import type { Role, RoleId } from '../features/access/types'
 
 /**
  * PLANTILLAS de acceso por rol. Al crear un usuario (o cambiarle el rol) sus accesos

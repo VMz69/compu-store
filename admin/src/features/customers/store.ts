@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 import { delay } from '@/shared/lib/delay'
 import { STORAGE_KEYS } from '@/shared/lib/storage'
 import { nextSequentialId } from '@/shared/lib/text'
-import { CUSTOMERS_MOCK } from './mocks/customers.mock'
+import { CUSTOMERS_MOCK } from '../../86-pipeline-datos-demo-personas/03-customers.mock'
 import type { Customer, CustomerDraft } from './types'
 
 /** Store del directorio de clientes (datos + operaciones con latencia simulada). */

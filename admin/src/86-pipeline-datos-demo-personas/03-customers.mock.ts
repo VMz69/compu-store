@@ -1,4 +1,4 @@
-import type { Customer } from '../types'
+import type { Customer } from '../features/customers/types'
 
 /**
  * Directorio inicial. Los nombres y teléfonos coinciden con los pedidos de

@@ -9,8 +9,8 @@ import { migrateOrder } from './lib/migrate'
 import { expiredReservations, reservationBounds, validateReservationDate } from './lib/reservation'
 import { findOrderByQuote, nextOrderId, nowStamp, ordersOfChannel } from './lib/order.service'
 import { applyStatusLabels, canTransition, deleteBlockedReason, editBlockedReason, ORDER_STATUSES, type StatusLabel, type StatusLabels } from './lib/orderFlow'
-import { CHANNELS_MOCK } from './mocks/channels.mock'
-import { ORDERS_MOCK } from './mocks/orders.mock'
+import { CHANNELS_MOCK } from '../../88-pipeline-datos-demo-documentos/02-channels.mock'
+import { ORDERS_MOCK } from '../../88-pipeline-datos-demo-documentos/00-director-datos-demo-documentos'
 import type { Channel, ChannelDraft, DeletedOrder, Order, OrderDraft, OrderStatusId } from './types'
 
 interface SalesState {

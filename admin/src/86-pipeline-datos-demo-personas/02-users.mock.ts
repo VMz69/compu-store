@@ -1,5 +1,5 @@
-import { templateAccess } from '../lib/access'
-import type { User } from '../types'
+import { templateAccess } from '../features/access/lib/access'
+import type { User } from '../features/access/types'
 
 /**
  * Contraseña inicial de todos los usuarios de prueba.

@@ -6,9 +6,9 @@ import { nextSequentialId, slugify } from '@/shared/lib/text'
 import { deductFromProducts, restockProducts, type StockLine } from './lib/inventory'
 import { normalizeProduct } from './lib/normalize'
 import { deriveBrands, productsInCategory, productsOfBrand, uniqueSlug } from './lib/taxonomy'
-import { BRANDS_MOCK } from './mocks/brands.mock'
-import { CATEGORIES_MOCK } from './mocks/categories.mock'
-import { PRODUCTS_MOCK } from './mocks/products.mock'
+import { BRANDS_MOCK } from '../../87-pipeline-datos-demo-productos/03-brands.mock'
+import { CATEGORIES_MOCK } from '../../87-pipeline-datos-demo-productos/02-categories.mock'
+import { PRODUCTS_MOCK } from '../../87-pipeline-datos-demo-productos/00-director-datos-demo-productos'
 import type { Brand, BrandDraft, Category, CategoryDraft, Product, ProductDraft } from './types'
 
 interface CatalogState {

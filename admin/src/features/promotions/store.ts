@@ -5,7 +5,7 @@ import { delay } from '@/shared/lib/delay'
 import { STORAGE_KEYS } from '@/shared/lib/storage'
 import { nextSequentialId } from '@/shared/lib/text'
 import { offerStatus, today } from './lib/offerPricing'
-import { OFFERS_MOCK } from './mocks/promotions.mock'
+import { OFFERS_MOCK } from '../../87-pipeline-datos-demo-productos/04-promotions.mock'
 import type { Offer, OfferDraft } from './types'
 
 interface OffersState {

@@ -4,7 +4,7 @@ import { registerDemoData } from '@/shared/lib/demoData'
 import { delay } from '@/shared/lib/delay'
 import { STORAGE_KEYS } from '@/shared/lib/storage'
 import { nextQuoteId } from './lib/quote.service'
-import { QUOTES_MOCK } from './mocks/quotes.mock'
+import { QUOTES_MOCK } from '../../88-pipeline-datos-demo-documentos/04-quotes.mock'
 import type { Quote, QuoteStoredStatus } from './types'
 
 /** Datos para emitir: el store asigna correlativo, fecha y estado inicial. */
