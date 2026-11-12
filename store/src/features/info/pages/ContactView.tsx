@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ContactForm } from '../components/ContactForm'
+import { ContactForm } from '@/28-pipeline-consulta-contacto/00-director-consulta-contacto'
 import { ContactInfoCards } from '../components/ContactInfoCards'
 import { ContactMap } from '../components/ContactMap'
 import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'

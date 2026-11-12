@@ -1,4 +1,4 @@
-import { useContactForm } from '../hooks/useContactForm'
+import { useContactForm } from './03-estado-contacto'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/info/components/ContactForm.tsx'
