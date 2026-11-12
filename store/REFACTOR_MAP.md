@@ -591,3 +591,10 @@ paso; sus movimientos siguen siendo independientes y conservan el grafo original
 | `16-pipeline-presentacion-producto` | 3 | OK (0) | OK (0) | OK (0) |
 | `17-pipeline-vitrina-productos` | 4 | OK (0) | OK (0) | OK (0) |
 | `18-pipeline-galeria-producto` | 4 | OK (0) | OK (0) | OK (0) |
+
+
+Interrupción externa: el entorno terminó el proceso con SIGTERM durante
+`19-pipeline-calificaciones` antes de completar el build. Se restauró inmediatamente
+`0eb2f4c` con git reset --hard, sin conservar el paso incompleto.
+Se reanuda por lotes más cortos, con los mismos movimientos y validaciones.
+
