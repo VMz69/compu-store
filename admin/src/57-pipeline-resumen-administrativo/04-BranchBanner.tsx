@@ -1,6 +1,6 @@
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('BranchBanner', 'src/features/dashboard/components/BranchBanner.tsx')
+const t = tracer('BranchBanner', 'src/57-pipeline-resumen-administrativo/04-BranchBanner.tsx')
 
 interface BranchBannerProps {
   title: string

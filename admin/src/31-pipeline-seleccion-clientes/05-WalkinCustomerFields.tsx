@@ -3,7 +3,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { CustomerSelection } from './02-useCustomerSelection'
 import { DuplicateCustomerNotice } from '../32-pipeline-identificacion-clientes/04-DuplicateCustomerNotice'
 
-const t = tracer('WalkinCustomerFields', 'src/features/customers/components/picker/WalkinCustomerFields.tsx')
+const t = tracer('WalkinCustomerFields', 'src/31-pipeline-seleccion-clientes/05-WalkinCustomerFields.tsx')
 
 const TYPE_OPTIONS = [
   { value: 'persona', label: 'Persona' },

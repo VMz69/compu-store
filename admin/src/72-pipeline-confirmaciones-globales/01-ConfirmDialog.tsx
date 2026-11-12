@@ -4,7 +4,7 @@ import { Button } from '../66-pipeline-acciones-administrativas/00-director-acci
 import { Modal } from '../73-pipeline-modales-globales/00-director-modales-globales'
 import { Textarea } from '../65-pipeline-campos-administrativos/02-Textarea'
 
-const t = tracer('ConfirmDialog', 'src/shared/ui/ConfirmDialog.tsx')
+const t = tracer('ConfirmDialog', 'src/72-pipeline-confirmaciones-globales/01-ConfirmDialog.tsx')
 
 export function ConfirmDialog() {
   const d = useConfirmDialog()

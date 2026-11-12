@@ -4,7 +4,7 @@ import type { ProductActions } from '../24-pipeline-inventario-productos/00-dire
 import type { Product } from '../25-pipeline-persistencia-catalogo/04-types'
 import { ProductTableRow } from './02-ProductTableRow'
 
-const t = tracer('ProductTable', 'src/features/catalog/components/table/ProductTable.tsx')
+const t = tracer('ProductTable', 'src/15-pipeline-tabla-existencias/01-ProductTable.tsx')
 
 const HEADERS: TableHeader[] = [
   { label: 'Producto', className: 'px-4' },

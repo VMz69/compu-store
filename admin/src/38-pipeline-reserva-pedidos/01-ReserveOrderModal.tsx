@@ -5,7 +5,7 @@ import { tracer } from '@/00-trazabilidad'
 import { useReserveOrder } from './02-useReserveOrder'
 import { RESERVATION } from './04-reservation'
 
-const t = tracer('ReserveOrderModal', 'src/features/sales/components/reserve/ReserveOrderModal.tsx')
+const t = tracer('ReserveOrderModal', 'src/38-pipeline-reserva-pedidos/01-ReserveOrderModal.tsx')
 
 const CHIP = 'px-2.5 py-1 rounded-full text-[11px] font-bold border transition-colors'
 

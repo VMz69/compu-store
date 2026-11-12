@@ -5,7 +5,7 @@ import { useSettingsPageMeta } from '../60-pipeline-administracion-negocio/04-us
 import { TaxpayerCard } from './03-TaxpayerCard'
 import { useStoreSettings } from '../62-pipeline-parametros-emisor/00-director-parametros-emisor'
 
-const t = tracer('FiscalPage', 'src/features/settings/pages/FiscalPage.tsx')
+const t = tracer('FiscalPage', 'src/64-pipeline-parametros-fiscales/01-FiscalPage.tsx')
 
 /**
  * ⚠️ DESACTIVADA: sin ruta, sin tarjeta en el hub y sin exportación pública.

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('ListToolbar', 'src/shared/ui/ListToolbar.tsx')
+const t = tracer('ListToolbar', 'src/69-pipeline-navegacion-listados/01-ListToolbar.tsx')
 
 interface ListToolbarProps {
   /** Regreso discreto (`BackLink`) en la fila superior, antes de la ubicación. */

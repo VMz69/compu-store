@@ -1,7 +1,7 @@
 import { KpiCard, type KpiData } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('KpiGrid', 'src/features/dashboard/components/KpiGrid.tsx')
+const t = tracer('KpiGrid', 'src/57-pipeline-resumen-administrativo/03-KpiGrid.tsx')
 
 export function KpiGrid({ items }: { items: Array<KpiData & { id: string }> }) {
   return (

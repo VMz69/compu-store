@@ -5,7 +5,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { ProductPickerApi } from './02-useProductPicker'
 import type { Product } from '../25-pipeline-persistencia-catalogo/04-types'
 
-const t = tracer('ProductPicker', 'src/features/catalog/components/picker/ProductPicker.tsx')
+const t = tracer('ProductPicker', 'src/23-pipeline-seleccion-productos/01-ProductPicker.tsx')
 
 interface ProductPickerProps {
   picker: ProductPickerApi

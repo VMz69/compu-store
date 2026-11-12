@@ -5,7 +5,7 @@ import { ThemeToggle } from './04-ThemeToggle'
 import { TopbarShortcut } from './03-TopbarShortcut'
 import { TopbarTitle } from './02-TopbarTitle'
 
-const t = tracer('Topbar', 'src/app/layout/topbar/Topbar.tsx')
+const t = tracer('Topbar', 'src/04-pipeline-cabecera-administrativa/01-Topbar.tsx')
 
 /** Barra superior: colapsar menú, título único de la vista, sucursal, tema y accesos directos (Ajustes). */
 export function Topbar() {

@@ -8,7 +8,7 @@ import { usePaginatedProducts } from './03-usePaginatedProducts'
 import { useProductActions } from '../24-pipeline-inventario-productos/00-director-inventario-productos'
 import { useProductFilters } from '../13-pipeline-filtros-productos/00-director-filtros-productos'
 
-const t = tracer('ProductsPage', 'src/features/catalog/pages/ProductsPage.tsx')
+const t = tracer('ProductsPage', 'src/12-pipeline-listado-productos/01-ProductsPage.tsx')
 
 export function ProductsPage() {
   const filters = useProductFilters()

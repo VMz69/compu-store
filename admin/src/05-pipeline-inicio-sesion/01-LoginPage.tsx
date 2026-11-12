@@ -3,7 +3,7 @@ import { tracer } from '@/00-trazabilidad'
 import { LoginCard } from './03-LoginCard'
 import { useLoginForm } from './02-useLoginForm'
 
-const t = tracer('LoginPage', 'src/features/access/pages/LoginPage.tsx')
+const t = tracer('LoginPage', 'src/05-pipeline-inicio-sesion/01-LoginPage.tsx')
 
 export function LoginPage() {
   const api = useLoginForm()

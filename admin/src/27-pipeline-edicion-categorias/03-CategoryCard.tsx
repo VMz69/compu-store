@@ -2,7 +2,7 @@ import { Card, IconButton } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { CategoriesTabApi } from '../26-pipeline-categorias-productos/03-useCategoriesTab'
 
-const t = tracer('CategoryCard', 'src/features/catalog/components/taxonomy/CategoryCard.tsx')
+const t = tracer('CategoryCard', 'src/27-pipeline-edicion-categorias/03-CategoryCard.tsx')
 
 type CategoryItem = CategoriesTabApi['items'][number]
 

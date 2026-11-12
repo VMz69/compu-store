@@ -3,7 +3,7 @@ import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import { Button, DataTable, EmptyState, type TableHeader } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('PendingOrdersTable', 'src/features/billing/components/list/PendingOrdersTable.tsx')
+const t = tracer('PendingOrdersTable', 'src/44-pipeline-listado-facturacion/05-PendingOrdersTable.tsx')
 
 const HEADERS: TableHeader[] = [
   { label: 'Pedido', className: 'px-4' },

@@ -5,7 +5,7 @@ import { OrdersToolbar } from './05-OrdersToolbar'
 import { useOrderActions } from '../39-pipeline-transiciones-pedidos/00-director-transiciones-pedidos'
 import { usePaginatedOrders } from './02-usePaginatedOrders'
 
-const t = tracer('OrdersPage', 'src/features/sales/pages/OrdersPage.tsx')
+const t = tracer('OrdersPage', 'src/34-pipeline-listado-pedidos/01-OrdersPage.tsx')
 
 export function OrdersPage() {
   const { orders, totalCount, pagination, sort, onSort, search } = usePaginatedOrders()

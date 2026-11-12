@@ -4,7 +4,7 @@ import { usePageMeta } from '@/75-pipeline-estado-navegacion/00-director-estado-
 import { EmptyState, PageContainer } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('NotFoundPage', 'src/app/pages/NotFoundPage.tsx')
+const t = tracer('NotFoundPage', 'src/01-pipeline-rutas-protegidas/05-NotFoundPage.tsx')
 
 export function NotFoundPage() {
   const homePath = useHomePath()

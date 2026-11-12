@@ -4,7 +4,7 @@ import type { UserAccessApi } from './00-director-accesos-por-vista'
 import { RoleBadge } from '../07-pipeline-administracion-usuarios/05-RoleBadge'
 import { UserAvatar } from '../08-pipeline-edicion-usuarios/04-UserAvatar'
 
-const t = tracer('AccessSummaryBar', 'src/features/access/components/users/access/AccessSummaryBar.tsx')
+const t = tracer('AccessSummaryBar', 'src/09-pipeline-accesos-por-vista/04-AccessSummaryBar.tsx')
 
 /** Resumen del usuario (rol, vistas, acciones, inicio) + acciones de guardado o aviso de bloqueo. */
 export function AccessSummaryBar({ a }: { a: UserAccessApi }) {

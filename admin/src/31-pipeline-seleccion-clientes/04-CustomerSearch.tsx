@@ -4,7 +4,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { CustomerCombobox } from './03-useCustomerCombobox'
 import { CustomerOption } from '../32-pipeline-identificacion-clientes/00-director-identificacion-clientes'
 
-const t = tracer('CustomerSearch', 'src/features/customers/components/picker/CustomerSearch.tsx')
+const t = tracer('CustomerSearch', 'src/31-pipeline-seleccion-clientes/04-CustomerSearch.tsx')
 
 interface CustomerSearchProps {
   cb: CustomerCombobox

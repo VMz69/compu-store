@@ -3,7 +3,7 @@ import { Card, Switch } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { UserAccessApi } from './00-director-accesos-por-vista'
 
-const t = tracer('ViewActionsPanel', 'src/features/access/components/users/access/ViewActionsPanel.tsx')
+const t = tracer('ViewActionsPanel', 'src/09-pipeline-accesos-por-vista/05-ViewActionsPanel.tsx')
 
 /** Acciones posibles dentro de la vista seleccionada (requieren acceso a la vista). */
 export function ViewActionsPanel({ a }: { a: UserAccessApi }) {

@@ -8,7 +8,7 @@ import { LogisticsTab } from '../19-pipeline-datos-comerciales-producto/04-Logis
 import { PricingTab } from '../19-pipeline-datos-comerciales-producto/02-PricingTab'
 import { SpecsTab } from '../20-pipeline-validacion-producto/04-SpecsTab'
 
-const t = tracer('ProductFormModal', 'src/features/catalog/components/form/ProductFormModal.tsx')
+const t = tracer('ProductFormModal', 'src/18-pipeline-edicion-producto/01-ProductFormModal.tsx')
 
 /**
  * Alta/edición de producto en 4 secciones (General · Precios · Especificaciones · Inventario).

@@ -4,7 +4,7 @@ import { QuoteRow } from './03-QuoteRow'
 import { QuotesToolbar } from './04-QuotesToolbar'
 import { useQuotes } from './02-useQuotes'
 
-const t = tracer('QuotesPage', 'src/features/quotes/pages/QuotesPage.tsx')
+const t = tracer('QuotesPage', 'src/48-pipeline-listado-cotizaciones/01-QuotesPage.tsx')
 
 const HEADERS: TableHeader[] = [
   { label: 'Cotización', className: 'px-4' },

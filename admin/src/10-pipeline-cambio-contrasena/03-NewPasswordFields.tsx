@@ -5,7 +5,7 @@ import type { PasswordCheck } from './04-password'
 import { PasswordInput } from '../11-pipeline-restablecimiento-contrasena/02-PasswordInput'
 import { PasswordStrength } from '../11-pipeline-restablecimiento-contrasena/03-PasswordStrength'
 
-const t = tracer('NewPasswordFields', 'src/features/access/components/password/NewPasswordFields.tsx')
+const t = tracer('NewPasswordFields', 'src/10-pipeline-cambio-contrasena/03-NewPasswordFields.tsx')
 
 type Binder = (key: 'password' | 'confirm') => {
   name: string

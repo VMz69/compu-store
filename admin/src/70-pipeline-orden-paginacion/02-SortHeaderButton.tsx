@@ -2,7 +2,7 @@ import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import type { SortDir } from '@/82-pipeline-calculo-importes/03-sort'
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('SortHeaderButton', 'src/shared/ui/SortHeaderButton.tsx')
+const t = tracer('SortHeaderButton', 'src/70-pipeline-orden-paginacion/02-SortHeaderButton.tsx')
 
 interface SortHeaderButtonProps {
   label: string

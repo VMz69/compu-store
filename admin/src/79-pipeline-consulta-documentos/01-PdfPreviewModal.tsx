@@ -4,7 +4,7 @@ import { tracer } from '@/00-trazabilidad'
 import { Button } from '../66-pipeline-acciones-administrativas/00-director-acciones-administrativas'
 import { Modal, ModalHeader } from '../73-pipeline-modales-globales/00-director-modales-globales'
 
-const t = tracer('PdfPreviewModal', 'src/shared/ui/PdfPreviewModal.tsx')
+const t = tracer('PdfPreviewModal', 'src/79-pipeline-consulta-documentos/01-PdfPreviewModal.tsx')
 
 interface PdfPreviewModalProps {
   /** Prefijo de trazabilidad del documento (ej. "quotes.preview.COT-2026-007"). */

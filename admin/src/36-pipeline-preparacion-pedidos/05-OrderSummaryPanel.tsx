@@ -5,7 +5,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { OrderBuilderApi } from './03-useOrderBuilder'
 import { OrderDeliverySection } from './04-OrderDeliverySection'
 
-const t = tracer('OrderSummaryPanel', 'src/features/sales/components/builder/OrderSummaryPanel.tsx')
+const t = tracer('OrderSummaryPanel', 'src/36-pipeline-preparacion-pedidos/05-OrderSummaryPanel.tsx')
 
 /** Panel derecho del constructor: cliente → productos → venta y entrega → cargos extra → totales → registrar. */
 export function OrderSummaryPanel({ b }: { b: OrderBuilderApi }) {

@@ -6,7 +6,7 @@ import { SafeImage } from '../81-pipeline-visualizacion-imagenes/00-director-vis
 import { LightboxThumbnails } from './03-LightboxThumbnails'
 import { LightboxToolbar } from './02-LightboxToolbar'
 
-const t = tracer('ImageLightbox', 'src/shared/ui/lightbox/ImageLightbox.tsx')
+const t = tracer('ImageLightbox', 'src/80-pipeline-galeria-imagenes/01-ImageLightbox.tsx')
 
 interface ImageLightboxProps {
   images: string[]

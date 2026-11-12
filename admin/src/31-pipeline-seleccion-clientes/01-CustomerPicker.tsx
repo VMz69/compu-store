@@ -7,7 +7,7 @@ import { CustomerSearch } from './04-CustomerSearch'
 import { SelectedCustomerCard } from '../32-pipeline-identificacion-clientes/03-SelectedCustomerCard'
 import { WalkinCustomerFields } from './05-WalkinCustomerFields'
 
-const t = tracer('CustomerPicker', 'src/features/customers/components/CustomerPicker.tsx')
+const t = tracer('CustomerPicker', 'src/31-pipeline-seleccion-clientes/01-CustomerPicker.tsx')
 
 const MODE_BASE = 'flex-1 py-1.5 rounded-md text-[11px] font-bold transition-colors'
 const MODE_ACTIVE = 'bg-white dark:bg-slate-700 text-brand shadow-xs'

@@ -1,7 +1,7 @@
 import { Button, EmptyState } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('ProductsEmptyState', 'src/features/catalog/components/ProductsEmptyState.tsx')
+const t = tracer('ProductsEmptyState', 'src/12-pipeline-listado-productos/04-ProductsEmptyState.tsx')
 
 interface ProductsEmptyStateProps {
   canCreate: boolean

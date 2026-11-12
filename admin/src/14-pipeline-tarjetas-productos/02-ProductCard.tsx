@@ -6,7 +6,7 @@ import { CardBody } from './04-CardBody'
 import { CardFooter } from './05-CardFooter'
 import { CardMedia } from './03-CardMedia'
 
-const t = tracer('ProductCard', 'src/features/catalog/components/grid/ProductCard.tsx')
+const t = tracer('ProductCard', 'src/14-pipeline-tarjetas-productos/02-ProductCard.tsx')
 
 interface ProductCardProps {
   product: Product

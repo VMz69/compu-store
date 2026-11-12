@@ -2,7 +2,7 @@ import { Field, Input, Select, Textarea } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { OrderBuilderApi } from './03-useOrderBuilder'
 
-const t = tracer('OrderDeliverySection', 'src/features/sales/components/builder/OrderDeliverySection.tsx')
+const t = tracer('OrderDeliverySection', 'src/36-pipeline-preparacion-pedidos/04-OrderDeliverySection.tsx')
 
 /** Paso 3 · Canal, pago, entrega y notas del pedido. */
 export function OrderDeliverySection({ b }: { b: OrderBuilderApi }) {

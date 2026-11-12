@@ -7,7 +7,7 @@ import { ReservationTag } from '../38-pipeline-reserva-pedidos/05-ReservationTag
 import { OrderLines } from './03-OrderLines'
 import { OrderTimeline } from './04-OrderTimeline'
 
-const t = tracer('OrderDetailModal', 'src/features/sales/components/detail/OrderDetailModal.tsx')
+const t = tracer('OrderDetailModal', 'src/37-pipeline-detalle-pedidos/01-OrderDetailModal.tsx')
 
 const PANEL = 'bg-slate-50 dark:bg-slate-800/40 p-3.5 rounded-xl border border-slate-100 dark:border-slate-800'
 

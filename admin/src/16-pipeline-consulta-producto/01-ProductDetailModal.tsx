@@ -5,7 +5,7 @@ import { DetailMetrics } from './04-DetailMetrics'
 import { DetailSpecs } from '../17-pipeline-ficha-producto/02-DetailSpecs'
 import { DetailSummary } from './03-DetailSummary'
 
-const t = tracer('ProductDetailModal', 'src/features/catalog/components/detail/ProductDetailModal.tsx')
+const t = tracer('ProductDetailModal', 'src/16-pipeline-consulta-producto/01-ProductDetailModal.tsx')
 
 export function ProductDetailModal() {
   const detail = useProductDetail()

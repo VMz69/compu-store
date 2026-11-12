@@ -2,7 +2,7 @@ import { useTheme } from '@/74-pipeline-tema-administrativo/00-director-tema-adm
 import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('ThemeToggle', 'src/app/layout/topbar/ThemeToggle.tsx')
+const t = tracer('ThemeToggle', 'src/04-pipeline-cabecera-administrativa/04-ThemeToggle.tsx')
 
 export function ThemeToggle() {
   const { isDark, toggle } = useTheme()

@@ -1,6 +1,6 @@
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('StockStepper', 'src/features/catalog/components/StockStepper.tsx')
+const t = tracer('StockStepper', 'src/15-pipeline-tabla-existencias/04-StockStepper.tsx')
 
 const STEP_BUTTON =
   'w-5 h-5 rounded bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-200 border border-slate-200 dark:border-slate-600 flex items-center justify-center hover:bg-brand hover:text-white font-bold'

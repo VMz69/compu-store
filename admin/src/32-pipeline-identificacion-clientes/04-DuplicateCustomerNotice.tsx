@@ -1,7 +1,7 @@
 import { tracer } from '@/00-trazabilidad'
 import type { Customer } from '../33-pipeline-historial-clientes/03-types'
 
-const t = tracer('DuplicateCustomerNotice', 'src/features/customers/components/picker/DuplicateCustomerNotice.tsx')
+const t = tracer('DuplicateCustomerNotice', 'src/32-pipeline-identificacion-clientes/04-DuplicateCustomerNotice.tsx')
 
 interface DuplicateCustomerNoticeProps {
   customer: Customer

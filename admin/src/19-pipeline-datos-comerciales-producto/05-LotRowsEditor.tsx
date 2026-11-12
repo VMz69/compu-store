@@ -2,7 +2,7 @@ import { AffixInput, DatePicker, Field, IconButton, Input } from '@/00-director-
 import { tracer } from '@/00-trazabilidad'
 import type { ProductFormApi } from '../18-pipeline-edicion-producto/02-useProductForm'
 
-const t = tracer('LotRowsEditor', 'src/features/catalog/components/form/tabs/LotRowsEditor.tsx')
+const t = tracer('LotRowsEditor', 'src/19-pipeline-datos-comerciales-producto/05-LotRowsEditor.tsx')
 
 /** Desglose de lotes/cajas. El total alimenta el stock autocalculado. */
 export function LotRowsEditor({ api }: { api: ProductFormApi }) {

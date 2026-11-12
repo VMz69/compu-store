@@ -2,7 +2,7 @@ import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { tracer } from '@/00-trazabilidad'
 import { SafeImage } from '../81-pipeline-visualizacion-imagenes/00-director-visualizacion-imagenes'
 
-const t = tracer('LightboxThumbnails', 'src/shared/ui/lightbox/LightboxThumbnails.tsx')
+const t = tracer('LightboxThumbnails', 'src/80-pipeline-galeria-imagenes/03-LightboxThumbnails.tsx')
 
 interface LightboxThumbnailsProps {
   images: string[]

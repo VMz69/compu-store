@@ -5,7 +5,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { BillingApi } from './02-useBilling'
 import { InvoiceStatusBadge } from '../46-pipeline-documento-factura/04-InvoiceStatusBadge'
 
-const t = tracer('InvoicesTable', 'src/features/billing/components/list/InvoicesTable.tsx')
+const t = tracer('InvoicesTable', 'src/44-pipeline-listado-facturacion/04-InvoicesTable.tsx')
 
 const HEADERS: TableHeader[] = [
   { label: 'Factura', className: 'px-4' },

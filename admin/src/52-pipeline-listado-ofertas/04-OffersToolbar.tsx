@@ -3,7 +3,7 @@ import { ListToolbar, LiveSearch, SegmentedTabs } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { OfferFilter, OffersApi } from './02-useOffers'
 
-const t = tracer('OffersToolbar', 'src/features/promotions/components/list/OffersToolbar.tsx')
+const t = tracer('OffersToolbar', 'src/52-pipeline-listado-ofertas/04-OffersToolbar.tsx')
 
 const OFFER_FILTERS: { id: OfferFilter; label: string }[] = [
   { id: 'all', label: 'Todas' },

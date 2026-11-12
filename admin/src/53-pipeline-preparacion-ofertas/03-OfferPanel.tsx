@@ -4,7 +4,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { OfferBuilderApi } from './02-useOfferBuilder'
 import { OfferProductList } from './04-OfferProductList'
 
-const t = tracer('OfferPanel', 'src/features/promotions/components/builder/OfferPanel.tsx')
+const t = tracer('OfferPanel', 'src/53-pipeline-preparacion-ofertas/03-OfferPanel.tsx')
 
 const STEP = 'text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400'
 const SEG = 'flex-1 py-1.5 rounded-md text-[11px] font-bold transition-colors'

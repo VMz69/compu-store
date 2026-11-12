@@ -3,7 +3,7 @@ import { ListToolbar, LiveSearch, Select } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { QuotesApi } from './02-useQuotes'
 
-const t = tracer('QuotesToolbar', 'src/features/quotes/components/list/QuotesToolbar.tsx')
+const t = tracer('QuotesToolbar', 'src/48-pipeline-listado-cotizaciones/04-QuotesToolbar.tsx')
 
 interface QuotesToolbarProps {
   api: QuotesApi

@@ -1,6 +1,6 @@
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('DemoCredentials', 'src/features/access/components/login/DemoCredentials.tsx')
+const t = tracer('DemoCredentials', 'src/05-pipeline-inicio-sesion/04-DemoCredentials.tsx')
 
 interface DemoCredentialsProps {
   password: string

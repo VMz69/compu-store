@@ -8,7 +8,7 @@ import { StockBadge } from '../15-pipeline-tabla-existencias/03-StockBadge'
 import { ReservedBadge } from '../15-pipeline-tabla-existencias/05-ReservedBadge'
 import { StockStepper } from '../15-pipeline-tabla-existencias/04-StockStepper'
 
-const t = tracer('CardBody', 'src/features/catalog/components/grid/CardBody.tsx')
+const t = tracer('CardBody', 'src/14-pipeline-tarjetas-productos/04-CardBody.tsx')
 
 interface CardBodyProps {
   product: Product

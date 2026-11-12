@@ -2,7 +2,7 @@ import { Field, FormActions, Input, Modal, ModalHeader, ModalTitle, SwitchField,
 import { tracer } from '@/00-trazabilidad'
 import { useBrandForm } from './02-useBrandForm'
 
-const t = tracer('BrandFormModal', 'src/features/catalog/components/taxonomy/BrandFormModal.tsx')
+const t = tracer('BrandFormModal', 'src/28-pipeline-marcas-productos/01-BrandFormModal.tsx')
 
 /** Alta/edición de marca. Renombrar actualiza la marca en sus productos (se avisa antes). */
 export function BrandFormModal() {

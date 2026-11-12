@@ -2,7 +2,7 @@ import { Card, CardTitle, ProgressBar, type ProgressTone } from '@/00-director-i
 import { tracer } from '@/00-trazabilidad'
 import { QuickLinks } from './00-director-seguimiento-comercial'
 
-const t = tracer('StockHealthPanel', 'src/features/dashboard/components/StockHealthPanel.tsx')
+const t = tracer('StockHealthPanel', 'src/58-pipeline-seguimiento-comercial/04-StockHealthPanel.tsx')
 
 interface StockHealthPanelProps {
   health: Array<{ label: string; value: number; tone: ProgressTone }>

@@ -5,7 +5,7 @@ import { useOrderStatusTabs } from '../35-pipeline-consulta-pedidos/00-director-
 import type { PaginatedOrdersApi } from './02-usePaginatedOrders'
 import { OrderStatusTabs } from '../35-pipeline-consulta-pedidos/04-OrderStatusTabs'
 
-const t = tracer('OrdersToolbar', 'src/features/sales/components/orders/OrdersToolbar.tsx')
+const t = tracer('OrdersToolbar', 'src/34-pipeline-listado-pedidos/05-OrdersToolbar.tsx')
 
 interface OrdersToolbarProps {
   search: PaginatedOrdersApi['search']

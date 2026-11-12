@@ -1,7 +1,7 @@
-// admin/src/ui-traceability/index.ts
+// admin/src/00-trazabilidad.ts
 
 /**
- * Trazabilidad UI (regla DOMA).
+ * Trazabilidad UI (arquitectura FLOA).
  *
  * Todo elemento interactivo o contenedor principal declara un `id` estable, el
  * componente que lo renderiza y su archivo fuente. Esas marcas permiten auditar
@@ -11,6 +11,8 @@
  * los mismos atributos (`data-ui-id`, `data-ui-component`, `data-ui-source`).
  *
  * Kill switch: definir `VITE_UI_TRACEABILITY=false` desactiva la inyección.
+ * Solo la cadena exacta `false` la desactiva; sin definirla permanece activa.
+ * En Vite se aplica al arrancar el servidor o generar el build.
  * No se usa `import.meta.env.PROD` de forma automática para no perder la
  * trazabilidad en builds de QA/staging.
  */
@@ -38,7 +40,7 @@ export const uiMeta = (meta: UiMeta): Record<string, string> => {
  * respeta el mismo kill switch.
  *
  * @example
- * const t = tracer('ProductCard', 'src/features/catalog/components/grid/ProductCard.tsx')
+ * const t = tracer('ProductCard', 'src/14-pipeline-tarjetas-productos/02-ProductCard.tsx')
  * <article {...t(`catalog.card.${p.id}`)} />
  */
 export const tracer =

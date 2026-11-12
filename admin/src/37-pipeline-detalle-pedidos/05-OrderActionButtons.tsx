@@ -3,7 +3,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { OrderActionButton } from '../39-pipeline-transiciones-pedidos/00-director-transiciones-pedidos'
 import type { OrderAction } from '../39-pipeline-transiciones-pedidos/02-orderFlow'
 
-const t = tracer('OrderActionButtons', 'src/features/sales/components/OrderActionButtons.tsx')
+const t = tracer('OrderActionButtons', 'src/37-pipeline-detalle-pedidos/05-OrderActionButtons.tsx')
 
 interface OrderActionButtonsProps {
   buttons: OrderActionButton[]

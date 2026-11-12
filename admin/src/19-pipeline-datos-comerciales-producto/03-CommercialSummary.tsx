@@ -3,7 +3,7 @@ import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import { tracer } from '@/00-trazabilidad'
 import type { CommercialSummary as Summary } from '../23-pipeline-seleccion-productos/04-commercial'
 
-const t = tracer('CommercialSummary', 'src/features/catalog/components/form/tabs/CommercialSummary.tsx')
+const t = tracer('CommercialSummary', 'src/19-pipeline-datos-comerciales-producto/03-CommercialSummary.tsx')
 
 function Row({ label, value, valueClass }: { label: string; value: string; valueClass?: string }) {
   return (

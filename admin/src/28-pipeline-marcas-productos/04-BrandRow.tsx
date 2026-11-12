@@ -3,7 +3,7 @@ import { IconButton, Switch } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { BrandsTabApi } from './03-useBrandsTab'
 
-const t = tracer('BrandRow', 'src/features/catalog/components/taxonomy/BrandRow.tsx')
+const t = tracer('BrandRow', 'src/28-pipeline-marcas-productos/04-BrandRow.tsx')
 
 type BrandItem = BrandsTabApi['items'][number]
 

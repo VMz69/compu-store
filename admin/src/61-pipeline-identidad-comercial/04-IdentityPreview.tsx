@@ -2,7 +2,7 @@ import { Card, CardTitle } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { IdentityFormApi } from './05-useIdentityForm'
 
-const t = tracer('IdentityPreview', 'src/features/settings/components/IdentityPreview.tsx')
+const t = tracer('IdentityPreview', 'src/61-pipeline-identidad-comercial/04-IdentityPreview.tsx')
 
 const LABEL = 'text-[9px] font-black uppercase tracking-wider text-slate-400'
 const LINE = 'text-[11px] text-slate-500 dark:text-slate-400 leading-snug break-words'

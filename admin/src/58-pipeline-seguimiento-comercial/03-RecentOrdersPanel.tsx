@@ -2,7 +2,7 @@ import { RecentOrdersTable, type Order } from '@/00-director-ventas'
 import { Card, CardTitle } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('RecentOrdersPanel', 'src/features/dashboard/components/RecentOrdersPanel.tsx')
+const t = tracer('RecentOrdersPanel', 'src/58-pipeline-seguimiento-comercial/03-RecentOrdersPanel.tsx')
 
 interface RecentOrdersPanelProps {
   orders: Order[]

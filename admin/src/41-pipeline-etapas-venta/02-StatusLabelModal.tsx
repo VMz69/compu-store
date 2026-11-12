@@ -2,7 +2,7 @@ import { Field, FormActions, Input, Modal, ModalHeader, ModalTitle, Textarea } f
 import { tracer } from '@/00-trazabilidad'
 import { useStatusLabelForm } from './03-useFlowTable'
 
-const t = tracer('StatusLabelModal', 'src/features/sales/components/flow/StatusLabelModal.tsx')
+const t = tracer('StatusLabelModal', 'src/41-pipeline-etapas-venta/02-StatusLabelModal.tsx')
 
 /** Edita el nombre visible y la descripción de un estado (las reglas del flujo no cambian). */
 export function StatusLabelModal() {

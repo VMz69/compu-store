@@ -2,7 +2,7 @@ import { UserAvatar, type Role, type User } from '@/00-director-acceso'
 import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('SidebarProfile', 'src/app/layout/sidebar/SidebarProfile.tsx')
+const t = tracer('SidebarProfile', 'src/03-pipeline-navegacion-administrativa/03-SidebarProfile.tsx')
 
 interface SidebarProfileProps {
   isOpen: boolean

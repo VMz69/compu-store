@@ -1,7 +1,7 @@
 import { Badge, Card, CardTitle, Field, Input } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('FiscalCards', 'src/features/settings/components/FiscalCards.tsx')
+const t = tracer('FiscalCards', 'src/64-pipeline-parametros-fiscales/02-FiscalCards.tsx')
 
 /** Parámetros fiscales de solo lectura (normativa salvadoreña). */
 export function FiscalCards({ currency }: { currency: string }) {

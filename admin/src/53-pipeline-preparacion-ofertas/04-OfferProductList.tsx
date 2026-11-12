@@ -5,7 +5,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { OfferBuilderApi } from './02-useOfferBuilder'
 import { MIN_MARGIN_PERCENT, type MarginLevel } from '../54-pipeline-precio-ofertas/02-offerPricing'
 
-const t = tracer('OfferProductList', 'src/features/promotions/components/builder/OfferProductList.tsx')
+const t = tracer('OfferProductList', 'src/53-pipeline-preparacion-ofertas/04-OfferProductList.tsx')
 
 const LEVEL: Record<MarginLevel, { label: string; className: string }> = {
   ok: { label: 'Margen sano', className: 'text-emerald-600 dark:text-emerald-400' },

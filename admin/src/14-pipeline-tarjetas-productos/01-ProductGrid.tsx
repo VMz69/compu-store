@@ -3,7 +3,7 @@ import type { ProductActions } from '../24-pipeline-inventario-productos/00-dire
 import type { Product } from '../25-pipeline-persistencia-catalogo/04-types'
 import { ProductCard } from './02-ProductCard'
 
-const t = tracer('ProductGrid', 'src/features/catalog/components/grid/ProductGrid.tsx')
+const t = tracer('ProductGrid', 'src/14-pipeline-tarjetas-productos/01-ProductGrid.tsx')
 
 interface ProductGridProps {
   items: Product[]

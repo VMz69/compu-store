@@ -3,7 +3,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { FlowTableApi } from './03-useFlowTable'
 import { OrderStatusBadge } from '../39-pipeline-transiciones-pedidos/04-OrderStatusBadge'
 
-const t = tracer('FlowTable', 'src/features/sales/components/flow/FlowTable.tsx')
+const t = tracer('FlowTable', 'src/41-pipeline-etapas-venta/01-FlowTable.tsx')
 
 const HEADERS: TableHeader[] = [
   { label: 'Paso', className: 'px-4 w-14' },

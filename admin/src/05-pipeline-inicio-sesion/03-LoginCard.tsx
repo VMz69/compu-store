@@ -4,7 +4,7 @@ import type { LoginFormApi } from './02-useLoginForm'
 import { PasswordInput } from '../11-pipeline-restablecimiento-contrasena/02-PasswordInput'
 import { DemoCredentials } from './04-DemoCredentials'
 
-const t = tracer('LoginCard', 'src/features/access/components/login/LoginCard.tsx')
+const t = tracer('LoginCard', 'src/05-pipeline-inicio-sesion/03-LoginCard.tsx')
 
 /** Tarjeta de inicio de sesión: identidad de marca + formulario de credenciales. */
 export function LoginCard({ api }: { api: LoginFormApi }) {

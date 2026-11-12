@@ -9,7 +9,7 @@ import type { Product, StockSeverity } from '../25-pipeline-persistencia-catalog
 import { StockBadge } from './03-StockBadge'
 import { ReservedBadge } from './05-ReservedBadge'
 
-const t = tracer('ProductTableRow', 'src/features/catalog/components/table/ProductTableRow.tsx')
+const t = tracer('ProductTableRow', 'src/15-pipeline-tabla-existencias/02-ProductTableRow.tsx')
 
 const STOCK_TEXT: Record<StockSeverity, string> = {
   out: 'text-red-500',

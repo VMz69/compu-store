@@ -5,7 +5,7 @@ import type { OrderActions } from '../39-pipeline-transiciones-pedidos/00-direct
 import type { Order } from '../42-pipeline-persistencia-pedidos/05-types'
 import { OrderRow } from './04-OrderRow'
 
-const t = tracer('OrdersTable', 'src/features/sales/components/orders/OrdersTable.tsx')
+const t = tracer('OrdersTable', 'src/34-pipeline-listado-pedidos/03-OrdersTable.tsx')
 
 const HEADERS: TableHeader[] = [
   { label: 'Orden', className: 'px-4', sortKey: 'id' },

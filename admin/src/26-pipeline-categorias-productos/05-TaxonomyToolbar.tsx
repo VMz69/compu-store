@@ -2,7 +2,7 @@ import { Button, ListToolbar, LiveSearch, SegmentedTabs } from '@/00-director-in
 import { tracer } from '@/00-trazabilidad'
 import type { TaxonomyPageApi, TaxonomyTab } from './02-useTaxonomyPage'
 
-const t = tracer('TaxonomyToolbar', 'src/features/catalog/components/taxonomy/TaxonomyToolbar.tsx')
+const t = tracer('TaxonomyToolbar', 'src/26-pipeline-categorias-productos/05-TaxonomyToolbar.tsx')
 
 /** Barra estándar de listados: áreas (categorías / marcas) · buscador ··· alta contextual. */
 export function TaxonomyToolbar({ page }: { page: TaxonomyPageApi }) {

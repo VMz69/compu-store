@@ -2,7 +2,7 @@ import type { LightboxState } from '@/80-pipeline-galeria-imagenes/04-useLightbo
 import { tracer } from '@/00-trazabilidad'
 import { IconButton } from '../66-pipeline-acciones-administrativas/02-IconButton'
 
-const t = tracer('LightboxToolbar', 'src/shared/ui/lightbox/LightboxToolbar.tsx')
+const t = tracer('LightboxToolbar', 'src/80-pipeline-galeria-imagenes/02-LightboxToolbar.tsx')
 
 interface LightboxToolbarProps {
   lightbox: LightboxState

@@ -2,7 +2,7 @@ import { Button, ListToolbar, LiveSearch, SegmentedTabs, Select, type SegmentedT
 import { tracer } from '@/00-trazabilidad'
 import type { ReviewFilter, ReviewModerationApi } from './02-useReviewModeration'
 
-const t = tracer('ReviewsToolbar', 'src/features/interactions/components/ReviewsToolbar.tsx')
+const t = tracer('ReviewsToolbar', 'src/55-pipeline-moderacion-comentarios/04-ReviewsToolbar.tsx')
 
 const RATING_OPTIONS = [{ value: '', label: 'Todas las estrellas' }, ...[5, 4, 3, 2, 1].map((n) => ({ value: String(n), label: `${n} ★` }))]
 

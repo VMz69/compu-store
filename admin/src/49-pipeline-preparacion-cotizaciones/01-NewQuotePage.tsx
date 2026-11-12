@@ -4,7 +4,7 @@ import { tracer } from '@/00-trazabilidad'
 import { QuoteSummaryPanel } from './03-QuoteSummaryPanel'
 import { useQuoteBuilder } from './02-useQuoteBuilder'
 
-const t = tracer('NewQuotePage', 'src/features/quotes/pages/NewQuotePage.tsx')
+const t = tracer('NewQuotePage', 'src/49-pipeline-preparacion-cotizaciones/01-NewQuotePage.tsx')
 
 /**
  * /cotizaciones/nueva · Constructor a dos columnas.

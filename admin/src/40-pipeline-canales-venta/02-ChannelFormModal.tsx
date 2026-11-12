@@ -3,7 +3,7 @@ import { Checkbox, Field, FormActions, Input, Modal, ModalHeader, ModalTitle, Te
 import { tracer } from '@/00-trazabilidad'
 import { useChannelForm } from './04-useChannelForm'
 
-const t = tracer('ChannelFormModal', 'src/features/sales/components/channels/ChannelFormModal.tsx')
+const t = tracer('ChannelFormModal', 'src/40-pipeline-canales-venta/02-ChannelFormModal.tsx')
 
 /** Alta/edición de canal de venta. */
 export function ChannelFormModal() {

@@ -3,7 +3,7 @@ import { tracer } from '@/00-trazabilidad'
 import { useUserForm } from './02-useUserForm'
 import { NewPasswordFields } from '../10-pipeline-cambio-contrasena/03-NewPasswordFields'
 
-const t = tracer('UserFormModal', 'src/features/access/components/users/UserFormModal.tsx')
+const t = tracer('UserFormModal', 'src/08-pipeline-edicion-usuarios/01-UserFormModal.tsx')
 
 /** Alta/edición de usuario. En edición no se muestra la contraseña (se usa "Restablecer"). */
 export function UserFormModal() {

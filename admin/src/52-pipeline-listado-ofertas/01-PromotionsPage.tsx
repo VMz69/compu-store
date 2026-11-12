@@ -4,7 +4,7 @@ import { OfferRow } from './03-OfferRow'
 import { OffersToolbar } from './04-OffersToolbar'
 import { useOffers } from './02-useOffers'
 
-const t = tracer('PromotionsPage', 'src/features/promotions/pages/PromotionsPage.tsx')
+const t = tracer('PromotionsPage', 'src/52-pipeline-listado-ofertas/01-PromotionsPage.tsx')
 
 const HEADERS: TableHeader[] = [
   { label: 'Oferta', className: 'px-4' },

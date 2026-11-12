@@ -5,7 +5,7 @@ import { tracer } from '@/00-trazabilidad'
 import { AffixInput } from '../68-pipeline-marcos-contenido/04-AffixInput'
 import { IconButton } from '../66-pipeline-acciones-administrativas/02-IconButton'
 
-const t = tracer('LineItemsEditor', 'src/shared/ui/LineItemsEditor.tsx')
+const t = tracer('LineItemsEditor', 'src/77-pipeline-edicion-formularios/01-LineItemsEditor.tsx')
 
 const STEP =
   'w-7 h-8 flex items-center justify-center text-slate-500 hover:text-brand hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors disabled:opacity-30 disabled:pointer-events-none'

@@ -4,7 +4,7 @@ import { ReviewCard } from './03-ReviewCard'
 import { ReviewsToolbar } from './04-ReviewsToolbar'
 import { useReviewModeration } from './02-useReviewModeration'
 
-const t = tracer('InteractionsPage', 'src/features/interactions/pages/InteractionsPage.tsx')
+const t = tracer('InteractionsPage', 'src/55-pipeline-moderacion-comentarios/01-InteractionsPage.tsx')
 
 /**
  * /interacciones · Moderación de los comentarios que los clientes dejan en la ficha

@@ -6,7 +6,7 @@ import { RecentOrdersPanel } from '../58-pipeline-seguimiento-comercial/03-Recen
 import { StockHealthPanel } from '../58-pipeline-seguimiento-comercial/04-StockHealthPanel'
 import { useDashboardMetrics } from './02-useDashboardMetrics'
 
-const t = tracer('DashboardPage', 'src/features/dashboard/pages/DashboardPage.tsx')
+const t = tracer('DashboardPage', 'src/57-pipeline-resumen-administrativo/01-DashboardPage.tsx')
 
 export function DashboardPage() {
   const d = useDashboardMetrics()

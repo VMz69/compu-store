@@ -3,7 +3,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { ImageGalleryApi } from './04-useImageGallery'
 import { ImageThumb } from './03-ImageThumb'
 
-const t = tracer('ImageGallery', 'src/features/catalog/components/form/tabs/images/ImageGallery.tsx')
+const t = tracer('ImageGallery', 'src/21-pipeline-imagenes-producto/01-ImageGallery.tsx')
 
 interface ImageGalleryProps {
   gallery: ImageGalleryApi

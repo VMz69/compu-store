@@ -2,7 +2,7 @@ import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { tracer } from '@/00-trazabilidad'
 import { QUICK_LINKS } from './02-quickLinks.config'
 
-const t = tracer('QuickLinks', 'src/features/dashboard/components/QuickLinks.tsx')
+const t = tracer('QuickLinks', 'src/58-pipeline-seguimiento-comercial/01-QuickLinks.tsx')
 
 export function QuickLinks({ onNavigate }: { onNavigate: (path: string) => void }) {
   return (

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('TopbarShortcut', 'src/app/layout/topbar/TopbarShortcut.tsx')
+const t = tracer('TopbarShortcut', 'src/04-pipeline-cabecera-administrativa/03-TopbarShortcut.tsx')
 
 interface TopbarShortcutProps {
   id: string

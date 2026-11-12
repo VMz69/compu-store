@@ -3,7 +3,7 @@ import { tracer } from '@/00-trazabilidad'
 import { useUsersAdmin } from './02-useUsersAdmin'
 import { UserRow } from './04-UserRow'
 
-const t = tracer('UsersSection', 'src/features/access/components/users/UsersSection.tsx')
+const t = tracer('UsersSection', 'src/07-pipeline-administracion-usuarios/01-UsersSection.tsx')
 
 const HEADERS: TableHeader[] = [
   { label: 'Colaborador', className: 'px-4' },

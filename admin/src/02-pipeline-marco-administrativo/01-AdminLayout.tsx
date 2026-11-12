@@ -4,7 +4,7 @@ import { tracer } from '@/00-trazabilidad'
 import { Sidebar } from '../03-pipeline-navegacion-administrativa/00-director-navegacion-administrativa'
 import { Topbar } from '../04-pipeline-cabecera-administrativa/00-director-cabecera-administrativa'
 
-const t = tracer('AdminLayout', 'src/app/layout/AdminLayout.tsx')
+const t = tracer('AdminLayout', 'src/02-pipeline-marco-administrativo/01-AdminLayout.tsx')
 
 /** Shell autenticado: sidebar + área principal (topbar + vista activa). */
 export function AdminLayout() {

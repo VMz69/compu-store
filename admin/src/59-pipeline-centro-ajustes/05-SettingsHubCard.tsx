@@ -4,7 +4,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { HubCardConfig } from './03-hub.config'
 import type { HubStat } from './02-useSettingsHub'
 
-const t = tracer('SettingsHubCard', 'src/features/settings/components/SettingsHubCard.tsx')
+const t = tracer('SettingsHubCard', 'src/59-pipeline-centro-ajustes/05-SettingsHubCard.tsx')
 
 const STAT_COLUMNS: Record<number, string> = { 2: 'grid-cols-2', 3: 'grid-cols-3' }
 

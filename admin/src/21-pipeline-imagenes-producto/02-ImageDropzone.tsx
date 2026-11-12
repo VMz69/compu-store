@@ -5,7 +5,7 @@ import type { ImageGalleryApi } from './04-useImageGallery'
 import { formatMegabytes, MAX_IMAGE_BYTES } from '../17-pipeline-ficha-producto/03-productImages'
 import { ImageUrlInput } from '../22-pipeline-captura-imagen-producto/00-director-captura-imagen-producto'
 
-const t = tracer('ImageDropzone', 'src/features/catalog/components/form/tabs/images/ImageDropzone.tsx')
+const t = tracer('ImageDropzone', 'src/21-pipeline-imagenes-producto/02-ImageDropzone.tsx')
 
 interface ImageDropzoneProps {
   gallery: ImageGalleryApi

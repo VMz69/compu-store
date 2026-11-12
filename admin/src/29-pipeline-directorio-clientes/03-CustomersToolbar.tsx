@@ -2,7 +2,7 @@ import { Button, ListToolbar, LiveSearch, Select } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { CustomersApi } from './02-useCustomers'
 
-const t = tracer('CustomersToolbar', 'src/features/customers/components/CustomersToolbar.tsx')
+const t = tracer('CustomersToolbar', 'src/29-pipeline-directorio-clientes/03-CustomersToolbar.tsx')
 
 type CustomersToolbarProps = Pick<CustomersApi, 'filters' | 'totalCount' | 'canManage' | 'openCreate'>
 

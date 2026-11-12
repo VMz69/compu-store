@@ -2,7 +2,7 @@ import { UsersSection } from '@/00-director-acceso'
 import { tracer } from '@/00-trazabilidad'
 import { useSettingsPageMeta } from './04-useSettingsPageMeta'
 
-const t = tracer('UsersPage', 'src/features/settings/pages/UsersPage.tsx')
+const t = tracer('UsersPage', 'src/60-pipeline-administracion-negocio/01-UsersPage.tsx')
 
 /**
  * Ajustes › Usuarios y Roles.

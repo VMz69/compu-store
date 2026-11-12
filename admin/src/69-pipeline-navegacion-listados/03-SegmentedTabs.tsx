@@ -1,7 +1,7 @@
 import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('SegmentedTabs', 'src/shared/ui/SegmentedTabs.tsx')
+const t = tracer('SegmentedTabs', 'src/69-pipeline-navegacion-listados/03-SegmentedTabs.tsx')
 
 export interface SegmentedTabItem<T extends string> {
   id: T

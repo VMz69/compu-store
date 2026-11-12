@@ -3,7 +3,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { ProductFiltersApi } from './00-director-filtros-productos'
 import { ViewModeToggle } from './04-ViewModeToggle'
 
-const t = tracer('ProductToolbar', 'src/features/catalog/components/toolbar/ProductToolbar.tsx')
+const t = tracer('ProductToolbar', 'src/13-pipeline-filtros-productos/03-ProductToolbar.tsx')
 
 interface ProductToolbarProps {
   filters: ProductFiltersApi

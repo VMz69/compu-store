@@ -1,5 +1,7 @@
 # Reestructuración FLOA de admin
 
+> Registro histórico del cierre de migración `1d8456f` (2026-11-11). La adecuación posterior de trazabilidad se detalla al final y en arch-backOffice.md.
+
 ## Alcance y fuente de verdad
 
 - Rama: `refactor/floa-admin`; base: `c518624`.
@@ -1073,3 +1075,11 @@ Todas las rutas de las tablas son relativas a `admin/src/`. Las filas «creado»
 - Comparación con la salida de producción de la línea base: los 21 archivos coinciden byte a byte (incluidos JS, CSS, HTML y recursos públicos); SHA-256 idénticos.
 - Reversiones: ninguna.
 - Sin pruebas de navegador; la preservación se acredita con contenido, grafo de dependencias y comparación de artefactos, además de los comandos de calidad disponibles.
+
+## Seguimiento: trazabilidad FLOA (2026-11-12)
+
+Por solicitud posterior se actualizaron exclusivamente los valores source de los 139 emisores de trazabilidad para señalar a sus rutas físicas numeradas. Se conservaron IDs, componentes, puntos de aplicación, lógica, JSX, estilos y los doce módulos mock. El helper `src/00-trazabilidad.ts` mantiene su contrato y su kill switch; solo se actualizaron sus comentarios y ejemplo.
+
+La decisión 3 y la comparación de 21 artefactos del cierre anterior describen el estado de aquella migración. Desde esta adecuación, los bundles JS cambian deliberadamente por las nuevas rutas source; la hoja CSS continúa idéntica. Las siete comprobaciones en `tests/traceability.test.mjs` verifican rutas, helper central, contrato y cinco valores del switch. Chrome verificó 23 escenarios con metadata y los mismos 23 sin ella, sin excepciones JavaScript.
+
+La especificación vigente está en [arch-backOffice.md](./arch-backOffice.md), incluidos topología, contratos, puertos, apagado y comandos de verificación. No se modificaron dependencias ni configuración de Vite/TypeScript.

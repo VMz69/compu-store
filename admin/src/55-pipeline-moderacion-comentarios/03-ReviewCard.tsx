@@ -6,7 +6,7 @@ import type { ReviewModerationApi } from './02-useReviewModeration'
 import { REVIEW_STATUS_META } from '../56-pipeline-persistencia-comentarios/02-reviews.service'
 import { Stars } from './05-Stars'
 
-const t = tracer('ReviewCard', 'src/features/interactions/components/ReviewCard.tsx')
+const t = tracer('ReviewCard', 'src/55-pipeline-moderacion-comentarios/03-ReviewCard.tsx')
 
 type Item = ReviewModerationApi['items'][number]
 

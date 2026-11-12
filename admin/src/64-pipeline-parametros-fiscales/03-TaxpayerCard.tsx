@@ -2,7 +2,7 @@ import type { StoreSettings } from '@/85-pipeline-identificadores-texto/03-store
 import { Card, CardTitle } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('TaxpayerCard', 'src/features/settings/components/TaxpayerCard.tsx')
+const t = tracer('TaxpayerCard', 'src/64-pipeline-parametros-fiscales/03-TaxpayerCard.tsx')
 
 /** Datos del contribuyente emisor que se imprimen en cada factura (solo lectura). */
 export function TaxpayerCard({ settings }: { settings: StoreSettings }) {

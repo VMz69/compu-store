@@ -4,7 +4,7 @@ import type { ProductFormApi } from '../18-pipeline-edicion-producto/02-useProdu
 import { StockBadge } from '../15-pipeline-tabla-existencias/03-StockBadge'
 import { LotRowsEditor } from './05-LotRowsEditor'
 
-const t = tracer('LogisticsTab', 'src/features/catalog/components/form/tabs/LogisticsTab.tsx')
+const t = tracer('LogisticsTab', 'src/19-pipeline-datos-comerciales-producto/04-LogisticsTab.tsx')
 
 /**
  * Sección 4 · Inventario.

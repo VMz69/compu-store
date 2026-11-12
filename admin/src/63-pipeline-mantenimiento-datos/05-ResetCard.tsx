@@ -1,7 +1,7 @@
 import { Button } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('ResetCard', 'src/features/settings/components/ResetCard.tsx')
+const t = tracer('ResetCard', 'src/63-pipeline-mantenimiento-datos/05-ResetCard.tsx')
 
 interface ResetCardProps {
   canEdit: boolean

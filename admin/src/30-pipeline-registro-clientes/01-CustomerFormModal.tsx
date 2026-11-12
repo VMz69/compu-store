@@ -2,7 +2,7 @@ import { Checkbox, Field, FormActions, Input, Modal, ModalHeader, ModalTitle, Se
 import { tracer } from '@/00-trazabilidad'
 import { useCustomerForm } from './02-useCustomerForm'
 
-const t = tracer('CustomerFormModal', 'src/features/customers/components/CustomerFormModal.tsx')
+const t = tracer('CustomerFormModal', 'src/30-pipeline-registro-clientes/01-CustomerFormModal.tsx')
 
 /** Ficha del cliente: identificación, contacto, ubicación y notas internas. */
 export function CustomerFormModal() {

@@ -2,7 +2,7 @@ import { IconButton, Input } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { ImageUrlEntry } from './02-useImageUrlEntry'
 
-const t = tracer('ImageUrlInput', 'src/features/catalog/components/form/tabs/images/ImageUrlInput.tsx')
+const t = tracer('ImageUrlInput', 'src/22-pipeline-captura-imagen-producto/01-ImageUrlInput.tsx')
 
 /** Agrega una imagen remota a la galería pegando su URL (Enter o botón). */
 export function ImageUrlInput({ entry, disabled }: { entry: ImageUrlEntry; disabled: boolean }) {

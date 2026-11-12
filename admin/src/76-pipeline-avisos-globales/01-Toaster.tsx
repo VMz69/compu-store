@@ -2,7 +2,7 @@ import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { useToasts, type ToastTone } from '@/76-pipeline-avisos-globales/02-toast.store'
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('Toaster', 'src/shared/ui/Toaster.tsx')
+const t = tracer('Toaster', 'src/76-pipeline-avisos-globales/01-Toaster.tsx')
 
 const TONES: Record<ToastTone, string> = {
   success: 'bg-brand text-white shadow-brand-glow',

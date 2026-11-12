@@ -5,7 +5,7 @@ import { ResetCard } from './05-ResetCard'
 import { useSettingsPageMeta } from '../60-pipeline-administracion-negocio/04-useSettingsPageMeta'
 import { useMaintenance } from './00-director-mantenimiento-datos'
 
-const t = tracer('MaintenancePage', 'src/features/settings/pages/MaintenancePage.tsx')
+const t = tracer('MaintenancePage', 'src/63-pipeline-mantenimiento-datos/01-MaintenancePage.tsx')
 
 /**
  * ⚠️ DESACTIVADA: sin ruta, sin tarjeta en el hub y sin exportación pública.

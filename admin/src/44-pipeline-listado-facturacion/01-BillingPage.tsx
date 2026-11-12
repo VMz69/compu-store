@@ -6,7 +6,7 @@ import { InvoicesTable } from './04-InvoicesTable'
 import { PendingOrdersTable } from './05-PendingOrdersTable'
 import { useBilling } from './02-useBilling'
 
-const t = tracer('BillingPage', 'src/features/billing/pages/BillingPage.tsx')
+const t = tracer('BillingPage', 'src/44-pipeline-listado-facturacion/01-BillingPage.tsx')
 
 /**
  * /facturacion · Salida de pedidos.

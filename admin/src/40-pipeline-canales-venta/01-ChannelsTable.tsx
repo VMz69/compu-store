@@ -3,7 +3,7 @@ import { DataTable, IconButton, Switch, type TableHeader } from '@/00-director-i
 import { tracer } from '@/00-trazabilidad'
 import type { ChannelsApi } from './03-useChannels'
 
-const t = tracer('ChannelsTable', 'src/features/sales/components/channels/ChannelsTable.tsx')
+const t = tracer('ChannelsTable', 'src/40-pipeline-canales-venta/01-ChannelsTable.tsx')
 
 const HEADERS: TableHeader[] = [
   { label: 'Canal', className: 'px-4' },

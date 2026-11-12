@@ -6,7 +6,7 @@ import type { QuoteRowData, QuotesApi } from './02-useQuotes'
 import { isConvertible } from '../51-pipeline-persistencia-cotizaciones/02-quote.service'
 import { QuoteStatusBadge } from './05-QuoteStatusBadge'
 
-const t = tracer('QuoteRow', 'src/features/quotes/components/list/QuoteRow.tsx')
+const t = tracer('QuoteRow', 'src/48-pipeline-listado-cotizaciones/03-QuoteRow.tsx')
 
 interface QuoteRowProps {
   row: QuoteRowData

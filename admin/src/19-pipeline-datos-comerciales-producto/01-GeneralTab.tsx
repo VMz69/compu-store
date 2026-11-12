@@ -4,7 +4,7 @@ import type { ProductFormApi } from '../18-pipeline-edicion-producto/02-useProdu
 import { ImageDropzone } from '../21-pipeline-imagenes-producto/02-ImageDropzone'
 import { ImageGallery } from '../21-pipeline-imagenes-producto/00-director-imagenes-producto'
 
-const t = tracer('GeneralTab', 'src/features/catalog/components/form/tabs/GeneralTab.tsx')
+const t = tracer('GeneralTab', 'src/19-pipeline-datos-comerciales-producto/01-GeneralTab.tsx')
 
 /** Sección 1 · Identificación del producto, galería de imágenes y visibilidad web. */
 export function GeneralTab({ api }: { api: ProductFormApi }) {

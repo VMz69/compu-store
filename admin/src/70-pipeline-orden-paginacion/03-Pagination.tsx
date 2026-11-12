@@ -2,7 +2,7 @@ import type { PaginationState } from '@/70-pipeline-orden-paginacion/04-usePagin
 import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('Pagination', 'src/shared/ui/Pagination.tsx')
+const t = tracer('Pagination', 'src/70-pipeline-orden-paginacion/03-Pagination.tsx')
 
 /** Botón base del paginador (clases completas; Tailwind v4 no genera clases concatenadas). */
 const PAGE_BUTTON =

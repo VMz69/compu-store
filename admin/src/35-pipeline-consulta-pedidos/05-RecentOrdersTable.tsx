@@ -4,7 +4,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { Order } from '../42-pipeline-persistencia-pedidos/05-types'
 import { OrderStatusBadge } from '../39-pipeline-transiciones-pedidos/04-OrderStatusBadge'
 
-const t = tracer('RecentOrdersTable', 'src/features/sales/components/orders/RecentOrdersTable.tsx')
+const t = tracer('RecentOrdersTable', 'src/35-pipeline-consulta-pedidos/05-RecentOrdersTable.tsx')
 
 const HEADERS: TableHeader[] = [
   { label: 'ID Pedido' },

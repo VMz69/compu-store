@@ -3,7 +3,7 @@ import { ImageLightbox, SafeImage } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { ProductDetailApi } from '../16-pipeline-consulta-producto/02-useProductDetail'
 
-const t = tracer('DetailGallery', 'src/features/catalog/components/detail/DetailGallery.tsx')
+const t = tracer('DetailGallery', 'src/17-pipeline-ficha-producto/01-DetailGallery.tsx')
 
 type DetailGalleryProps = Pick<ProductDetailApi, 'product' | 'gallery'>
 

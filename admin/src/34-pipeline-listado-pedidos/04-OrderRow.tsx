@@ -9,7 +9,7 @@ import { OrderActionButtons } from '../37-pipeline-detalle-pedidos/05-OrderActio
 import { OrderStatusBadge } from '../39-pipeline-transiciones-pedidos/04-OrderStatusBadge'
 import { ReservationTag } from '../38-pipeline-reserva-pedidos/05-ReservationTag'
 
-const t = tracer('OrderRow', 'src/features/sales/components/orders/OrderRow.tsx')
+const t = tracer('OrderRow', 'src/34-pipeline-listado-pedidos/04-OrderRow.tsx')
 
 interface OrderRowProps {
   order: Order

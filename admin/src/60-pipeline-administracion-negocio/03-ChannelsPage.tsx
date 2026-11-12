@@ -3,7 +3,7 @@ import { BackLink, Button, PageContainer } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import { useSettingsPageMeta } from './04-useSettingsPageMeta'
 
-const t = tracer('ChannelsPage', 'src/features/settings/pages/ChannelsPage.tsx')
+const t = tracer('ChannelsPage', 'src/60-pipeline-administracion-negocio/03-ChannelsPage.tsx')
 
 const SECTION_TITLE = 'text-sm font-black text-slate-800 dark:text-slate-100'
 const SECTION_HINT = 'text-[11px] text-slate-400'

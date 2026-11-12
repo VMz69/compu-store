@@ -5,7 +5,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { OffersApi } from './02-useOffers'
 import { OFFER_STATUS_META } from '../54-pipeline-precio-ofertas/02-offerPricing'
 
-const t = tracer('OfferRow', 'src/features/promotions/components/list/OfferRow.tsx')
+const t = tracer('OfferRow', 'src/52-pipeline-listado-ofertas/03-OfferRow.tsx')
 
 type Row = OffersApi['rows'][number]
 

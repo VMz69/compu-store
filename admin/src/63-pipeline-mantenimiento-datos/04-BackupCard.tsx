@@ -1,7 +1,7 @@
 import { Button, Card, CardTitle } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('BackupCard', 'src/features/settings/components/BackupCard.tsx')
+const t = tracer('BackupCard', 'src/63-pipeline-mantenimiento-datos/04-BackupCard.tsx')
 
 interface BackupCardProps {
   summary: string[]

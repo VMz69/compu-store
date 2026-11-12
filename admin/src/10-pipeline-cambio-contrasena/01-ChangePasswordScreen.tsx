@@ -3,7 +3,7 @@ import { tracer } from '@/00-trazabilidad'
 import { useChangePasswordForm } from './02-usePasswordForms'
 import { NewPasswordFields } from './03-NewPasswordFields'
 
-const t = tracer('ChangePasswordScreen', 'src/features/access/components/password/ChangePasswordScreen.tsx')
+const t = tracer('ChangePasswordScreen', 'src/10-pipeline-cambio-contrasena/01-ChangePasswordScreen.tsx')
 
 /**
  * Pantalla bloqueante: el usuario tiene una contraseña temporal y debe

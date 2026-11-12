@@ -4,7 +4,7 @@ import { useIdentityForm } from './05-useIdentityForm'
 import { CommercialFields, InvoiceNumberingFields, TaxpayerFields } from './03-IdentityFields'
 import { IdentityPreview } from './04-IdentityPreview'
 
-const t = tracer('IdentityForm', 'src/features/settings/components/IdentityForm.tsx')
+const t = tracer('IdentityForm', 'src/61-pipeline-identidad-comercial/02-IdentityForm.tsx')
 
 /** Identidad del emisor: formulario (2/3) + vista previa de cómo se imprime en los documentos (1/3). */
 export function IdentityForm() {

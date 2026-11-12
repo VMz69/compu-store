@@ -4,7 +4,7 @@ import { tracer } from '@/00-trazabilidad'
 import { useQuotePreview } from './02-useQuotePreview'
 import { QuoteStatusBadge } from '../48-pipeline-listado-cotizaciones/05-QuoteStatusBadge'
 
-const t = tracer('QuotePreviewModal', 'src/features/quotes/components/preview/QuotePreviewModal.tsx')
+const t = tracer('QuotePreviewModal', 'src/50-pipeline-documento-cotizacion/01-QuotePreviewModal.tsx')
 
 /** Vista previa del PDF de la cotización (visor compartido) + aviso por WhatsApp. */
 export function QuotePreviewModal() {

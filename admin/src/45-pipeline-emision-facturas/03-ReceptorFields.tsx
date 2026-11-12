@@ -2,7 +2,7 @@ import { Checkbox, Field, Input, Select } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { InvoiceEmitApi } from './02-useInvoiceEmit'
 
-const t = tracer('ReceptorFields', 'src/features/billing/components/emit/ReceptorFields.tsx')
+const t = tracer('ReceptorFields', 'src/45-pipeline-emision-facturas/03-ReceptorFields.tsx')
 
 /** Datos del receptor: "Consumidor Final" o identificado (precargado del directorio si hay coincidencia). */
 export function ReceptorFields({ f }: { f: InvoiceEmitApi }) {

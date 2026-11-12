@@ -3,7 +3,7 @@ import { Badge, IconButton } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { CustomerRowData, CustomersApi } from './02-useCustomers'
 
-const t = tracer('CustomerRow', 'src/features/customers/components/CustomerRow.tsx')
+const t = tracer('CustomerRow', 'src/29-pipeline-directorio-clientes/04-CustomerRow.tsx')
 
 interface CustomerRowProps {
   row: CustomerRowData

@@ -1,7 +1,7 @@
 import { tracer } from '@/00-trazabilidad'
 import { Input, type InputProps } from '@/00-director-interfaz'
 
-const t = tracer('PasswordInput', 'src/features/access/components/password/PasswordInput.tsx')
+const t = tracer('PasswordInput', 'src/11-pipeline-restablecimiento-contrasena/02-PasswordInput.tsx')
 
 interface PasswordInputProps extends Omit<InputProps, 'type'> {
   /** Visibilidad controlada desde el hook del formulario (un toggle puede servir a varios campos). */

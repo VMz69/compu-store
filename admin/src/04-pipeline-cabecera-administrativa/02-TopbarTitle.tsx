@@ -6,7 +6,7 @@ import type { PageBadge, PageCrumb } from '@/75-pipeline-estado-navegacion/02-pa
 import { Breadcrumb } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 
-const t = tracer('TopbarTitle', 'src/app/layout/topbar/TopbarTitle.tsx')
+const t = tracer('TopbarTitle', 'src/04-pipeline-cabecera-administrativa/02-TopbarTitle.tsx')
 
 const BADGE: Record<NonNullable<PageBadge['tone']>, string> = {
   brand: 'bg-brand-50 text-brand border-brand/30 dark:bg-brand/10 dark:text-brand-300',

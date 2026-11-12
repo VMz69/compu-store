@@ -4,7 +4,7 @@ import { useResetPasswordForm } from '../10-pipeline-cambio-contrasena/02-usePas
 import { NewPasswordFields } from '../10-pipeline-cambio-contrasena/03-NewPasswordFields'
 import { UserAvatar } from '../08-pipeline-edicion-usuarios/04-UserAvatar'
 
-const t = tracer('ResetPasswordModal', 'src/features/access/components/users/ResetPasswordModal.tsx')
+const t = tracer('ResetPasswordModal', 'src/11-pipeline-restablecimiento-contrasena/01-ResetPasswordModal.tsx')
 
 /** Asigna una contraseña nueva a un usuario (la actual no se puede ver: solo se reemplaza). */
 export function ResetPasswordModal() {

@@ -2,7 +2,7 @@ import { Button, IconButton, Input } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { ProductFormApi } from '../18-pipeline-edicion-producto/02-useProductForm'
 
-const t = tracer('SpecRowsEditor', 'src/features/catalog/components/form/tabs/SpecRowsEditor.tsx')
+const t = tracer('SpecRowsEditor', 'src/20-pipeline-validacion-producto/05-SpecRowsEditor.tsx')
 
 /** Ficha técnica: lista dinámica de pares clave/valor (D1, D2, D3…). */
 export function SpecRowsEditor({ api }: { api: ProductFormApi }) {

@@ -2,7 +2,7 @@ import { Field, Input, Select, Textarea } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { IdentityFormApi } from './05-useIdentityForm'
 
-const t = tracer('IdentityFields', 'src/features/settings/components/IdentityFields.tsx')
+const t = tracer('IdentityFields', 'src/61-pipeline-identidad-comercial/03-IdentityFields.tsx')
 
 const SECTION = 'text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400'
 const HINT = 'text-[11px] text-slate-400'

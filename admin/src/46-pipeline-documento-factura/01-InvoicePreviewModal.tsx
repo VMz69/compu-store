@@ -4,7 +4,7 @@ import { tracer } from '@/00-trazabilidad'
 import { useInvoicePreview } from './02-useInvoicePreview'
 import { InvoiceStatusBadge } from './04-InvoiceStatusBadge'
 
-const t = tracer('InvoicePreviewModal', 'src/features/billing/components/preview/InvoicePreviewModal.tsx')
+const t = tracer('InvoicePreviewModal', 'src/46-pipeline-documento-factura/01-InvoicePreviewModal.tsx')
 
 /** Vista previa del PDF de la factura (mismo visor que las cotizaciones). */
 export function InvoicePreviewModal() {

@@ -3,7 +3,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { ProductFormApi } from '../18-pipeline-edicion-producto/02-useProductForm'
 import { CommercialSummary } from './03-CommercialSummary'
 
-const t = tracer('PricingTab', 'src/features/catalog/components/form/tabs/PricingTab.tsx')
+const t = tracer('PricingTab', 'src/19-pipeline-datos-comerciales-producto/02-PricingTab.tsx')
 
 /**
  * Sección 2 · Precios y costos.

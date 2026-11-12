@@ -3,7 +3,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { ProductFormApi } from '../18-pipeline-edicion-producto/02-useProductForm'
 import { SpecRowsEditor } from './05-SpecRowsEditor'
 
-const t = tracer('SpecsTab', 'src/features/catalog/components/form/tabs/SpecsTab.tsx')
+const t = tracer('SpecsTab', 'src/20-pipeline-validacion-producto/04-SpecsTab.tsx')
 
 /** Sección 3 · Compatibilidad, conectividad y ficha técnica clave/valor. */
 export function SpecsTab({ api }: { api: ProductFormApi }) {

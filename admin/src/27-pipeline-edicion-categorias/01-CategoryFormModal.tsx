@@ -3,7 +3,7 @@ import { Field, FormActions, Input, Modal, ModalHeader, ModalTitle, Textarea } f
 import { tracer } from '@/00-trazabilidad'
 import { useCategoryForm } from './02-useCategoryForm'
 
-const t = tracer('CategoryFormModal', 'src/features/catalog/components/taxonomy/CategoryFormModal.tsx')
+const t = tracer('CategoryFormModal', 'src/27-pipeline-edicion-categorias/01-CategoryFormModal.tsx')
 
 /** Alta/edición de categoría con selector visual de ícono y vista previa. */
 export function CategoryFormModal() {

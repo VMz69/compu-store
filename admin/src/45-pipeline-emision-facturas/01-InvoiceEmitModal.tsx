@@ -4,7 +4,7 @@ import { useInvoiceEmit } from './02-useInvoiceEmit'
 import { ReceptorFields } from './03-ReceptorFields'
 import { StockCheck } from './04-StockCheck'
 
-const t = tracer('InvoiceEmitModal', 'src/features/billing/components/emit/InvoiceEmitModal.tsx')
+const t = tracer('InvoiceEmitModal', 'src/45-pipeline-emision-facturas/01-InvoiceEmitModal.tsx')
 
 /**
  * Emitir factura de un pedido. Un solo paso: revisar detalle/stock → datos del

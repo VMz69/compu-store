@@ -4,7 +4,7 @@ import { CustomerRow } from './04-CustomerRow'
 import { CustomersToolbar } from './03-CustomersToolbar'
 import { useCustomers } from './02-useCustomers'
 
-const t = tracer('CustomersPage', 'src/features/customers/pages/CustomersPage.tsx')
+const t = tracer('CustomersPage', 'src/29-pipeline-directorio-clientes/01-CustomersPage.tsx')
 
 const HEADERS: TableHeader[] = [
   { label: 'Cliente', className: 'px-4' },

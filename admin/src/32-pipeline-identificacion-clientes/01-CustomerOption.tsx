@@ -4,7 +4,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { Customer } from '../33-pipeline-historial-clientes/03-types'
 import { CustomerInitials } from './02-CustomerInitials'
 
-const t = tracer('CustomerOption', 'src/features/customers/components/picker/CustomerOption.tsx')
+const t = tracer('CustomerOption', 'src/32-pipeline-identificacion-clientes/01-CustomerOption.tsx')
 
 interface CustomerOptionProps {
   customer: Customer

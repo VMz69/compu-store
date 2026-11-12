@@ -3,7 +3,7 @@ import { tracer } from '@/00-trazabilidad'
 import { SettingsHubCard } from './05-SettingsHubCard'
 import { useSettingsHub } from './02-useSettingsHub'
 
-const t = tracer('SettingsPage', 'src/features/settings/pages/SettingsPage.tsx')
+const t = tracer('SettingsPage', 'src/59-pipeline-centro-ajustes/01-SettingsPage.tsx')
 
 /** Hub de Ajustes: indizador de sub-vistas. */
 export function SettingsPage() {

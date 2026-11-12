@@ -2,7 +2,7 @@ import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { tracer } from '@/00-trazabilidad'
 import type { UserAccessApi } from './00-director-accesos-por-vista'
 
-const t = tracer('AccessSidebar', 'src/features/access/components/users/access/AccessSidebar.tsx')
+const t = tracer('AccessSidebar', 'src/09-pipeline-accesos-por-vista/03-AccessSidebar.tsx')
 
 /**
  * Réplica del menú lateral del usuario: cada vista con su interruptor de acceso

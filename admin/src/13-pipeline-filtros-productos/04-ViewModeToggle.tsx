@@ -2,7 +2,7 @@ import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { tracer } from '@/00-trazabilidad'
 import type { ProductViewMode } from '../25-pipeline-persistencia-catalogo/04-types'
 
-const t = tracer('ViewModeToggle', 'src/features/catalog/components/toolbar/ViewModeToggle.tsx')
+const t = tracer('ViewModeToggle', 'src/13-pipeline-filtros-productos/04-ViewModeToggle.tsx')
 
 const BASE = 'w-7 h-7 rounded-md flex items-center justify-center transition-all'
 const ACTIVE = 'bg-white dark:bg-slate-700 text-brand shadow-xs font-bold'

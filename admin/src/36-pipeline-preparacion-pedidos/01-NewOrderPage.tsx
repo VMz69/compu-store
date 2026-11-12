@@ -5,7 +5,7 @@ import { tracer } from '@/00-trazabilidad'
 import { OrderSummaryPanel } from './05-OrderSummaryPanel'
 import { useOrderBuilder } from './03-useOrderBuilder'
 
-const t = tracer('NewOrderPage', 'src/features/sales/pages/NewOrderPage.tsx')
+const t = tracer('NewOrderPage', 'src/36-pipeline-preparacion-pedidos/01-NewOrderPage.tsx')
 
 /**
  * /pedidos/nuevo y /pedidos/:orderId/editar · Constructor a dos columnas (mismo patrón

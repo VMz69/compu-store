@@ -4,7 +4,7 @@ import { BackLink, Button, EmptyState, PageContainer } from '@/00-director-inter
 import { tracer } from '@/00-trazabilidad'
 import { useSettingsPageMeta } from './04-useSettingsPageMeta'
 
-const t = tracer('UserAccessPage', 'src/features/settings/pages/UserAccessPage.tsx')
+const t = tracer('UserAccessPage', 'src/60-pipeline-administracion-negocio/02-UserAccessPage.tsx')
 
 /**
  * Ajustes › Usuarios › Accesos · RBAC por vistas: a la izquierda su menú (vistas con

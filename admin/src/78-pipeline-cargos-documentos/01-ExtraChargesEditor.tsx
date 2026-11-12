@@ -5,7 +5,7 @@ import { AffixInput } from '../68-pipeline-marcos-contenido/04-AffixInput'
 import { IconButton } from '../66-pipeline-acciones-administrativas/02-IconButton'
 import { Input } from '../65-pipeline-campos-administrativos/00-director-campos-administrativos'
 
-const t = tracer('ExtraChargesEditor', 'src/shared/ui/ExtraChargesEditor.tsx')
+const t = tracer('ExtraChargesEditor', 'src/78-pipeline-cargos-documentos/01-ExtraChargesEditor.tsx')
 
 const ERROR = 'text-[10px] font-semibold text-red-600 dark:text-red-400'
 

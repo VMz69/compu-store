@@ -3,7 +3,7 @@ import { IconButton, SafeImage } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { ImageRow } from '../17-pipeline-ficha-producto/03-productImages'
 
-const t = tracer('ImageThumb', 'src/features/catalog/components/form/tabs/images/ImageThumb.tsx')
+const t = tracer('ImageThumb', 'src/21-pipeline-imagenes-producto/03-ImageThumb.tsx')
 
 interface ImageThumbProps {
   row: ImageRow

@@ -4,7 +4,7 @@ import { Button, ExtraChargesEditor, Field, LineItemsEditor, Select, Textarea } 
 import { tracer } from '@/00-trazabilidad'
 import type { QuoteBuilderApi } from './02-useQuoteBuilder'
 
-const t = tracer('QuoteSummaryPanel', 'src/features/quotes/components/builder/QuoteSummaryPanel.tsx')
+const t = tracer('QuoteSummaryPanel', 'src/49-pipeline-preparacion-cotizaciones/03-QuoteSummaryPanel.tsx')
 
 function TotalRow({ label, value, strong = false }: { label: string; value: string; strong?: boolean }) {
   return (

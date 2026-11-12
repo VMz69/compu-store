@@ -7,7 +7,7 @@ import { useBrandsTab } from '../28-pipeline-marcas-productos/03-useBrandsTab'
 import { useCategoriesTab } from './03-useCategoriesTab'
 import { useTaxonomyPage } from './02-useTaxonomyPage'
 
-const t = tracer('CategoriesPage', 'src/features/catalog/pages/CategoriesPage.tsx')
+const t = tracer('CategoriesPage', 'src/26-pipeline-categorias-productos/01-CategoriesPage.tsx')
 
 /** /categorias · CRUD de la taxonomía del catálogo: categorías (tarjetas) y marcas (tabla). */
 export function CategoriesPage() {

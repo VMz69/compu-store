@@ -3,7 +3,7 @@ import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { tracer } from '@/00-trazabilidad'
 import type { NavItem } from './04-useNavItems'
 
-const t = tracer('SidebarNavItem', 'src/app/layout/sidebar/SidebarNavItem.tsx')
+const t = tracer('SidebarNavItem', 'src/03-pipeline-navegacion-administrativa/02-SidebarNavItem.tsx')
 
 export function SidebarNavItem({ item, isOpen }: { item: NavItem; isOpen: boolean }) {
   return (

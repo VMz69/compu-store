@@ -2,7 +2,7 @@ import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { tracer } from '@/00-trazabilidad'
 import { PRODUCT_FORM_TABS, type ProductFormTab } from '../20-pipeline-validacion-producto/00-director-validacion-producto'
 
-const t = tracer('ProductFormTabs', 'src/features/catalog/components/form/ProductFormTabs.tsx')
+const t = tracer('ProductFormTabs', 'src/18-pipeline-edicion-producto/04-ProductFormTabs.tsx')
 
 const TAB_BASE =
   'relative flex items-center gap-2 px-3 py-3 -mb-px text-xs font-bold whitespace-nowrap border-b-2 transition-colors focus-visible:outline-2 focus-visible:outline-brand'

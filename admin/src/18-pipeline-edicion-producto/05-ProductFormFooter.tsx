@@ -2,7 +2,7 @@ import { Button } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { ProductFormApi } from './02-useProductForm'
 
-const t = tracer('ProductFormFooter', 'src/features/catalog/components/form/ProductFormFooter.tsx')
+const t = tracer('ProductFormFooter', 'src/18-pipeline-edicion-producto/05-ProductFormFooter.tsx')
 
 /**
  * Pie fijo: navegación entre secciones a la izquierda y acciones a la derecha.

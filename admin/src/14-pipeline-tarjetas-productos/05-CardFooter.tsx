@@ -4,7 +4,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { ProductActions } from '../24-pipeline-inventario-productos/00-director-inventario-productos'
 import type { Product } from '../25-pipeline-persistencia-catalogo/04-types'
 
-const t = tracer('CardFooter', 'src/features/catalog/components/grid/CardFooter.tsx')
+const t = tracer('CardFooter', 'src/14-pipeline-tarjetas-productos/05-CardFooter.tsx')
 
 interface CardFooterProps {
   product: Product

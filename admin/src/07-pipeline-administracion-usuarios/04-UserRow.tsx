@@ -5,7 +5,7 @@ import type { UserRowData, UsersAdminApi } from './02-useUsersAdmin'
 import { RoleBadge } from './05-RoleBadge'
 import { UserAvatar } from '../08-pipeline-edicion-usuarios/04-UserAvatar'
 
-const t = tracer('UserRow', 'src/features/access/components/users/UserRow.tsx')
+const t = tracer('UserRow', 'src/07-pipeline-administracion-usuarios/04-UserRow.tsx')
 
 interface UserRowProps {
   row: UserRowData

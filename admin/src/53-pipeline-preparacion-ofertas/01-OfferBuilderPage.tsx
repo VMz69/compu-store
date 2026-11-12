@@ -5,7 +5,7 @@ import { tracer } from '@/00-trazabilidad'
 import { OfferPanel } from './03-OfferPanel'
 import { useOfferBuilder } from './02-useOfferBuilder'
 
-const t = tracer('OfferBuilderPage', 'src/features/promotions/pages/OfferBuilderPage.tsx')
+const t = tracer('OfferBuilderPage', 'src/53-pipeline-preparacion-ofertas/01-OfferBuilderPage.tsx')
 
 /** /ofertas/nueva y /ofertas/:offerId/editar · Catálogo a la izquierda (clic agrega/quita), oferta a la derecha. */
 export function OfferBuilderPage() {

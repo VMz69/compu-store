@@ -6,7 +6,7 @@ import { useNavItems } from './04-useNavItems'
 import { SidebarNavItem } from './02-SidebarNavItem'
 import { SidebarProfile } from './03-SidebarProfile'
 
-const t = tracer('Sidebar', 'src/app/layout/sidebar/Sidebar.tsx')
+const t = tracer('Sidebar', 'src/03-pipeline-navegacion-administrativa/01-Sidebar.tsx')
 
 /** Sidebar compacto/expandible con identidad, navegación por rol y perfil. */
 export function Sidebar() {

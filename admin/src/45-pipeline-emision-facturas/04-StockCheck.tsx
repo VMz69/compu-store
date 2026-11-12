@@ -4,7 +4,7 @@ import { tracer } from '@/00-trazabilidad'
 import type { InvoiceEmitApi } from './02-useInvoiceEmit'
 import { isProductItem, lineAmount } from '../47-pipeline-persistencia-facturas/02-invoice.service'
 
-const t = tracer('StockCheck', 'src/features/billing/components/emit/StockCheck.tsx')
+const t = tracer('StockCheck', 'src/45-pipeline-emision-facturas/04-StockCheck.tsx')
 
 const BADGE = 'text-[10px] font-bold px-2 py-0.5 rounded-md border whitespace-nowrap'
 const BADGE_OK = 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/50'
