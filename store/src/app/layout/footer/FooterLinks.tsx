@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { FOOTER_LINKS } from '../../nav.config'
+import { FOOTER_LINKS } from '@/35-pipeline-navegacion-tienda/00-director-navegacion-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/app/layout/footer/FooterLinks.tsx'

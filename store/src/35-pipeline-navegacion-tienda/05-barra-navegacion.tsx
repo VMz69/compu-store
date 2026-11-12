@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
-import { ExploreMenu } from './ExploreMenu'
+import { ExploreMenu } from './04-menu-explorar'
 import { MobileMenu } from '@/34-pipeline-menu-movil/00-director-menu-movil'
 import { navOffersPill, navQuickLink } from '@/34-pipeline-menu-movil/00-director-menu-movil'
-import { INFO_LINKS } from '../../nav.config'
-import { useNavbar } from '../../hooks/useNavbar'
+import { INFO_LINKS } from './01-enlaces-navegacion.config'
+import { useNavbar } from './02-estado-navegacion'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/app/layout/navbar/Navbar.tsx'
