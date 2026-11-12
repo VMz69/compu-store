@@ -1,5 +1,5 @@
-import { cn } from '@/shared/lib/cn'
-import { formatLongISO } from '@/shared/lib/date'
+import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
+import { formatLongISO } from '@/71-pipeline-seleccion-fechas/05-date'
 import { reservationDaysLeft, reservationLabel } from '../lib/reservation'
 
 /** Etiqueta de vigencia de la reserva: "Quedan 3 días" (ámbar si vence hoy o mañana). */

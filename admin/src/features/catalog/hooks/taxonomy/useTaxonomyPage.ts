@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { usePermission } from '@/00-director-acceso'
-import { openModal } from '@/shared/store/modal.store'
+import { openModal } from '@/73-pipeline-modales-globales/03-modal.store'
 import { CATALOG_MODALS } from '../../modals'
 import { useCatalogStore } from '../../store'
 

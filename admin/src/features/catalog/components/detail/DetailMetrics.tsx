@@ -1,5 +1,5 @@
-import { cn } from '@/shared/lib/cn'
-import { formatCurrency } from '@/shared/lib/currency'
+import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
+import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import type { ProductDetailApi } from '../../hooks/useProductDetail'
 import type { StockSeverity } from '../../types'
 

@@ -1,5 +1,5 @@
-import { formatCurrency } from '@/shared/lib/currency'
-import { amountToWords } from '@/shared/lib/numberToWords'
+import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
+import { amountToWords } from '@/79-pipeline-consulta-documentos/04-numberToWords'
 import {
   createPdf,
   drawFooter,
@@ -11,7 +11,7 @@ import {
   drawTotals,
   pdfFilename,
   type PdfKit,
-} from '@/shared/lib/pdf'
+} from '@/79-pipeline-consulta-documentos/03-pdf'
 import type { Invoice } from '../types'
 import { invoiceTotals, lineAmount } from './invoice.service'
 

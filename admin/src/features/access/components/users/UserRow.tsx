@@ -1,4 +1,4 @@
-import { formatDateTime } from '@/shared/lib/date'
+import { formatDateTime } from '@/71-pipeline-seleccion-fechas/05-date'
 import { Badge, IconButton, Switch } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { UserRowData, UsersAdminApi } from '../../hooks/useUsersAdmin'

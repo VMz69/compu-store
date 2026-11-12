@@ -1,5 +1,5 @@
-import { cn } from '@/shared/lib/cn'
-import { stopPropagation } from '@/shared/lib/events'
+import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
+import { stopPropagation } from '@/83-pipeline-recursos-publicos/03-events'
 import { tracer } from '@/00-trazabilidad'
 import type { Customer } from '../../types'
 import { CustomerInitials } from './CustomerInitials'

@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { nextSort, type SortState } from '@/shared/lib/sort'
+import { nextSort, type SortState } from '@/82-pipeline-calculo-importes/03-sort'
 import { DEFAULT_ORDER_SORT, FIRST_DIR, type OrderSortKey } from './lib/orderSort'
 import type { OrderStatusId } from './types'
 

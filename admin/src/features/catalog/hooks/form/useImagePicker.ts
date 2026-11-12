@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent, type DragEvent } from 'react'
-import { toast } from '@/shared/store/toast.store'
+import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
 import { ACCEPTED_IMAGE_TYPES, formatMegabytes, MAX_IMAGE_BYTES } from '../../lib/productImages'
 
 const readAsDataUrl = (file: File): Promise<string | null> =>

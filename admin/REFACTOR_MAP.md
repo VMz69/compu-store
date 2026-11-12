@@ -31,7 +31,7 @@ Cada fila corresponde a un paso y un commit independiente. Después de mover se 
 | --- | --- | --- | --- | --- |
 | raiz | validado | 0 | 0 | idéntico |
 | datos-mock | validado | 0 | 0 | idéntico |
-| transversal | pendiente | pendiente | pendiente | pendiente |
+| transversal | validado | 0 | 0 | idéntico |
 | aplicacion | pendiente | pendiente | pendiente | pendiente |
 | acceso | pendiente | pendiente | pendiente | pendiente |
 | catalogo | pendiente | pendiente | pendiente | pendiente |

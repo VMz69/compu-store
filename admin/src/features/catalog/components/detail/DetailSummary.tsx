@@ -1,4 +1,4 @@
-import { formatCurrency } from '@/shared/lib/currency'
+import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import { Badge } from '@/00-director-interfaz'
 import type { ProductDetailApi } from '../../hooks/useProductDetail'
 import { StockBadge } from '../StockBadge'

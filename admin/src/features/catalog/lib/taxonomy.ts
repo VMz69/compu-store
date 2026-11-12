@@ -1,4 +1,4 @@
-import { foldText, slugify } from '@/shared/lib/text'
+import { foldText, slugify } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
 import type { Brand, Category, Product } from '../types'
 
 /**

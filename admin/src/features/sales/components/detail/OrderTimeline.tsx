@@ -1,4 +1,4 @@
-import { formatDateTime } from '@/shared/lib/date'
+import { formatDateTime } from '@/71-pipeline-seleccion-fechas/05-date'
 import type { OrderDetailApi } from '../../hooks/useOrderDetail'
 
 /** Historial del pedido (más reciente primero): quién lo movió de estado y cuándo. */

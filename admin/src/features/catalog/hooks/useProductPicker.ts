@@ -1,5 +1,5 @@
 import { useMemo, useState, type ChangeEvent } from 'react'
-import { matchesQuery } from '@/shared/lib/text'
+import { matchesQuery } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
 import { useEffectivePrice } from '../lib/pricePort'
 import { useCatalogStore } from '../store'
 import type { Product } from '../types'

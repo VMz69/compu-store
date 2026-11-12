@@ -1,4 +1,4 @@
-import { usePageMeta } from '@/shared/hooks/usePageMeta'
+import { usePageMeta } from '@/75-pipeline-estado-navegacion/00-director-estado-navegacion'
 
 /**
  * Título de una sub-vista de Ajustes en la barra superior: SOLO el título.

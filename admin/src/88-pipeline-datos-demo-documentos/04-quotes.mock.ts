@@ -1,4 +1,4 @@
-import { STORE_CONFIG } from '@/shared/config/store.config'
+import { STORE_CONFIG } from '@/85-pipeline-identificadores-texto/03-store.config'
 import type { Quote, QuoteCustomer, QuoteItem } from '../features/quotes/types'
 
 /** Emisor por defecto de las cotizaciones de prueba. */

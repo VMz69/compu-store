@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import type { Role } from '@/00-director-acceso'
 import { RoleBadge } from '@/00-director-acceso'
-import { cn } from '@/shared/lib/cn'
-import type { PageBadge, PageCrumb } from '@/shared/store/pageMeta.store'
+import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
+import type { PageBadge, PageCrumb } from '@/75-pipeline-estado-navegacion/02-pageMeta.store'
 import { Breadcrumb } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 

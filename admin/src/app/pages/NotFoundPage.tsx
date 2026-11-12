@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useHomePath } from '@/00-director-acceso'
-import { usePageMeta } from '@/shared/hooks/usePageMeta'
+import { usePageMeta } from '@/75-pipeline-estado-navegacion/00-director-estado-navegacion'
 import { EmptyState, PageContainer } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 

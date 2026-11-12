@@ -1,5 +1,5 @@
-import { cn } from '@/shared/lib/cn'
-import { controlTone } from '@/shared/ui/controlStyles'
+import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
+import { controlTone } from '@/65-pipeline-campos-administrativos/05-controlStyles'
 import { tracer } from '@/00-trazabilidad'
 import type { CustomerCombobox } from '../../hooks/useCustomerCombobox'
 import { CustomerOption } from './CustomerOption'

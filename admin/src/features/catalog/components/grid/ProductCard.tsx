@@ -1,4 +1,4 @@
-import { clickable } from '@/shared/lib/events'
+import { clickable } from '@/83-pipeline-recursos-publicos/03-events'
 import { tracer } from '@/00-trazabilidad'
 import type { ProductActions } from '../../hooks/useProductActions'
 import type { Product } from '../../types'

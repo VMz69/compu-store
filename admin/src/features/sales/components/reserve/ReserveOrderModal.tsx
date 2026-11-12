@@ -1,5 +1,5 @@
-import { cn } from '@/shared/lib/cn'
-import { formatCurrency } from '@/shared/lib/currency'
+import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
+import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import { Button, Calendar, Modal, ModalFooter, ModalHeader, ModalTitle } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import { useReserveOrder } from '../../hooks/useReserveOrder'

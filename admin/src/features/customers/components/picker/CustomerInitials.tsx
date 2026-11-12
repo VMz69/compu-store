@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib/cn'
+import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import type { CustomerType } from '../../types'
 
 const initialsOf = (name: string): string =>

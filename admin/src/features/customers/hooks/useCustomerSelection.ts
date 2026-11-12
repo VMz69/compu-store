@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useFormState } from '@/shared/hooks/useFormState'
+import { useFormState } from '@/77-pipeline-edicion-formularios/03-useFormState'
 import { findByPhone, normalizePhone, validateCustomer } from '../lib/customer.service'
 import { useCustomersStore } from '../store'
 import type { Customer, CustomerSnapshot, CustomerType } from '../types'

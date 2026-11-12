@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib/cn'
+import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { IconButton, SafeImage } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { ImageRow } from '../../../../lib/productImages'

@@ -1,5 +1,5 @@
 import { CustomerPicker } from '@/00-director-clientes'
-import { formatCurrency } from '@/shared/lib/currency'
+import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import { Button, ExtraChargesEditor, IconButton, LineItemsEditor } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { OrderBuilderApi } from '../../hooks/useOrderBuilder'

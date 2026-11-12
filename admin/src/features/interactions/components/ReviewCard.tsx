@@ -1,5 +1,5 @@
-import { cn } from '@/shared/lib/cn'
-import { formatDateTime } from '@/shared/lib/date'
+import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
+import { formatDateTime } from '@/71-pipeline-seleccion-fechas/05-date'
 import { Badge, Button, Card, IconButton } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { ReviewModerationApi } from '../hooks/useReviewModeration'

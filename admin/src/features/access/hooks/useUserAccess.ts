@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { toast } from '@/shared/store/toast.store'
+import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
 import { VIEW_CATALOG } from '../config/views.config'
 import { effectiveAccess, isSuperadmin, normalizeAccess, templateAccess, validateAccess } from '../lib/access'
 import { ensurePermission } from '../lib/permissions'

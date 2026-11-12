@@ -1,4 +1,4 @@
-import { STORE_CONFIG } from '@/shared/config/store.config'
+import { STORE_CONFIG } from '@/85-pipeline-identificadores-texto/03-store.config'
 import type { Invoice, InvoiceIssuer } from '../features/billing/types'
 
 /** Emisor de las facturas de prueba (datos fiscales de fábrica). */

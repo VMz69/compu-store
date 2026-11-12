@@ -1,4 +1,4 @@
-import { foldText } from '@/shared/lib/text'
+import { foldText } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
 import type { BadgeTone } from '@/00-director-interfaz'
 import type { ProductReview, ReviewStatus } from '../types'
 

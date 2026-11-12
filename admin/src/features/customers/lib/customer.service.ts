@@ -1,4 +1,4 @@
-import { foldText, matchesQuery } from '@/shared/lib/text'
+import { foldText, matchesQuery } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
 import type { Customer, CustomerStatusFilter, CustomerType } from '../types'
 
 /**

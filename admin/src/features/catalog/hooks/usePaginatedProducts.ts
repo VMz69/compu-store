@@ -1,4 +1,4 @@
-import { usePagination } from '@/shared/hooks/usePagination'
+import { usePagination } from '@/70-pipeline-orden-paginacion/04-usePagination'
 import { useProductFiltersStore } from '../filters.store'
 import { useFilteredProducts } from './useFilteredProducts'
 

@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router-dom'
 import { useInventoryMetrics, useProductActions } from '@/00-director-catalogo'
 import { useOrderActions, useOrderMetrics, useRecentOrders } from '@/00-director-ventas'
 import { useStoreSettings } from '@/00-director-ajustes'
-import { formatCurrency } from '@/shared/lib/currency'
-import { percent } from '@/shared/lib/text'
+import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
+import { percent } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
 import type { KpiData, ProgressTone } from '@/00-director-interfaz'
 
 type KpiItem = KpiData & { id: string }

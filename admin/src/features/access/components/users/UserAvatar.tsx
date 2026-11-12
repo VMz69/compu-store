@@ -1,5 +1,5 @@
-import { cn } from '@/shared/lib/cn'
-import { initialsAvatarUrl } from '@/shared/lib/initialsAvatar'
+import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
+import { initialsAvatarUrl } from '@/81-pipeline-visualizacion-imagenes/05-initialsAvatar'
 
 interface UserAvatarProps {
   name: string

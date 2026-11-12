@@ -1,4 +1,4 @@
-import type { SortState } from '@/shared/lib/sort'
+import type { SortState } from '@/82-pipeline-calculo-importes/03-sort'
 import { DataTable, type TableHeader } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { OrderActions } from '../../hooks/useOrderActions'

@@ -1,5 +1,5 @@
-import { formatCurrency } from '@/shared/lib/currency'
-import { formatDate } from '@/shared/lib/date'
+import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
+import { formatDate } from '@/71-pipeline-seleccion-fechas/05-date'
 import {
   createPdf,
   drawFooter,
@@ -9,7 +9,7 @@ import {
   drawNotes,
   drawTotals,
   pdfFilename,
-} from '@/shared/lib/pdf'
+} from '@/79-pipeline-consulta-documentos/03-pdf'
 import type { Quote } from '../types'
 import { calcTotals, lineTotal, validUntil } from './quote.service'
 

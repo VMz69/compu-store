@@ -10,7 +10,7 @@ import {
   SALES_MODALS,
   StatusLabelModal,
 } from '@/00-director-ventas'
-import { useModalStore } from '@/shared/store/modal.store'
+import { useModalStore } from '@/73-pipeline-modales-globales/03-modal.store'
 
 /** Resuelve el modal activo del store global (14 modales del sistema). */
 export function ModalHost() {

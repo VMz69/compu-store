@@ -46,4 +46,4 @@ export function roleChangeBlockReason(target: User, nextRole: RoleId, nextActive
 }
 
 /** Iniciales del nombre (implementación compartida con los avatares generados). */
-export { initialsOf } from '@/shared/lib/initialsAvatar'
+export { initialsOf } from '@/81-pipeline-visualizacion-imagenes/05-initialsAvatar'

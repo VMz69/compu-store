@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useImageViewer } from '@/shared/hooks/useImageViewer'
-import { closeModal, useModalPayload } from '@/shared/store/modal.store'
+import { useImageViewer } from '@/81-pipeline-visualizacion-imagenes/02-useImageViewer'
+import { closeModal, useModalPayload } from '@/73-pipeline-modales-globales/03-modal.store'
 import { getPricing, getStockSeverity } from '../lib/catalog.service'
 import { displayImages } from '../lib/productImages'
 import { useCatalogStore } from '../store'

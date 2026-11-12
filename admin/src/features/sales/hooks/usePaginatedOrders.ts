@@ -1,6 +1,6 @@
 import { useDeferredValue, useMemo, type ChangeEvent } from 'react'
-import { matchesQuery } from '@/shared/lib/text'
-import { usePagination } from '@/shared/hooks/usePagination'
+import { matchesQuery } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
+import { usePagination } from '@/70-pipeline-orden-paginacion/04-usePagination'
 import { useOrderFiltersStore } from '../filters.store'
 import { orderSearchFields } from '../lib/order.service'
 import { statusOf } from '../lib/orderFlow'

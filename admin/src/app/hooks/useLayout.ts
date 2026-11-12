@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useAccessActions, useSession } from '@/00-director-acceso'
-import { LOGOS, STORE_FRONT_URL } from '@/shared/config/store.config'
+import { LOGOS, STORE_FRONT_URL } from '@/85-pipeline-identificadores-texto/03-store.config'
 import { NAV_ITEMS } from '../nav.config'
-import { askConfirm } from '@/shared/store/confirm.store'
-import { useLayoutStore } from '@/shared/store/layout.store'
-import { usePageMetaStore } from '@/shared/store/pageMeta.store'
+import { askConfirm } from '@/72-pipeline-confirmaciones-globales/03-confirm.store'
+import { useLayoutStore } from '@/75-pipeline-estado-navegacion/03-layout.store'
+import { usePageMetaStore } from '@/75-pipeline-estado-navegacion/02-pageMeta.store'
 
 /** Estado del sidebar colapsable + perfil de sesión. */
 export function useSidebar() {

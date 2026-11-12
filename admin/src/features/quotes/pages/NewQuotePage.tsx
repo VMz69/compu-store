@@ -1,5 +1,5 @@
 import { ProductPicker, useProductPicker } from '@/00-director-catalogo'
-import { usePageMeta } from '@/shared/hooks/usePageMeta'
+import { usePageMeta } from '@/75-pipeline-estado-navegacion/00-director-estado-navegacion'
 import { tracer } from '@/00-trazabilidad'
 import { QuoteSummaryPanel } from '../components/builder/QuoteSummaryPanel'
 import { useQuoteBuilder } from '../hooks/useQuoteBuilder'

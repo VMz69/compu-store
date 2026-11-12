@@ -1,4 +1,4 @@
-import { formatCurrency } from '@/shared/lib/currency'
+import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import { PdfPreviewModal } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import { useQuotePreview } from '../../hooks/useQuotePreview'

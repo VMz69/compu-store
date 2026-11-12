@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { delay } from '@/shared/lib/delay'
-import { STORAGE_KEYS } from '@/shared/lib/storage'
-import { nextSequentialId } from '@/shared/lib/text'
+import { delay } from '@/84-pipeline-persistencia-demo/04-delay'
+import { STORAGE_KEYS } from '@/84-pipeline-persistencia-demo/02-storage'
+import { nextSequentialId } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
 import { CUSTOMERS_MOCK } from '../../86-pipeline-datos-demo-personas/03-customers.mock'
 import type { Customer, CustomerDraft } from './types'
 

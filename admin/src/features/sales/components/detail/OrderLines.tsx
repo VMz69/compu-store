@@ -1,4 +1,4 @@
-import { formatCurrency } from '@/shared/lib/currency'
+import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import type { OrderDetailApi } from '../../hooks/useOrderDetail'
 
 type OrderLinesProps = Pick<OrderDetailApi, 'lines' | 'charges' | 'totals'>

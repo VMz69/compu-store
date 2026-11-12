@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib/cn'
+import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 
 /** Estrellas de solo lectura (1–5), con texto accesible. */
 export function Stars({ rating, className }: { rating: number; className?: string }) {

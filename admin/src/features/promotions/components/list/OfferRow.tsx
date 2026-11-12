@@ -1,5 +1,5 @@
-import { formatCurrency } from '@/shared/lib/currency'
-import { formatDate } from '@/shared/lib/date'
+import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
+import { formatDate } from '@/71-pipeline-seleccion-fechas/05-date'
 import { Badge, IconButton } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { OffersApi } from '../../hooks/useOffers'

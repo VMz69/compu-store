@@ -1,5 +1,5 @@
-import { formatCurrency } from '@/shared/lib/currency'
-import { formatDateTime } from '@/shared/lib/date'
+import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
+import { formatDateTime } from '@/71-pipeline-seleccion-fechas/05-date'
 import { DataTable, IconButton, type TableHeader } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { BillingApi } from '../../hooks/useBilling'

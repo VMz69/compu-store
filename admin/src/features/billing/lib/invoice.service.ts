@@ -1,4 +1,4 @@
-import { matchesQuery } from '@/shared/lib/text'
+import { matchesQuery } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
 import type { BadgeTone } from '@/00-director-interfaz'
 import type { Invoice, InvoiceItem, InvoiceStatus, InvoiceTotals, PaymentCondition } from '../types'
 

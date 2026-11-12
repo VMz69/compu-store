@@ -1,5 +1,5 @@
-import { sumCharges } from '@/shared/lib/charges'
-import { money, summarizeLines, type LinesSummary, type PricedLine } from '@/shared/lib/pricing'
+import { sumCharges } from '@/78-pipeline-cargos-documentos/03-charges'
+import { money, summarizeLines, type LinesSummary, type PricedLine } from '@/82-pipeline-calculo-importes/00-director-calculo-importes'
 import type { OrderCharge } from '../types'
 
 /** Totales del pedido. La lógica genérica de cargos vive en `shared/lib/charges`. */

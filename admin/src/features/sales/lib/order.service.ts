@@ -1,4 +1,4 @@
-import { nextSequentialId } from '@/shared/lib/text'
+import { nextSequentialId } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
 import type { Channel, Order, OrderMetrics, OrderStatusId } from '../types'
 import { ACTIVE_STATUSES, SOLD_STATUSES } from './orderFlow'
 

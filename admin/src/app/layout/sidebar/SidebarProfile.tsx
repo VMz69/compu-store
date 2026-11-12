@@ -1,5 +1,5 @@
 import { UserAvatar, type Role, type User } from '@/00-director-acceso'
-import { cn } from '@/shared/lib/cn'
+import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { tracer } from '@/00-trazabilidad'
 
 const t = tracer('SidebarProfile', 'src/app/layout/sidebar/SidebarProfile.tsx')

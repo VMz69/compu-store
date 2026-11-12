@@ -1,4 +1,4 @@
-import { isolate } from '@/shared/lib/events'
+import { isolate } from '@/83-pipeline-recursos-publicos/03-events'
 import { Button, IconButton } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { ProductActions } from '../../hooks/useProductActions'

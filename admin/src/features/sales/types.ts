@@ -1,4 +1,4 @@
-import type { ExtraCharge } from '@/shared/lib/charges'
+import type { ExtraCharge } from '@/78-pipeline-cargos-documentos/03-charges'
 
 /**
  * Estados del flujo de pedidos (ver `lib/orderFlow.ts`):

@@ -1,4 +1,4 @@
-import { uid } from '@/shared/lib/uid'
+import { uid } from '@/85-pipeline-identificadores-texto/02-uid'
 import type { Category, Product, ProductCondition, ProductDraft } from '../types'
 import { PLACEHOLDER_IMAGE, resolveGallery, toImageRows, type ImageRow } from './productImages'
 import { DEFAULT_REORDER_POINT, DEFAULT_TAX_RATE } from './normalize'

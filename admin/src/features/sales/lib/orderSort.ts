@@ -1,5 +1,5 @@
-import type { SortDir, SortState } from '@/shared/lib/sort'
-import { sortWith } from '@/shared/lib/sort'
+import type { SortDir, SortState } from '@/82-pipeline-calculo-importes/03-sort'
+import { sortWith } from '@/82-pipeline-calculo-importes/03-sort'
 import type { Order } from '../types'
 import { statusOf } from './orderFlow'
 

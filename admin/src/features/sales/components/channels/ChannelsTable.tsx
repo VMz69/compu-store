@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib/cn'
+import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { DataTable, IconButton, Switch, type TableHeader } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { ChannelsApi } from '../../hooks/useChannels'

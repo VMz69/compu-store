@@ -1,5 +1,5 @@
-import { formatCurrency } from '@/shared/lib/currency'
-import { isolate } from '@/shared/lib/events'
+import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
+import { isolate } from '@/83-pipeline-recursos-publicos/03-events'
 import { Switch } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 import type { ProductActions } from '../../hooks/useProductActions'

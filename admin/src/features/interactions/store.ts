@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { registerDemoData } from '@/shared/lib/demoData'
-import { STORAGE_KEYS } from '@/shared/lib/storage'
+import { registerDemoData } from '@/84-pipeline-persistencia-demo/00-director-persistencia-demo'
+import { STORAGE_KEYS } from '@/84-pipeline-persistencia-demo/02-storage'
 import { REVIEWS_MOCK } from '../../86-pipeline-datos-demo-personas/04-reviews.mock'
 import type { ProductReview } from './types'
 

@@ -1,7 +1,7 @@
 import type { BadgeTone } from '@/00-director-interfaz'
-import { sumCharges, type ExtraCharge } from '@/shared/lib/charges'
-import { lineTotal as pricedLineTotal, money, summarizeLines } from '@/shared/lib/pricing'
-import { matchesQuery, nextSequentialId } from '@/shared/lib/text'
+import { sumCharges, type ExtraCharge } from '@/78-pipeline-cargos-documentos/03-charges'
+import { lineTotal as pricedLineTotal, money, summarizeLines } from '@/82-pipeline-calculo-importes/00-director-calculo-importes'
+import { matchesQuery, nextSequentialId } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
 import type { Quote, QuoteItem, QuoteStatus, QuoteTotals } from '../types'
 
 /**

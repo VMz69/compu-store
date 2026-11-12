@@ -1,5 +1,5 @@
-import { useTheme } from '@/shared/hooks/useTheme'
-import { cn } from '@/shared/lib/cn'
+import { useTheme } from '@/74-pipeline-tema-administrativo/00-director-tema-administrativo'
+import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { tracer } from '@/00-trazabilidad'
 
 const t = tracer('ThemeToggle', 'src/app/layout/topbar/ThemeToggle.tsx')

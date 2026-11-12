@@ -1,4 +1,4 @@
-import { toast } from '@/shared/store/toast.store'
+import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
 import { useAccessStore } from '../store'
 import type { Permission, Role } from '../types'
 import { effectiveRole } from './access'

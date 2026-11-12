@@ -1,4 +1,4 @@
-import { uid } from '@/shared/lib/uid'
+import { uid } from '@/85-pipeline-identificadores-texto/02-uid'
 
 /**
  * Reglas de negocio de la galería de imágenes del producto.

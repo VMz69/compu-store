@@ -1,4 +1,4 @@
-import type { StoreSettings } from '@/shared/config/store.config'
+import type { StoreSettings } from '@/85-pipeline-identificadores-texto/03-store.config'
 import { Card, CardTitle } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
 

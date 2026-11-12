@@ -1,4 +1,4 @@
-import type { ExtraCharge } from '@/shared/lib/charges'
+import type { ExtraCharge } from '@/78-pipeline-cargos-documentos/03-charges'
 
 /** Estado guardado. "vencida" no se guarda: se deriva de la fecha de validez. */
 export type QuoteStoredStatus = 'emitida' | 'aceptada' | 'rechazada'

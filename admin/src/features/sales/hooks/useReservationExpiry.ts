@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { toast } from '@/shared/store/toast.store'
+import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
 import { useSalesStore } from '../store'
 
 /** Cada cuánto se revisan las reservas vencidas mientras el panel está abierto. */

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
-import { useImageViewer } from '@/shared/hooks/useImageViewer'
-import { toast } from '@/shared/store/toast.store'
+import { useImageViewer } from '@/81-pipeline-visualizacion-imagenes/02-useImageViewer'
+import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
 import {
   appendImages,
   formatMegabytes,

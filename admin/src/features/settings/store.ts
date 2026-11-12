@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { STORE_CONFIG, type StoreSettings } from '@/shared/config/store.config'
-import { delay } from '@/shared/lib/delay'
-import { STORAGE_KEYS } from '@/shared/lib/storage'
+import { STORE_CONFIG, type StoreSettings } from '@/85-pipeline-identificadores-texto/03-store.config'
+import { delay } from '@/84-pipeline-persistencia-demo/04-delay'
+import { STORAGE_KEYS } from '@/84-pipeline-persistencia-demo/02-storage'
 
 interface SettingsState {
   settings: StoreSettings

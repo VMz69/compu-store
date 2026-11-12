@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib/cn'
+import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import type { PasswordCheck } from '../../lib/password'
 
 /** Color de la barra según cuántas reglas se cumplen (0–5). Clases completas. */

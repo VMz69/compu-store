@@ -1,4 +1,4 @@
-import { addDaysISO, daysBetweenISO, todayISO } from '@/shared/lib/date'
+import { addDaysISO, daysBetweenISO, todayISO } from '@/71-pipeline-seleccion-fechas/05-date'
 import type { Order } from '../types'
 
 /**

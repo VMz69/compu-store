@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib/cn'
+import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { useStatusMeta } from '../hooks/useOrders'
 import type { OrderStatusId } from '../types'
 
