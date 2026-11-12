@@ -5,9 +5,9 @@ import { useCatalogStore, type Product } from '@/00-director-catalogo'
 import { useFormState } from '@/77-pipeline-edicion-formularios/03-useFormState'
 import { addDaysISO } from '@/71-pipeline-seleccion-fechas/05-date'
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
-import { analyzeProduct, offerStatus, today, validateOffer } from '../lib/offerPricing'
-import { usePromotionsStore } from '../store'
-import type { DiscountType } from '../types'
+import { analyzeProduct, offerStatus, today, validateOffer } from '../54-pipeline-precio-ofertas/02-offerPricing'
+import { usePromotionsStore } from '../54-pipeline-precio-ofertas/03-store'
+import type { DiscountType } from '../54-pipeline-precio-ofertas/04-types'
 
 /**
  * Constructor de ofertas (/ofertas/nueva y /ofertas/:offerId/editar).

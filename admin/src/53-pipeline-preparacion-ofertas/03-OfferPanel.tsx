@@ -1,8 +1,8 @@
 import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { AffixInput, Button, DatePicker, Field, Input, Textarea } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import type { OfferBuilderApi } from '../../hooks/useOfferBuilder'
-import { OfferProductList } from './OfferProductList'
+import type { OfferBuilderApi } from './02-useOfferBuilder'
+import { OfferProductList } from './04-OfferProductList'
 
 const t = tracer('OfferPanel', 'src/features/promotions/components/builder/OfferPanel.tsx')
 

@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import type { EffectivePriceResolver, Product } from '@/00-director-catalogo'
-import { effectivePrice } from '../lib/offerPricing'
-import { usePromotionsStore } from '../store'
+import { effectivePrice } from './02-offerPricing'
+import { usePromotionsStore } from './03-store'
 
 /** Implementación del puerto de Catálogo: precio vigente según las ofertas vigentes hoy. */
 export function useOfferPriceResolver(): EffectivePriceResolver {

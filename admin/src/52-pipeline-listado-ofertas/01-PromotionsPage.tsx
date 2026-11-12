@@ -1,8 +1,8 @@
 import { Button, DataTable, EmptyState, PageContainer, type TableHeader } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import { OfferRow } from '../components/list/OfferRow'
-import { OffersToolbar } from '../components/list/OffersToolbar'
-import { useOffers } from '../hooks/useOffers'
+import { OfferRow } from './03-OfferRow'
+import { OffersToolbar } from './04-OffersToolbar'
+import { useOffers } from './02-useOffers'
 
 const t = tracer('PromotionsPage', 'src/features/promotions/pages/PromotionsPage.tsx')
 

@@ -1,7 +1,7 @@
 import { toLocalISO } from '@/71-pipeline-seleccion-fechas/05-date'
 import { money } from '@/82-pipeline-calculo-importes/00-director-calculo-importes'
 import type { Product } from '@/00-director-catalogo'
-import type { DiscountType, Offer, OfferStatus } from '../types'
+import type { DiscountType, Offer, OfferStatus } from './04-types'
 
 /**
  * Lógica pura de ofertas (sin React ni store).

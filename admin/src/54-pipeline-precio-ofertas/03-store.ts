@@ -4,9 +4,9 @@ import { getCatalogSnapshot } from '@/00-director-catalogo'
 import { delay } from '@/84-pipeline-persistencia-demo/04-delay'
 import { STORAGE_KEYS } from '@/84-pipeline-persistencia-demo/02-storage'
 import { nextSequentialId } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
-import { offerStatus, today } from './lib/offerPricing'
-import { OFFERS_MOCK } from '../../87-pipeline-datos-demo-productos/04-promotions.mock'
-import type { Offer, OfferDraft } from './types'
+import { offerStatus, today } from './02-offerPricing'
+import { OFFERS_MOCK } from '../87-pipeline-datos-demo-productos/04-promotions.mock'
+import type { Offer, OfferDraft } from './04-types'
 
 interface OffersState {
   offers: Offer[]

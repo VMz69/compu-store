@@ -5,9 +5,9 @@ import { useCatalogStore } from '@/00-director-catalogo'
 import { askConfirm } from '@/72-pipeline-confirmaciones-globales/03-confirm.store'
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
 import { matchesQuery } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
-import { analyzeProduct, discountText, OFFER_STATUS_META, offerStatus } from '../lib/offerPricing'
-import { usePromotionsStore } from '../store'
-import type { Offer, OfferStatus } from '../types'
+import { analyzeProduct, discountText, OFFER_STATUS_META, offerStatus } from '../54-pipeline-precio-ofertas/02-offerPricing'
+import { usePromotionsStore } from '../54-pipeline-precio-ofertas/03-store'
+import type { Offer, OfferStatus } from '../54-pipeline-precio-ofertas/04-types'
 
 export type OfferFilter = 'all' | OfferStatus
 

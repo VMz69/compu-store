@@ -1,4 +1,4 @@
-import type { Offer } from '../features/promotions/types'
+import type { Offer } from '../54-pipeline-precio-ofertas/04-types'
 
 const at = '2026-10-01T09:00:00.000Z'
 

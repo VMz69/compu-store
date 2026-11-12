@@ -2,8 +2,8 @@ import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import { IconButton } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import type { OfferBuilderApi } from '../../hooks/useOfferBuilder'
-import { MIN_MARGIN_PERCENT, type MarginLevel } from '../../lib/offerPricing'
+import type { OfferBuilderApi } from './02-useOfferBuilder'
+import { MIN_MARGIN_PERCENT, type MarginLevel } from '../54-pipeline-precio-ofertas/02-offerPricing'
 
 const t = tracer('OfferProductList', 'src/features/promotions/components/builder/OfferProductList.tsx')
 

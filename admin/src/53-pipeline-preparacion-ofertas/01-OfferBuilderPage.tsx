@@ -2,8 +2,8 @@ import { ProductPicker, useProductPicker } from '@/00-director-catalogo'
 import { Button, EmptyState } from '@/00-director-interfaz'
 import { usePageMeta } from '@/75-pipeline-estado-navegacion/00-director-estado-navegacion'
 import { tracer } from '@/00-trazabilidad'
-import { OfferPanel } from '../components/builder/OfferPanel'
-import { useOfferBuilder } from '../hooks/useOfferBuilder'
+import { OfferPanel } from './03-OfferPanel'
+import { useOfferBuilder } from './02-useOfferBuilder'
 
 const t = tracer('OfferBuilderPage', 'src/features/promotions/pages/OfferBuilderPage.tsx')
 
