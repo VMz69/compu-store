@@ -1,4 +1,4 @@
-import { useReviewForm } from '../../hooks/useReviewForm'
+import { useReviewForm } from '@/20-pipeline-estado-resenas/00-director-estado-resenas'
 import { ReviewPendingNotice } from './ReviewPendingNotice'
 import { uiMeta } from '@/04-trazabilidad-ui'
 

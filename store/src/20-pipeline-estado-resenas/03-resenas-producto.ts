@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { isPublished } from '../lib/reviews.api'
+import { isPublished } from './01-contrato-resenas'
 import { DEFAULT_REVIEWS } from '@/06-pipeline-datos-mock/00-director-datos-mock'
-import { useReviewStore } from '../reviews.store'
+import { useReviewStore } from './02-resenas.store'
 
 /**
  * Reseñas PUBLICADAS del producto y distribución de estrellas memoizada.

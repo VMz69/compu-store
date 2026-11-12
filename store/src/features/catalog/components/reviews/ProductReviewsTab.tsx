@@ -1,7 +1,7 @@
 import { RatingSummary } from '@/19-pipeline-calificaciones/00-director-calificaciones'
 import { ReviewCard } from '@/19-pipeline-calificaciones/00-director-calificaciones'
 import { ReviewForm } from './ReviewForm'
-import { useProductReviews } from '../../hooks/useProductReviews'
+import { useProductReviews } from '@/20-pipeline-estado-resenas/00-director-estado-resenas'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
 
