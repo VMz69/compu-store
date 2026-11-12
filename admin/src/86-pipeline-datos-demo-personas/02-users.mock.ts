@@ -1,5 +1,5 @@
-import { templateAccess } from '../features/access/lib/access'
-import type { User } from '../features/access/types'
+import { templateAccess } from '../06-pipeline-sesion-permisos/03-access'
+import type { User } from '../06-pipeline-sesion-permisos/05-types'
 
 /**
  * Contraseña inicial de todos los usuarios de prueba.

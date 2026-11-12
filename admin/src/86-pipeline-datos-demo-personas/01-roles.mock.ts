@@ -1,4 +1,4 @@
-import type { Role, RoleId } from '../features/access/types'
+import type { Role, RoleId } from '../06-pipeline-sesion-permisos/05-types'
 
 /**
  * PLANTILLAS de acceso por rol. Al crear un usuario (o cambiarle el rol) sus accesos
