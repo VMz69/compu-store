@@ -1,4 +1,4 @@
-import type { Channel } from '../features/sales/types'
+import type { Channel } from '../42-pipeline-persistencia-pedidos/05-types'
 
 /** Canales omnicanal de venta. */
 export const CHANNELS_MOCK: Channel[] = [

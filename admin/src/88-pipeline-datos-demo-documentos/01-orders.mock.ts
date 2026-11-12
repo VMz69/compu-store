@@ -1,5 +1,5 @@
-import { orderTotals } from '../features/sales/lib/charges'
-import type { Order, OrderEvent, OrderItem, OrderStatusId } from '../features/sales/types'
+import { orderTotals } from '../43-pipeline-reglas-pedidos/04-charges'
+import type { Order, OrderEvent, OrderItem, OrderStatusId } from '../42-pipeline-persistencia-pedidos/05-types'
 
 const line = (productId: string, sku: string, name: string, unitPrice: number, quantity = 1, discountPercent = 0): OrderItem => ({
   productId, sku, name, unitPrice, quantity, discountPercent,
