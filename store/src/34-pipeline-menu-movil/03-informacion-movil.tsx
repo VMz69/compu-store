@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { MOBILE_SECTION_TITLE } from './navbar.styles'
+import { MOBILE_SECTION_TITLE } from './01-navegacion.styles'
 import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 

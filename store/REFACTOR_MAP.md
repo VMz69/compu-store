@@ -613,3 +613,4 @@ Se reanuda por lotes más cortos, con los mismos movimientos y validaciones.
 | `31-pipeline-captura-busqueda` | 5 | OK (0) | OK (0) | OK (0) |
 | `32-pipeline-resultados-busqueda` | 3 | OK (0) | OK (0) | OK (0) |
 | `33-pipeline-cabecera-tienda` | 5 | OK (0) | OK (0) | OK (0) |
+| `34-pipeline-menu-movil` | 4 | OK (0) | OK (0) | OK (0) |

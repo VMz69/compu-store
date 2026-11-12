@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { MobileMenuCatalog } from './MobileMenuCatalog'
-import { MobileMenuInfo } from './MobileMenuInfo'
+import { MobileMenuCatalog } from './02-catalogo-movil'
+import { MobileMenuInfo } from './03-informacion-movil'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { BrandWithCount, CategoryWithCount } from '@/00-director-modelos'
 

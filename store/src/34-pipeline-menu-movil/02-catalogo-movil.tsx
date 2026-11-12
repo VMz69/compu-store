@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { MOBILE_SECTION_TITLE } from './navbar.styles'
+import { MOBILE_SECTION_TITLE } from './01-navegacion.styles'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { BrandWithCount, CategoryWithCount } from '@/00-director-modelos'
 
