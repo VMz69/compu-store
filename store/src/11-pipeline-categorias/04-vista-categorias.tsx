@@ -1,7 +1,7 @@
-import { CategoryCard } from '../components/browse/CategoryCard'
+import { CategoryCard } from './03-tarjeta-categoria'
 import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { PageBanner } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
-import { useCatalogHub } from '../hooks/useCatalogHub'
+import { useCatalogHub } from './02-estado-categorias'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/pages/CatalogHub.tsx'

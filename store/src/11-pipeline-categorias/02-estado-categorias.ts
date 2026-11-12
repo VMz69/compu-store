@@ -1,4 +1,4 @@
-import { useCatalogStats } from './useCatalogStats'
+import { useCatalogStats } from './01-estadisticas-catalogo'
 
 /**
  * Datos del hub de categorías.

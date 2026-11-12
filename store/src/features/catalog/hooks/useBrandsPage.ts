@@ -1,4 +1,4 @@
-import { useCatalogStats } from './useCatalogStats'
+import { useCatalogStats } from '@/11-pipeline-categorias/00-director-categorias'
 
 /**
  * Marcas con conteo de productos para la página de marcas.
