@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { FilterBar, ProductGrid } from '@/00-director-catalogo'
 import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
-import { useSearchView } from '../hooks/useSearchView'
+import { useSearchView } from './02-estado-resultados'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/search/pages/SearchView.tsx'
