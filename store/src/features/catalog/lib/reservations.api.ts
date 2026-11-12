@@ -1,4 +1,4 @@
-import type { Product } from '@/shared/types'
+import type { Product } from '@/00-director-modelos'
 
 /**
  * Regla de negocio: productos RESERVADOS por pedidos del back office.

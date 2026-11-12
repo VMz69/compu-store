@@ -1,4 +1,4 @@
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 import type { ToastMessage } from '@/shared/store/toast.store'
 

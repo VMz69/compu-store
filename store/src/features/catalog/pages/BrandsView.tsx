@@ -2,7 +2,7 @@ import { BrandCard } from '../components/browse/BrandCard'
 import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
 import { PageBanner } from '@/shared/ui/PageBanner'
 import { useBrandsPage } from '../hooks/useBrandsPage'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/pages/BrandsView.tsx'
 

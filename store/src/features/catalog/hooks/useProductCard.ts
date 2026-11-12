@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom'
-import { getAvailableStock, useCart, useCartStore } from '@/features/cart'
+import { getAvailableStock, useCart, useCartStore } from '@/00-director-carrito'
 import { useFavorites } from './useFavorites'
 import { calculateDiscountPercentage } from '@/shared/lib/formatters'
-import type { Product } from '@/shared/types'
+import type { Product } from '@/00-director-modelos'
 
 /**
  * Estado y acciones de una tarjeta de producto (stock, descuento, carrito y favoritos).

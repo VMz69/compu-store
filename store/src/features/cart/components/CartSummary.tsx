@@ -1,6 +1,6 @@
 import { CheckoutForm } from './CheckoutForm'
 import { formatCurrency } from '@/shared/lib/formatters'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 import type { DeliveryMethod } from '../types'
 
 const SOURCE = 'src/features/cart/components/CartSummary.tsx'

@@ -1,8 +1,8 @@
 import { ProductInfoActions } from './ProductInfoActions'
 import { RatingStars } from '@/shared/ui/RatingStars'
 import { formatCurrency, formatSku } from '@/shared/lib/formatters'
-import { uiMeta } from '@/ui-traceability'
-import type { Product } from '@/shared/types'
+import { uiMeta } from '@/04-trazabilidad-ui'
+import type { Product } from '@/00-director-modelos'
 
 const SOURCE = 'src/features/catalog/components/detail/ProductInfo.tsx'
 

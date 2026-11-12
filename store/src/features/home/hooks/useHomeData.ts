@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { getDeals, products, useCatalogStats } from '@/features/catalog'
+import { getDeals, products, useCatalogStats } from '@/00-director-catalogo'
 
 export const useHomeData = () => {
   const stats = useCatalogStats()

@@ -4,7 +4,7 @@ import { ContactInfoCards } from '../components/ContactInfoCards'
 import { ContactMap } from '../components/ContactMap'
 import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
 import { STORE_CONFIG } from '@/shared/config/store.config'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/info/pages/ContactView.tsx'
 

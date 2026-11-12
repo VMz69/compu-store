@@ -1,4 +1,4 @@
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/components/detail/ProductGalleryThumbs.tsx'
 

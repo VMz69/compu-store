@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/shared/ui/Breadcrumbs.tsx'
 

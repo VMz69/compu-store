@@ -1,9 +1,9 @@
 import { ProductOverviewTab } from './ProductOverviewTab'
 import { ProductReviewsTab } from '../reviews/ProductReviewsTab'
 import { ProductSpecsTab } from './ProductSpecsTab'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 import type { ProductDetailTab } from '@/shared/store/ui.store'
-import type { Product } from '@/shared/types'
+import type { Product } from '@/00-director-modelos'
 
 const SOURCE = 'src/features/catalog/components/detail/ProductTabs.tsx'
 

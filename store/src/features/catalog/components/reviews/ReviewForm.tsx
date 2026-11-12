@@ -1,6 +1,6 @@
 import { useReviewForm } from '../../hooks/useReviewForm'
 import { ReviewPendingNotice } from './ReviewPendingNotice'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/components/reviews/ReviewForm.tsx'
 

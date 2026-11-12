@@ -2,8 +2,8 @@ import { ProductTrustChips } from './ProductTrustChips'
 import { QuantitySelector } from '@/shared/ui/QuantitySelector'
 import { formatCurrency } from '@/shared/lib/formatters'
 import { STORE_CONFIG } from '@/shared/config/store.config'
-import { uiMeta } from '@/ui-traceability'
-import type { Product } from '@/shared/types'
+import { uiMeta } from '@/04-trazabilidad-ui'
+import type { Product } from '@/00-director-modelos'
 
 const SOURCE = 'src/features/catalog/components/detail/ProductBuyBox.tsx'
 

@@ -3,7 +3,7 @@ import { FooterLinks } from './FooterLinks'
 import { FooterSocial } from './FooterSocial'
 import { FooterStoreInfo } from './FooterStoreInfo'
 import { STORE_CONFIG } from '@/shared/config/store.config'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/app/layout/footer/Footer.tsx'
 

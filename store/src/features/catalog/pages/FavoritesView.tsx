@@ -3,7 +3,7 @@ import { ProductGrid } from '../components/grid/ProductGrid'
 import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
 import { ConfirmDialog } from '@/shared/ui/ConfirmDialog'
 import { useFavoritesView } from '../hooks/useFavoritesView'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/pages/FavoritesView.tsx'
 

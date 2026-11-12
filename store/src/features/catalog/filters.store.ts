@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { SortBy } from '@/shared/types'
+import type { SortBy } from '@/00-director-modelos'
 
 /**
  * Filtros de búsqueda y ordenamiento compartidos entre header, catálogo y

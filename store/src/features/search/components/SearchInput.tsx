@@ -1,4 +1,4 @@
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 import { SearchDropdown } from './SearchDropdown'
 import { useSearchDropdown } from '../hooks/useSearchDropdown'
 import {
@@ -9,7 +9,7 @@ import {
   placeholderText,
   submitClass,
 } from './searchInput.styles'
-import type { Product } from '@/shared/types'
+import type { Product } from '@/00-director-modelos'
 
 const SOURCE = 'src/features/search/components/SearchInput.tsx'
 

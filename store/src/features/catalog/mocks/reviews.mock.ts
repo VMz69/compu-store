@@ -1,4 +1,4 @@
-import type { Review } from '@/shared/types'
+import type { Review } from '@/00-director-modelos'
 
 export const DEFAULT_REVIEWS: Review[] = [
   {

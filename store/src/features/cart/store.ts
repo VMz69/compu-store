@@ -5,7 +5,7 @@ import {
   removeItem as removeCartItem,
   updateQuantity as updateCartQuantity,
 } from './lib/cart.service'
-import type { Product } from '@/shared/types'
+import type { Product } from '@/00-director-modelos'
 import type { CartItem, DeliveryMethod } from './types'
 
 /**

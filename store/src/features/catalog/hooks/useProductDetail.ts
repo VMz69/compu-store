@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { categories } from '../mocks/categories.mock'
 import { products } from '../mocks/products.mock'
-import { getAvailableStock, useCart, useCartStore } from '@/features/cart'
+import { getAvailableStock, useCart, useCartStore } from '@/00-director-carrito'
 import { useFavorites } from './useFavorites'
 import { useProductReviews } from './useProductReviews'
 import { calculateDiscountPercentage } from '@/shared/lib/formatters'

@@ -2,8 +2,8 @@ import { RatingSummary } from './RatingSummary'
 import { ReviewCard } from './ReviewCard'
 import { ReviewForm } from './ReviewForm'
 import { useProductReviews } from '../../hooks/useProductReviews'
-import { uiMeta } from '@/ui-traceability'
-import type { Product } from '@/shared/types'
+import { uiMeta } from '@/04-trazabilidad-ui'
+import type { Product } from '@/00-director-modelos'
 
 const SOURCE = 'src/features/catalog/components/reviews/ProductReviewsTab.tsx'
 

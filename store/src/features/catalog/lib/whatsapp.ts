@@ -1,7 +1,7 @@
 import { STORE_CONFIG } from '@/shared/config/store.config'
 import { formatCurrency } from '@/shared/lib/formatters'
 import { buildWhatsAppUrl } from '@/shared/lib/whatsapp'
-import type { Product } from '@/shared/types'
+import type { Product } from '@/00-director-modelos'
 
 /** Mensaje y enlace de WhatsApp para la compra directa de un producto. */
 

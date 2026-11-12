@@ -1,5 +1,5 @@
 import { useContactForm } from '../hooks/useContactForm'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/info/components/ContactForm.tsx'
 

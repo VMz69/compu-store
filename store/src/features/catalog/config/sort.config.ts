@@ -1,4 +1,4 @@
-import type { SortBy } from '@/shared/types'
+import type { SortBy } from '@/00-director-modelos'
 
 export const SORT_OPTIONS: { value: SortBy; label: string }[] = [
   { value: 'featured', label: 'Destacados' },

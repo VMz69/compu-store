@@ -5,7 +5,7 @@ import { ConfirmDialog } from '@/shared/ui/ConfirmDialog'
 import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { useCartView } from '../hooks/useCartView'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/cart/pages/CartView.tsx'
 

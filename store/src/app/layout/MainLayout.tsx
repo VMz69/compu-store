@@ -9,7 +9,7 @@ import { TopBar } from './header/TopBar'
 import { useLayoutInsets } from '../hooks/useLayoutInsets'
 import { useScrollToTop } from '../hooks/useScrollToTop'
 import { useTheme } from '@/shared/hooks/useTheme'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/app/layout/MainLayout.tsx'
 

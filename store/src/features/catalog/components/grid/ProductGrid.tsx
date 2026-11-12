@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 import { ProductCard } from './ProductCard'
 import { EmptyState } from '@/shared/ui/EmptyState'
-import { uiMeta } from '@/ui-traceability'
-import type { Product } from '@/shared/types'
+import { uiMeta } from '@/04-trazabilidad-ui'
+import type { Product } from '@/00-director-modelos'
 
 const SOURCE = 'src/features/catalog/components/grid/ProductGrid.tsx'
 

@@ -1,8 +1,8 @@
 import { useHelpfulReview } from '../../hooks/useHelpfulReview'
 import { RatingStars } from '@/shared/ui/RatingStars'
 import { getInitials } from '@/shared/lib/formatters'
-import { uiMeta } from '@/ui-traceability'
-import type { Review } from '@/shared/types'
+import { uiMeta } from '@/04-trazabilidad-ui'
+import type { Review } from '@/00-director-modelos'
 
 const SOURCE = 'src/features/catalog/components/reviews/ReviewCard.tsx'
 

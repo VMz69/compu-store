@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { buildPendingReview, type ReviewSubmission } from './lib/reviews.api'
 import { INITIAL_REVIEWS } from './mocks/reviews.mock'
-import type { Review } from '@/shared/types'
+import type { Review } from '@/00-director-modelos'
 
 /**
  * Reseñas por producto. En esta fase viven en memoria (se pierden al recargar).

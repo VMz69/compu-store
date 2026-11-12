@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import { FilterBar, ProductGrid } from '@/features/catalog'
+import { FilterBar, ProductGrid } from '@/00-director-catalogo'
 import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
 import { useSearchView } from '../hooks/useSearchView'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/search/pages/SearchView.tsx'
 

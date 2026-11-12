@@ -1,4 +1,4 @@
-import type { Brand } from '@/shared/types'
+import type { Brand } from '@/00-director-modelos'
 
 export const brands: Brand[] = [
   {

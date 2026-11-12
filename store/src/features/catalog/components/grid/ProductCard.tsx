@@ -2,8 +2,8 @@ import { ProductCardActions } from './ProductCardActions'
 import { ProductCardInfo } from './ProductCardInfo'
 import { ProductCardMedia } from './ProductCardMedia'
 import { useProductCard } from '../../hooks/useProductCard'
-import { uiMeta } from '@/ui-traceability'
-import type { Product } from '@/shared/types'
+import { uiMeta } from '@/04-trazabilidad-ui'
+import type { Product } from '@/00-director-modelos'
 
 const SOURCE = 'src/features/catalog/components/grid/ProductCard.tsx'
 

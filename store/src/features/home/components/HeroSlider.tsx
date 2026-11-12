@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useHeroSlider } from '../hooks/useHeroSlider'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/home/components/HeroSlider.tsx'
 

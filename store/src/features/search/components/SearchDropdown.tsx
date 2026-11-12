@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 import { SearchResultItem } from './SearchResultItem'
-import type { Product } from '@/shared/types'
+import type { Product } from '@/00-director-modelos'
 
 const SOURCE = 'src/features/search/components/SearchDropdown.tsx'
 

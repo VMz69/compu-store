@@ -1,4 +1,4 @@
-import type { Review } from '@/shared/types'
+import type { Review } from '@/00-director-modelos'
 
 /**
  * Contrato de la futura API de reseñas (moderación desde el back office).

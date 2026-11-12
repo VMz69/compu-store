@@ -1,4 +1,4 @@
-import type { Product } from '@/shared/types'
+import type { Product } from '@/00-director-modelos'
 import type { CartItem } from '../types'
 
 /**

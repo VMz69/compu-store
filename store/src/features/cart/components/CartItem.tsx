@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { getLineTotal } from '../lib/cart.service'
 import { formatCurrency } from '@/shared/lib/formatters'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 import type { CartItem as CartItemType } from '../types'
 
 const SOURCE = 'src/features/cart/components/CartItem.tsx'

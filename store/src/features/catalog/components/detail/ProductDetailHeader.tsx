@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/components/detail/ProductDetailHeader.tsx'
 

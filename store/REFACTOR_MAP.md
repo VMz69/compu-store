@@ -561,4 +561,6 @@ Nuevo: `37-pipeline-layout-tienda/00-director-layout-tienda.ts` (solo reexportac
 
 ## Resultados de ejecución
 
-Pendiente de migración.
+| Paso | Movimientos | Typecheck | Build | Auditoría de integridad |
+| --- | ---: | --- | --- | --- |
+| `00-integracion-y-modelos` | 12 | OK (0) | OK (0) | OK (0) |

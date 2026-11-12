@@ -1,7 +1,7 @@
 import { formatCurrency } from '@/shared/lib/formatters'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 import { useSearchResultItem } from '../hooks/useSearchResultItem'
-import type { Product } from '@/shared/types'
+import type { Product } from '@/00-director-modelos'
 
 const SOURCE = 'src/features/search/components/SearchResultItem.tsx'
 

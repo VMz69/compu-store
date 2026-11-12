@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useClickOutside } from '@/shared/hooks/useClickOutside'
-import { useCatalogStats } from '@/features/catalog'
+import { useCatalogStats } from '@/00-director-catalogo'
 import { useUIStore } from '@/shared/store/ui.store'
 
 /** Ruta activa para un destino exacto o para cualquiera de sus subrutas. */

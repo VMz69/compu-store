@@ -1,4 +1,4 @@
-import type { Category } from '@/shared/types'
+import type { Category } from '@/00-director-modelos'
 
 export const categories: Category[] = [
   {

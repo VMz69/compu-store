@@ -10,7 +10,7 @@ import { EmptyState } from '@/shared/ui/EmptyState'
 import { useProductDetail } from '../hooks/useProductDetail'
 import { useProductTabs } from '../hooks/useProductTabs'
 import { useShareProduct } from '../hooks/useShareProduct'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/pages/ProductDetail.tsx'
 

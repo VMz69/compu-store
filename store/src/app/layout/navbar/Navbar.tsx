@@ -4,7 +4,7 @@ import { MobileMenu } from './MobileMenu'
 import { navOffersPill, navQuickLink } from './navbar.styles'
 import { INFO_LINKS } from '../../nav.config'
 import { useNavbar } from '../../hooks/useNavbar'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/app/layout/navbar/Navbar.tsx'
 

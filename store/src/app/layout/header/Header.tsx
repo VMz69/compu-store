@@ -1,11 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { CartWidget, useCart } from '@/features/cart'
+import { CartWidget, useCart } from '@/00-director-carrito'
 import { Logo } from '@/shared/ui/Logo'
-import { SearchInput, useSearchInput, useSearchSuggestions } from '@/features/search'
+import { SearchInput, useSearchInput, useSearchSuggestions } from '@/00-director-busqueda'
 import { ThemeToggle } from './ThemeToggle'
 import { useHeaderState } from '../../hooks/useHeaderState'
 import { useMobileSearchCollapse } from '../../hooks/useMobileSearchCollapse'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/app/layout/header/Header.tsx'
 

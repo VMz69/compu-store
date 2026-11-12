@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom'
 import { ProductGalleryThumbs } from './ProductGalleryThumbs'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 import type { ProductGalleryState } from '../../hooks/useProductGallery'
 
 const SOURCE = 'src/features/catalog/components/detail/ProductLightbox.tsx'

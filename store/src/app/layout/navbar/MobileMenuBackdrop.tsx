@@ -1,5 +1,5 @@
 import { useMobileMenuOverlay } from '../../hooks/useMobileMenuOverlay'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/app/layout/navbar/MobileMenuBackdrop.tsx'
 

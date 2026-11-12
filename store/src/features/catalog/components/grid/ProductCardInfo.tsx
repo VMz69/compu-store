@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { uiMeta } from '@/ui-traceability'
-import type { Product } from '@/shared/types'
+import { uiMeta } from '@/04-trazabilidad-ui'
+import type { Product } from '@/00-director-modelos'
 
 const SOURCE = 'src/features/catalog/components/grid/ProductCardInfo.tsx'
 

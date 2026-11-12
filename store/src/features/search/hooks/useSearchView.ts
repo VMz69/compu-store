@@ -1,4 +1,4 @@
-import { useFilters } from '@/features/catalog'
+import { useFilters } from '@/00-director-catalogo'
 
 /**
  * Resultados de búsqueda y término activo.

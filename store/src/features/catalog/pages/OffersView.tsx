@@ -4,7 +4,7 @@ import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
 import { FilterBar } from '../components/FilterBar'
 import { PageBanner } from '@/shared/ui/PageBanner'
 import { useOffersView } from '../hooks/useOffersView'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/pages/OffersView.tsx'
 

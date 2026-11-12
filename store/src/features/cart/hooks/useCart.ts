@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react'
 import { calculateItemCount, calculateSubtotal } from '../lib/cart.service'
 import { useCartStore } from '../store'
 import { useToastStore } from '@/shared/store/toast.store'
-import type { Product } from '@/shared/types'
+import type { Product } from '@/00-director-modelos'
 
 /**
  * Acciones y totales del carrito para componentes de producto y header.

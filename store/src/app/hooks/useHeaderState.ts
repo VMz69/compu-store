@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom'
-import { useCart } from '@/features/cart'
-import { useFavorites } from '@/features/catalog'
+import { useCart } from '@/00-director-carrito'
+import { useFavorites } from '@/00-director-catalogo'
 import { useUIStore } from '@/shared/store/ui.store'
 
 /**

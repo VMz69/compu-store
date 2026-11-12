@@ -1,5 +1,5 @@
 import { buildAssistantUrl } from '@/shared/lib/whatsapp'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/app/layout/FloatingWhatsApp.tsx'
 

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { uiMeta } from '@/ui-traceability'
-import type { BrandWithCount, CategoryWithCount } from '@/shared/types'
+import { uiMeta } from '@/04-trazabilidad-ui'
+import type { BrandWithCount, CategoryWithCount } from '@/00-director-modelos'
 
 const SOURCE = 'src/app/layout/navbar/ExploreMenuPanel.tsx'
 

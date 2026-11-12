@@ -5,7 +5,7 @@ import { EmptyState } from '@/shared/ui/EmptyState'
 import { FilterBar } from '../components/FilterBar'
 import { PageBanner } from '@/shared/ui/PageBanner'
 import { useBrandView } from '../hooks/useBrandView'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/pages/BrandDetail.tsx'
 

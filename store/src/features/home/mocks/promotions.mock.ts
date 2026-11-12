@@ -1,4 +1,4 @@
-import type { Promotion } from '@/shared/types'
+import type { Promotion } from '@/00-director-modelos'
 
 export const promotions: Promotion[] = [
   {

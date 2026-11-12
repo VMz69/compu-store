@@ -1,6 +1,6 @@
 import { Toast } from '@/shared/ui/Toast'
 import { useToasts } from '@/shared/hooks/useToasts'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/app/layout/ToastContainer.tsx'
 

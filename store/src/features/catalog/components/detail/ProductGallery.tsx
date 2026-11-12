@@ -1,7 +1,7 @@
 import { ProductGalleryThumbs } from './ProductGalleryThumbs'
 import { ProductLightbox } from './ProductLightbox'
 import { useProductGallery } from '../../hooks/useProductGallery'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/components/detail/ProductGallery.tsx'
 

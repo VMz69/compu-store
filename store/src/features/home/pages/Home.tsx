@@ -3,10 +3,10 @@ import { BrandTile } from '../components/BrandTile'
 import { CategoryTile } from '../components/CategoryTile'
 import { HeroSlider } from '../components/HeroSlider'
 import { TrustPillars } from '../components/TrustPillars'
-import { ProductGrid } from '@/features/catalog'
+import { ProductGrid } from '@/00-director-catalogo'
 import { SectionHeading } from '@/shared/ui/SectionHeading'
 import { useHomeData } from '../hooks/useHomeData'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/home/pages/Home.tsx'
 /** Las vitrinas de portada muestran 4 productos: se fijan en 4 columnas para no dejar huecos. */

@@ -1,8 +1,8 @@
 import { Select } from '@/shared/ui/Select'
 import { SORT_OPTIONS } from '../config/sort.config'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
-import type { SortBy } from '@/shared/types'
+import type { SortBy } from '@/00-director-modelos'
 
 const SOURCE = 'src/features/catalog/components/FilterBar.tsx'
 const SOURCE_SELECT = 'src/shared/ui/Select.tsx'

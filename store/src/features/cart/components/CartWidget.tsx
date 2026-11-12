@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { formatCurrency } from '@/shared/lib/formatters'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/cart/components/CartWidget.tsx'
 

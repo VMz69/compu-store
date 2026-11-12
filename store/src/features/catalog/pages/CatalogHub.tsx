@@ -2,7 +2,7 @@ import { CategoryCard } from '../components/browse/CategoryCard'
 import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
 import { PageBanner } from '@/shared/ui/PageBanner'
 import { useCatalogHub } from '../hooks/useCatalogHub'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/pages/CatalogHub.tsx'
 

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { filterAndSort, products, useFilterStore } from '@/features/catalog'
+import { filterAndSort, products, useFilterStore } from '@/00-director-catalogo'
 
 const MAX_SUGGESTIONS = 6
 

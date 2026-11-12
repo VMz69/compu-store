@@ -1,5 +1,5 @@
 import { RatingStars } from '@/shared/ui/RatingStars'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/components/reviews/RatingSummary.tsx'
 

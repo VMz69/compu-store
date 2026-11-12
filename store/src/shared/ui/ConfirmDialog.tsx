@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { uiMeta } from '@/ui-traceability'
+import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/shared/ui/ConfirmDialog.tsx'
 

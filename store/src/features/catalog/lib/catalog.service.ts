@@ -5,7 +5,7 @@ import type {
   CategoryWithCount,
   Product,
   ProductFilters,
-} from '@/shared/types'
+} from '@/00-director-modelos'
 
 /**
  * Dominio de catálogo. Funciones puras y sin dependencias de React: reciben

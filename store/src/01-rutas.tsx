@@ -1,10 +1,10 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { MainLayout } from './layout/MainLayout'
-import { AboutView, ContactView } from '@/features/info'
-import { BrandDetail, BrandsView, CatalogHub, CategoryView, FavoritesView, OffersView, ProductDetail } from '@/features/catalog'
-import { CartView } from '@/features/cart'
-import { Home } from '@/features/home'
-import { SearchView } from '@/features/search'
+import { MainLayout } from './app/layout/MainLayout'
+import { AboutView, ContactView } from '@/00-director-informacion'
+import { BrandDetail, BrandsView, CatalogHub, CategoryView, FavoritesView, OffersView, ProductDetail } from '@/00-director-catalogo'
+import { CartView } from '@/00-director-carrito'
+import { Home } from '@/00-director-inicio'
+import { SearchView } from '@/00-director-busqueda'
 
 /** Árbol de rutas del Front Office (HashRouter en `main.tsx`). */
 export const AppRoutes = () => (
