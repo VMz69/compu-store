@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { buildCartCheckoutUrl } from '../features/cart/lib/whatsapp'
+import { buildCartCheckoutUrl } from '@/09-pipeline-checkout-whatsapp/00-director-checkout-whatsapp'
 import { calculateItemCount, calculateSubtotal } from '@/07-pipeline-estado-carrito/00-director-estado-carrito'
 import { useCartStore } from '@/07-pipeline-estado-carrito/00-director-estado-carrito'
 import { useToastStore } from '@/03-pipeline-notificaciones/00-director-notificaciones'

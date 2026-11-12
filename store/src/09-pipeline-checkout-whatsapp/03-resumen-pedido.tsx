@@ -1,4 +1,4 @@
-import { CheckoutForm } from './CheckoutForm'
+import { CheckoutForm } from './02-formulario-pedido'
 import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { DeliveryMethod } from '@/07-pipeline-estado-carrito/00-director-estado-carrito'

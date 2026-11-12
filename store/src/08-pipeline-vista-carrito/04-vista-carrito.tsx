@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { CartItem } from './02-linea-carrito'
-import { CartSummary } from '../features/cart/components/CartSummary'
+import { CartSummary } from '@/09-pipeline-checkout-whatsapp/00-director-checkout-whatsapp'
 import { ConfirmDialog } from '@/05-pipeline-controles-compra/00-director-controles-compra'
 import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { EmptyState } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
