@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { buildCartCheckoutUrl } from '../lib/whatsapp'
 import { calculateItemCount, calculateSubtotal } from '../lib/cart.service'
 import { useCartStore } from '../store'
-import { useToastStore } from '@/shared/store/toast.store'
+import { useToastStore } from '@/03-pipeline-notificaciones/00-director-notificaciones'
 import type { CartItem } from '../types'
 
 /**

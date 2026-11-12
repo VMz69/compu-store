@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { CONTACT_SUBJECTS } from '../config/contact.config'
 import { buildContactUrl } from '../lib/whatsapp'
-import { useToastStore } from '@/shared/store/toast.store'
+import { useToastStore } from '@/03-pipeline-notificaciones/00-director-notificaciones'
 
 interface ContactFormState {
   name: string

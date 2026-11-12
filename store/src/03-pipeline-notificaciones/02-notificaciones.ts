@@ -1,4 +1,4 @@
-import { useToastStore } from '@/shared/store/toast.store'
+import { useToastStore } from '@/03-pipeline-notificaciones/01-notificaciones.store'
 
 /**
  * Acceso a la cola de notificaciones.

@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { products } from '../mocks/products.mock'
 import { useFavStore } from '../favorites.store'
 import { useFavorites } from './useFavorites'
-import { useToastStore } from '@/shared/store/toast.store'
+import { useToastStore } from '@/03-pipeline-notificaciones/00-director-notificaciones'
 
 /**
  * Productos favoritos resueltos a partir de los ids persistidos, más el vaciado

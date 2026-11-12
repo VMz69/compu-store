@@ -1,5 +1,5 @@
-import { Toast } from '@/shared/ui/Toast'
-import { useToasts } from '@/shared/hooks/useToasts'
+import { Toast } from '@/03-pipeline-notificaciones/03-aviso'
+import { useToasts } from '@/03-pipeline-notificaciones/02-notificaciones'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/app/layout/ToastContainer.tsx'

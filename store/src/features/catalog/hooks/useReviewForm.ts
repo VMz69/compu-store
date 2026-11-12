@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useToastStore } from '@/shared/store/toast.store'
+import { useToastStore } from '@/03-pipeline-notificaciones/00-director-notificaciones'
 import { useReviewStore } from '../reviews.store'
 
 const RATING_LABELS: Record<number, string> = {

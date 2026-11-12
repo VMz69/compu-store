@@ -4,7 +4,7 @@ import { FloatingWhatsApp } from '@/02-pipeline-preferencias-interfaz/00-directo
 import { Header } from './header/Header'
 import { MobileMenuBackdrop } from './navbar/MobileMenuBackdrop'
 import { Navbar } from './navbar/Navbar'
-import { ToastContainer } from './ToastContainer'
+import { ToastContainer } from '@/03-pipeline-notificaciones/00-director-notificaciones'
 import { TopBar } from './header/TopBar'
 import { useLayoutInsets } from '@/02-pipeline-preferencias-interfaz/00-director-preferencias-interfaz'
 import { useScrollToTop } from '../hooks/useScrollToTop'

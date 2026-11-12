@@ -1,4 +1,4 @@
-import { useToastStore } from '@/shared/store/toast.store'
+import { useToastStore } from '@/03-pipeline-notificaciones/00-director-notificaciones'
 
 /** Respaldo para navegadores sin Clipboard API o en contextos no seguros (http). */
 const copyWithTextarea = (text: string): boolean => {

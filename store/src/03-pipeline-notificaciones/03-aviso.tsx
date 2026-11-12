@@ -1,6 +1,6 @@
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-import type { ToastMessage } from '@/shared/store/toast.store'
+import type { ToastMessage } from '@/03-pipeline-notificaciones/01-notificaciones.store'
 
 const SOURCE = 'src/shared/ui/Toast.tsx'
 
