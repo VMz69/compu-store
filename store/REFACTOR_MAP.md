@@ -4,6 +4,10 @@ Fecha: 2026-11-11 (America/El_Salvador). Rama: `refactor/floa-store`.
 Base: `c518624`. Alcance: exclusivamente `store/src/` y este reporte.
 Fuente arquitectónica leída completa: `/home/vmz/Descargas/Copia de arq.md`.
 
+> Este informe conserva el cierre de la migración inicial (`13e7cb0`). La
+> adecuación de trazabilidad solicitada después se registra al final; actualiza
+> las rutas SOURCE y la especificación general sin invalidar el mapa de archivos.
+
 ## Línea base
 
 | Comprobación | Comando desde store/ | Resultado |
@@ -660,3 +664,40 @@ No hubo reversiones por errores de compilación ni parches de lógica, estilos o
 
 Los scripts, perfiles del navegador, capturas y logs auxiliares se guardaron en
 /tmp/compustore-floa-* para esta ejecución; no se añaden al frontend.
+
+
+## Seguimiento: trazabilidad adecuada a FLOA · 2026-11-11
+
+Por solicitud posterior explícita se actualizan los metadatos de origen que
+la migración inicial había conservado. Esa decisión histórica sobre SOURCE
+queda sustituida por la adecuación siguiente; el mapeo de archivos no cambia.
+Commit de código y pruebas: `2f8fbac`.
+
+- Se actualizan 79 rutas SOURCE/SOURCE_SELECT en 78 módulos TSX, apuntando a
+  archivos existentes de FLOA. Los data-ui-id, data-ui-component y contratos
+  de componentes se mantienen.
+- El núcleo sigue en src/04-trazabilidad-ui.ts. Su condición del kill switch
+  no cambia: solo VITE_UI_TRACEABILITY=false desactiva los tres atributos,
+  tanto en desarrollo como en producción; por defecto permanecen activos.
+- Se elimina una dependencia funcional previa de los atributos de diagnóstico:
+  useSearchLock y useMobileMenuOverlay ahora localizan la cabecera mediante
+  #store-sticky-header; el scroll interno de búsqueda usa [data-search-dropdown].
+  Ambos marcadores permanecen con la trazabilidad apagada. No se cambia la
+  lógica de negocio, los estilos, los datos mock ni los IDs trazables.
+- Se añaden once pruebas con node:test y TypeScript existente, sin dependencias
+  nuevas: valores del switch, pureza, fuentes vigentes, imports del núcleo y
+  ausencia de consumidores funcionales/inyección directa de data-ui-*.
+- Typecheck y lint correctos. Tres variantes de build (variable ausente, true,
+  false) pasan en Chrome contra la referencia previa: 36 snapshots, nueve flujos
+  y cuatro capturas idénticas por variante al excluir metadatos/marcadores del
+  DOM. Se verifican cabecera fija, scroll de overlays, Escape y cambio de
+  breakpoint. False produce cero atributos data-ui-*, también en portales.
+- El CSS compilado coincide byte por byte y los cinco módulos dummy permanecen
+  intactos. La comparación usa HTTPS externo bloqueado, movimiento reducido
+  y tema inicial claro; no comprueba disponibilidad de terceros.
+- La especificación vigente pasa a ser [arch-fronOffice.md](arch-fronOffice.md):
+  documenta los 37 pipelines, directores, contratos, rutas de vistas, trazabilidad,
+  configuración del kill switch, selectores independientes y comprobaciones.
+
+Los inventarios HTML y demás documentos históricos conservan su contenido.
+Los controles temporales de navegador se guardan en /tmp/compustore-trace-*.
