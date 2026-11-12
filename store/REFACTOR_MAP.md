@@ -602,3 +602,4 @@ Se reanuda por lotes más cortos, con los mismos movimientos y validaciones.
 | `20-pipeline-estado-resenas` | 4 | OK (0) | OK (0) | OK (0) |
 | `21-pipeline-publicacion-resenas` | 3 | OK (0) | OK (0) | OK (0) |
 | `22-pipeline-informacion-producto` | 4 | OK (0) | OK (0) | OK (0) |
+| `23-pipeline-oferta-producto` | 4 | OK (0) | OK (0) | OK (0) |

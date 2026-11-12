@@ -1,4 +1,4 @@
-import { ProductTrustChips } from './ProductTrustChips'
+import { ProductTrustChips } from './01-garantias-producto'
 import { QuantitySelector } from '@/05-pipeline-controles-compra/00-director-controles-compra'
 import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
