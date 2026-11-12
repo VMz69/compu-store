@@ -1,6 +1,6 @@
 import type { StoreSettings } from '@/shared/config/store.config'
-import { Card, CardTitle } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Card, CardTitle } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 
 const t = tracer('TaxpayerCard', 'src/features/settings/components/TaxpayerCard.tsx')
 

@@ -1,5 +1,5 @@
-import { Button, Card, CardTitle } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, Card, CardTitle } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 
 const t = tracer('BackupCard', 'src/features/settings/components/BackupCard.tsx')
 

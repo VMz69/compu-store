@@ -1,5 +1,5 @@
-import { Button, EmptyState, Pagination } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, EmptyState, Pagination } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { OrdersTable } from '../components/orders/OrdersTable'
 import { OrdersToolbar } from '../components/orders/OrdersToolbar'
 import { useOrderActions } from '../hooks/useOrderActions'

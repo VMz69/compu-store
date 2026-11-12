@@ -1,5 +1,5 @@
-import { Field, Input, Select } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Field, Input, Select } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { CustomerSelection } from '../../hooks/useCustomerSelection'
 import { DuplicateCustomerNotice } from './DuplicateCustomerNotice'
 

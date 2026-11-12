@@ -1,5 +1,5 @@
-import { Field, FormActions, Input, Modal, ModalHeader, ModalTitle, SwitchField, Textarea } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Field, FormActions, Input, Modal, ModalHeader, ModalTitle, SwitchField, Textarea } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useBrandForm } from '../../hooks/useBrandForm'
 
 const t = tracer('BrandFormModal', 'src/features/catalog/components/taxonomy/BrandFormModal.tsx')

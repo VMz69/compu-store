@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
-import { ListToolbar, LiveSearch, Select } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { ListToolbar, LiveSearch, Select } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { QuotesApi } from '../../hooks/useQuotes'
 
 const t = tracer('QuotesToolbar', 'src/features/quotes/components/list/QuotesToolbar.tsx')

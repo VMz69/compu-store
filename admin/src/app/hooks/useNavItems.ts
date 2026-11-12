@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom'
-import { useSession } from '@/features/access'
-import { usePendingReviewsCount } from '@/features/interactions'
-import { useInvoiceableCount, usePendingOrdersCount } from '@/features/sales'
+import { useSession } from '@/00-director-acceso'
+import { usePendingReviewsCount } from '@/00-director-interacciones'
+import { useInvoiceableCount, usePendingOrdersCount } from '@/00-director-ventas'
 import { NAV_ITEMS, type NavBadgeKey } from '../nav.config'
 
 /** Ítems del sidebar permitidos para el rol, con estado activo y contadores. */

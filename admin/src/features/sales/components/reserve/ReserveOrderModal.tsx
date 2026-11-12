@@ -1,7 +1,7 @@
 import { cn } from '@/shared/lib/cn'
 import { formatCurrency } from '@/shared/lib/currency'
-import { Button, Calendar, Modal, ModalFooter, ModalHeader, ModalTitle } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, Calendar, Modal, ModalFooter, ModalHeader, ModalTitle } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useReserveOrder } from '../../hooks/useReserveOrder'
 import { RESERVATION } from '../../lib/reservation'
 

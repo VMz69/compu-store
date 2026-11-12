@@ -1,5 +1,5 @@
 import { foldText } from '@/shared/lib/text'
-import type { BadgeTone } from '@/shared/ui'
+import type { BadgeTone } from '@/00-director-interfaz'
 import type { ProductReview, ReviewStatus } from '../types'
 
 /** Lógica pura de moderación (sin React ni store). */

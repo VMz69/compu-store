@@ -1,6 +1,6 @@
-import { UserAvatar, type Role, type User } from '@/features/access'
+import { UserAvatar, type Role, type User } from '@/00-director-acceso'
 import { cn } from '@/shared/lib/cn'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 
 const t = tracer('SidebarProfile', 'src/app/layout/sidebar/SidebarProfile.tsx')
 

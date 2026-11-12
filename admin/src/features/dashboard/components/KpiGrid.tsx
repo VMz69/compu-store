@@ -1,5 +1,5 @@
-import { KpiCard, type KpiData } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { KpiCard, type KpiData } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 
 const t = tracer('KpiGrid', 'src/features/dashboard/components/KpiGrid.tsx')
 

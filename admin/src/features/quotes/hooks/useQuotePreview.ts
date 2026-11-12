@@ -1,4 +1,4 @@
-import { useQuoteOrderLink } from '@/features/sales'
+import { useQuoteOrderLink } from '@/00-director-ventas'
 import { usePdfDocument } from '@/shared/hooks/usePdfDocument'
 import { formatCurrency } from '@/shared/lib/currency'
 import { buildWhatsAppLink } from '@/shared/lib/whatsapp'

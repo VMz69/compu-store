@@ -1,5 +1,5 @@
-import { Checkbox, Field, FormActions, Input, Modal, ModalHeader, ModalTitle, Select, Textarea } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Checkbox, Field, FormActions, Input, Modal, ModalHeader, ModalTitle, Select, Textarea } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useCustomerForm } from '../hooks/useCustomerForm'
 
 const t = tracer('CustomerFormModal', 'src/features/customers/components/CustomerFormModal.tsx')

@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn'
-import { IconButton, Switch } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { IconButton, Switch } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { BrandsTabApi } from '../../hooks/taxonomy/useBrandsTab'
 
 const t = tracer('BrandRow', 'src/features/catalog/components/taxonomy/BrandRow.tsx')

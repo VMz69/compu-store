@@ -1,6 +1,6 @@
 import { toLocalISO } from '@/shared/lib/date'
 import { money } from '@/shared/lib/pricing'
-import type { Product } from '@/features/catalog'
+import type { Product } from '@/00-director-catalogo'
 import type { DiscountType, Offer, OfferStatus } from '../types'
 
 /**

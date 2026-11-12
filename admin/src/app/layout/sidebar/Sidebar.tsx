@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn'
-import { SafeImage } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { SafeImage } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useSidebar } from '../../hooks/useLayout'
 import { useNavItems } from '../../hooks/useNavItems'
 import { SidebarNavItem } from './SidebarNavItem'

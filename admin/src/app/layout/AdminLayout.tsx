@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
-import { useReservationExpiry } from '@/features/sales'
-import { tracer } from '@/ui-traceability'
+import { useReservationExpiry } from '@/00-director-ventas'
+import { tracer } from '@/00-trazabilidad'
 import { Sidebar } from './sidebar/Sidebar'
 import { Topbar } from './topbar/Topbar'
 

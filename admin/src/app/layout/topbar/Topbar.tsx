@@ -1,5 +1,5 @@
-import { IconButton } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { IconButton } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useTopbar } from '../../hooks/useLayout'
 import { ThemeToggle } from './ThemeToggle'
 import { TopbarShortcut } from './TopbarShortcut'

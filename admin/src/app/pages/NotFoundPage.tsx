@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import { useHomePath } from '@/features/access'
+import { useHomePath } from '@/00-director-acceso'
 import { usePageMeta } from '@/shared/hooks/usePageMeta'
-import { EmptyState, PageContainer } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { EmptyState, PageContainer } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 
 const t = tracer('NotFoundPage', 'src/app/pages/NotFoundPage.tsx')
 

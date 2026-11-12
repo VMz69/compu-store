@@ -1,4 +1,4 @@
-import { Badge } from '@/shared/ui'
+import { Badge } from '@/00-director-interfaz'
 import type { Role } from '../types'
 
 interface RoleBadgeProps {

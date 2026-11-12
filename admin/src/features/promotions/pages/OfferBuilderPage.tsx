@@ -1,7 +1,7 @@
-import { ProductPicker, useProductPicker } from '@/features/catalog'
-import { Button, EmptyState } from '@/shared/ui'
+import { ProductPicker, useProductPicker } from '@/00-director-catalogo'
+import { Button, EmptyState } from '@/00-director-interfaz'
 import { usePageMeta } from '@/shared/hooks/usePageMeta'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import { OfferPanel } from '../components/builder/OfferPanel'
 import { useOfferBuilder } from '../hooks/useOfferBuilder'
 

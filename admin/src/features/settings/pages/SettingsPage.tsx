@@ -1,5 +1,5 @@
-import { PageContainer } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { PageContainer } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { SettingsHubCard } from '../components/SettingsHubCard'
 import { useSettingsHub } from '../hooks/useSettingsHub'
 

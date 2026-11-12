@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom'
-import { ChangePasswordScreen, useSession } from '@/features/access'
+import { ChangePasswordScreen, useSession } from '@/00-director-acceso'
 
 /**
  * Protege el shell administrativo.

@@ -1,5 +1,5 @@
-import { Field, Textarea } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Field, Textarea } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { ProductFormApi } from '../../../hooks/useProductForm'
 import { SpecRowsEditor } from './SpecRowsEditor'
 

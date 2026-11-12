@@ -1,4 +1,4 @@
-import { Badge } from '@/shared/ui'
+import { Badge } from '@/00-director-interfaz'
 import { QUOTE_STATUS_META } from '../lib/quote.service'
 import type { QuoteStatus } from '../types'
 

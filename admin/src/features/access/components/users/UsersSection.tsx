@@ -1,5 +1,5 @@
-import { BackLink, Button, DataTable, EmptyState, ListToolbar, LiveSearch, PageContainer, Select, type TableHeader } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { BackLink, Button, DataTable, EmptyState, ListToolbar, LiveSearch, PageContainer, Select, type TableHeader } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useUsersAdmin } from '../../hooks/useUsersAdmin'
 import { UserRow } from './UserRow'
 

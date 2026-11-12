@@ -1,5 +1,5 @@
-import { Button, Modal, ModalFooter, ModalHeader } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, Modal, ModalFooter, ModalHeader } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useProductDetail } from '../../hooks/useProductDetail'
 import { DetailMetrics } from './DetailMetrics'
 import { DetailSpecs } from './DetailSpecs'

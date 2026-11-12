@@ -1,5 +1,5 @@
-import { tracer } from '@/ui-traceability'
-import { Input, type InputProps } from '@/shared/ui'
+import { tracer } from '@/00-trazabilidad'
+import { Input, type InputProps } from '@/00-director-interfaz'
 
 const t = tracer('PasswordInput', 'src/features/access/components/password/PasswordInput.tsx')
 

@@ -1,6 +1,6 @@
 import { formatCurrency } from '@/shared/lib/currency'
-import { Button, EmptyState, Pagination } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, EmptyState, Pagination } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { BillingToolbar } from '../components/list/BillingToolbar'
 import { InvoicesTable } from '../components/list/InvoicesTable'
 import { PendingOrdersTable } from '../components/list/PendingOrdersTable'

@@ -1,4 +1,4 @@
-import type { Product } from '@/features/catalog'
+import type { Product } from '@/00-director-catalogo'
 import type { Order, OrderItem } from '../types'
 import { isReservationActive } from './reservation'
 

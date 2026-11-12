@@ -1,5 +1,5 @@
-import { Checkbox, FormActions, Modal, ModalHeader, ModalTitle } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Checkbox, FormActions, Modal, ModalHeader, ModalTitle } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useResetPasswordForm } from '../../hooks/usePasswordForms'
 import { NewPasswordFields } from '../password/NewPasswordFields'
 import { UserAvatar } from './UserAvatar'

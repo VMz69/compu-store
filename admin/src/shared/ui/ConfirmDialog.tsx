@@ -1,5 +1,5 @@
 import { useConfirmDialog } from '@/shared/hooks/useConfirmDialog'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import { Button } from './Button'
 import { Modal } from './Modal'
 import { Textarea } from './Textarea'

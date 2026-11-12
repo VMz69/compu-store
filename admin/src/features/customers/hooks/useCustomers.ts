@@ -1,5 +1,5 @@
 import { useMemo, useState, type ChangeEvent } from 'react'
-import { ensurePermission, usePermission } from '@/features/access'
+import { ensurePermission, usePermission } from '@/00-director-acceso'
 import { usePagination } from '@/shared/hooks/usePagination'
 import { buildWhatsAppLink } from '@/shared/lib/whatsapp'
 import { askConfirm } from '@/shared/store/confirm.store'

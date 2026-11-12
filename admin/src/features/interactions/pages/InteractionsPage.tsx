@@ -1,5 +1,5 @@
-import { EmptyState, KpiCard, PageContainer } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { EmptyState, KpiCard, PageContainer } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { ReviewCard } from '../components/ReviewCard'
 import { ReviewsToolbar } from '../components/ReviewsToolbar'
 import { useReviewModeration } from '../hooks/useReviewModeration'

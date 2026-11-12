@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn'
-import { Checkbox, Field, FormActions, Input, Modal, ModalHeader, ModalTitle, Textarea } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Checkbox, Field, FormActions, Input, Modal, ModalHeader, ModalTitle, Textarea } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useChannelForm } from '../../hooks/useChannelForm'
 
 const t = tracer('ChannelFormModal', 'src/features/sales/components/channels/ChannelFormModal.tsx')

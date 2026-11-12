@@ -1,5 +1,5 @@
-import { BackLink, PageContainer } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { BackLink, PageContainer } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { IdentityForm } from '../components/IdentityForm'
 import { useSettingsPageMeta } from '../hooks/useSettingsPageMeta'
 

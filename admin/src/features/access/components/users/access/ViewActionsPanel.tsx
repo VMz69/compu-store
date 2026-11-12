@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn'
-import { Card, Switch } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Card, Switch } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { UserAccessApi } from '../../../hooks/useUserAccess'
 
 const t = tracer('ViewActionsPanel', 'src/features/access/components/users/access/ViewActionsPanel.tsx')

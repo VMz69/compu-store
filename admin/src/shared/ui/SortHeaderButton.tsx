@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn'
 import type { SortDir } from '@/shared/lib/sort'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 
 const t = tracer('SortHeaderButton', 'src/shared/ui/SortHeaderButton.tsx')
 

@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn'
-import { SafeImage } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { SafeImage } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { ImageGalleryApi } from '../../../../hooks/form/useImageGallery'
 import { formatMegabytes, MAX_IMAGE_BYTES } from '../../../../lib/productImages'
 import { ImageUrlInput } from './ImageUrlInput'

@@ -1,4 +1,4 @@
-import { VIEW_CATALOG, type ViewId } from '@/features/access'
+import { VIEW_CATALOG, type ViewId } from '@/00-director-acceso'
 
 export type NavBadgeKey = 'orders' | 'toInvoice' | 'reviews'
 

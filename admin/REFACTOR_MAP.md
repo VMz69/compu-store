@@ -29,7 +29,7 @@ Cada fila corresponde a un paso y un commit independiente. Después de mover se 
 
 | Paso | Estado | Typecheck | Build | Auditoría de contenido/imports |
 | --- | --- | --- | --- | --- |
-| raiz | pendiente | pendiente | pendiente | pendiente |
+| raiz | validado | 0 | 0 | idéntico |
 | datos-mock | pendiente | pendiente | pendiente | pendiente |
 | transversal | pendiente | pendiente | pendiente | pendiente |
 | aplicacion | pendiente | pendiente | pendiente | pendiente |

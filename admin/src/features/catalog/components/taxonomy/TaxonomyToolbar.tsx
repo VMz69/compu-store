@@ -1,5 +1,5 @@
-import { Button, ListToolbar, LiveSearch, SegmentedTabs } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, ListToolbar, LiveSearch, SegmentedTabs } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { TaxonomyPageApi, TaxonomyTab } from '../../hooks/taxonomy/useTaxonomyPage'
 
 const t = tracer('TaxonomyToolbar', 'src/features/catalog/components/taxonomy/TaxonomyToolbar.tsx')

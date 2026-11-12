@@ -1,5 +1,5 @@
 import { cn } from '@/shared/lib/cn'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import { SafeImage } from '../SafeImage'
 
 const t = tracer('LightboxThumbnails', 'src/shared/ui/lightbox/LightboxThumbnails.tsx')

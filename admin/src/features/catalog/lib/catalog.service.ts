@@ -1,5 +1,5 @@
 import { matchesQuery } from '@/shared/lib/text'
-import type { BadgeTone, SelectOption } from '@/shared/ui'
+import type { BadgeTone, SelectOption } from '@/00-director-interfaz'
 import type {
   InventoryMetrics,
   Product,

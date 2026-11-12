@@ -1,5 +1,5 @@
-import { AffixInput, Badge, Field, SwitchField } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { AffixInput, Badge, Field, SwitchField } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { ProductFormApi } from '../../../hooks/useProductForm'
 import { StockBadge } from '../../StockBadge'
 import { LotRowsEditor } from './LotRowsEditor'

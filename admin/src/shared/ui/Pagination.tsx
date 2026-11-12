@@ -1,6 +1,6 @@
 import type { PaginationState } from '@/shared/hooks/usePagination'
 import { cn } from '@/shared/lib/cn'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 
 const t = tracer('Pagination', 'src/shared/ui/Pagination.tsx')
 

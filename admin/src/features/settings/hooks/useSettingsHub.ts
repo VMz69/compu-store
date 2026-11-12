@@ -1,5 +1,5 @@
-import { ROLE_LIST, useAccessStore } from '@/features/access'
-import { ORDER_STATUSES, useSalesStore } from '@/features/sales'
+import { ROLE_LIST, useAccessStore } from '@/00-director-acceso'
+import { ORDER_STATUSES, useSalesStore } from '@/00-director-ventas'
 import { HUB_CARDS, type HubCardConfig } from '../config/hub.config'
 import { useSettingsStore } from '../store'
 

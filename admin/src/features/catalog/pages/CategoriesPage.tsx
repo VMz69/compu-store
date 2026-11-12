@@ -1,5 +1,5 @@
-import { Button, EmptyState, PageContainer } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, EmptyState, PageContainer } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { BrandsTable } from '../components/taxonomy/BrandsTable'
 import { CategoryCard } from '../components/taxonomy/CategoryCard'
 import { TaxonomyToolbar } from '../components/taxonomy/TaxonomyToolbar'

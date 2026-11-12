@@ -1,4 +1,4 @@
-import { normalizePhone, type Customer, type CustomerStats } from '@/features/customers'
+import { normalizePhone, type Customer, type CustomerStats } from '@/00-director-clientes'
 import type { Order } from '../types'
 import { SOLD_STATUSES } from './orderFlow'
 

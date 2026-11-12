@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn'
-import { DataTable, IconButton, Switch, type TableHeader } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { DataTable, IconButton, Switch, type TableHeader } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { ChannelsApi } from '../../hooks/useChannels'
 
 const t = tracer('ChannelsTable', 'src/features/sales/components/channels/ChannelsTable.tsx')

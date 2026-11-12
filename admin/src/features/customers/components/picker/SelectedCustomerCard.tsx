@@ -1,4 +1,4 @@
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import type { Customer } from '../../types'
 import { CustomerInitials } from './CustomerInitials'
 

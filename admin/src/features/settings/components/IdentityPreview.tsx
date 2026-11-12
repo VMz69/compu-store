@@ -1,5 +1,5 @@
-import { Card, CardTitle } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Card, CardTitle } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { IdentityFormApi } from '../hooks/useIdentityForm'
 
 const t = tracer('IdentityPreview', 'src/features/settings/components/IdentityPreview.tsx')

@@ -1,5 +1,5 @@
-import { Badge, Modal, ModalHeader } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Badge, Modal, ModalHeader } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useProductForm } from '../../hooks/useProductForm'
 import { ProductFormFooter } from './ProductFormFooter'
 import { ProductFormTabs } from './ProductFormTabs'

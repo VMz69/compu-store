@@ -1,6 +1,6 @@
 import { formatCurrency } from '@/shared/lib/currency'
-import { Badge, IconButton } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Badge, IconButton } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { CustomerRowData, CustomersApi } from '../hooks/useCustomers'
 
 const t = tracer('CustomerRow', 'src/features/customers/components/CustomerRow.tsx')

@@ -1,7 +1,7 @@
-import { CustomerPicker } from '@/features/customers'
+import { CustomerPicker } from '@/00-director-clientes'
 import { formatCurrency } from '@/shared/lib/currency'
-import { Button, ExtraChargesEditor, Field, LineItemsEditor, Select, Textarea } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, ExtraChargesEditor, Field, LineItemsEditor, Select, Textarea } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { QuoteBuilderApi } from '../../hooks/useQuoteBuilder'
 
 const t = tracer('QuoteSummaryPanel', 'src/features/quotes/components/builder/QuoteSummaryPanel.tsx')

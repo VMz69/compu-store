@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import { LoginCard } from '../components/login/LoginCard'
 import { useLoginForm } from '../hooks/useLoginForm'
 

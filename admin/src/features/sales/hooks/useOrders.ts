@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react'
-import type { Customer } from '@/features/customers'
+import type { Customer } from '@/00-director-clientes'
 import { getCustomerOrderStats } from '../lib/customerStats'
 import { countByStatus, filterByStatus, findOrderByQuote, getOrderMetrics } from '../lib/order.service'
 import { isInvoiceable, ORDER_STATUSES, statusOf } from '../lib/orderFlow'

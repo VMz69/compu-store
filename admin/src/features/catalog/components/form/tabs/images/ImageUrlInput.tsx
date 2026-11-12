@@ -1,5 +1,5 @@
-import { IconButton, Input } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { IconButton, Input } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { ImageUrlEntry } from '../../../../hooks/form/useImageUrlEntry'
 
 const t = tracer('ImageUrlInput', 'src/features/catalog/components/form/tabs/images/ImageUrlInput.tsx')

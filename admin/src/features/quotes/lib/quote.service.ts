@@ -1,4 +1,4 @@
-import type { BadgeTone } from '@/shared/ui'
+import type { BadgeTone } from '@/00-director-interfaz'
 import { sumCharges, type ExtraCharge } from '@/shared/lib/charges'
 import { lineTotal as pricedLineTotal, money, summarizeLines } from '@/shared/lib/pricing'
 import { matchesQuery, nextSequentialId } from '@/shared/lib/text'

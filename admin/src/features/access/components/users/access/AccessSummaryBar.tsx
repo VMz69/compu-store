@@ -1,5 +1,5 @@
-import { Button, Card } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, Card } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { UserAccessApi } from '../../../hooks/useUserAccess'
 import { RoleBadge } from '../../RoleBadge'
 import { UserAvatar } from '../UserAvatar'

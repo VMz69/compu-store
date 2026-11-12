@@ -1,5 +1,5 @@
-import { PageContainer } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { PageContainer } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { BranchBanner } from '../components/BranchBanner'
 import { KpiGrid } from '../components/KpiGrid'
 import { RecentOrdersPanel } from '../components/RecentOrdersPanel'

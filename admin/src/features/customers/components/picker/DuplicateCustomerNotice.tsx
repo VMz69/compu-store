@@ -1,4 +1,4 @@
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import type { Customer } from '../../types'
 
 const t = tracer('DuplicateCustomerNotice', 'src/features/customers/components/picker/DuplicateCustomerNotice.tsx')

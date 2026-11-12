@@ -1,4 +1,4 @@
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 
 const t = tracer('DemoCredentials', 'src/features/access/components/login/DemoCredentials.tsx')
 

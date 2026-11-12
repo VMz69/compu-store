@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
-import { ListToolbar, LiveSearch, SegmentedTabs } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { ListToolbar, LiveSearch, SegmentedTabs } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { OfferFilter, OffersApi } from '../../hooks/useOffers'
 
 const t = tracer('OffersToolbar', 'src/features/promotions/components/list/OffersToolbar.tsx')

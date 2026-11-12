@@ -1,5 +1,5 @@
-import { Checkbox, Field, FormActions, Input, Modal, ModalHeader, ModalTitle, Select } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Checkbox, Field, FormActions, Input, Modal, ModalHeader, ModalTitle, Select } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useUserForm } from '../../hooks/useUserForm'
 import { NewPasswordFields } from '../password/NewPasswordFields'
 

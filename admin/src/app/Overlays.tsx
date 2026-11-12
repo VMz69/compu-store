@@ -1,4 +1,4 @@
-import { ConfirmDialog, Toaster } from '@/shared/ui'
+import { ConfirmDialog, Toaster } from '@/00-director-interfaz'
 import { ModalHost } from './ModalHost'
 
 /** Capas globales: modal activo, confirmación y notificaciones. */

@@ -1,5 +1,5 @@
 import { cn } from '@/shared/lib/cn'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import { QUICK_LINKS } from '../config/quickLinks.config'
 
 const t = tracer('QuickLinks', 'src/features/dashboard/components/QuickLinks.tsx')

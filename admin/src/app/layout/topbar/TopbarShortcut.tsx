@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { cn } from '@/shared/lib/cn'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 
 const t = tracer('TopbarShortcut', 'src/app/layout/topbar/TopbarShortcut.tsx')
 

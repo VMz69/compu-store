@@ -1,5 +1,5 @@
-import { AffixInput, DatePicker, Field, IconButton, Input } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { AffixInput, DatePicker, Field, IconButton, Input } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { ProductFormApi } from '../../../hooks/useProductForm'
 
 const t = tracer('LotRowsEditor', 'src/features/catalog/components/form/tabs/LotRowsEditor.tsx')

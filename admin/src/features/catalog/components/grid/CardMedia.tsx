@@ -1,5 +1,5 @@
 import { cn } from '@/shared/lib/cn'
-import { SafeImage } from '@/shared/ui'
+import { SafeImage } from '@/00-director-interfaz'
 import type { Product } from '../../types'
 
 /** Cabecera visual de la tarjeta: imagen, categoría e insignia comercial. */

@@ -1,5 +1,5 @@
-import { Button, ListToolbar, LiveSearch, SegmentedTabs, Select, type SegmentedTabItem } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, ListToolbar, LiveSearch, SegmentedTabs, Select, type SegmentedTabItem } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { ReviewFilter, ReviewModerationApi } from '../hooks/useReviewModeration'
 
 const t = tracer('ReviewsToolbar', 'src/features/interactions/components/ReviewsToolbar.tsx')

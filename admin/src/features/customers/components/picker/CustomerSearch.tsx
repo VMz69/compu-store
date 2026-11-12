@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn'
 import { controlTone } from '@/shared/ui/controlStyles'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import type { CustomerCombobox } from '../../hooks/useCustomerCombobox'
 import { CustomerOption } from './CustomerOption'
 

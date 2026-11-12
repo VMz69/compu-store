@@ -1,4 +1,4 @@
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import type { ProductActions } from '../../hooks/useProductActions'
 import type { Product } from '../../types'
 import { ProductCard } from './ProductCard'

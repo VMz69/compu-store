@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { ensurePermission, useSession } from '@/features/access'
-import { useCatalogStore } from '@/features/catalog'
+import { ensurePermission, useSession } from '@/00-director-acceso'
+import { useCatalogStore } from '@/00-director-catalogo'
 import { addDaysISO, formatLongISO, todayISO } from '@/shared/lib/date'
 import { closeModal, useModalPayload } from '@/shared/store/modal.store'
 import { toast } from '@/shared/store/toast.store'

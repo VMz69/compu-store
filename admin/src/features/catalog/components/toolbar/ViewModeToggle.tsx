@@ -1,5 +1,5 @@
 import { cn } from '@/shared/lib/cn'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import type { ProductViewMode } from '../../types'
 
 const t = tracer('ViewModeToggle', 'src/features/catalog/components/toolbar/ViewModeToggle.tsx')

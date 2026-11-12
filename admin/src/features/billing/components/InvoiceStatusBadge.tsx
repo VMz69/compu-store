@@ -1,4 +1,4 @@
-import { Badge } from '@/shared/ui'
+import { Badge } from '@/00-director-interfaz'
 import { INVOICE_STATUS_META } from '../lib/invoice.service'
 import type { InvoiceStatus } from '../types'
 

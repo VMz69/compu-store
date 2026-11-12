@@ -1,5 +1,5 @@
 import { cn } from '@/shared/lib/cn'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import { PRODUCT_FORM_TABS, type ProductFormTab } from '../../lib/productForm'
 
 const t = tracer('ProductFormTabs', 'src/features/catalog/components/form/ProductFormTabs.tsx')

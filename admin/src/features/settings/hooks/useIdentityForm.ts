@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { ensurePermission, usePermission } from '@/features/access'
+import { ensurePermission, usePermission } from '@/00-director-acceso'
 import { useFormState } from '@/shared/hooks/useFormState'
 import { toast } from '@/shared/store/toast.store'
 import { ESTABLISHMENT_TYPES, formatInvoiceNumber, nextInvoiceNumber, toWhatsappNumber, validateIdentity, type IdentityValues } from '../lib/identity'

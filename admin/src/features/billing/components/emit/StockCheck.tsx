@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn'
 import { formatCurrency } from '@/shared/lib/currency'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import type { InvoiceEmitApi } from '../../hooks/useInvoiceEmit'
 import { isProductItem, lineAmount } from '../../lib/invoice.service'
 

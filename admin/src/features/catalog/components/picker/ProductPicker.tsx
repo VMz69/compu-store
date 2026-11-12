@@ -1,7 +1,7 @@
 import { cn } from '@/shared/lib/cn'
 import { formatCurrency } from '@/shared/lib/currency'
-import { Badge, EmptyState, LiveSearch, SafeImage, Select } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Badge, EmptyState, LiveSearch, SafeImage, Select } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { ProductPickerApi } from '../../hooks/useProductPicker'
 import type { Product } from '../../types'
 

@@ -1,7 +1,7 @@
 import type { ChangeEvent } from 'react'
 import { cn } from '@/shared/lib/cn'
 import { formatCurrency } from '@/shared/lib/currency'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import { AffixInput } from './AffixInput'
 import { IconButton } from './IconButton'
 

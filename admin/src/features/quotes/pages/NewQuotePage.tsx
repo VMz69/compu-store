@@ -1,6 +1,6 @@
-import { ProductPicker, useProductPicker } from '@/features/catalog'
+import { ProductPicker, useProductPicker } from '@/00-director-catalogo'
 import { usePageMeta } from '@/shared/hooks/usePageMeta'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import { QuoteSummaryPanel } from '../components/builder/QuoteSummaryPanel'
 import { useQuoteBuilder } from '../hooks/useQuoteBuilder'
 

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import type { PdfDocumentState } from '@/shared/hooks/usePdfDocument'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import { Button } from './Button'
 import { Modal, ModalHeader } from './Modal'
 

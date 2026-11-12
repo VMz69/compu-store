@@ -1,6 +1,6 @@
 import type { ChangeEvent } from 'react'
-import { Field } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Field } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { PasswordCheck } from '../../lib/password'
 import { PasswordInput } from './PasswordInput'
 import { PasswordStrength } from './PasswordStrength'

@@ -1,15 +1,15 @@
-import { ACCESS_MODALS, ResetPasswordModal, UserFormModal } from '@/features/access'
-import { BILLING_MODALS, InvoiceEmitModal, InvoicePreviewModal } from '@/features/billing'
-import { BrandFormModal, CATALOG_MODALS, CategoryFormModal, ProductDetailModal, ProductFormModal } from '@/features/catalog'
-import { CustomerFormModal, CUSTOMERS_MODALS } from '@/features/customers'
-import { QuotePreviewModal, QUOTES_MODALS } from '@/features/quotes'
+import { ACCESS_MODALS, ResetPasswordModal, UserFormModal } from '@/00-director-acceso'
+import { BILLING_MODALS, InvoiceEmitModal, InvoicePreviewModal } from '@/00-director-facturacion'
+import { BrandFormModal, CATALOG_MODALS, CategoryFormModal, ProductDetailModal, ProductFormModal } from '@/00-director-catalogo'
+import { CustomerFormModal, CUSTOMERS_MODALS } from '@/00-director-clientes'
+import { QuotePreviewModal, QUOTES_MODALS } from '@/00-director-cotizaciones'
 import {
   ChannelFormModal,
   OrderDetailModal,
   ReserveOrderModal,
   SALES_MODALS,
   StatusLabelModal,
-} from '@/features/sales'
+} from '@/00-director-ventas'
 import { useModalStore } from '@/shared/store/modal.store'
 
 /** Resuelve el modal activo del store global (14 modales del sistema). */

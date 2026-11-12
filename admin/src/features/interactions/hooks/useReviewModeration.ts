@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { ensurePermission, usePermission, useSession } from '@/features/access'
+import { ensurePermission, usePermission, useSession } from '@/00-director-acceso'
 import { askConfirm } from '@/shared/store/confirm.store'
 import { toast } from '@/shared/store/toast.store'
 import { filterReviews, REJECT_REASONS, reviewMetrics, spamSignals } from '../lib/reviews.service'

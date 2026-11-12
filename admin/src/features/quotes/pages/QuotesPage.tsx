@@ -1,5 +1,5 @@
-import { Button, DataTable, EmptyState, Pagination, type TableHeader } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, DataTable, EmptyState, Pagination, type TableHeader } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { QuoteRow } from '../components/list/QuoteRow'
 import { QuotesToolbar } from '../components/list/QuotesToolbar'
 import { useQuotes } from '../hooks/useQuotes'

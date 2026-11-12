@@ -1,5 +1,5 @@
-import { Field, FormActions, Input, Modal, ModalHeader, ModalTitle, Textarea } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Field, FormActions, Input, Modal, ModalHeader, ModalTitle, Textarea } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useStatusLabelForm } from '../../hooks/useFlowTable'
 
 const t = tracer('StatusLabelModal', 'src/features/sales/components/flow/StatusLabelModal.tsx')

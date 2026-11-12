@@ -1,6 +1,6 @@
 import { formatCurrency } from '@/shared/lib/currency'
-import { PdfPreviewModal } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { PdfPreviewModal } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useInvoicePreview } from '../../hooks/useInvoicePreview'
 import { InvoiceStatusBadge } from '../InvoiceStatusBadge'
 

@@ -1,7 +1,7 @@
-import { OrderStatusBadge, ReservationTag, type Order } from '@/features/sales'
+import { OrderStatusBadge, ReservationTag, type Order } from '@/00-director-ventas'
 import { formatCurrency } from '@/shared/lib/currency'
-import { Button, DataTable, EmptyState, type TableHeader } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, DataTable, EmptyState, type TableHeader } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 
 const t = tracer('PendingOrdersTable', 'src/features/billing/components/list/PendingOrdersTable.tsx')
 

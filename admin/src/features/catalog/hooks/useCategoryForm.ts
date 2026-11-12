@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { ensurePermission } from '@/features/access'
+import { ensurePermission } from '@/00-director-acceso'
 import { useFormState } from '@/shared/hooks/useFormState'
 import { closeModal, useModalPayload } from '@/shared/store/modal.store'
 import { toast } from '@/shared/store/toast.store'

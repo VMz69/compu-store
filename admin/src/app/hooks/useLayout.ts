@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import { useAccessActions, useSession } from '@/features/access'
+import { useAccessActions, useSession } from '@/00-director-acceso'
 import { LOGOS, STORE_FRONT_URL } from '@/shared/config/store.config'
 import { NAV_ITEMS } from '../nav.config'
 import { askConfirm } from '@/shared/store/confirm.store'

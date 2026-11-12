@@ -1,5 +1,5 @@
-import { Button, Card } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, Card } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useIdentityForm } from '../hooks/useIdentityForm'
 import { CommercialFields, InvoiceNumberingFields, TaxpayerFields } from './IdentityFields'
 import { IdentityPreview } from './IdentityPreview'

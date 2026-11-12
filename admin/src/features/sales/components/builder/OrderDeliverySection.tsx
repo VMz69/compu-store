@@ -1,5 +1,5 @@
-import { Field, Input, Select, Textarea } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Field, Input, Select, Textarea } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { OrderBuilderApi } from '../../hooks/useOrderBuilder'
 
 const t = tracer('OrderDeliverySection', 'src/features/sales/components/builder/OrderDeliverySection.tsx')

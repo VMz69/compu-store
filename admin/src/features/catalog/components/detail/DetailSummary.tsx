@@ -1,5 +1,5 @@
 import { formatCurrency } from '@/shared/lib/currency'
-import { Badge } from '@/shared/ui'
+import { Badge } from '@/00-director-interfaz'
 import type { ProductDetailApi } from '../../hooks/useProductDetail'
 import { StockBadge } from '../StockBadge'
 import { ReservedBadge } from '../ReservedBadge'

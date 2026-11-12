@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn'
-import { AffixInput, Button, DatePicker, Field, Input, Textarea } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { AffixInput, Button, DatePicker, Field, Input, Textarea } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { OfferBuilderApi } from '../../hooks/useOfferBuilder'
 import { OfferProductList } from './OfferProductList'
 

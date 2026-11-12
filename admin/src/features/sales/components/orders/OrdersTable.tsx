@@ -1,6 +1,6 @@
 import type { SortState } from '@/shared/lib/sort'
-import { DataTable, type TableHeader } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { DataTable, type TableHeader } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { OrderActions } from '../../hooks/useOrderActions'
 import type { Order } from '../../types'
 import { OrderRow } from './OrderRow'

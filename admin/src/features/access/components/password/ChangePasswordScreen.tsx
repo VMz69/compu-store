@@ -1,5 +1,5 @@
-import { Button } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useChangePasswordForm } from '../../hooks/usePasswordForms'
 import { NewPasswordFields } from './NewPasswordFields'
 

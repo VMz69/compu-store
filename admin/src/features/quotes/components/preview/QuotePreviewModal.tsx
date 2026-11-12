@@ -1,6 +1,6 @@
 import { formatCurrency } from '@/shared/lib/currency'
-import { PdfPreviewModal } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { PdfPreviewModal } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useQuotePreview } from '../../hooks/useQuotePreview'
 import { QuoteStatusBadge } from '../QuoteStatusBadge'
 

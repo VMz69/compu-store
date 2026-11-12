@@ -1,5 +1,5 @@
-import { ImageLightbox } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { ImageLightbox } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { ImageGalleryApi } from '../../../../hooks/form/useImageGallery'
 import { ImageThumb } from './ImageThumb'
 

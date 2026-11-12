@@ -1,4 +1,4 @@
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 
 const t = tracer('BranchBanner', 'src/features/dashboard/components/BranchBanner.tsx')
 

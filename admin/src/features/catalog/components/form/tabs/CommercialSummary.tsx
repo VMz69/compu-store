@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn'
 import { formatCurrency } from '@/shared/lib/currency'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import type { CommercialSummary as Summary } from '../../../lib/commercial'
 
 const t = tracer('CommercialSummary', 'src/features/catalog/components/form/tabs/CommercialSummary.tsx')

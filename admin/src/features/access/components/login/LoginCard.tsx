@@ -1,5 +1,5 @@
-import { Button, Field, Input, SafeImage } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, Field, Input, SafeImage } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { LoginFormApi } from '../../hooks/useLoginForm'
 import { PasswordInput } from '../password/PasswordInput'
 import { DemoCredentials } from './DemoCredentials'

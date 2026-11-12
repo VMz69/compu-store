@@ -1,7 +1,7 @@
 import { cn } from '@/shared/lib/cn'
 import { formatCurrency } from '@/shared/lib/currency'
-import { IconButton } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { IconButton } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { OfferBuilderApi } from '../../hooks/useOfferBuilder'
 import { MIN_MARGIN_PERCENT, type MarginLevel } from '../../lib/offerPricing'
 

@@ -1,5 +1,5 @@
-import { Checkbox, Field, Input, Select } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Checkbox, Field, Input, Select } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { InvoiceEmitApi } from '../../hooks/useInvoiceEmit'
 
 const t = tracer('ReceptorFields', 'src/features/billing/components/emit/ReceptorFields.tsx')

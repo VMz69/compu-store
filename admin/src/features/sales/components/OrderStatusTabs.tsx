@@ -1,4 +1,4 @@
-import { SegmentedTabs } from '@/shared/ui'
+import { SegmentedTabs } from '@/00-director-interfaz'
 import { useOrderStatusTabs } from '../hooks/useOrders'
 
 /** Filtro por estado del pedido (patrón segmentado del sistema) con conteo por estado. */

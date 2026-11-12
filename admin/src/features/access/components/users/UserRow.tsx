@@ -1,6 +1,6 @@
 import { formatDateTime } from '@/shared/lib/date'
-import { Badge, IconButton, Switch } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Badge, IconButton, Switch } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { UserRowData, UsersAdminApi } from '../../hooks/useUsersAdmin'
 import { RoleBadge } from '../RoleBadge'
 import { UserAvatar } from './UserAvatar'

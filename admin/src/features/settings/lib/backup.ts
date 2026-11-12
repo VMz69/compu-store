@@ -1,8 +1,8 @@
 import { toLocalISO } from '@/shared/lib/date'
-import { getUsersSnapshot } from '@/features/access'
-import { getCatalogSnapshot } from '@/features/catalog'
-import { getCustomersSnapshot } from '@/features/customers'
-import { getSalesSnapshot } from '@/features/sales'
+import { getUsersSnapshot } from '@/00-director-acceso'
+import { getCatalogSnapshot } from '@/00-director-catalogo'
+import { getCustomersSnapshot } from '@/00-director-clientes'
+import { getSalesSnapshot } from '@/00-director-ventas'
 import type { StoreSettings } from '@/shared/config/store.config'
 import { snapshotRegisteredDemoData } from '@/shared/lib/demoData'
 

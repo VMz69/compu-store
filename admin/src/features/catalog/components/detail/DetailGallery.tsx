@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn'
-import { ImageLightbox, SafeImage } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { ImageLightbox, SafeImage } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { ProductDetailApi } from '../../hooks/useProductDetail'
 
 const t = tracer('DetailGallery', 'src/features/catalog/components/detail/DetailGallery.tsx')

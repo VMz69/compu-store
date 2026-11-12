@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import type { EffectivePriceResolver, Product } from '@/features/catalog'
+import type { EffectivePriceResolver, Product } from '@/00-director-catalogo'
 import { effectivePrice } from '../lib/offerPricing'
 import { usePromotionsStore } from '../store'
 

@@ -1,5 +1,5 @@
-import { Button, IconButton, Input } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, IconButton, Input } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { ProductFormApi } from '../../../hooks/useProductForm'
 
 const t = tracer('SpecRowsEditor', 'src/features/catalog/components/form/tabs/SpecRowsEditor.tsx')

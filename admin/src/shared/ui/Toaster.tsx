@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn'
 import { useToasts, type ToastTone } from '@/shared/store/toast.store'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 
 const t = tracer('Toaster', 'src/shared/ui/Toaster.tsx')
 

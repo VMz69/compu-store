@@ -1,5 +1,5 @@
-import { Button, Modal, ModalHeader, ModalTitle } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, Modal, ModalHeader, ModalTitle } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useInvoiceEmit } from '../../hooks/useInvoiceEmit'
 import { ReceptorFields } from './ReceptorFields'
 import { StockCheck } from './StockCheck'

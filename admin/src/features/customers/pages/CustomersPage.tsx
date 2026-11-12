@@ -1,5 +1,5 @@
-import { Button, DataTable, EmptyState, Pagination, type TableHeader } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, DataTable, EmptyState, Pagination, type TableHeader } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { CustomerRow } from '../components/CustomerRow'
 import { CustomersToolbar } from '../components/CustomersToolbar'
 import { useCustomers } from '../hooks/useCustomers'

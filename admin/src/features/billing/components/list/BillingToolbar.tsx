@@ -1,5 +1,5 @@
-import { ListToolbar, LiveSearch, SegmentedTabs, Select } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { ListToolbar, LiveSearch, SegmentedTabs, Select } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { BillingApi } from '../../hooks/useBilling'
 
 const t = tracer('BillingToolbar', 'src/features/billing/components/list/BillingToolbar.tsx')

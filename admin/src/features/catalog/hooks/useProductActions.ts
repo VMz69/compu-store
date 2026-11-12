@@ -1,4 +1,4 @@
-import { ensurePermission, usePermission } from '@/features/access'
+import { ensurePermission, usePermission } from '@/00-director-acceso'
 import { askConfirm } from '@/shared/store/confirm.store'
 import { closeModal, openModal } from '@/shared/store/modal.store'
 import { toast } from '@/shared/store/toast.store'

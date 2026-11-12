@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
-import type { Role } from '@/features/access'
-import { RoleBadge } from '@/features/access'
+import type { Role } from '@/00-director-acceso'
+import { RoleBadge } from '@/00-director-acceso'
 import { cn } from '@/shared/lib/cn'
 import type { PageBadge, PageCrumb } from '@/shared/store/pageMeta.store'
-import { Breadcrumb } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Breadcrumb } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 
 const t = tracer('TopbarTitle', 'src/app/layout/topbar/TopbarTitle.tsx')
 

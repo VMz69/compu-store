@@ -1,5 +1,5 @@
-import { Card, CardTitle, ProgressBar, type ProgressTone } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Card, CardTitle, ProgressBar, type ProgressTone } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { QuickLinks } from './QuickLinks'
 
 const t = tracer('StockHealthPanel', 'src/features/dashboard/components/StockHealthPanel.tsx')

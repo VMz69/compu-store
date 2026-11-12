@@ -1,5 +1,5 @@
 import type { LightboxState } from '@/shared/hooks/useLightbox'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import { IconButton } from '../IconButton'
 
 const t = tracer('LightboxToolbar', 'src/shared/ui/lightbox/LightboxToolbar.tsx')

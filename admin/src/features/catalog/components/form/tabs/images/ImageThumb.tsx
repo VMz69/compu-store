@@ -1,6 +1,6 @@
 import { cn } from '@/shared/lib/cn'
-import { IconButton, SafeImage } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { IconButton, SafeImage } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { ImageRow } from '../../../../lib/productImages'
 
 const t = tracer('ImageThumb', 'src/features/catalog/components/form/tabs/images/ImageThumb.tsx')

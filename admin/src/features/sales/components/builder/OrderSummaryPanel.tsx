@@ -1,7 +1,7 @@
-import { CustomerPicker } from '@/features/customers'
+import { CustomerPicker } from '@/00-director-clientes'
 import { formatCurrency } from '@/shared/lib/currency'
-import { Button, ExtraChargesEditor, IconButton, LineItemsEditor } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, ExtraChargesEditor, IconButton, LineItemsEditor } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { OrderBuilderApi } from '../../hooks/useOrderBuilder'
 import { OrderDeliverySection } from './OrderDeliverySection'
 

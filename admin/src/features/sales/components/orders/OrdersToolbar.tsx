@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
-import { ListToolbar, LiveSearch } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { ListToolbar, LiveSearch } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useOrderStatusTabs } from '../../hooks/useOrders'
 import type { PaginatedOrdersApi } from '../../hooks/usePaginatedOrders'
 import { OrderStatusTabs } from '../OrderStatusTabs'

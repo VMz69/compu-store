@@ -1,0 +1,12 @@
+// API pública del feature `customers`. Desde fuera solo se importa este archivo.
+export { CustomerFormModal } from './features/customers/components/CustomerFormModal'
+export { CustomerPicker } from './features/customers/components/CustomerPicker'
+export { useCustomerSelection } from './features/customers/hooks/useCustomerSelection'
+export type { CustomerMode, CustomerSelection, CustomerSelectionInit } from './features/customers/hooks/useCustomerSelection'
+export { normalizePhone } from './features/customers/lib/customer.service'
+export { provideCustomerStats } from './features/customers/lib/statsPort'
+export type { CustomerStatsHook, CustomerStatsResolver } from './features/customers/lib/statsPort'
+export { CUSTOMERS_MODALS } from './features/customers/modals'
+export { CustomersPage } from './features/customers/pages/CustomersPage'
+export { getCustomersSnapshot, resetCustomers, useCustomersStore } from './features/customers/store'
+export type { Customer, CustomerSnapshot, CustomerStats, CustomerType } from './features/customers/types'

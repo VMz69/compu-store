@@ -1,5 +1,5 @@
-import { Button } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { ProductFormApi } from '../../hooks/useProductForm'
 
 const t = tracer('ProductFormFooter', 'src/features/catalog/components/form/ProductFormFooter.tsx')

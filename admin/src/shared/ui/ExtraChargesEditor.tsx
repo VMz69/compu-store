@@ -1,6 +1,6 @@
 import type { ExtraChargesApi } from '@/shared/hooks/useExtraCharges'
 import { formatCurrency } from '@/shared/lib/currency'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import { AffixInput } from './AffixInput'
 import { IconButton } from './IconButton'
 import { Input } from './Input'

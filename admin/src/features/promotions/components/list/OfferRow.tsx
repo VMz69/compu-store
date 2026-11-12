@@ -1,7 +1,7 @@
 import { formatCurrency } from '@/shared/lib/currency'
 import { formatDate } from '@/shared/lib/date'
-import { Badge, IconButton } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Badge, IconButton } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { OffersApi } from '../../hooks/useOffers'
 import { OFFER_STATUS_META } from '../../lib/offerPricing'
 

@@ -1,6 +1,6 @@
-import { ChannelsTable, FlowTable, useChannels, useFlowTable } from '@/features/sales'
-import { BackLink, Button, PageContainer } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { ChannelsTable, FlowTable, useChannels, useFlowTable } from '@/00-director-ventas'
+import { BackLink, Button, PageContainer } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useSettingsPageMeta } from '../hooks/useSettingsPageMeta'
 
 const t = tracer('ChannelsPage', 'src/features/settings/pages/ChannelsPage.tsx')

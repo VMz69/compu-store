@@ -1,5 +1,5 @@
-import { Button, DataTable, EmptyState, PageContainer, type TableHeader } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, DataTable, EmptyState, PageContainer, type TableHeader } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { OfferRow } from '../components/list/OfferRow'
 import { OffersToolbar } from '../components/list/OffersToolbar'
 import { useOffers } from '../hooks/useOffers'

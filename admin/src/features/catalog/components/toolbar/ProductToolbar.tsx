@@ -1,5 +1,5 @@
-import { Button, ListToolbar, LiveSearch, Select } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, ListToolbar, LiveSearch, Select } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { ProductFiltersApi } from '../../hooks/useProductFilters'
 import { ViewModeToggle } from './ViewModeToggle'
 

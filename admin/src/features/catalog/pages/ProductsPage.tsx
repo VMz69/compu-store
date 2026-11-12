@@ -1,5 +1,5 @@
-import { Pagination } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Pagination } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { ProductGrid } from '../components/grid/ProductGrid'
 import { ProductsEmptyState } from '../components/ProductsEmptyState'
 import { ProductTable } from '../components/table/ProductTable'

@@ -1,5 +1,5 @@
-import { Button, Modal, ModalFooter, ModalHeader } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, Modal, ModalFooter, ModalHeader } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import { useOrderDetail } from '../../hooks/useOrderDetail'
 import { OrderActionButtons } from '../OrderActionButtons'
 import { OrderStatusBadge } from '../OrderStatusBadge'

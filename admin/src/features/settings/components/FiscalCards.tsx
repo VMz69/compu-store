@@ -1,5 +1,5 @@
-import { Badge, Card, CardTitle, Field, Input } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Badge, Card, CardTitle, Field, Input } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 
 const t = tracer('FiscalCards', 'src/features/settings/components/FiscalCards.tsx')
 

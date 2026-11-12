@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
-import { useViewAccess, type ViewId } from '@/features/access'
+import { useViewAccess, type ViewId } from '@/00-director-acceso'
 
 interface RequireViewProps {
   view: ViewId

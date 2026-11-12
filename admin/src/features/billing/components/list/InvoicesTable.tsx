@@ -1,7 +1,7 @@
 import { formatCurrency } from '@/shared/lib/currency'
 import { formatDateTime } from '@/shared/lib/date'
-import { DataTable, IconButton, type TableHeader } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { DataTable, IconButton, type TableHeader } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { BillingApi } from '../../hooks/useBilling'
 import { InvoiceStatusBadge } from '../InvoiceStatusBadge'
 

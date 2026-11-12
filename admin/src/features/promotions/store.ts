@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { getCatalogSnapshot } from '@/features/catalog'
+import { getCatalogSnapshot } from '@/00-director-catalogo'
 import { delay } from '@/shared/lib/delay'
 import { STORAGE_KEYS } from '@/shared/lib/storage'
 import { nextSequentialId } from '@/shared/lib/text'

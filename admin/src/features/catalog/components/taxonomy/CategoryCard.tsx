@@ -1,5 +1,5 @@
-import { Card, IconButton } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Card, IconButton } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { CategoriesTabApi } from '../../hooks/taxonomy/useCategoriesTab'
 
 const t = tracer('CategoryCard', 'src/features/catalog/components/taxonomy/CategoryCard.tsx')

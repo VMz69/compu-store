@@ -1,6 +1,6 @@
-import { RecentOrdersTable, type Order } from '@/features/sales'
-import { Card, CardTitle } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { RecentOrdersTable, type Order } from '@/00-director-ventas'
+import { Card, CardTitle } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 
 const t = tracer('RecentOrdersPanel', 'src/features/dashboard/components/RecentOrdersPanel.tsx')
 

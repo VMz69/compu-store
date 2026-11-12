@@ -1,5 +1,5 @@
-import { Button, EmptyState } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Button, EmptyState } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 
 const t = tracer('ProductsEmptyState', 'src/features/catalog/components/ProductsEmptyState.tsx')
 

@@ -1,6 +1,6 @@
 import { formatCurrency } from '@/shared/lib/currency'
-import { DataTable, type TableHeader } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { DataTable, type TableHeader } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { Order } from '../../types'
 import { OrderStatusBadge } from '../OrderStatusBadge'
 

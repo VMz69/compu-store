@@ -1,5 +1,5 @@
-import { Field, Input, Select, Textarea } from '@/shared/ui'
-import { tracer } from '@/ui-traceability'
+import { Field, Input, Select, Textarea } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
 import type { IdentityFormApi } from '../hooks/useIdentityForm'
 
 const t = tracer('IdentityFields', 'src/features/settings/components/IdentityFields.tsx')

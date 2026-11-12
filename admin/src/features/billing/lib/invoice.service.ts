@@ -1,5 +1,5 @@
 import { matchesQuery } from '@/shared/lib/text'
-import type { BadgeTone } from '@/shared/ui'
+import type { BadgeTone } from '@/00-director-interfaz'
 import type { Invoice, InvoiceItem, InvoiceStatus, InvoiceTotals, PaymentCondition } from '../types'
 
 /**

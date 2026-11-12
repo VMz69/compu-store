@@ -1,5 +1,5 @@
-import { UsersSection } from '@/features/access'
-import { tracer } from '@/ui-traceability'
+import { UsersSection } from '@/00-director-acceso'
+import { tracer } from '@/00-trazabilidad'
 import { useSettingsPageMeta } from '../hooks/useSettingsPageMeta'
 
 const t = tracer('UsersPage', 'src/features/settings/pages/UsersPage.tsx')

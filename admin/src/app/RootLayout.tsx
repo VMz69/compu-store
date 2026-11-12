@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom'
-import { tracer } from '@/ui-traceability'
+import { tracer } from '@/00-trazabilidad'
 import { Overlays } from './Overlays'
 
 const t = tracer('RootLayout', 'src/app/RootLayout.tsx')
