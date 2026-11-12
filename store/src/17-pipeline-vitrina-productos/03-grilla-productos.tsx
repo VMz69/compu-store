@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { ProductCard } from './ProductCard'
+import { ProductCard } from './02-tarjeta-producto'
 import { EmptyState } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'

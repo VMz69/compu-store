@@ -1,7 +1,7 @@
 import { ProductCardActions } from '@/16-pipeline-presentacion-producto/00-director-presentacion-producto'
 import { ProductCardInfo } from '@/16-pipeline-presentacion-producto/00-director-presentacion-producto'
 import { ProductCardMedia } from '@/16-pipeline-presentacion-producto/00-director-presentacion-producto'
-import { useProductCard } from '../../hooks/useProductCard'
+import { useProductCard } from './01-estado-tarjeta'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
 

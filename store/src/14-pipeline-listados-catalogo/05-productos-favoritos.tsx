@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ProductGrid } from '../features/catalog/components/grid/ProductGrid'
+import { ProductGrid } from '@/17-pipeline-vitrina-productos/00-director-vitrina-productos'
 import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { ConfirmDialog } from '@/05-pipeline-controles-compra/00-director-controles-compra'
 import { useFavoritesView } from './04-estado-lista-favoritos'

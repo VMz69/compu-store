@@ -589,3 +589,4 @@ paso; sus movimientos siguen siendo independientes y conservan el grafo original
 | `14-pipeline-listados-catalogo` | 5 | OK (0) | OK (0) | OK (0) |
 | `15-pipeline-preferencias-producto` | 3 | OK (0) | OK (0) | OK (0) |
 | `16-pipeline-presentacion-producto` | 3 | OK (0) | OK (0) | OK (0) |
+| `17-pipeline-vitrina-productos` | 4 | OK (0) | OK (0) | OK (0) |

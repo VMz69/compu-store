@@ -1,6 +1,6 @@
 // API pública del feature `catalog`. Desde fuera solo se importa este archivo.
 export { FilterBar } from '@/10-pipeline-consulta-catalogo/00-director-consulta-catalogo'
-export { ProductGrid } from './features/catalog/components/grid/ProductGrid'
+export { ProductGrid } from '@/17-pipeline-vitrina-productos/00-director-vitrina-productos'
 export { useFilterStore } from '@/10-pipeline-consulta-catalogo/00-director-consulta-catalogo'
 export { useCatalogStats } from '@/11-pipeline-categorias/00-director-categorias'
 export { useFavorites } from '@/15-pipeline-preferencias-producto/00-director-preferencias-producto'

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ProductGrid } from '../grid/ProductGrid'
+import { ProductGrid } from './03-grilla-productos'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
 
