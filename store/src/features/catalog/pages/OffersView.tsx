@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ProductGrid } from '../components/grid/ProductGrid'
 import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
-import { FilterBar } from '../components/FilterBar'
+import { FilterBar } from '@/10-pipeline-consulta-catalogo/00-director-consulta-catalogo'
 import { PageBanner } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { useOffersView } from '../hooks/useOffersView'
 import { uiMeta } from '@/04-trazabilidad-ui'

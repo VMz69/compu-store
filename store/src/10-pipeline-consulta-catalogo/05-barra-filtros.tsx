@@ -1,5 +1,5 @@
 import { Select } from '@/05-pipeline-controles-compra/00-director-controles-compra'
-import { SORT_OPTIONS } from '../config/sort.config'
+import { SORT_OPTIONS } from './02-ordenacion.config'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 import type { SortBy } from '@/00-director-modelos'

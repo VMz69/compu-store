@@ -1,5 +1,5 @@
 import { categories } from '@/06-pipeline-datos-mock/00-director-datos-mock'
-import { useFilters } from './useFilters'
+import { useFilters } from '@/10-pipeline-consulta-catalogo/00-director-consulta-catalogo'
 
 /**
  * Resuelve la categoría por slug y entrega sus productos filtrados.

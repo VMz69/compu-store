@@ -1,4 +1,4 @@
-import { useFilters } from './useFilters'
+import { useFilters } from '@/10-pipeline-consulta-catalogo/00-director-consulta-catalogo'
 
 /**
  * Productos en oferta y su ordenamiento.
