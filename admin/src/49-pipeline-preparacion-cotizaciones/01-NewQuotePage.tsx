@@ -1,8 +1,8 @@
 import { ProductPicker, useProductPicker } from '@/00-director-catalogo'
 import { usePageMeta } from '@/75-pipeline-estado-navegacion/00-director-estado-navegacion'
 import { tracer } from '@/00-trazabilidad'
-import { QuoteSummaryPanel } from '../components/builder/QuoteSummaryPanel'
-import { useQuoteBuilder } from '../hooks/useQuoteBuilder'
+import { QuoteSummaryPanel } from './03-QuoteSummaryPanel'
+import { useQuoteBuilder } from './02-useQuoteBuilder'
 
 const t = tracer('NewQuotePage', 'src/features/quotes/pages/NewQuotePage.tsx')
 

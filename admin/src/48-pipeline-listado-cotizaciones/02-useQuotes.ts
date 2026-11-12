@@ -6,10 +6,10 @@ import { usePagination } from '@/70-pipeline-orden-paginacion/04-usePagination'
 import { askConfirm } from '@/72-pipeline-confirmaciones-globales/03-confirm.store'
 import { openModal } from '@/73-pipeline-modales-globales/03-modal.store'
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
-import { calcTotals, effectiveStatus, filterQuotes, isConvertible, QUOTE_STATUS_META, validUntil } from '../lib/quote.service'
-import { QUOTES_MODALS } from '../modals'
-import { useQuotesStore } from '../store'
-import type { Quote, QuoteStatus, QuoteStoredStatus } from '../types'
+import { calcTotals, effectiveStatus, filterQuotes, isConvertible, QUOTE_STATUS_META, validUntil } from '../51-pipeline-persistencia-cotizaciones/02-quote.service'
+import { QUOTES_MODALS } from '../50-pipeline-documento-cotizacion/04-modals'
+import { useQuotesStore } from '../51-pipeline-persistencia-cotizaciones/00-director-persistencia-cotizaciones'
+import type { Quote, QuoteStatus, QuoteStoredStatus } from '../51-pipeline-persistencia-cotizaciones/03-types'
 
 export const QUOTE_PAGE_SIZES = [10, 25, 50]
 

@@ -1,7 +1,7 @@
 // API pública del feature `quotes` (/cotizaciones). Desde fuera solo se importa este archivo.
-export { QuotePreviewModal } from './features/quotes/components/preview/QuotePreviewModal'
-export { QUOTES_MODALS } from './features/quotes/modals'
-export { NewQuotePage } from './features/quotes/pages/NewQuotePage'
-export { QuotesPage } from './features/quotes/pages/QuotesPage'
-export { useQuotesStore } from './features/quotes/store'
-export type { Quote, QuoteStatus } from './features/quotes/types'
+export { QuotePreviewModal } from './50-pipeline-documento-cotizacion/00-director-documento-cotizacion'
+export { QUOTES_MODALS } from './50-pipeline-documento-cotizacion/04-modals'
+export { NewQuotePage } from './49-pipeline-preparacion-cotizaciones/00-director-preparacion-cotizaciones'
+export { QuotesPage } from './48-pipeline-listado-cotizaciones/00-director-listado-cotizaciones'
+export { useQuotesStore } from './51-pipeline-persistencia-cotizaciones/00-director-persistencia-cotizaciones'
+export type { Quote, QuoteStatus } from './51-pipeline-persistencia-cotizaciones/03-types'

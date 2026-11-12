@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { ListToolbar, LiveSearch, Select } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import type { QuotesApi } from '../../hooks/useQuotes'
+import type { QuotesApi } from './02-useQuotes'
 
 const t = tracer('QuotesToolbar', 'src/features/quotes/components/list/QuotesToolbar.tsx')
 

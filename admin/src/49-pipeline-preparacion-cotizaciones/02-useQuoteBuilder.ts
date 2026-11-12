@@ -9,10 +9,10 @@ import { useFormState } from '@/77-pipeline-edicion-formularios/03-useFormState'
 import { useLineItems } from '@/77-pipeline-edicion-formularios/02-useLineItems'
 import { openModal } from '@/73-pipeline-modales-globales/03-modal.store'
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
-import { calcTotals, DEFAULT_VALIDITY_DAYS, lineTotal, VALIDITY_OPTIONS } from '../lib/quote.service'
-import { QUOTES_MODALS } from '../modals'
-import { useQuotesStore } from '../store'
-import type { QuoteItem } from '../types'
+import { calcTotals, DEFAULT_VALIDITY_DAYS, lineTotal, VALIDITY_OPTIONS } from '../51-pipeline-persistencia-cotizaciones/02-quote.service'
+import { QUOTES_MODALS } from '../50-pipeline-documento-cotizacion/04-modals'
+import { useQuotesStore } from '../51-pipeline-persistencia-cotizaciones/00-director-persistencia-cotizaciones'
+import type { QuoteItem } from '../51-pipeline-persistencia-cotizaciones/03-types'
 
 /**
  * Estado del constructor de cotizaciones (/cotizaciones/nueva).

@@ -3,9 +3,9 @@ import { usePdfDocument } from '@/79-pipeline-consulta-documentos/02-usePdfDocum
 import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import { buildWhatsAppLink } from '@/83-pipeline-recursos-publicos/04-whatsapp'
 import { closeModal, useModalPayload } from '@/73-pipeline-modales-globales/03-modal.store'
-import { calcTotals, effectiveStatus } from '../lib/quote.service'
-import { buildQuotePdf, quotePdfFilename } from '../lib/quotePdf'
-import { useQuotesStore } from '../store'
+import { calcTotals, effectiveStatus } from '../51-pipeline-persistencia-cotizaciones/02-quote.service'
+import { buildQuotePdf, quotePdfFilename } from './03-quotePdf'
+import { useQuotesStore } from '../51-pipeline-persistencia-cotizaciones/00-director-persistencia-cotizaciones'
 
 /** Vista previa del PDF de una cotización (payload del modal: id de la cotización). */
 export function useQuotePreview() {

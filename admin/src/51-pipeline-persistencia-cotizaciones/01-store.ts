@@ -3,9 +3,9 @@ import { persist } from 'zustand/middleware'
 import { registerDemoData } from '@/84-pipeline-persistencia-demo/00-director-persistencia-demo'
 import { delay } from '@/84-pipeline-persistencia-demo/04-delay'
 import { STORAGE_KEYS } from '@/84-pipeline-persistencia-demo/02-storage'
-import { nextQuoteId } from './lib/quote.service'
-import { QUOTES_MOCK } from '../../88-pipeline-datos-demo-documentos/04-quotes.mock'
-import type { Quote, QuoteStoredStatus } from './types'
+import { nextQuoteId } from './02-quote.service'
+import { QUOTES_MOCK } from '../88-pipeline-datos-demo-documentos/04-quotes.mock'
+import type { Quote, QuoteStoredStatus } from './03-types'
 
 /** Datos para emitir: el store asigna correlativo, fecha y estado inicial. */
 export type NewQuoteInput = Omit<Quote, 'id' | 'createdAt' | 'status'>

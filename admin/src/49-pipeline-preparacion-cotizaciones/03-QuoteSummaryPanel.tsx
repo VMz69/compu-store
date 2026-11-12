@@ -2,7 +2,7 @@ import { CustomerPicker } from '@/00-director-clientes'
 import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import { Button, ExtraChargesEditor, Field, LineItemsEditor, Select, Textarea } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import type { QuoteBuilderApi } from '../../hooks/useQuoteBuilder'
+import type { QuoteBuilderApi } from './02-useQuoteBuilder'
 
 const t = tracer('QuoteSummaryPanel', 'src/features/quotes/components/builder/QuoteSummaryPanel.tsx')
 

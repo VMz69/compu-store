@@ -1,5 +1,5 @@
 import { STORE_CONFIG } from '@/85-pipeline-identificadores-texto/03-store.config'
-import type { Quote, QuoteCustomer, QuoteItem } from '../features/quotes/types'
+import type { Quote, QuoteCustomer, QuoteItem } from '../51-pipeline-persistencia-cotizaciones/03-types'
 
 /** Emisor por defecto de las cotizaciones de prueba. */
 const ISSUER = {

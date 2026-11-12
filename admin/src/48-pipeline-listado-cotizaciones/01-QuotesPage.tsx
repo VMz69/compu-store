@@ -1,8 +1,8 @@
 import { Button, DataTable, EmptyState, Pagination, type TableHeader } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import { QuoteRow } from '../components/list/QuoteRow'
-import { QuotesToolbar } from '../components/list/QuotesToolbar'
-import { useQuotes } from '../hooks/useQuotes'
+import { QuoteRow } from './03-QuoteRow'
+import { QuotesToolbar } from './04-QuotesToolbar'
+import { useQuotes } from './02-useQuotes'
 
 const t = tracer('QuotesPage', 'src/features/quotes/pages/QuotesPage.tsx')
 

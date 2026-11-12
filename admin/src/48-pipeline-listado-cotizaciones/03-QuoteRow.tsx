@@ -2,9 +2,9 @@ import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import { formatDate } from '@/71-pipeline-seleccion-fechas/05-date'
 import { IconButton } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import type { QuoteRowData, QuotesApi } from '../../hooks/useQuotes'
-import { isConvertible } from '../../lib/quote.service'
-import { QuoteStatusBadge } from '../QuoteStatusBadge'
+import type { QuoteRowData, QuotesApi } from './02-useQuotes'
+import { isConvertible } from '../51-pipeline-persistencia-cotizaciones/02-quote.service'
+import { QuoteStatusBadge } from './05-QuoteStatusBadge'
 
 const t = tracer('QuoteRow', 'src/features/quotes/components/list/QuoteRow.tsx')
 

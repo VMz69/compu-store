@@ -10,8 +10,8 @@ import {
   drawTotals,
   pdfFilename,
 } from '@/79-pipeline-consulta-documentos/03-pdf'
-import type { Quote } from '../types'
-import { calcTotals, lineTotal, validUntil } from './quote.service'
+import type { Quote } from '../51-pipeline-persistencia-cotizaciones/03-types'
+import { calcTotals, lineTotal, validUntil } from '../51-pipeline-persistencia-cotizaciones/02-quote.service'
 
 /**
  * PDF formal de una cotización. Usa el kit compartido `shared/lib/pdf` para
