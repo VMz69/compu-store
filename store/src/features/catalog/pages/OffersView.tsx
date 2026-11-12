@@ -3,7 +3,7 @@ import { ProductGrid } from '../components/grid/ProductGrid'
 import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { FilterBar } from '@/10-pipeline-consulta-catalogo/00-director-consulta-catalogo'
 import { PageBanner } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
-import { useOffersView } from '../hooks/useOffersView'
+import { useOffersView } from '@/13-pipeline-seleccion-catalogo/00-director-seleccion-catalogo'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/pages/OffersView.tsx'
