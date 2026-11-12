@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom'
-import { ProductGalleryThumbs } from './ProductGalleryThumbs'
+import { ProductGalleryThumbs } from './02-miniaturas'
 import { uiMeta } from '@/04-trazabilidad-ui'
-import type { ProductGalleryState } from '../../hooks/useProductGallery'
+import type { ProductGalleryState } from './01-estado-galeria'
 
 const SOURCE = 'src/features/catalog/components/detail/ProductLightbox.tsx'
 

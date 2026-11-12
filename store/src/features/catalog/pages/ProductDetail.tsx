@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { ProductBuyBox } from '../components/detail/ProductBuyBox'
 import { ProductDetailHeader } from '../components/detail/ProductDetailHeader'
-import { ProductGallery } from '../components/detail/ProductGallery'
+import { ProductGallery } from '@/18-pipeline-galeria-producto/00-director-galeria-producto'
 import { ProductInfo } from '../components/detail/ProductInfo'
 import { ProductMobileBar } from '../components/detail/ProductMobileBar'
 import { ProductTabs } from '../components/detail/ProductTabs'

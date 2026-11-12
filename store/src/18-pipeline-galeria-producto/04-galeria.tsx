@@ -1,6 +1,6 @@
-import { ProductGalleryThumbs } from './ProductGalleryThumbs'
-import { ProductLightbox } from './ProductLightbox'
-import { useProductGallery } from '../../hooks/useProductGallery'
+import { ProductGalleryThumbs } from './02-miniaturas'
+import { ProductLightbox } from './03-visor-imagenes'
+import { useProductGallery } from './01-estado-galeria'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/components/detail/ProductGallery.tsx'
