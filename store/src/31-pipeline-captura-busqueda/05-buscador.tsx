@@ -1,6 +1,6 @@
 import { uiMeta } from '@/04-trazabilidad-ui'
 import { SearchDropdown } from '@/30-pipeline-sugerencias-busqueda/00-director-sugerencias-busqueda'
-import { useSearchDropdown } from '../hooks/useSearchDropdown'
+import { useSearchDropdown } from './03-estado-desplegable'
 import {
   clearClass,
   containerClass,
@@ -8,7 +8,7 @@ import {
   inputClass,
   placeholderText,
   submitClass,
-} from './searchInput.styles'
+} from './04-buscador.styles'
 import type { Product } from '@/00-director-modelos'
 
 const SOURCE = 'src/features/search/components/SearchInput.tsx'

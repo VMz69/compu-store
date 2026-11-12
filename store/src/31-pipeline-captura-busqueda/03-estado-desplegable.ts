@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useSearchLock } from './useSearchLock'
+import { useSearchLock } from './02-bloqueo-scroll'
 
 /**
  * Estado de apertura del desplegable de búsqueda.
