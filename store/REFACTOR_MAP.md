@@ -561,61 +561,102 @@ Nuevo: `37-pipeline-layout-tienda/00-director-layout-tienda.ts` (solo reexportac
 
 ## Resultados de ejecución
 
-| Paso | Movimientos | Typecheck | Build | Auditoría de integridad |
-| --- | ---: | --- | --- | --- |
-| `00-integracion-y-modelos` | 12 | OK (0) | OK (0) | OK (0) |
+| Paso | Movimientos | Typecheck | Build | Integridad | Commit |
+| --- | ---: | --- | --- | --- | --- |
+| `00-integracion-y-modelos` | 12 | OK (0) | OK (0) | OK (0) | `9645e98` |
+| `01-pipeline-identidad-tienda` | 4 | OK (0) | OK (0) | OK (0) | `cbe6ca7` |
+| `02-pipeline-preferencias-interfaz` | 5 | OK (0) | OK (0) | OK (0) | `ac84a17` |
+| `03-pipeline-notificaciones` | 4 | OK (0) | OK (0) | OK (0) | `4e2eeaa` |
+| `04-pipeline-presentacion-secciones` | 4 | OK (0) | OK (0) | OK (0) | `9c2968e` |
+| `05-pipeline-controles-compra` | 5 | OK (0) | OK (0) | OK (0) | `d735a05` |
+| `06-pipeline-datos-mock` | 5 | OK (0) | OK (0) | OK (0) | `af73554` |
+| `07-pipeline-estado-carrito` | 4 | OK (0) | OK (0) | OK (0) | `397f1c1` |
+| `08-pipeline-vista-carrito` | 4 | OK (0) | OK (0) | OK (0) | `b3eb2ee` |
+| `09-pipeline-checkout-whatsapp` | 3 | OK (0) | OK (0) | OK (0) | `21faa88` |
+| `10-pipeline-consulta-catalogo` | 5 | OK (0) | OK (0) | OK (0) | `3d4d7b7` |
+| `11-pipeline-categorias` | 4 | OK (0) | OK (0) | OK (0) | `a16ff59` |
+| `12-pipeline-marcas` | 3 | OK (0) | OK (0) | OK (0) | `13fc41f` |
+| `13-pipeline-seleccion-catalogo` | 3 | OK (0) | OK (0) | OK (0) | `b396a6a` |
+| `14-pipeline-listados-catalogo` | 5 | OK (0) | OK (0) | OK (0) | `691d86b` |
+| `15-pipeline-preferencias-producto` | 3 | OK (0) | OK (0) | OK (0) | `58abcbd` |
+| `16-pipeline-presentacion-producto` | 3 | OK (0) | OK (0) | OK (0) | `a372fab` |
+| `17-pipeline-vitrina-productos` | 4 | OK (0) | OK (0) | OK (0) | `b6b529d` |
+| `18-pipeline-galeria-producto` | 4 | OK (0) | OK (0) | OK (0) | `0eb2f4c` |
+| `19-pipeline-calificaciones` | 4 | OK (0) | OK (0) | OK (0) | `ff89f0a` |
+| `20-pipeline-estado-resenas` | 4 | OK (0) | OK (0) | OK (0) | `7c1a1de` |
+| `21-pipeline-publicacion-resenas` | 3 | OK (0) | OK (0) | OK (0) | `5a82395` |
+| `22-pipeline-informacion-producto` | 4 | OK (0) | OK (0) | OK (0) | `4ef49df` |
+| `23-pipeline-oferta-producto` | 4 | OK (0) | OK (0) | OK (0) | `285bfc5` |
+| `24-pipeline-compra-producto` | 4 | OK (0) | OK (0) | OK (0) | `93098ba` |
+| `25-pipeline-detalle-producto` | 3 | OK (0) | OK (0) | OK (0) | `e3e2bf8` |
+| `26-pipeline-presentacion-portada` | 4 | OK (0) | OK (0) | OK (0) | `8675011` |
+| `27-pipeline-inicio` | 4 | OK (0) | OK (0) | OK (0) | `319c953` |
+| `28-pipeline-consulta-contacto` | 4 | OK (0) | OK (0) | OK (0) | `22034c1` |
+| `29-pipeline-informacion-tienda` | 4 | OK (0) | OK (0) | OK (0) | `74285a3` |
+| `30-pipeline-sugerencias-busqueda` | 3 | OK (0) | OK (0) | OK (0) | `3f5f0d7` |
+| `31-pipeline-captura-busqueda` | 5 | OK (0) | OK (0) | OK (0) | `71d44dd` |
+| `32-pipeline-resultados-busqueda` | 3 | OK (0) | OK (0) | OK (0) | `7741cf4` |
+| `33-pipeline-cabecera-tienda` | 5 | OK (0) | OK (0) | OK (0) | `2770cc1` |
+| `34-pipeline-menu-movil` | 4 | OK (0) | OK (0) | OK (0) | `b903d81` |
+| `35-pipeline-navegacion-tienda` | 5 | OK (0) | OK (0) | OK (0) | `0b4188e` |
+| `36-pipeline-pie-tienda` | 5 | OK (0) | OK (0) | OK (0) | `ed02bad` |
+| `37-pipeline-layout-tienda` | 4 | OK (0) | OK (0) | OK (0) | `86daaed` |
+| `00-recursos-estaticos` | 10 | OK (0) | OK (0) | OK (0) | `f087524` |
+| `00-documentacion-historica` | 50 | OK (0) | OK (0) | OK (0) | `df33142` |
 
+## Incidentes y reversiones
 
-Incidente del verificador temporal: el primer intento de identidad-tienda fue
-revertido inmediatamente a `9645e98` porque el auditor trató EndOfFileToken
-como si fuera una sentencia de código. TypeScript y build no habían fallado.
-Se corrigió únicamente el auditor externo en /tmp para comprobar las sentencias
-del director, sin cambiar el plan ni código de aplicación. Se reintenta el mismo
-paso; sus movimientos siguen siendo independientes y conservan el grafo original.
+El primer intento de `01-pipeline-identidad-tienda` se revirtió inmediatamente
+con `git reset --hard 9645e98`. El auditor temporal interpretó por error el
+EndOfFileToken del AST de TypeScript como una sentencia del director.
+TypeScript y build no habían fallado: la comprobación estática previa produjo
+un falso positivo. Se corrigió únicamente el auditor en /tmp, se verificó que
+el grafo seguía sin ciclos y se repitieron los mismos movimientos con éxito.
+Los commits `ccad649` y `43371ac` registran el incidente y su resolución.
+El entorno también terminó con SIGTERM un lote largo durante el primer intento
+de calificaciones, antes de finalizar su build. Se restauró inmediatamente
+`0eb2f4c` con git reset --hard y se reintentó el mismo paso en lotes más cortos.
+No hubo reversiones por errores de compilación ni parches de lógica, estilos o JSX.
 
-| `01-pipeline-identidad-tienda` | 4 | OK (0) | OK (0) | OK (0) |
-| `02-pipeline-preferencias-interfaz` | 5 | OK (0) | OK (0) | OK (0) |
-| `03-pipeline-notificaciones` | 4 | OK (0) | OK (0) | OK (0) |
-| `04-pipeline-presentacion-secciones` | 4 | OK (0) | OK (0) | OK (0) |
-| `05-pipeline-controles-compra` | 5 | OK (0) | OK (0) | OK (0) |
-| `06-pipeline-datos-mock` | 5 | OK (0) | OK (0) | OK (0) |
-| `07-pipeline-estado-carrito` | 4 | OK (0) | OK (0) | OK (0) |
-| `08-pipeline-vista-carrito` | 4 | OK (0) | OK (0) | OK (0) |
-| `09-pipeline-checkout-whatsapp` | 3 | OK (0) | OK (0) | OK (0) |
-| `10-pipeline-consulta-catalogo` | 5 | OK (0) | OK (0) | OK (0) |
-| `11-pipeline-categorias` | 4 | OK (0) | OK (0) | OK (0) |
-| `12-pipeline-marcas` | 3 | OK (0) | OK (0) | OK (0) |
-| `13-pipeline-seleccion-catalogo` | 3 | OK (0) | OK (0) | OK (0) |
-| `14-pipeline-listados-catalogo` | 5 | OK (0) | OK (0) | OK (0) |
-| `15-pipeline-preferencias-producto` | 3 | OK (0) | OK (0) | OK (0) |
-| `16-pipeline-presentacion-producto` | 3 | OK (0) | OK (0) | OK (0) |
-| `17-pipeline-vitrina-productos` | 4 | OK (0) | OK (0) | OK (0) |
-| `18-pipeline-galeria-producto` | 4 | OK (0) | OK (0) | OK (0) |
+## Cierre y evidencia
 
+- 220 archivos movidos con git mv; main.tsx conserva su ubicación. Se preservan
+  los 221 archivos originales y se añaden 37 directores de reexportación:
+  258 archivos finales en src, sin archivos perdidos ni añadidos imprevistos.
+- Los 37 pipelines tienen 4–6 archivos incluyendo director, sin anidamiento.
+  Los 160 módulos TS/TSX originales coinciden byte por byte al ignorar solo los
+  specifiers de import/export. Esto incluye símbolos, lógica, JSX, comentarios,
+  metadatos de trazabilidad, claves de persistencia y los cinco datasets mock.
+  Los otros 61 archivos (CSS, imágenes, SVG e inventarios HTML) son idénticos.
+- No hay imports locales sin resolver, dependencias circulares ni imports
+  directos a fases internas de otro pipeline. Los módulos que ya estaban sin
+  uso se conservan deliberadamente; no se considera permitido eliminarlos.
+- `pnpm exec tsc -b --force`, `pnpm lint` y `pnpm build`: salida 0 al cierre.
+  Cada uno de los 40 pasos también pasó typecheck forzado, build y auditoría
+  de integridad antes de su commit. No hay suite de tests en el proyecto.
+- Chrome headless comparó las builds anterior y final: 18 rutas en escritorio
+  (1440 px) y móvil (390 px), incluidos vacíos, inexistentes y redirección.
+  Los 36 snapshots del DOM, textos y rutas son iguales, normalizando únicamente
+  nombres de assets generados mediante el hash de su contenido.
+- Siete flujos dieron los mismos resultados y estado persistido: añadir al
+  carrito/favoritos, aumentar cantidad y elegir envío, cancelar/confirmar vaciado,
+  abrir/avanzar/cerrar galería y consultar reseñas, cambiar tema, buscar producto
+  y abrir/cerrar menú móvil. Cero excepciones y cero errores de consola JS.
+- Cuatro capturas (inicio y producto, escritorio y móvil) son idénticas byte por
+  byte. Para obtener una comparación repetible se bloquearon las solicitudes
+  HTTPS externas en ambos builds (placeholders, fuentes, iconos y mapa); esos
+  servicios externos no están cubiertos por esta prueba. Se usó movimiento
+  reducido y preferencia inicial de tema claro en ambos casos.
+- El CSS compilado coincide byte por byte con la línea base. Las imágenes locales
+  conservan su contenido; Vite puede cambiar sus nombres al renombrar el origen.
+  Las reexportaciones añaden módulos al grafo y pueden variar el hash del JS.
+  Build final: 223 módulos; JS 438.62 kB; CSS 84.50 kB.
+  SHA-256 del CSS (base y final):
+  `8f34a3840cb31402cd9a8712c1181bd6a0049ff96b5b09336374459af3d45a76`.
+- No se modificó ningún archivo versionado fuera de store/src y este reporte.
+  Configuración Vite/TS, public/, manifiesto, lockfile y dependencias no cambian.
+  main conserva el commit original c518624. Todo el trabajo se confirma en
+  refactor/floa-store, sin publicar ni fusionar la rama.
 
-Interrupción externa: el entorno terminó el proceso con SIGTERM durante
-`19-pipeline-calificaciones` antes de completar el build. Se restauró inmediatamente
-`0eb2f4c` con git reset --hard, sin conservar el paso incompleto.
-Se reanuda por lotes más cortos, con los mismos movimientos y validaciones.
-
-| `19-pipeline-calificaciones` | 4 | OK (0) | OK (0) | OK (0) |
-| `20-pipeline-estado-resenas` | 4 | OK (0) | OK (0) | OK (0) |
-| `21-pipeline-publicacion-resenas` | 3 | OK (0) | OK (0) | OK (0) |
-| `22-pipeline-informacion-producto` | 4 | OK (0) | OK (0) | OK (0) |
-| `23-pipeline-oferta-producto` | 4 | OK (0) | OK (0) | OK (0) |
-| `24-pipeline-compra-producto` | 4 | OK (0) | OK (0) | OK (0) |
-| `25-pipeline-detalle-producto` | 3 | OK (0) | OK (0) | OK (0) |
-| `26-pipeline-presentacion-portada` | 4 | OK (0) | OK (0) | OK (0) |
-| `27-pipeline-inicio` | 4 | OK (0) | OK (0) | OK (0) |
-| `28-pipeline-consulta-contacto` | 4 | OK (0) | OK (0) | OK (0) |
-| `29-pipeline-informacion-tienda` | 4 | OK (0) | OK (0) | OK (0) |
-| `30-pipeline-sugerencias-busqueda` | 3 | OK (0) | OK (0) | OK (0) |
-| `31-pipeline-captura-busqueda` | 5 | OK (0) | OK (0) | OK (0) |
-| `32-pipeline-resultados-busqueda` | 3 | OK (0) | OK (0) | OK (0) |
-| `33-pipeline-cabecera-tienda` | 5 | OK (0) | OK (0) | OK (0) |
-| `34-pipeline-menu-movil` | 4 | OK (0) | OK (0) | OK (0) |
-| `35-pipeline-navegacion-tienda` | 5 | OK (0) | OK (0) | OK (0) |
-| `36-pipeline-pie-tienda` | 5 | OK (0) | OK (0) | OK (0) |
-| `37-pipeline-layout-tienda` | 4 | OK (0) | OK (0) | OK (0) |
-| `00-recursos-estaticos` | 10 | OK (0) | OK (0) | OK (0) |
-| `00-documentacion-historica` | 50 | OK (0) | OK (0) | OK (0) |
+Los scripts, perfiles del navegador, capturas y logs auxiliares se guardaron en
+/tmp/compustore-floa-* para esta ejecución; no se añaden al frontend.
