@@ -616,3 +616,4 @@ Se reanuda por lotes más cortos, con los mismos movimientos y validaciones.
 | `34-pipeline-menu-movil` | 4 | OK (0) | OK (0) | OK (0) |
 | `35-pipeline-navegacion-tienda` | 5 | OK (0) | OK (0) | OK (0) |
 | `36-pipeline-pie-tienda` | 5 | OK (0) | OK (0) | OK (0) |
+| `37-pipeline-layout-tienda` | 4 | OK (0) | OK (0) | OK (0) |

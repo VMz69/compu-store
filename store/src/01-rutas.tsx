@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { MainLayout } from './app/layout/MainLayout'
+import { MainLayout } from '@/37-pipeline-layout-tienda/00-director-layout-tienda'
 import { AboutView, ContactView } from '@/00-director-informacion'
 import { BrandDetail, BrandsView, CatalogHub, CategoryView, FavoritesView, OffersView, ProductDetail } from '@/00-director-catalogo'
 import { CartView } from '@/00-director-carrito'

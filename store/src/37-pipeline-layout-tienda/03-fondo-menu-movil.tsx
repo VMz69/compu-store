@@ -1,4 +1,4 @@
-import { useMobileMenuOverlay } from '../../hooks/useMobileMenuOverlay'
+import { useMobileMenuOverlay } from './02-estado-overlay-movil'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/app/layout/navbar/MobileMenuBackdrop.tsx'
