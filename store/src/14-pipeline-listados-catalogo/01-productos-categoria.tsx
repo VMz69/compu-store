@@ -7,7 +7,7 @@ import { PageBanner } from '@/04-pipeline-presentacion-secciones/00-director-pre
 import { useCategoryView } from '@/13-pipeline-seleccion-catalogo/00-director-seleccion-catalogo'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/catalog/pages/CategoryView.tsx'
+const SOURCE = 'src/14-pipeline-listados-catalogo/01-productos-categoria.tsx'
 
 export const CategoryView = () => {
   const { slug = '' } = useParams()

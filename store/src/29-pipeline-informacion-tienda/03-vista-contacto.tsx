@@ -6,7 +6,7 @@ import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-pr
 import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/info/pages/ContactView.tsx'
+const SOURCE = 'src/29-pipeline-informacion-tienda/03-vista-contacto.tsx'
 
 const quickActions = [
   {

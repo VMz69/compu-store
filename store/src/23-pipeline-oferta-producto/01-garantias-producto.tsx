@@ -1,6 +1,6 @@
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/catalog/components/detail/ProductTrustChips.tsx'
+const SOURCE = 'src/23-pipeline-oferta-producto/01-garantias-producto.tsx'
 
 const CHIPS = [
   {

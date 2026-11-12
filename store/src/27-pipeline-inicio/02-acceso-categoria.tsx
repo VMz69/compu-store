@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { CategoryWithCount } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/home/components/CategoryTile.tsx'
+const SOURCE = 'src/27-pipeline-inicio/02-acceso-categoria.tsx'
 
 export const CategoryTile = ({ category }: { category: CategoryWithCount }) => (
   <Link

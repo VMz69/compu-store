@@ -3,7 +3,7 @@ import { ProductLightbox } from './03-visor-imagenes'
 import { useProductGallery } from './01-estado-galeria'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/catalog/components/detail/ProductGallery.tsx'
+const SOURCE = 'src/18-pipeline-galeria-producto/04-galeria.tsx'
 
 interface ProductGalleryProps {
   productName: string

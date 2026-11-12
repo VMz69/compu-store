@@ -4,7 +4,7 @@ import { getInitials } from '@/01-pipeline-identidad-tienda/00-director-identida
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Review } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/catalog/components/reviews/ReviewCard.tsx'
+const SOURCE = 'src/19-pipeline-calificaciones/04-tarjeta-resena.tsx'
 
 export const ReviewCard = ({ review }: { review: Review }) => {
   const { helpful, markHelpful } = useHelpfulReview()

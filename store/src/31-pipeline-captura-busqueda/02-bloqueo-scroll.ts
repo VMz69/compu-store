@@ -10,7 +10,7 @@ export const useSearchLock = (active: boolean) => {
     if (!active) return
     if (window.matchMedia('(min-width: 1024px)').matches) return
 
-    const header = document.querySelector<HTMLElement>('[data-ui-id="layout.sticky-header"]')
+    const header = document.querySelector<HTMLElement>('#store-sticky-header')
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
 
     const previousBodyOverflow = document.body.style.overflow
@@ -51,7 +51,7 @@ export const useSearchLock = (active: boolean) => {
     }
 
     const handleTouchMove = (event: TouchEvent) => {
-      const dropdown = document.querySelector('[data-ui-id="layout.search.dropdown"]')
+      const dropdown = document.querySelector('[data-search-dropdown]')
       if (dropdown && dropdown.contains(event.target as Node)) return
       event.preventDefault()
     }

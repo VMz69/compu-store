@@ -3,7 +3,7 @@ import { Logo } from '@/01-pipeline-identidad-tienda/00-director-identidad-tiend
 import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/app/layout/footer/FooterBrand.tsx'
+const SOURCE = 'src/36-pipeline-pie-tienda/01-identidad-pie.tsx'
 
 export const FooterBrand = () => (
   <div

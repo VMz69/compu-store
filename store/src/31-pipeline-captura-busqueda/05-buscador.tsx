@@ -11,7 +11,7 @@ import {
 } from './04-buscador.styles'
 import type { Product } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/search/components/SearchInput.tsx'
+const SOURCE = 'src/31-pipeline-captura-busqueda/05-buscador.tsx'
 
 interface SearchInputProps {
   variant: 'desktop' | 'mobile'

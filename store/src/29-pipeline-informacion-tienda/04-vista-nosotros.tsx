@@ -3,7 +3,7 @@ import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-pr
 import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/info/pages/AboutView.tsx'
+const SOURCE = 'src/29-pipeline-informacion-tienda/04-vista-nosotros.tsx'
 
 export const AboutView = () => (
   <div className="space-y-6 sm:space-y-12 max-w-5xl mx-auto">

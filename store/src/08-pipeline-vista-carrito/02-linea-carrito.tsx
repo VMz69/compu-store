@@ -4,7 +4,7 @@ import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-ident
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { CartItem as CartItemType } from '@/07-pipeline-estado-carrito/00-director-estado-carrito'
 
-const SOURCE = 'src/features/cart/components/CartItem.tsx'
+const SOURCE = 'src/08-pipeline-vista-carrito/02-linea-carrito.tsx'
 
 interface CartItemProps {
   item: CartItemType

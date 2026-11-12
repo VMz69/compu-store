@@ -5,7 +5,7 @@ import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identid
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/catalog/components/detail/ProductBuyBox.tsx'
+const SOURCE = 'src/23-pipeline-oferta-producto/04-ficha-compra.tsx'
 
 interface ProductBuyBoxProps {
   product: Product

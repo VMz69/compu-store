@@ -5,7 +5,7 @@ import { uiMeta } from '@/04-trazabilidad-ui'
 import type { ProductDetailTab } from '@/02-pipeline-preferencias-interfaz/00-director-preferencias-interfaz'
 import type { Product } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/catalog/components/detail/ProductTabs.tsx'
+const SOURCE = 'src/22-pipeline-informacion-producto/04-pestanas-producto.tsx'
 
 interface ProductTabsProps {
   product: Product

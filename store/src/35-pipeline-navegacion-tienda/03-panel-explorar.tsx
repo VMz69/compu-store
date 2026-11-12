@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { BrandWithCount, CategoryWithCount } from '@/00-director-modelos'
 
-const SOURCE = 'src/app/layout/navbar/ExploreMenuPanel.tsx'
+const SOURCE = 'src/35-pipeline-navegacion-tienda/03-panel-explorar.tsx'
 
 const COLUMN_TITLE = 'text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500'
 const SEE_ALL = 'text-[11px] font-bold text-brand hover:underline'

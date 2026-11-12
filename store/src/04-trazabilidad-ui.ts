@@ -1,13 +1,14 @@
-// store/src/ui-traceability/index.ts
+// store/src/04-trazabilidad-ui.ts
 
 /**
- * Trazabilidad UI (regla DOMA).
+ * Trazabilidad UI: núcleo transversal de la arquitectura FLOA.
  *
  * Todo elemento interactivo o contenedor principal declara un `id` estable, el
  * componente que lo renderiza y su archivo fuente. Esas marcas permiten auditar
  * la interfaz desde herramientas externas sin acoplarse a clases de Tailwind.
  *
  * Kill switch: definir `VITE_UI_TRACEABILITY=false` desactiva la inyección.
+ * Los selectores funcionales del DOM son independientes de estos metadatos.
  * No se usa `import.meta.env.PROD` de forma automática para no perder la
  * trazabilidad en builds de QA/staging.
  */

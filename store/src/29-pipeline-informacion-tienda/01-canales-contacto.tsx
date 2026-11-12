@@ -1,7 +1,7 @@
 import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/info/components/ContactInfoCards.tsx'
+const SOURCE = 'src/29-pipeline-informacion-tienda/01-canales-contacto.tsx'
 
 export const ContactInfoCards = () => (
   <div

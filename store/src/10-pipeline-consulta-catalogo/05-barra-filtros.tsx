@@ -4,8 +4,8 @@ import { uiMeta } from '@/04-trazabilidad-ui'
 
 import type { SortBy } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/catalog/components/FilterBar.tsx'
-const SOURCE_SELECT = 'src/shared/ui/Select.tsx'
+const SOURCE = 'src/10-pipeline-consulta-catalogo/05-barra-filtros.tsx'
+const SOURCE_SELECT = 'src/05-pipeline-controles-compra/03-selector.tsx'
 
 interface FilterBarProps {
   count: number

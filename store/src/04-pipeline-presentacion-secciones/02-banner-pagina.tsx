@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/shared/ui/PageBanner.tsx'
+const SOURCE = 'src/04-pipeline-presentacion-secciones/02-banner-pagina.tsx'
 
 interface PageBannerProps {
   badge?: string

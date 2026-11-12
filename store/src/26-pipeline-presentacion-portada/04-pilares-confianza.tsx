@@ -1,7 +1,7 @@
 import { TRUST_PILLARS } from './01-pilares-confianza.config'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/home/components/TrustPillars.tsx'
+const SOURCE = 'src/26-pipeline-presentacion-portada/04-pilares-confianza.tsx'
 
 export const TrustPillars = () => (
   <div

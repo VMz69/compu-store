@@ -3,7 +3,7 @@ import { MOBILE_SECTION_TITLE } from './01-navegacion.styles'
 import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/app/layout/navbar/MobileMenuInfo.tsx'
+const SOURCE = 'src/34-pipeline-menu-movil/03-informacion-movil.tsx'
 
 const INFO_LINKS = [
   { to: '/about', label: 'Nosotros', icon: 'fa-solid fa-circle-info', traceId: 'layout.mobile-menu.about' },

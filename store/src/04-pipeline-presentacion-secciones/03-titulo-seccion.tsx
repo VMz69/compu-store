@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/shared/ui/SectionHeading.tsx'
+const SOURCE = 'src/04-pipeline-presentacion-secciones/03-titulo-seccion.tsx'
 
 interface SectionHeadingProps {
   title: string

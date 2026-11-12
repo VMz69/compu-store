@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/shared/ui/EmptyState.tsx'
+const SOURCE = 'src/04-pipeline-presentacion-secciones/04-estado-vacio.tsx'
 
 interface EmptyStateProps {
   icon: string

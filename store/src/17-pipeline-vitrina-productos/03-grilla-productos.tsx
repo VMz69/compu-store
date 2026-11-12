@@ -4,7 +4,7 @@ import { EmptyState } from '@/04-pipeline-presentacion-secciones/00-director-pre
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/catalog/components/grid/ProductGrid.tsx'
+const SOURCE = 'src/17-pipeline-vitrina-productos/03-grilla-productos.tsx'
 
 interface ProductGridProps {
   products: Product[]

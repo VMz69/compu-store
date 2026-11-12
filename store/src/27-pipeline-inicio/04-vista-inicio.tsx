@@ -8,7 +8,7 @@ import { SectionHeading } from '@/04-pipeline-presentacion-secciones/00-director
 import { useHomeData } from './01-datos-inicio'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/home/pages/Home.tsx'
+const SOURCE = 'src/27-pipeline-inicio/04-vista-inicio.tsx'
 /** Las vitrinas de portada muestran 4 productos: se fijan en 4 columnas para no dejar huecos. */
 const SHOWCASE_GRID = 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6'
 

@@ -3,7 +3,7 @@ import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-ident
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { DeliveryMethod } from '@/07-pipeline-estado-carrito/00-director-estado-carrito'
 
-const SOURCE = 'src/features/cart/components/CartSummary.tsx'
+const SOURCE = 'src/09-pipeline-checkout-whatsapp/03-resumen-pedido.tsx'
 
 interface CartSummaryProps {
   subtotal: number

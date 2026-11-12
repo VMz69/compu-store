@@ -6,7 +6,7 @@ import { INFO_LINKS } from './01-enlaces-navegacion.config'
 import { useNavbar } from './02-estado-navegacion'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/app/layout/navbar/Navbar.tsx'
+const SOURCE = 'src/35-pipeline-navegacion-tienda/05-barra-navegacion.tsx'
 
 export const Navbar = () => {
   const {

@@ -1,6 +1,6 @@
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/catalog/components/detail/ProductInfoActions.tsx'
+const SOURCE = 'src/23-pipeline-oferta-producto/02-acciones-informacion.tsx'
 
 const ACTION_BTN =
   'w-10 h-10 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center justify-center transition-all cursor-pointer hover:border-brand-300 hover:shadow-soft-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand'

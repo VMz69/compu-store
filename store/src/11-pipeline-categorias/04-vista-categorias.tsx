@@ -4,7 +4,7 @@ import { PageBanner } from '@/04-pipeline-presentacion-secciones/00-director-pre
 import { useCatalogHub } from './02-estado-categorias'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/catalog/pages/CatalogHub.tsx'
+const SOURCE = 'src/11-pipeline-categorias/04-vista-categorias.tsx'
 
 export const CatalogHub = () => {
   const { categories, totalProducts } = useCatalogHub()

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/cart/components/CartWidget.tsx'
+const SOURCE = 'src/08-pipeline-vista-carrito/01-indicador-carrito.tsx'
 
 interface CartWidgetProps {
   count: number

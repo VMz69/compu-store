@@ -3,7 +3,7 @@ import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-ident
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/catalog/components/grid/ProductCardActions.tsx'
+const SOURCE = 'src/16-pipeline-presentacion-producto/03-acciones-tarjeta.tsx'
 
 interface ProductCardActionsProps {
   product: Product

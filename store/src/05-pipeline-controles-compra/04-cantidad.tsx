@@ -1,6 +1,6 @@
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/shared/ui/QuantitySelector.tsx'
+const SOURCE = 'src/05-pipeline-controles-compra/04-cantidad.tsx'
 
 interface QuantitySelectorProps {
   value: number

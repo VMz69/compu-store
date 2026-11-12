@@ -2,7 +2,7 @@ import { ExploreMenuPanel } from './03-panel-explorar'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { BrandWithCount, CategoryWithCount } from '@/00-director-modelos'
 
-const SOURCE = 'src/app/layout/navbar/ExploreMenu.tsx'
+const SOURCE = 'src/35-pipeline-navegacion-tienda/04-menu-explorar.tsx'
 
 interface ExploreMenuProps {
   open: boolean

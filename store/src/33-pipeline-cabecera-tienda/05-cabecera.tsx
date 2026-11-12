@@ -7,7 +7,7 @@ import { useHeaderState } from './01-estado-cabecera'
 import { useMobileSearchCollapse } from './02-buscador-al-desplazar'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/app/layout/header/Header.tsx'
+const SOURCE = 'src/33-pipeline-cabecera-tienda/05-cabecera.tsx'
 
 export const Header = () => {
   const {

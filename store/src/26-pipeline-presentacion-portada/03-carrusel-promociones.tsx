@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { useHeroSlider } from './02-estado-promociones'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/home/components/HeroSlider.tsx'
+const SOURCE = 'src/26-pipeline-presentacion-portada/03-carrusel-promociones.tsx'
 
 export const HeroSlider = () => {
   const { promotion, activeSlide, total, goTo, next, prev, pause, resume } = useHeroSlider()

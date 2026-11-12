@@ -1,6 +1,6 @@
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/shared/ui/RatingStars.tsx'
+const SOURCE = 'src/19-pipeline-calificaciones/02-estrellas.tsx'
 
 interface RatingStarsProps {
   rating: number

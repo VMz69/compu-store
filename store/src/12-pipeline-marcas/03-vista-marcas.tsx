@@ -4,7 +4,7 @@ import { PageBanner } from '@/04-pipeline-presentacion-secciones/00-director-pre
 import { useBrandsPage } from './01-estado-marcas'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/catalog/pages/BrandsView.tsx'
+const SOURCE = 'src/12-pipeline-marcas/03-vista-marcas.tsx'
 
 export const BrandsView = () => {
   const { brands } = useBrandsPage()

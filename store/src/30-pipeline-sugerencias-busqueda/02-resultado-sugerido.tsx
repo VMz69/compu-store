@@ -3,7 +3,7 @@ import { uiMeta } from '@/04-trazabilidad-ui'
 import { useSearchResultItem } from './01-acciones-resultado'
 import type { Product } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/search/components/SearchResultItem.tsx'
+const SOURCE = 'src/30-pipeline-sugerencias-busqueda/02-resultado-sugerido.tsx'
 
 interface SearchResultItemProps {
   product: Product

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { CategoryWithCount } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/catalog/components/browse/CategoryCard.tsx'
+const SOURCE = 'src/11-pipeline-categorias/03-tarjeta-categoria.tsx'
 
 interface CategoryCardProps {
   category: CategoryWithCount

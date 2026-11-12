@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/shared/ui/ConfirmDialog.tsx'
+const SOURCE = 'src/05-pipeline-controles-compra/05-confirmacion.tsx'
 
 interface ConfirmDialogProps {
   open: boolean

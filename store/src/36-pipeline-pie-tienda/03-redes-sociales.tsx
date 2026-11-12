@@ -1,7 +1,7 @@
 import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/app/layout/footer/FooterSocial.tsx'
+const SOURCE = 'src/36-pipeline-pie-tienda/03-redes-sociales.tsx'
 
 const SOCIALS = [
   { label: 'Facebook', icon: 'fa-brands fa-facebook-f', href: STORE_CONFIG.socials.facebook },

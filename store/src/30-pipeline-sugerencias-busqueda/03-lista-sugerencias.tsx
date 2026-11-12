@@ -3,7 +3,7 @@ import { uiMeta } from '@/04-trazabilidad-ui'
 import { SearchResultItem } from './02-resultado-sugerido'
 import type { Product } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/search/components/SearchDropdown.tsx'
+const SOURCE = 'src/30-pipeline-sugerencias-busqueda/03-lista-sugerencias.tsx'
 
 interface SearchDropdownProps {
   open: boolean
@@ -34,6 +34,7 @@ export const SearchDropdown = ({
 
   return (
     <div
+      data-search-dropdown
       className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-dropdown dark:border-slate-800 dark:bg-slate-900"
       {...uiMeta({ id: 'layout.search.dropdown', component: 'SearchDropdown', source: SOURCE })}
     >

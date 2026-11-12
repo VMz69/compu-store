@@ -7,7 +7,7 @@ import { PageBanner } from '@/04-pipeline-presentacion-secciones/00-director-pre
 import { useBrandView } from '@/13-pipeline-seleccion-catalogo/00-director-seleccion-catalogo'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/catalog/pages/BrandDetail.tsx'
+const SOURCE = 'src/14-pipeline-listados-catalogo/02-productos-marca.tsx'
 
 export const BrandDetail = () => {
   const { slug = '' } = useParams()

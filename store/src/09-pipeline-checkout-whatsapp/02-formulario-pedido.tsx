@@ -1,7 +1,7 @@
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { DeliveryMethod } from '@/07-pipeline-estado-carrito/00-director-estado-carrito'
 
-const SOURCE = 'src/features/cart/components/CheckoutForm.tsx'
+const SOURCE = 'src/09-pipeline-checkout-whatsapp/02-formulario-pedido.tsx'
 
 interface CheckoutFormProps {
   deliveryMethod: DeliveryMethod

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { FOOTER_LINKS } from '@/35-pipeline-navegacion-tienda/00-director-navegacion-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/app/layout/footer/FooterLinks.tsx'
+const SOURCE = 'src/36-pipeline-pie-tienda/02-enlaces-pie.tsx'
 
 export const FooterLinks = () => (
   <div

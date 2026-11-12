@@ -5,7 +5,7 @@ import { useProductCard } from './01-estado-tarjeta'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/catalog/components/grid/ProductCard.tsx'
+const SOURCE = 'src/17-pipeline-vitrina-productos/02-tarjeta-producto.tsx'
 
 export const ProductCard = ({ product }: { product: Product }) => {
   const card = useProductCard(product)

@@ -2,7 +2,7 @@ import { useReviewForm } from '@/20-pipeline-estado-resenas/00-director-estado-r
 import { ReviewPendingNotice } from './01-aviso-moderacion'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/catalog/components/reviews/ReviewForm.tsx'
+const SOURCE = 'src/21-pipeline-publicacion-resenas/02-formulario-resena.tsx'
 
 const STARS = [1, 2, 3, 4, 5]
 

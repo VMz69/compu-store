@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/catalog/components/detail/ProductDetailHeader.tsx'
+const SOURCE = 'src/25-pipeline-detalle-producto/02-cabecera-producto.tsx'
 
 interface ProductDetailHeaderProps {
   productName: string

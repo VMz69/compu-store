@@ -3,7 +3,7 @@ import { useMobileActionBar } from './03-estado-compra-movil'
 import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/catalog/components/detail/ProductMobileBar.tsx'
+const SOURCE = 'src/24-pipeline-compra-producto/04-barra-compra-movil.tsx'
 
 interface ProductMobileBarProps {
   productId: number

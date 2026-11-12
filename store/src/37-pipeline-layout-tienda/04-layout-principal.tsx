@@ -11,7 +11,7 @@ import { useScrollToTop } from './01-restaurar-desplazamiento'
 import { useTheme } from '@/02-pipeline-preferencias-interfaz/00-director-preferencias-interfaz'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/app/layout/MainLayout.tsx'
+const SOURCE = 'src/37-pipeline-layout-tienda/04-layout-principal.tsx'
 
 export const MainLayout = () => {
   useScrollToTop()
@@ -26,6 +26,7 @@ export const MainLayout = () => {
       <TopBar />
 
       <header
+        id="store-sticky-header"
         className="sticky top-0 z-40 bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200 dark:border-slate-800 transition-colors"
         {...uiMeta({ id: 'layout.sticky-header', component: 'MainLayout', source: SOURCE })}
       >

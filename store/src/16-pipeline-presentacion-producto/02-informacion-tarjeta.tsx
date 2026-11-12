@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/catalog/components/grid/ProductCardInfo.tsx'
+const SOURCE = 'src/16-pipeline-presentacion-producto/02-informacion-tarjeta.tsx'
 
 export const ProductCardInfo = ({ product }: { product: Product }) => {
   const traceId = `producto.card.${product.id}`

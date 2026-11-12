@@ -1,7 +1,7 @@
 import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/info/components/ContactMap.tsx'
+const SOURCE = 'src/29-pipeline-informacion-tienda/02-mapa-tienda.tsx'
 
 const MAP_EMBED_URL =
   'https://www.google.com/maps?q=13.7214635,-88.9349584&z=17&output=embed'

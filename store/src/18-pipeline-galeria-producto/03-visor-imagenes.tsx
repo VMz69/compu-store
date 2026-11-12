@@ -3,7 +3,7 @@ import { ProductGalleryThumbs } from './02-miniaturas'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { ProductGalleryState } from './01-estado-galeria'
 
-const SOURCE = 'src/features/catalog/components/detail/ProductLightbox.tsx'
+const SOURCE = 'src/18-pipeline-galeria-producto/03-visor-imagenes.tsx'
 
 const ROUND_BTN =
   'w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300'

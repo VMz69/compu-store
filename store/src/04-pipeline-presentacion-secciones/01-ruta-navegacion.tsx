@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/shared/ui/Breadcrumbs.tsx'
+const SOURCE = 'src/04-pipeline-presentacion-secciones/01-ruta-navegacion.tsx'
 
 export interface Crumb {
   label: string

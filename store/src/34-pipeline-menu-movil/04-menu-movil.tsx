@@ -4,7 +4,7 @@ import { MobileMenuInfo } from './03-informacion-movil'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { BrandWithCount, CategoryWithCount } from '@/00-director-modelos'
 
-const SOURCE = 'src/app/layout/navbar/MobileMenu.tsx'
+const SOURCE = 'src/34-pipeline-menu-movil/04-menu-movil.tsx'
 
 interface MobileMenuProps {
   open: boolean

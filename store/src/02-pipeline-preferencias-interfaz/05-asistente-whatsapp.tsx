@@ -1,7 +1,7 @@
 import { buildAssistantUrl } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/app/layout/FloatingWhatsApp.tsx'
+const SOURCE = 'src/02-pipeline-preferencias-interfaz/05-asistente-whatsapp.tsx'
 
 interface FloatingWhatsAppProps {
   /** Con la barra de compra móvil activa, se oculta bajo `lg` para no duplicar el CTA. */

@@ -3,7 +3,7 @@ import { ProductGrid } from './03-grilla-productos'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/catalog/components/detail/RelatedList.tsx'
+const SOURCE = 'src/17-pipeline-vitrina-productos/04-productos-relacionados.tsx'
 
 interface RelatedListProps {
   products: Product[]

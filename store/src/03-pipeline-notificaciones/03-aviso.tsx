@@ -2,7 +2,7 @@ import { uiMeta } from '@/04-trazabilidad-ui'
 
 import type { ToastMessage } from '@/03-pipeline-notificaciones/01-notificaciones.store'
 
-const SOURCE = 'src/shared/ui/Toast.tsx'
+const SOURCE = 'src/03-pipeline-notificaciones/03-aviso.tsx'
 
 const TONE: Record<ToastMessage['type'], string> = {
   success: 'bg-emerald-600 text-white border-emerald-700',

@@ -1,6 +1,6 @@
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/catalog/components/reviews/ReviewPendingNotice.tsx'
+const SOURCE = 'src/21-pipeline-publicacion-resenas/01-aviso-moderacion.tsx'
 
 interface ReviewPendingNoticeProps {
   show: boolean

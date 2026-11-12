@@ -3,7 +3,7 @@ import { MOBILE_SECTION_TITLE } from './01-navegacion.styles'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { BrandWithCount, CategoryWithCount } from '@/00-director-modelos'
 
-const SOURCE = 'src/app/layout/navbar/MobileMenuCatalog.tsx'
+const SOURCE = 'src/34-pipeline-menu-movil/02-catalogo-movil.tsx'
 
 const tileClass = (active: boolean) =>
   `flex min-h-12 items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-bold transition-colors active:scale-[0.99] ${

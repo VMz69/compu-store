@@ -7,7 +7,7 @@ import { EmptyState } from '@/04-pipeline-presentacion-secciones/00-director-pre
 import { useCartView } from './03-estado-vista-carrito'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/cart/pages/CartView.tsx'
+const SOURCE = 'src/08-pipeline-vista-carrito/04-vista-carrito.tsx'
 
 export const CartView = () => {
   const cart = useCartView()

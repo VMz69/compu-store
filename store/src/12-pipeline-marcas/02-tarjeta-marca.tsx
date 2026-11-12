@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { BrandWithCount } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/catalog/components/browse/BrandCard.tsx'
+const SOURCE = 'src/12-pipeline-marcas/02-tarjeta-marca.tsx'
 
 export const BrandCard = ({ brand }: { brand: BrandWithCount }) => (
   <div

@@ -6,7 +6,7 @@ import { PageBanner } from '@/04-pipeline-presentacion-secciones/00-director-pre
 import { useOffersView } from '@/13-pipeline-seleccion-catalogo/00-director-seleccion-catalogo'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/catalog/pages/OffersView.tsx'
+const SOURCE = 'src/14-pipeline-listados-catalogo/03-productos-oferta.tsx'
 
 export const OffersView = () => {
   const { products, sortBy, setSortBy } = useOffersView()

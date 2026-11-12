@@ -1,6 +1,6 @@
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/catalog/components/detail/ProductGalleryThumbs.tsx'
+const SOURCE = 'src/18-pipeline-galeria-producto/02-miniaturas.tsx'
 
 const THUMB_BASE =
   'relative shrink-0 w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-800/60 p-1.5 flex items-center justify-center transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900'

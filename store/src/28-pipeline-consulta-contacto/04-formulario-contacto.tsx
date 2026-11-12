@@ -1,7 +1,7 @@
 import { useContactForm } from './03-estado-contacto'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/info/components/ContactForm.tsx'
+const SOURCE = 'src/28-pipeline-consulta-contacto/04-formulario-contacto.tsx'
 
 const inputClass =
   'w-full p-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs focus:bg-white dark:focus:bg-slate-700 focus:ring-2 focus:ring-brand focus:outline-none'

@@ -12,7 +12,7 @@ import { useProductTabs } from '@/22-pipeline-informacion-producto/00-director-i
 import { useShareProduct } from '@/15-pipeline-preferencias-producto/00-director-preferencias-producto'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/catalog/pages/ProductDetail.tsx'
+const SOURCE = 'src/25-pipeline-detalle-producto/03-vista-producto.tsx'
 
 export const ProductDetail = () => {
   const { id } = useParams()

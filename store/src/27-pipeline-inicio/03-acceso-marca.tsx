@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { BrandWithCount } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/home/components/BrandTile.tsx'
+const SOURCE = 'src/27-pipeline-inicio/03-acceso-marca.tsx'
 
 export const BrandTile = ({ brand }: { brand: BrandWithCount }) => (
   <Link

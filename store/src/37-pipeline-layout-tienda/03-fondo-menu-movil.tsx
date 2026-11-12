@@ -1,7 +1,7 @@
 import { useMobileMenuOverlay } from './02-estado-overlay-movil'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/app/layout/navbar/MobileMenuBackdrop.tsx'
+const SOURCE = 'src/37-pipeline-layout-tienda/03-fondo-menu-movil.tsx'
 
 export const MobileMenuBackdrop = () => {
   const { isOpen, closeMenu } = useMobileMenuOverlay()

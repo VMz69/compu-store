@@ -5,7 +5,7 @@ import { useProductReviews } from '@/20-pipeline-estado-resenas/00-director-esta
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/catalog/components/reviews/ProductReviewsTab.tsx'
+const SOURCE = 'src/21-pipeline-publicacion-resenas/03-panel-resenas.tsx'
 
 export const ProductReviewsTab = ({ product }: { product: Product }) => {
   const { reviews, distribution } = useProductReviews(product.id)

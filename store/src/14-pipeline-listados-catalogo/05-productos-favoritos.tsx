@@ -5,7 +5,7 @@ import { ConfirmDialog } from '@/05-pipeline-controles-compra/00-director-contro
 import { useFavoritesView } from './04-estado-lista-favoritos'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/features/catalog/pages/FavoritesView.tsx'
+const SOURCE = 'src/14-pipeline-listados-catalogo/05-productos-favoritos.tsx'
 
 export const FavoritesView = () => {
   const favorites = useFavoritesView()

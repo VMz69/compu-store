@@ -4,7 +4,7 @@ import { formatCurrency, formatSku } from '@/01-pipeline-identidad-tienda/00-dir
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/catalog/components/detail/ProductInfo.tsx'
+const SOURCE = 'src/23-pipeline-oferta-producto/03-informacion-comercial.tsx'
 
 interface ProductInfoProps {
   product: Product

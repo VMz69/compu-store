@@ -5,7 +5,7 @@ import { FooterStoreInfo } from './04-informacion-pie'
 import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/app/layout/footer/Footer.tsx'
+const SOURCE = 'src/36-pipeline-pie-tienda/05-pie-tienda.tsx'
 
 export const Footer = () => (
   <footer

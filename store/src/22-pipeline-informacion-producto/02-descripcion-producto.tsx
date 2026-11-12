@@ -1,7 +1,7 @@
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/catalog/components/detail/ProductOverviewTab.tsx'
+const SOURCE = 'src/22-pipeline-informacion-producto/02-descripcion-producto.tsx'
 
 const HIGHLIGHTS = [
   {

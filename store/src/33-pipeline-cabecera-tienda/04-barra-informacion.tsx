@@ -1,7 +1,7 @@
 import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/app/layout/header/TopBar.tsx'
+const SOURCE = 'src/33-pipeline-cabecera-tienda/04-barra-informacion.tsx'
 
 export const TopBar = () => (
   <div

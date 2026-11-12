@@ -18,7 +18,7 @@ export const useMobileMenuOverlay = () => {
     if (!isOpen) return
 
     scrollYRef.current = window.scrollY
-    const header = document.querySelector<HTMLElement>('[data-ui-id="layout.sticky-header"]')
+    const header = document.querySelector<HTMLElement>('#store-sticky-header')
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
 
     const previousBodyOverflow = document.body.style.overflow

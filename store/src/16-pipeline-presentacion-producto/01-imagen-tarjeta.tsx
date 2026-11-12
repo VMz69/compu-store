@@ -1,7 +1,7 @@
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
 
-const SOURCE = 'src/features/catalog/components/grid/ProductCardMedia.tsx'
+const SOURCE = 'src/16-pipeline-presentacion-producto/01-imagen-tarjeta.tsx'
 
 interface ProductCardMediaProps {
   product: Product

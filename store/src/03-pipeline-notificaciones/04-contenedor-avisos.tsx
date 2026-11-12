@@ -2,7 +2,7 @@ import { Toast } from '@/03-pipeline-notificaciones/03-aviso'
 import { useToasts } from '@/03-pipeline-notificaciones/02-notificaciones'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
-const SOURCE = 'src/app/layout/ToastContainer.tsx'
+const SOURCE = 'src/03-pipeline-notificaciones/04-contenedor-avisos.tsx'
 
 interface ToastContainerProps {
   /** Con la barra de compra móvil activa, sube sobre ella (incluida la safe-area). */
