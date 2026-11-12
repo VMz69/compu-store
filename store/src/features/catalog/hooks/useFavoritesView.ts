@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { products } from '../mocks/products.mock'
+import { products } from '@/06-pipeline-datos-mock/00-director-datos-mock'
 import { useFavStore } from '../favorites.store'
 import { useFavorites } from './useFavorites'
 import { useToastStore } from '@/03-pipeline-notificaciones/00-director-notificaciones'

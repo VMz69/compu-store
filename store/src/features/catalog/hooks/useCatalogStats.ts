@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { brands } from '../mocks/brands.mock'
-import { categories } from '../mocks/categories.mock'
-import { products } from '../mocks/products.mock'
+import { brands } from '@/06-pipeline-datos-mock/00-director-datos-mock'
+import { categories } from '@/06-pipeline-datos-mock/00-director-datos-mock'
+import { products } from '@/06-pipeline-datos-mock/00-director-datos-mock'
 import { getBrandsWithCounts, getCategoriesWithCounts } from '../lib/catalog.service'
 
 /**

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { isPublished } from '../lib/reviews.api'
-import { DEFAULT_REVIEWS } from '../mocks/reviews.mock'
+import { DEFAULT_REVIEWS } from '@/06-pipeline-datos-mock/00-director-datos-mock'
 import { useReviewStore } from '../reviews.store'
 
 /**

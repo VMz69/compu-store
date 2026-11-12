@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { products } from '../mocks/products.mock'
+import { products } from '@/06-pipeline-datos-mock/00-director-datos-mock'
 import { filterAndSort } from '../lib/catalog.service'
 import { useFilterStore } from '../filters.store'
 import type { ProductFilters } from '@/00-director-modelos'

@@ -1,0 +1,5 @@
+export * from './01-categorias.mock'
+export * from './02-marcas.mock'
+export * from './03-productos.mock'
+export * from './04-resenas.mock'
+export * from './05-promociones.mock'

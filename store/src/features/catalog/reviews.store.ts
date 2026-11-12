@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { buildPendingReview, type ReviewSubmission } from './lib/reviews.api'
-import { INITIAL_REVIEWS } from './mocks/reviews.mock'
+import { INITIAL_REVIEWS } from '@/06-pipeline-datos-mock/00-director-datos-mock'
 import type { Review } from '@/00-director-modelos'
 
 /**

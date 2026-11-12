@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { categories } from '../mocks/categories.mock'
-import { products } from '../mocks/products.mock'
+import { categories } from '@/06-pipeline-datos-mock/00-director-datos-mock'
+import { products } from '@/06-pipeline-datos-mock/00-director-datos-mock'
 import { getAvailableStock, useCart, useCartStore } from '@/00-director-carrito'
 import { useFavorites } from './useFavorites'
 import { useProductReviews } from './useProductReviews'

@@ -1,4 +1,4 @@
-import { brands } from '../mocks/brands.mock'
+import { brands } from '@/06-pipeline-datos-mock/00-director-datos-mock'
 import { useFilters } from './useFilters'
 
 /**

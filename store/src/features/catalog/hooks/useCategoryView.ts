@@ -1,4 +1,4 @@
-import { categories } from '../mocks/categories.mock'
+import { categories } from '@/06-pipeline-datos-mock/00-director-datos-mock'
 import { useFilters } from './useFilters'
 
 /**
