@@ -564,3 +564,29 @@ Nuevo: `37-pipeline-layout-tienda/00-director-layout-tienda.ts` (solo reexportac
 | Paso | Movimientos | Typecheck | Build | Auditoría de integridad |
 | --- | ---: | --- | --- | --- |
 | `00-integracion-y-modelos` | 12 | OK (0) | OK (0) | OK (0) |
+
+Paso revertido: `01-pipeline-identidad-tienda`. Se restauró `9645e98e40ee3436400c277fa880c398a4c2ad86` inmediatamente.
+
+```text
+node /tmp/compustore-floa-imports.cjs audit
+/tmp/compustore-floa-imports.cjs:148
+        if (!ts.isExportDeclaration(node) || !node.moduleSpecifier) throw Error('Director con algo distinto a reexportación: '+source.fileName);
+                                                                    ^
+
+Error: Director con algo distinto a reexportación: /home/vmz/Documentos/UDB/ADP/4.proyecto2/compu-store/store/src/01-pipeline-identidad-tienda/00-director-identidad-tienda.ts
+    at /tmp/compustore-floa-imports.cjs:148:75
+    at visitNode2 (/home/vmz/Documentos/UDB/ADP/4.proyecto2/compu-store/store/node_modules/.pnpm/typescript@6.0.3/node_modules/typescript/lib/typescript.js:32551:18)
+    at forEachChildInSourceFile (/home/vmz/Documentos/UDB/ADP/4.proyecto2/compu-store/store/node_modules/.pnpm/typescript@6.0.3/node_modules/typescript/lib/typescript.js:32772:60)
+    at forEachChild (/home/vmz/Documentos/UDB/ADP/4.proyecto2/compu-store/store/node_modules/.pnpm/typescript@6.0.3/node_modules/typescript/lib/typescript.js:33072:35)
+    at SourceFileObject.forEachChild (/home/vmz/Documentos/UDB/ADP/4.proyecto2/compu-store/store/node_modules/.pnpm/typescript@6.0.3/node_modules/typescript/lib/typescript.js:152561:12)
+    at Object.<anonymous> (/tmp/compustore-floa-imports.cjs:147:14)
+    at Module._compile (node:internal/modules/cjs/loader:1873:14)
+    at Object..js (node:internal/modules/cjs/loader:2013:10)
+    at Module.load (node:internal/modules/cjs/loader:1596:32)
+    at Module._load (node:internal/modules/cjs/loader:1398:12)
+
+Node.js v26.3.0
+
+```
+
+Migración detenida para revisar dependencias antes de continuar.
