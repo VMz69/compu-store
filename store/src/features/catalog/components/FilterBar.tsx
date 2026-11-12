@@ -1,4 +1,4 @@
-import { Select } from '@/shared/ui/Select'
+import { Select } from '@/05-pipeline-controles-compra/00-director-controles-compra'
 import { SORT_OPTIONS } from '../config/sort.config'
 import { uiMeta } from '@/04-trazabilidad-ui'
 

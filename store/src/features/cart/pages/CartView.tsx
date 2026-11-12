@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { CartItem } from '../components/CartItem'
 import { CartSummary } from '../components/CartSummary'
-import { ConfirmDialog } from '@/shared/ui/ConfirmDialog'
+import { ConfirmDialog } from '@/05-pipeline-controles-compra/00-director-controles-compra'
 import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { EmptyState } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { useCartView } from '../hooks/useCartView'

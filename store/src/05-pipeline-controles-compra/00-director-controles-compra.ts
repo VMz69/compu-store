@@ -1,0 +1,5 @@
+export * from './01-etiqueta'
+export * from './02-boton'
+export * from './03-selector'
+export * from './04-cantidad'
+export * from './05-confirmacion'

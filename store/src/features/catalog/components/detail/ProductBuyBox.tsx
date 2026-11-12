@@ -1,5 +1,5 @@
 import { ProductTrustChips } from './ProductTrustChips'
-import { QuantitySelector } from '@/shared/ui/QuantitySelector'
+import { QuantitySelector } from '@/05-pipeline-controles-compra/00-director-controles-compra'
 import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'

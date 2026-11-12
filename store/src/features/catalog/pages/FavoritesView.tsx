@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ProductGrid } from '../components/grid/ProductGrid'
 import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
-import { ConfirmDialog } from '@/shared/ui/ConfirmDialog'
+import { ConfirmDialog } from '@/05-pipeline-controles-compra/00-director-controles-compra'
 import { useFavoritesView } from '../hooks/useFavoritesView'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
