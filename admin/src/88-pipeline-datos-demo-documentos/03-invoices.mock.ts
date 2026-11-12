@@ -1,5 +1,5 @@
 import { STORE_CONFIG } from '@/85-pipeline-identificadores-texto/03-store.config'
-import type { Invoice, InvoiceIssuer } from '../features/billing/types'
+import type { Invoice, InvoiceIssuer } from '../47-pipeline-persistencia-facturas/03-types'
 
 /** Emisor de las facturas de prueba (datos fiscales de fábrica). */
 export const MOCK_ISSUER: InvoiceIssuer = {

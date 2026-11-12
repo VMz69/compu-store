@@ -1,8 +1,8 @@
 import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import { tracer } from '@/00-trazabilidad'
-import type { InvoiceEmitApi } from '../../hooks/useInvoiceEmit'
-import { isProductItem, lineAmount } from '../../lib/invoice.service'
+import type { InvoiceEmitApi } from './02-useInvoiceEmit'
+import { isProductItem, lineAmount } from '../47-pipeline-persistencia-facturas/02-invoice.service'
 
 const t = tracer('StockCheck', 'src/features/billing/components/emit/StockCheck.tsx')
 

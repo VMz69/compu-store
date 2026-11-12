@@ -8,10 +8,10 @@ import { matchesQuery } from '@/85-pipeline-identificadores-texto/00-director-id
 import { askConfirm } from '@/72-pipeline-confirmaciones-globales/03-confirm.store'
 import { openModal } from '@/73-pipeline-modales-globales/03-modal.store'
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
-import { filterInvoices, INVOICE_STATUS_META, invoiceTotals, lastInternalNumber, stockLines } from '../lib/invoice.service'
-import { BILLING_MODALS } from '../modals'
-import { useBillingStore } from '../store'
-import type { Invoice, InvoiceStatus } from '../types'
+import { filterInvoices, INVOICE_STATUS_META, invoiceTotals, lastInternalNumber, stockLines } from '../47-pipeline-persistencia-facturas/02-invoice.service'
+import { BILLING_MODALS } from '../45-pipeline-emision-facturas/05-modals'
+import { useBillingStore } from '../47-pipeline-persistencia-facturas/00-director-persistencia-facturas'
+import type { Invoice, InvoiceStatus } from '../47-pipeline-persistencia-facturas/03-types'
 
 export type BillingTab = 'pending' | 'issued'
 export const INVOICE_PAGE_SIZES = [10, 25, 50]

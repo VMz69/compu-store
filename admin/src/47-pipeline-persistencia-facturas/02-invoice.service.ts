@@ -1,6 +1,6 @@
 import { matchesQuery } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
 import type { BadgeTone } from '@/00-director-interfaz'
-import type { Invoice, InvoiceItem, InvoiceStatus, InvoiceTotals, PaymentCondition } from '../types'
+import type { Invoice, InvoiceItem, InvoiceStatus, InvoiceTotals, PaymentCondition } from './03-types'
 
 /**
  * Lógica pura de facturación (sin React ni store): totales, correlativos e

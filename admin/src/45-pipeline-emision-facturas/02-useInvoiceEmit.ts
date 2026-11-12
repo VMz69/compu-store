@@ -8,10 +8,10 @@ import { useFormState } from '@/77-pipeline-edicion-formularios/03-useFormState'
 import { lineDiscount } from '@/82-pipeline-calculo-importes/00-director-calculo-importes'
 import { closeModal, openModal, useModalPayload } from '@/73-pipeline-modales-globales/03-modal.store'
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
-import { invoiceTotals, PAYMENT_CONDITIONS, paymentConditionFrom, stockLines } from '../lib/invoice.service'
-import { BILLING_MODALS } from '../modals'
-import { useBillingStore } from '../store'
-import type { InvoiceItem, InvoiceReceptor, PaymentCondition } from '../types'
+import { invoiceTotals, PAYMENT_CONDITIONS, paymentConditionFrom, stockLines } from '../47-pipeline-persistencia-facturas/02-invoice.service'
+import { BILLING_MODALS } from './05-modals'
+import { useBillingStore } from '../47-pipeline-persistencia-facturas/00-director-persistencia-facturas'
+import type { InvoiceItem, InvoiceReceptor, PaymentCondition } from '../47-pipeline-persistencia-facturas/03-types'
 
 /**
  * Emisión de factura desde un pedido (payload del modal: id del pedido).

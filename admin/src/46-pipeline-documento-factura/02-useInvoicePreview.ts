@@ -2,9 +2,9 @@ import { usePdfDocument } from '@/79-pipeline-consulta-documentos/02-usePdfDocum
 import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import { buildWhatsAppLink } from '@/83-pipeline-recursos-publicos/04-whatsapp'
 import { closeModal, useModalPayload } from '@/73-pipeline-modales-globales/03-modal.store'
-import { invoiceTotals } from '../lib/invoice.service'
-import { buildInvoicePdf, invoicePdfFilename } from '../lib/invoicePdf'
-import { useBillingStore } from '../store'
+import { invoiceTotals } from '../47-pipeline-persistencia-facturas/02-invoice.service'
+import { buildInvoicePdf, invoicePdfFilename } from './03-invoicePdf'
+import { useBillingStore } from '../47-pipeline-persistencia-facturas/00-director-persistencia-facturas'
 
 /** Vista previa del PDF de una factura (payload del modal: número de control). */
 export function useInvoicePreview() {

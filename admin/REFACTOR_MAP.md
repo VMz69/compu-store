@@ -37,7 +37,7 @@ Cada fila corresponde a un paso y un commit independiente. Después de mover se 
 | catalogo | validado | 0 | 0 | idéntico |
 | clientes | validado | 0 | 0 | idéntico |
 | ventas | validado | 0 | 0 | idéntico |
-| facturacion | pendiente | pendiente | pendiente | pendiente |
+| facturacion | validado | 0 | 0 | idéntico |
 | cotizaciones | pendiente | pendiente | pendiente | pendiente |
 | ofertas | pendiente | pendiente | pendiente | pendiente |
 | interacciones | pendiente | pendiente | pendiente | pendiente |

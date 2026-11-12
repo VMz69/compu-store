@@ -2,8 +2,8 @@ import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import { formatDateTime } from '@/71-pipeline-seleccion-fechas/05-date'
 import { DataTable, IconButton, type TableHeader } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import type { BillingApi } from '../../hooks/useBilling'
-import { InvoiceStatusBadge } from '../InvoiceStatusBadge'
+import type { BillingApi } from './02-useBilling'
+import { InvoiceStatusBadge } from '../46-pipeline-documento-factura/04-InvoiceStatusBadge'
 
 const t = tracer('InvoicesTable', 'src/features/billing/components/list/InvoicesTable.tsx')
 

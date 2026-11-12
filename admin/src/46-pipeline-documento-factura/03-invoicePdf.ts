@@ -12,8 +12,8 @@ import {
   pdfFilename,
   type PdfKit,
 } from '@/79-pipeline-consulta-documentos/03-pdf'
-import type { Invoice } from '../types'
-import { invoiceTotals, lineAmount } from './invoice.service'
+import type { Invoice } from '../47-pipeline-persistencia-facturas/03-types'
+import { invoiceTotals, lineAmount } from '../47-pipeline-persistencia-facturas/02-invoice.service'
 
 /**
  * PDF de la Factura (DTE-01, Consumidor Final) siguiendo la estructura del

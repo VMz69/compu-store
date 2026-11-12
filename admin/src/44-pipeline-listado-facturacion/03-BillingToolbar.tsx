@@ -1,6 +1,6 @@
 import { ListToolbar, LiveSearch, SegmentedTabs, Select } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import type { BillingApi } from '../../hooks/useBilling'
+import type { BillingApi } from './02-useBilling'
 
 const t = tracer('BillingToolbar', 'src/features/billing/components/list/BillingToolbar.tsx')
 

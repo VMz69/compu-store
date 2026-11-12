@@ -1,10 +1,10 @@
 import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import { Button, EmptyState, Pagination } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import { BillingToolbar } from '../components/list/BillingToolbar'
-import { InvoicesTable } from '../components/list/InvoicesTable'
-import { PendingOrdersTable } from '../components/list/PendingOrdersTable'
-import { useBilling } from '../hooks/useBilling'
+import { BillingToolbar } from './03-BillingToolbar'
+import { InvoicesTable } from './04-InvoicesTable'
+import { PendingOrdersTable } from './05-PendingOrdersTable'
+import { useBilling } from './02-useBilling'
 
 const t = tracer('BillingPage', 'src/features/billing/pages/BillingPage.tsx')
 

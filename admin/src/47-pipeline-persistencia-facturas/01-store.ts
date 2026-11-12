@@ -3,9 +3,9 @@ import { persist } from 'zustand/middleware'
 import { registerDemoData } from '@/84-pipeline-persistencia-demo/00-director-persistencia-demo'
 import { delay } from '@/84-pipeline-persistencia-demo/04-delay'
 import { STORAGE_KEYS } from '@/84-pipeline-persistencia-demo/02-storage'
-import { newGenerationCode, nextControlNumber, nextInternalId, simulatedSeal } from './lib/invoice.service'
-import { INVOICES_MOCK } from '../../88-pipeline-datos-demo-documentos/03-invoices.mock'
-import type { Invoice } from './types'
+import { newGenerationCode, nextControlNumber, nextInternalId, simulatedSeal } from './02-invoice.service'
+import { INVOICES_MOCK } from '../88-pipeline-datos-demo-documentos/03-invoices.mock'
+import type { Invoice } from './03-types'
 
 /** Datos para emitir: el store asigna número de control, códigos, fecha y estado. */
 export type NewInvoiceInput = Omit<Invoice, 'id' | 'generationCode' | 'receptionSeal' | 'internalId' | 'status' | 'createdAt' | 'voidedAt'>

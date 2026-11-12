@@ -1,8 +1,8 @@
 import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import { PdfPreviewModal } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import { useInvoicePreview } from '../../hooks/useInvoicePreview'
-import { InvoiceStatusBadge } from '../InvoiceStatusBadge'
+import { useInvoicePreview } from './02-useInvoicePreview'
+import { InvoiceStatusBadge } from './04-InvoiceStatusBadge'
 
 const t = tracer('InvoicePreviewModal', 'src/features/billing/components/preview/InvoicePreviewModal.tsx')
 

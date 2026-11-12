@@ -1,8 +1,8 @@
 import { Button, Modal, ModalHeader, ModalTitle } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import { useInvoiceEmit } from '../../hooks/useInvoiceEmit'
-import { ReceptorFields } from './ReceptorFields'
-import { StockCheck } from './StockCheck'
+import { useInvoiceEmit } from './02-useInvoiceEmit'
+import { ReceptorFields } from './03-ReceptorFields'
+import { StockCheck } from './04-StockCheck'
 
 const t = tracer('InvoiceEmitModal', 'src/features/billing/components/emit/InvoiceEmitModal.tsx')
 
