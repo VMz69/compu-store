@@ -1,6 +1,6 @@
-import { ProductOverviewTab } from './ProductOverviewTab'
+import { ProductOverviewTab } from './02-descripcion-producto'
 import { ProductReviewsTab } from '@/21-pipeline-publicacion-resenas/00-director-publicacion-resenas'
-import { ProductSpecsTab } from './ProductSpecsTab'
+import { ProductSpecsTab } from './03-especificaciones-producto'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { ProductDetailTab } from '@/02-pipeline-preferencias-interfaz/00-director-preferencias-interfaz'
 import type { Product } from '@/00-director-modelos'
