@@ -1,0 +1,36 @@
+import { toLocalISO } from '@/71-pipeline-seleccion-fechas/05-date'
+import { getUsersSnapshot } from '@/00-director-acceso'
+import { getCatalogSnapshot } from '@/00-director-catalogo'
+import { getCustomersSnapshot } from '@/00-director-clientes'
+import { getSalesSnapshot } from '@/00-director-ventas'
+import type { StoreSettings } from '@/85-pipeline-identificadores-texto/03-store.config'
+import { snapshotRegisteredDemoData } from '@/84-pipeline-persistencia-demo/00-director-persistencia-demo'
+
+export const BACKUP_VERSION = '2026.2'
+
+/** Snapshot integral para exportar en JSON. */
+export function buildBackup(settings: StoreSettings) {
+  const { products, categories, brands } = getCatalogSnapshot()
+  const { orders, deletedOrders, orderStatuses, channels } = getSalesSnapshot()
+  return {
+    version: BACKUP_VERSION,
+    exportDate: new Date().toISOString(),
+    settings,
+    products,
+    orders,
+    /** Pedidos con eliminación lógica (auditoría). */
+    deletedOrders,
+    channels,
+    orderStatuses,
+    categories,
+    brands,
+    customers: getCustomersSnapshot(),
+    // Los usuarios se exportan SIN hash de contraseña.
+    users: getUsersSnapshot(),
+    // Secciones de los features registrados (cotizaciones, …).
+    ...snapshotRegisteredDemoData(),
+  }
+}
+
+export const backupFilename = (date: Date = new Date()): string =>
+  `compustore_backup_${toLocalISO(date)}.json`

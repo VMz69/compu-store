@@ -1,0 +1,40 @@
+import { Button, ListToolbar, LiveSearch, Select } from '@/00-director-interfaz'
+import { tracer } from '@/00-trazabilidad'
+import type { CustomersApi } from './02-useCustomers'
+
+const t = tracer('CustomersToolbar', 'src/29-pipeline-directorio-clientes/03-CustomersToolbar.tsx')
+
+type CustomersToolbarProps = Pick<CustomersApi, 'filters' | 'totalCount' | 'canManage' | 'openCreate'>
+
+/** Barra estándar de listados: buscador · tipo · estado ··· "Nuevo cliente". */
+export function CustomersToolbar({ filters, totalCount, canManage, openCreate }: CustomersToolbarProps) {
+  return (
+    <ListToolbar
+      traceId="customers.toolbar"
+      search={
+        <LiveSearch
+          value={filters.search}
+          onChange={filters.onSearch}
+          onClear={filters.clearSearch}
+          resultCount={totalCount}
+          placeholder="Buscar nombre, teléfono, correo, DUI/NIT…"
+          aria-label="Buscar clientes"
+          {...t('customers.toolbar.search')}
+        />
+      }
+      filters={
+        <>
+          <Select tone="filter" options={filters.typeOptions} value={filters.type} onChange={filters.onType} aria-label="Filtrar por tipo" {...t('customers.toolbar.type')} />
+          <Select tone="filter" options={filters.statusOptions} value={filters.status} onChange={filters.onStatus} aria-label="Filtrar por estado" {...t('customers.toolbar.status')} />
+        </>
+      }
+      action={
+        canManage && (
+          <Button icon="fa-solid fa-user-plus" onClick={openCreate} {...t('customers.toolbar.create')}>
+            Nuevo cliente
+          </Button>
+        )
+      }
+    />
+  )
+}

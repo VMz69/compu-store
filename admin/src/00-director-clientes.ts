@@ -1,0 +1,12 @@
+// API pública del feature `customers`. Desde fuera solo se importa este archivo.
+export { CustomerFormModal } from './30-pipeline-registro-clientes/00-director-registro-clientes'
+export { CustomerPicker } from './31-pipeline-seleccion-clientes/00-director-seleccion-clientes'
+export { useCustomerSelection } from './31-pipeline-seleccion-clientes/02-useCustomerSelection'
+export type { CustomerMode, CustomerSelection, CustomerSelectionInit } from './31-pipeline-seleccion-clientes/02-useCustomerSelection'
+export { normalizePhone } from './30-pipeline-registro-clientes/03-customer.service'
+export { provideCustomerStats } from './33-pipeline-historial-clientes/02-statsPort'
+export type { CustomerStatsHook, CustomerStatsResolver } from './33-pipeline-historial-clientes/02-statsPort'
+export { CUSTOMERS_MODALS } from './30-pipeline-registro-clientes/04-modals'
+export { CustomersPage } from './29-pipeline-directorio-clientes/00-director-directorio-clientes'
+export { getCustomersSnapshot, resetCustomers, useCustomersStore } from './33-pipeline-historial-clientes/00-director-historial-clientes'
+export type { Customer, CustomerSnapshot, CustomerStats, CustomerType } from './33-pipeline-historial-clientes/03-types'
