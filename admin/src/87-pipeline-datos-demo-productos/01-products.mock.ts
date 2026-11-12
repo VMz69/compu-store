@@ -1,5 +1,5 @@
-import { normalizeProduct } from '../features/catalog/lib/normalize'
-import type { Product } from '../features/catalog/types'
+import { normalizeProduct } from '../20-pipeline-validacion-producto/03-normalize'
+import type { Product } from '../25-pipeline-persistencia-catalogo/04-types'
 
 const image = (text: string) => `https://placehold.co/400x300/f8fafc/0168f5?text=${text}`
 

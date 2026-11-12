@@ -1,4 +1,4 @@
-import type { Category } from '../features/catalog/types'
+import type { Category } from '../25-pipeline-persistencia-catalogo/04-types'
 
 export const CATEGORIES_MOCK: Category[] = [
   {

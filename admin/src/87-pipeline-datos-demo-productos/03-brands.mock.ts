@@ -1,4 +1,4 @@
-import type { Brand } from '../features/catalog/types'
+import type { Brand } from '../25-pipeline-persistencia-catalogo/04-types'
 
 const at = '2026-10-01T09:00:00.000Z'
 const brand = (id: string, name: string, website: string, description: string): Brand => ({
