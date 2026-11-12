@@ -574,3 +574,4 @@ del director, sin cambiar el plan ni código de aplicación. Se reintenta el mis
 paso; sus movimientos siguen siendo independientes y conservan el grafo original.
 
 | `01-pipeline-identidad-tienda` | 4 | OK (0) | OK (0) | OK (0) |
+| `02-pipeline-preferencias-interfaz` | 5 | OK (0) | OK (0) | OK (0) |

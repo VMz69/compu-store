@@ -2,7 +2,7 @@ import { ProductOverviewTab } from './ProductOverviewTab'
 import { ProductReviewsTab } from '../reviews/ProductReviewsTab'
 import { ProductSpecsTab } from './ProductSpecsTab'
 import { uiMeta } from '@/04-trazabilidad-ui'
-import type { ProductDetailTab } from '@/shared/store/ui.store'
+import type { ProductDetailTab } from '@/02-pipeline-preferencias-interfaz/00-director-preferencias-interfaz'
 import type { Product } from '@/00-director-modelos'
 
 const SOURCE = 'src/features/catalog/components/detail/ProductTabs.tsx'

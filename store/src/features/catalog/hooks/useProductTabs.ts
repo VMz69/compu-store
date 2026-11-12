@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
-import { useUIStore } from '@/shared/store/ui.store'
-import type { ProductDetailTab } from '@/shared/store/ui.store'
+import { useUIStore } from '@/02-pipeline-preferencias-interfaz/00-director-preferencias-interfaz'
+import type { ProductDetailTab } from '@/02-pipeline-preferencias-interfaz/00-director-preferencias-interfaz'
 
 /**
  * Pestaña activa del detalle de producto. Vuelve a «Descripción General» al

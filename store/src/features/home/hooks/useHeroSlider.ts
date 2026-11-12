@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { promotions } from '../mocks/promotions.mock'
-import { useUIStore } from '@/shared/store/ui.store'
+import { useUIStore } from '@/02-pipeline-preferencias-interfaz/00-director-preferencias-interfaz'
 
 const AUTOPLAY_MS = 7000
 

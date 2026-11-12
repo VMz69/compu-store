@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
-import { useUIStore } from '@/shared/store/ui.store'
+import { useUIStore } from '@/02-pipeline-preferencias-interfaz/00-director-preferencias-interfaz'
 
 /**
  * Controla el estado del menú móvil: bloquea el scroll de la página,

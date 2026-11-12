@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
-import { useClickOutside } from '@/shared/hooks/useClickOutside'
+import { useClickOutside } from '@/02-pipeline-preferencias-interfaz/00-director-preferencias-interfaz'
 import { useCatalogStats } from '@/00-director-catalogo'
-import { useUIStore } from '@/shared/store/ui.store'
+import { useUIStore } from '@/02-pipeline-preferencias-interfaz/00-director-preferencias-interfaz'
 
 /** Ruta activa para un destino exacto o para cualquiera de sus subrutas. */
 const matches = (pathname: string, exact: string[], prefixes: string[] = []) =>

@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useUIStore } from '@/shared/store/ui.store'
+import { useUIStore } from '@/02-pipeline-preferencias-interfaz/00-director-preferencias-interfaz'
 
 /**
  * Registra la barra de compra móvil mientras está montada, para que el layout
