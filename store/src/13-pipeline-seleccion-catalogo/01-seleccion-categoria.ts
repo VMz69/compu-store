@@ -1,0 +1,12 @@
+import { categories } from '@/06-pipeline-datos-mock/00-director-datos-mock'
+import { useFilters } from '@/10-pipeline-consulta-catalogo/00-director-consulta-catalogo'
+
+/**
+ * Resuelve la categoría por slug y entrega sus productos filtrados.
+ */
+export const useCategoryView = (slug = '') => {
+  const category = categories.find((item) => item.slug === slug)
+  const filters = useFilters({ category: slug })
+
+  return { category, ...filters }
+}

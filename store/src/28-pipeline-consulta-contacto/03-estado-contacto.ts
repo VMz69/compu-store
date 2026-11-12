@@ -1,0 +1,40 @@
+import { useState } from 'react'
+import { CONTACT_SUBJECTS } from './01-asuntos-contacto.config'
+import { buildContactUrl } from './02-contacto-whatsapp'
+import { useToastStore } from '@/03-pipeline-notificaciones/00-director-notificaciones'
+
+interface ContactFormState {
+  name: string
+  phone: string
+  subject: string
+  message: string
+}
+
+const INITIAL_FORM: ContactFormState = {
+  name: '',
+  phone: '',
+  subject: CONTACT_SUBJECTS[0],
+  message: '',
+}
+
+/**
+ * Formulario de contacto validado que redirige la consulta a WhatsApp.
+ */
+export const useContactForm = () => {
+  const pushToast = useToastStore((state) => state.pushToast)
+  const [form, setForm] = useState<ContactFormState>(INITIAL_FORM)
+
+  const setField = (field: keyof ContactFormState, value: string) =>
+    setForm((current) => ({ ...current, [field]: value }))
+
+  const submit = () => {
+    if (!form.name.trim() || !form.message.trim()) {
+      pushToast('Por favor ingresa tu nombre y tu mensaje.', 'warning')
+      return
+    }
+    window.open(buildContactUrl(form), '_blank', 'noopener,noreferrer')
+    pushToast('Abriendo WhatsApp con tu consulta...', 'success')
+  }
+
+  return { form, setField, submit, subjects: CONTACT_SUBJECTS }
+}

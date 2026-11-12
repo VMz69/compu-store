@@ -1,9 +1,9 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { HashRouter } from 'react-router-dom'
-import './index.css'
-import App from './App.tsx'
-import { normalizeInitialView } from '@/app/lib/route.service'
+import './00-estilos-globales.css'
+import App from './00-director-aplicacion.tsx'
+import { normalizeInitialView } from '@/02-vista-inicial'
 
 normalizeInitialView()
 
