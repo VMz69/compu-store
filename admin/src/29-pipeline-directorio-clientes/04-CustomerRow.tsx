@@ -1,7 +1,7 @@
 import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import { Badge, IconButton } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import type { CustomerRowData, CustomersApi } from '../hooks/useCustomers'
+import type { CustomerRowData, CustomersApi } from './02-useCustomers'
 
 const t = tracer('CustomerRow', 'src/features/customers/components/CustomerRow.tsx')
 

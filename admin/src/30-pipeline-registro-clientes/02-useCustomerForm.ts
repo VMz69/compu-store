@@ -3,9 +3,9 @@ import { ensurePermission } from '@/00-director-acceso'
 import { useFormState } from '@/77-pipeline-edicion-formularios/03-useFormState'
 import { closeModal, useModalPayload } from '@/73-pipeline-modales-globales/03-modal.store'
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
-import { CUSTOMER_TYPE_LABELS, validateCustomer } from '../lib/customer.service'
-import { useCustomersStore } from '../store'
-import type { Customer, CustomerType } from '../types'
+import { CUSTOMER_TYPE_LABELS, validateCustomer } from './03-customer.service'
+import { useCustomersStore } from '../33-pipeline-historial-clientes/00-director-historial-clientes'
+import type { Customer, CustomerType } from '../33-pipeline-historial-clientes/03-types'
 
 type CustomerFormValues = {
   id: string

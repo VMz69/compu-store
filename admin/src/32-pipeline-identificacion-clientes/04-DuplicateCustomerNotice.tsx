@@ -1,5 +1,5 @@
 import { tracer } from '@/00-trazabilidad'
-import type { Customer } from '../../types'
+import type { Customer } from '../33-pipeline-historial-clientes/03-types'
 
 const t = tracer('DuplicateCustomerNotice', 'src/features/customers/components/picker/DuplicateCustomerNotice.tsx')
 

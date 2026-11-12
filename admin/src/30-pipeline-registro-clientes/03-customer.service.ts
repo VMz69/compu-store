@@ -1,5 +1,5 @@
 import { foldText, matchesQuery } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
-import type { Customer, CustomerStatusFilter, CustomerType } from '../types'
+import type { Customer, CustomerStatusFilter, CustomerType } from '../33-pipeline-historial-clientes/03-types'
 
 /**
  * Lógica pura del directorio de clientes (sin React ni store).

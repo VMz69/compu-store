@@ -1,8 +1,8 @@
 import { Button, DataTable, EmptyState, Pagination, type TableHeader } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import { CustomerRow } from '../components/CustomerRow'
-import { CustomersToolbar } from '../components/CustomersToolbar'
-import { useCustomers } from '../hooks/useCustomers'
+import { CustomerRow } from './04-CustomerRow'
+import { CustomersToolbar } from './03-CustomersToolbar'
+import { useCustomers } from './02-useCustomers'
 
 const t = tracer('CustomersPage', 'src/features/customers/pages/CustomersPage.tsx')
 

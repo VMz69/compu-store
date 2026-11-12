@@ -1,11 +1,11 @@
 import { useId } from 'react'
 import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
 import { tracer } from '@/00-trazabilidad'
-import { useCustomerCombobox } from '../hooks/useCustomerCombobox'
-import type { CustomerSelection } from '../hooks/useCustomerSelection'
-import { CustomerSearch } from './picker/CustomerSearch'
-import { SelectedCustomerCard } from './picker/SelectedCustomerCard'
-import { WalkinCustomerFields } from './picker/WalkinCustomerFields'
+import { useCustomerCombobox } from './03-useCustomerCombobox'
+import type { CustomerSelection } from './02-useCustomerSelection'
+import { CustomerSearch } from './04-CustomerSearch'
+import { SelectedCustomerCard } from '../32-pipeline-identificacion-clientes/03-SelectedCustomerCard'
+import { WalkinCustomerFields } from './05-WalkinCustomerFields'
 
 const t = tracer('CustomerPicker', 'src/features/customers/components/CustomerPicker.tsx')
 

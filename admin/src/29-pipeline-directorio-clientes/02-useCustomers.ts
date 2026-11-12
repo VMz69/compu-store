@@ -5,11 +5,11 @@ import { buildWhatsAppLink } from '@/83-pipeline-recursos-publicos/04-whatsapp'
 import { askConfirm } from '@/72-pipeline-confirmaciones-globales/03-confirm.store'
 import { openModal } from '@/73-pipeline-modales-globales/03-modal.store'
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
-import { CUSTOMER_TYPE_LABELS, filterCustomers } from '../lib/customer.service'
-import { useCustomerStats } from '../lib/statsPort'
-import { CUSTOMERS_MODALS } from '../modals'
-import { useCustomersStore } from '../store'
-import type { Customer, CustomerStatusFilter, CustomerType } from '../types'
+import { CUSTOMER_TYPE_LABELS, filterCustomers } from '../30-pipeline-registro-clientes/03-customer.service'
+import { useCustomerStats } from '../33-pipeline-historial-clientes/02-statsPort'
+import { CUSTOMERS_MODALS } from '../30-pipeline-registro-clientes/04-modals'
+import { useCustomersStore } from '../33-pipeline-historial-clientes/00-director-historial-clientes'
+import type { Customer, CustomerStatusFilter, CustomerType } from '../33-pipeline-historial-clientes/03-types'
 
 export const CUSTOMER_PAGE_SIZES = [10, 25, 50]
 

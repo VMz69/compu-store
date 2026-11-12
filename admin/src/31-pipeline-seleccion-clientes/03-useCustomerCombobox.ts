@@ -1,6 +1,6 @@
 import { useId, useState, type KeyboardEvent } from 'react'
-import { matchesCustomer, searchCustomers } from '../lib/customer.service'
-import type { CustomerSelection } from './useCustomerSelection'
+import { matchesCustomer, searchCustomers } from '../30-pipeline-registro-clientes/03-customer.service'
+import type { CustomerSelection } from './02-useCustomerSelection'
 
 const MAX_RESULTS = 8
 

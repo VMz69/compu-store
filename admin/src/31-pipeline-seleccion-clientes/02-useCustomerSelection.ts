@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useFormState } from '@/77-pipeline-edicion-formularios/03-useFormState'
-import { findByPhone, normalizePhone, validateCustomer } from '../lib/customer.service'
-import { useCustomersStore } from '../store'
-import type { Customer, CustomerSnapshot, CustomerType } from '../types'
+import { findByPhone, normalizePhone, validateCustomer } from '../30-pipeline-registro-clientes/03-customer.service'
+import { useCustomersStore } from '../33-pipeline-historial-clientes/00-director-historial-clientes'
+import type { Customer, CustomerSnapshot, CustomerType } from '../33-pipeline-historial-clientes/03-types'
 
 /** "directory" = cliente del directorio · "walkin" = datos a mano (ocasional o nuevo). */
 export type CustomerMode = 'directory' | 'walkin'

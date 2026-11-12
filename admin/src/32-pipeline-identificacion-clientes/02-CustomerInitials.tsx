@@ -1,5 +1,5 @@
 import { cn } from '@/83-pipeline-recursos-publicos/02-cn'
-import type { CustomerType } from '../../types'
+import type { CustomerType } from '../33-pipeline-historial-clientes/03-types'
 
 const initialsOf = (name: string): string =>
   name

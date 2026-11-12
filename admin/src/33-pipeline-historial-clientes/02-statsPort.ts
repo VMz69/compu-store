@@ -1,4 +1,4 @@
-import type { Customer, CustomerStats } from '../types'
+import type { Customer, CustomerStats } from './03-types'
 
 /**
  * Puerto de métricas de compra (inversión de dependencias).

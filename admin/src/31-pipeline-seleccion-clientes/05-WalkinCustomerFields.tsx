@@ -1,7 +1,7 @@
 import { Field, Input, Select } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import type { CustomerSelection } from '../../hooks/useCustomerSelection'
-import { DuplicateCustomerNotice } from './DuplicateCustomerNotice'
+import type { CustomerSelection } from './02-useCustomerSelection'
+import { DuplicateCustomerNotice } from '../32-pipeline-identificacion-clientes/04-DuplicateCustomerNotice'
 
 const t = tracer('WalkinCustomerFields', 'src/features/customers/components/picker/WalkinCustomerFields.tsx')
 

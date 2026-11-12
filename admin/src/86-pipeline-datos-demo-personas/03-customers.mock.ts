@@ -1,4 +1,4 @@
-import type { Customer } from '../features/customers/types'
+import type { Customer } from '../33-pipeline-historial-clientes/03-types'
 
 /**
  * Directorio inicial. Los nombres y teléfonos coinciden con los pedidos de

@@ -1,6 +1,6 @@
 import { Checkbox, Field, FormActions, Input, Modal, ModalHeader, ModalTitle, Select, Textarea } from '@/00-director-interfaz'
 import { tracer } from '@/00-trazabilidad'
-import { useCustomerForm } from '../hooks/useCustomerForm'
+import { useCustomerForm } from './02-useCustomerForm'
 
 const t = tracer('CustomerFormModal', 'src/features/customers/components/CustomerFormModal.tsx')
 
