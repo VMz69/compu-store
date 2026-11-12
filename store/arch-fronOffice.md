@@ -4,7 +4,7 @@
 > reseñas, búsqueda y contacto; checkout por WhatsApp.
 > **Stack:** React 19 · TypeScript 6 · Vite 8 · Tailwind CSS 4 · React Router 7
 > (HashRouter) · Zustand 5.
-> **Arquitectura vigente:** FLOA conservadora. Actualización: 2026-11-11.
+> **Arquitectura vigente:** FLOA conservadora. Actualización: 2026-11-12.
 
 Esta especificación describe el frontend store. El [back office](../admin/arch-backOffice.md)
 tiene su propia especificación y queda fuera del alcance de esta revisión.
@@ -50,27 +50,333 @@ La topología DOMA `app/features/shared` y los imports `features/*/index.ts`
 pertenecen a la estructura anterior. Se conserva la separación de presentación,
 hooks, estado y cálculos, sin recrear esas carpetas dentro de los pipelines.
 
-## 2. Arranque y núcleo transversal
+## 2. Topología completa y arranque
+
+Árbol completo de los 276 archivos versionados de `store/`, verificado
+el 2026-11-12. Incluye los 258 archivos de `src/`, los 37 pipelines con
+sus directores y fases, los recursos, los inventarios históricos, la
+configuración de Vite, los archivos públicos y las pruebas.
 
 ```txt
 store/
-├── index.html · public/ · package.json · pnpm-lock.yaml
-├── vite.config.ts · tsconfig*.json · eslint.config.js
-├── arch-fronOffice.md · REFACTOR_MAP.md
-├── tests/ui-traceability.test.mjs
-└── src/
-    ├── main.tsx
-    ├── 00-director-aplicacion.tsx
-    ├── 00-director-{catalogo,carrito,busqueda,inicio,informacion}.ts
-    ├── 00-director-modelos.ts
-    ├── 00-estilos-globales.css
-    ├── 01-rutas.tsx
-    ├── 02-vista-inicial.ts
-    ├── 03-modelos-producto.ts
-    ├── 04-trazabilidad-ui.ts
-    ├── 00-recursos-estaticos/          imágenes y SVG, planos
-    ├── 00-documentacion-historica/     inventarios 00Tree originales, planos
-    └── 01-pipeline-* … 37-pipeline-*   detalle completo en la tabla siguiente
+├── .gitignore
+├── DIAGNOSTICO.md
+├── README.md
+├── REFACTOR_MAP.md
+├── agent-rules.md
+├── arch-fronOffice.md
+├── eslint.config.js
+├── index.html
+├── package.json
+├── pnpm-lock.yaml
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+├── vite.config.ts
+├── public/
+│   ├── favicon.png
+│   ├── favicon.svg
+│   └── icons.svg
+├── src/
+│   ├── 00-director-aplicacion.tsx
+│   ├── 00-director-busqueda.ts
+│   ├── 00-director-carrito.ts
+│   ├── 00-director-catalogo.ts
+│   ├── 00-director-informacion.ts
+│   ├── 00-director-inicio.ts
+│   ├── 00-director-modelos.ts
+│   ├── 00-estilos-globales.css
+│   ├── 01-rutas.tsx
+│   ├── 02-vista-inicial.ts
+│   ├── 03-modelos-producto.ts
+│   ├── 04-trazabilidad-ui.ts
+│   ├── main.tsx
+│   ├── 00-documentacion-historica/
+│   │   ├── 01-arbol-app.html
+│   │   ├── 02-arbol-app-hooks.html
+│   │   ├── 03-arbol-app-layout.html
+│   │   ├── 04-arbol-app-layout-footer.html
+│   │   ├── 05-arbol-app-layout-header.html
+│   │   ├── 06-arbol-app-layout-navbar.html
+│   │   ├── 07-arbol-app-lib.html
+│   │   ├── 08-arbol-assets.html
+│   │   ├── 09-arbol-assets-logo.html
+│   │   ├── 10-arbol-features.html
+│   │   ├── 11-arbol-features-cart.html
+│   │   ├── 12-arbol-features-cart-components.html
+│   │   ├── 13-arbol-features-cart-hooks.html
+│   │   ├── 14-arbol-features-cart-lib.html
+│   │   ├── 15-arbol-features-cart-pages.html
+│   │   ├── 16-arbol-features-catalog.html
+│   │   ├── 17-arbol-features-catalog-components.html
+│   │   ├── 18-arbol-features-catalog-components-browse.html
+│   │   ├── 19-arbol-features-catalog-components-detail.html
+│   │   ├── 20-arbol-features-catalog-components-grid.html
+│   │   ├── 21-arbol-features-catalog-components-reviews.html
+│   │   ├── 22-arbol-features-catalog-config.html
+│   │   ├── 23-arbol-features-catalog-hooks.html
+│   │   ├── 24-arbol-features-catalog-lib.html
+│   │   ├── 25-arbol-features-catalog-mocks.html
+│   │   ├── 26-arbol-features-catalog-pages.html
+│   │   ├── 27-arbol-features-home.html
+│   │   ├── 28-arbol-features-home-components.html
+│   │   ├── 29-arbol-features-home-config.html
+│   │   ├── 30-arbol-features-home-hooks.html
+│   │   ├── 31-arbol-features-home-mocks.html
+│   │   ├── 32-arbol-features-home-pages.html
+│   │   ├── 33-arbol-features-info.html
+│   │   ├── 34-arbol-features-info-components.html
+│   │   ├── 35-arbol-features-info-config.html
+│   │   ├── 36-arbol-features-info-hooks.html
+│   │   ├── 37-arbol-features-info-lib.html
+│   │   ├── 38-arbol-features-info-pages.html
+│   │   ├── 39-arbol-features-search.html
+│   │   ├── 40-arbol-features-search-components.html
+│   │   ├── 41-arbol-features-search-hooks.html
+│   │   ├── 42-arbol-features-search-pages.html
+│   │   ├── 43-arbol-shared.html
+│   │   ├── 44-arbol-shared-config.html
+│   │   ├── 45-arbol-shared-hooks.html
+│   │   ├── 46-arbol-shared-lib.html
+│   │   ├── 47-arbol-shared-store.html
+│   │   ├── 48-arbol-shared-types.html
+│   │   ├── 49-arbol-shared-ui.html
+│   │   └── 50-arbol-ui-traceability.html
+│   ├── 00-recursos-estaticos/
+│   │   ├── 01-hero.png
+│   │   ├── 02-icono-bgBlack.png
+│   │   ├── 03-icono-bgWhite.png
+│   │   ├── 04-icono.png
+│   │   ├── 05-logo-bgBlack.png
+│   │   ├── 06-logo-bgWhite.png
+│   │   ├── 07-logo-fullBlue.png
+│   │   ├── 08-logo-horizontal.png
+│   │   ├── 09-react.svg
+│   │   └── 10-vite.svg
+│   ├── 01-pipeline-identidad-tienda/
+│   │   ├── 00-director-identidad-tienda.ts
+│   │   ├── 01-identidad.config.ts
+│   │   ├── 02-formatos-comerciales.ts
+│   │   ├── 03-enlaces-whatsapp.ts
+│   │   └── 04-logo.tsx
+│   ├── 02-pipeline-preferencias-interfaz/
+│   │   ├── 00-director-preferencias-interfaz.ts
+│   │   ├── 01-preferencias.store.ts
+│   │   ├── 02-tema.ts
+│   │   ├── 03-clic-exterior.ts
+│   │   ├── 04-espacio-para-compra.ts
+│   │   └── 05-asistente-whatsapp.tsx
+│   ├── 03-pipeline-notificaciones/
+│   │   ├── 00-director-notificaciones.ts
+│   │   ├── 01-notificaciones.store.ts
+│   │   ├── 02-notificaciones.ts
+│   │   ├── 03-aviso.tsx
+│   │   └── 04-contenedor-avisos.tsx
+│   ├── 04-pipeline-presentacion-secciones/
+│   │   ├── 00-director-presentacion-secciones.ts
+│   │   ├── 01-ruta-navegacion.tsx
+│   │   ├── 02-banner-pagina.tsx
+│   │   ├── 03-titulo-seccion.tsx
+│   │   └── 04-estado-vacio.tsx
+│   ├── 05-pipeline-controles-compra/
+│   │   ├── 00-director-controles-compra.ts
+│   │   ├── 01-etiqueta.tsx
+│   │   ├── 02-boton.tsx
+│   │   ├── 03-selector.tsx
+│   │   ├── 04-cantidad.tsx
+│   │   └── 05-confirmacion.tsx
+│   ├── 06-pipeline-datos-mock/
+│   │   ├── 00-director-datos-mock.ts
+│   │   ├── 01-categorias.mock.ts
+│   │   ├── 02-marcas.mock.ts
+│   │   ├── 03-productos.mock.ts
+│   │   ├── 04-resenas.mock.ts
+│   │   └── 05-promociones.mock.ts
+│   ├── 07-pipeline-estado-carrito/
+│   │   ├── 00-director-estado-carrito.ts
+│   │   ├── 01-modelos-carrito.ts
+│   │   ├── 02-calculos-carrito.ts
+│   │   ├── 03-carrito.store.ts
+│   │   └── 04-acciones-carrito.ts
+│   ├── 08-pipeline-vista-carrito/
+│   │   ├── 00-director-vista-carrito.ts
+│   │   ├── 01-indicador-carrito.tsx
+│   │   ├── 02-linea-carrito.tsx
+│   │   ├── 03-estado-vista-carrito.ts
+│   │   └── 04-vista-carrito.tsx
+│   ├── 09-pipeline-checkout-whatsapp/
+│   │   ├── 00-director-checkout-whatsapp.ts
+│   │   ├── 01-pedido-whatsapp.ts
+│   │   ├── 02-formulario-pedido.tsx
+│   │   └── 03-resumen-pedido.tsx
+│   ├── 10-pipeline-consulta-catalogo/
+│   │   ├── 00-director-consulta-catalogo.ts
+│   │   ├── 01-consultas-productos.ts
+│   │   ├── 02-ordenacion.config.ts
+│   │   ├── 03-filtros.store.ts
+│   │   ├── 04-aplicar-filtros.ts
+│   │   └── 05-barra-filtros.tsx
+│   ├── 11-pipeline-categorias/
+│   │   ├── 00-director-categorias.ts
+│   │   ├── 01-estadisticas-catalogo.ts
+│   │   ├── 02-estado-categorias.ts
+│   │   ├── 03-tarjeta-categoria.tsx
+│   │   └── 04-vista-categorias.tsx
+│   ├── 12-pipeline-marcas/
+│   │   ├── 00-director-marcas.ts
+│   │   ├── 01-estado-marcas.ts
+│   │   ├── 02-tarjeta-marca.tsx
+│   │   └── 03-vista-marcas.tsx
+│   ├── 13-pipeline-seleccion-catalogo/
+│   │   ├── 00-director-seleccion-catalogo.ts
+│   │   ├── 01-seleccion-categoria.ts
+│   │   ├── 02-seleccion-marca.ts
+│   │   └── 03-seleccion-ofertas.ts
+│   ├── 14-pipeline-listados-catalogo/
+│   │   ├── 00-director-listados-catalogo.ts
+│   │   ├── 01-productos-categoria.tsx
+│   │   ├── 02-productos-marca.tsx
+│   │   ├── 03-productos-oferta.tsx
+│   │   ├── 04-estado-lista-favoritos.ts
+│   │   └── 05-productos-favoritos.tsx
+│   ├── 15-pipeline-preferencias-producto/
+│   │   ├── 00-director-preferencias-producto.ts
+│   │   ├── 01-favoritos.store.ts
+│   │   ├── 02-acciones-favoritos.ts
+│   │   └── 03-compartir-producto.ts
+│   ├── 16-pipeline-presentacion-producto/
+│   │   ├── 00-director-presentacion-producto.ts
+│   │   ├── 01-imagen-tarjeta.tsx
+│   │   ├── 02-informacion-tarjeta.tsx
+│   │   └── 03-acciones-tarjeta.tsx
+│   ├── 17-pipeline-vitrina-productos/
+│   │   ├── 00-director-vitrina-productos.ts
+│   │   ├── 01-estado-tarjeta.ts
+│   │   ├── 02-tarjeta-producto.tsx
+│   │   ├── 03-grilla-productos.tsx
+│   │   └── 04-productos-relacionados.tsx
+│   ├── 18-pipeline-galeria-producto/
+│   │   ├── 00-director-galeria-producto.ts
+│   │   ├── 01-estado-galeria.ts
+│   │   ├── 02-miniaturas.tsx
+│   │   ├── 03-visor-imagenes.tsx
+│   │   └── 04-galeria.tsx
+│   ├── 19-pipeline-calificaciones/
+│   │   ├── 00-director-calificaciones.ts
+│   │   ├── 01-valorar-resena.ts
+│   │   ├── 02-estrellas.tsx
+│   │   ├── 03-resumen-calificaciones.tsx
+│   │   └── 04-tarjeta-resena.tsx
+│   ├── 20-pipeline-estado-resenas/
+│   │   ├── 00-director-estado-resenas.ts
+│   │   ├── 01-contrato-resenas.ts
+│   │   ├── 02-resenas.store.ts
+│   │   ├── 03-resenas-producto.ts
+│   │   └── 04-estado-formulario-resena.ts
+│   ├── 21-pipeline-publicacion-resenas/
+│   │   ├── 00-director-publicacion-resenas.ts
+│   │   ├── 01-aviso-moderacion.tsx
+│   │   ├── 02-formulario-resena.tsx
+│   │   └── 03-panel-resenas.tsx
+│   ├── 22-pipeline-informacion-producto/
+│   │   ├── 00-director-informacion-producto.ts
+│   │   ├── 01-estado-pestanas.ts
+│   │   ├── 02-descripcion-producto.tsx
+│   │   ├── 03-especificaciones-producto.tsx
+│   │   └── 04-pestanas-producto.tsx
+│   ├── 23-pipeline-oferta-producto/
+│   │   ├── 00-director-oferta-producto.ts
+│   │   ├── 01-garantias-producto.tsx
+│   │   ├── 02-acciones-informacion.tsx
+│   │   ├── 03-informacion-comercial.tsx
+│   │   └── 04-ficha-compra.tsx
+│   ├── 24-pipeline-compra-producto/
+│   │   ├── 00-director-compra-producto.ts
+│   │   ├── 01-disponibilidad-producto.ts
+│   │   ├── 02-consulta-whatsapp.ts
+│   │   ├── 03-estado-compra-movil.ts
+│   │   └── 04-barra-compra-movil.tsx
+│   ├── 25-pipeline-detalle-producto/
+│   │   ├── 00-director-detalle-producto.ts
+│   │   ├── 01-estado-detalle.ts
+│   │   ├── 02-cabecera-producto.tsx
+│   │   └── 03-vista-producto.tsx
+│   ├── 26-pipeline-presentacion-portada/
+│   │   ├── 00-director-presentacion-portada.ts
+│   │   ├── 01-pilares-confianza.config.ts
+│   │   ├── 02-estado-promociones.ts
+│   │   ├── 03-carrusel-promociones.tsx
+│   │   └── 04-pilares-confianza.tsx
+│   ├── 27-pipeline-inicio/
+│   │   ├── 00-director-inicio.ts
+│   │   ├── 01-datos-inicio.ts
+│   │   ├── 02-acceso-categoria.tsx
+│   │   ├── 03-acceso-marca.tsx
+│   │   └── 04-vista-inicio.tsx
+│   ├── 28-pipeline-consulta-contacto/
+│   │   ├── 00-director-consulta-contacto.ts
+│   │   ├── 01-asuntos-contacto.config.ts
+│   │   ├── 02-contacto-whatsapp.ts
+│   │   ├── 03-estado-contacto.ts
+│   │   └── 04-formulario-contacto.tsx
+│   ├── 29-pipeline-informacion-tienda/
+│   │   ├── 00-director-informacion-tienda.ts
+│   │   ├── 01-canales-contacto.tsx
+│   │   ├── 02-mapa-tienda.tsx
+│   │   ├── 03-vista-contacto.tsx
+│   │   └── 04-vista-nosotros.tsx
+│   ├── 30-pipeline-sugerencias-busqueda/
+│   │   ├── 00-director-sugerencias-busqueda.ts
+│   │   ├── 01-acciones-resultado.ts
+│   │   ├── 02-resultado-sugerido.tsx
+│   │   └── 03-lista-sugerencias.tsx
+│   ├── 31-pipeline-captura-busqueda/
+│   │   ├── 00-director-captura-busqueda.ts
+│   │   ├── 01-estado-busqueda.ts
+│   │   ├── 02-bloqueo-scroll.ts
+│   │   ├── 03-estado-desplegable.ts
+│   │   ├── 04-buscador.styles.ts
+│   │   └── 05-buscador.tsx
+│   ├── 32-pipeline-resultados-busqueda/
+│   │   ├── 00-director-resultados-busqueda.ts
+│   │   ├── 01-seleccion-sugerencias.ts
+│   │   ├── 02-estado-resultados.ts
+│   │   └── 03-vista-resultados.tsx
+│   ├── 33-pipeline-cabecera-tienda/
+│   │   ├── 00-director-cabecera-tienda.ts
+│   │   ├── 01-estado-cabecera.ts
+│   │   ├── 02-buscador-al-desplazar.ts
+│   │   ├── 03-selector-tema.tsx
+│   │   ├── 04-barra-informacion.tsx
+│   │   └── 05-cabecera.tsx
+│   ├── 34-pipeline-menu-movil/
+│   │   ├── 00-director-menu-movil.ts
+│   │   ├── 01-navegacion.styles.ts
+│   │   ├── 02-catalogo-movil.tsx
+│   │   ├── 03-informacion-movil.tsx
+│   │   └── 04-menu-movil.tsx
+│   ├── 35-pipeline-navegacion-tienda/
+│   │   ├── 00-director-navegacion-tienda.ts
+│   │   ├── 01-enlaces-navegacion.config.ts
+│   │   ├── 02-estado-navegacion.ts
+│   │   ├── 03-panel-explorar.tsx
+│   │   ├── 04-menu-explorar.tsx
+│   │   └── 05-barra-navegacion.tsx
+│   ├── 36-pipeline-pie-tienda/
+│   │   ├── 00-director-pie-tienda.ts
+│   │   ├── 01-identidad-pie.tsx
+│   │   ├── 02-enlaces-pie.tsx
+│   │   ├── 03-redes-sociales.tsx
+│   │   ├── 04-informacion-pie.tsx
+│   │   └── 05-pie-tienda.tsx
+│   └── 37-pipeline-layout-tienda/
+│       ├── 00-director-layout-tienda.ts
+│       ├── 01-restaurar-desplazamiento.ts
+│       ├── 02-estado-overlay-movil.ts
+│       ├── 03-fondo-menu-movil.tsx
+│       └── 04-layout-principal.tsx
+└── tests/
+    └── ui-traceability.test.mjs
 ```
 
 `main.tsx` importa los estilos globales, normaliza la vista inicial y monta
