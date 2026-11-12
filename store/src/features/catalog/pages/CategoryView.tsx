@@ -1,9 +1,9 @@
 import { Link, useParams } from 'react-router-dom'
 import { ProductGrid } from '../components/grid/ProductGrid'
-import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
-import { EmptyState } from '@/shared/ui/EmptyState'
+import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
+import { EmptyState } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { FilterBar } from '../components/FilterBar'
-import { PageBanner } from '@/shared/ui/PageBanner'
+import { PageBanner } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { useCategoryView } from '../hooks/useCategoryView'
 import { uiMeta } from '@/04-trazabilidad-ui'
 

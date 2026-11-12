@@ -1,6 +1,6 @@
 import { CategoryCard } from '../components/browse/CategoryCard'
-import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
-import { PageBanner } from '@/shared/ui/PageBanner'
+import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
+import { PageBanner } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { useCatalogHub } from '../hooks/useCatalogHub'
 import { uiMeta } from '@/04-trazabilidad-ui'
 

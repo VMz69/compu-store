@@ -1,5 +1,5 @@
 import { Logo } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
-import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
+import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 

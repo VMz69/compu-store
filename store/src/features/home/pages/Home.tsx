@@ -4,7 +4,7 @@ import { CategoryTile } from '../components/CategoryTile'
 import { HeroSlider } from '../components/HeroSlider'
 import { TrustPillars } from '../components/TrustPillars'
 import { ProductGrid } from '@/00-director-catalogo'
-import { SectionHeading } from '@/shared/ui/SectionHeading'
+import { SectionHeading } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { useHomeData } from '../hooks/useHomeData'
 import { uiMeta } from '@/04-trazabilidad-ui'
 

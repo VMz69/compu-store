@@ -1,6 +1,6 @@
 import { BrandCard } from '../components/browse/BrandCard'
-import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
-import { PageBanner } from '@/shared/ui/PageBanner'
+import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
+import { PageBanner } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { useBrandsPage } from '../hooks/useBrandsPage'
 import { uiMeta } from '@/04-trazabilidad-ui'
 

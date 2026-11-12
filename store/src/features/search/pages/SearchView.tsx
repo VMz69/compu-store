@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { FilterBar, ProductGrid } from '@/00-director-catalogo'
-import { Breadcrumbs } from '@/shared/ui/Breadcrumbs'
+import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { useSearchView } from '../hooks/useSearchView'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
