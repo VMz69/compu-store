@@ -1,4 +1,4 @@
-import { RatingStars } from '@/shared/ui/RatingStars'
+import { RatingStars } from '@/19-pipeline-calificaciones/02-estrellas'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/features/catalog/components/reviews/RatingSummary.tsx'

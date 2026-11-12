@@ -598,3 +598,4 @@ Interrupción externa: el entorno terminó el proceso con SIGTERM durante
 `0eb2f4c` con git reset --hard, sin conservar el paso incompleto.
 Se reanuda por lotes más cortos, con los mismos movimientos y validaciones.
 
+| `19-pipeline-calificaciones` | 4 | OK (0) | OK (0) | OK (0) |

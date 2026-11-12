@@ -1,5 +1,5 @@
 import { ProductInfoActions } from './ProductInfoActions'
-import { RatingStars } from '@/shared/ui/RatingStars'
+import { RatingStars } from '@/19-pipeline-calificaciones/00-director-calificaciones'
 import { formatCurrency, formatSku } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'

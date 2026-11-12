@@ -1,5 +1,5 @@
-import { useHelpfulReview } from '../../hooks/useHelpfulReview'
-import { RatingStars } from '@/shared/ui/RatingStars'
+import { useHelpfulReview } from './01-valorar-resena'
+import { RatingStars } from '@/19-pipeline-calificaciones/02-estrellas'
 import { getInitials } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Review } from '@/00-director-modelos'

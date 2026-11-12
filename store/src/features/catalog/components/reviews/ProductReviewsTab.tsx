@@ -1,5 +1,5 @@
-import { RatingSummary } from './RatingSummary'
-import { ReviewCard } from './ReviewCard'
+import { RatingSummary } from '@/19-pipeline-calificaciones/00-director-calificaciones'
+import { ReviewCard } from '@/19-pipeline-calificaciones/00-director-calificaciones'
 import { ReviewForm } from './ReviewForm'
 import { useProductReviews } from '../../hooks/useProductReviews'
 import { uiMeta } from '@/04-trazabilidad-ui'
