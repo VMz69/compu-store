@@ -1,0 +1,39 @@
+import cors from 'cors'
+import express, { type Express } from 'express'
+import helmet from 'helmet'
+import { ErrorApp, manejarErrores, noEncontrado } from './04-pipeline-http/00-director-http.js'
+
+export interface DependenciasApp {
+  /** Comprueba la base de datos; se inyecta para poder simular fallos en las pruebas. */
+  pingBD: () => Promise<void>
+  /** Orígenes permitidos por CORS. */
+  origenes: string[]
+  /** Rutas adicionales montadas antes del 404 (solo para pruebas). */
+  extender?: (app: Express) => void
+}
+
+/** Construye la aplicación Express sin abrir puertos (lo hace 00-main). */
+export function crearApp({ pingBD, origenes, extender }: DependenciasApp): Express {
+  const app = express()
+  app.disable('x-powered-by')
+  app.set('trust proxy', 1) // Railway y Vercel están detrás de un proxy.
+
+  app.use(helmet())
+  app.use(cors({ origin: origenes }))
+  app.use(express.json({ limit: '100kb' }))
+
+  app.get('/api/v1/health', async (_req, res) => {
+    try {
+      await pingBD()
+    } catch {
+      throw new ErrorApp('SERVICE_UNAVAILABLE', 503, 'La base de datos no responde.')
+    }
+    res.json({ data: { estado: 'ok', baseDatos: 'ok', fecha: new Date().toISOString() } })
+  })
+
+  extender?.(app)
+
+  app.use(noEncontrado)
+  app.use(manejarErrores)
+  return app
+}

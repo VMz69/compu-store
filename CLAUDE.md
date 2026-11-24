@@ -6,9 +6,11 @@ Antes de trabajar: leer §0, §9 y el lote en curso.
 - admin/ (BackOffice) y store/ (FrontOffice): React + Vite + TS, arquitectura FLOA.
 - api/: Express + TS + Prisma + MariaDB, FLOA + VSA.
 
-## Comandos (se completan en L01)
-- api: pnpm dev · pnpm test · pnpm check
+## Comandos
+- api (Node 26, pnpm 12): pnpm dev · pnpm build · pnpm start · pnpm test · pnpm check
+  (check = typecheck + lint + test + madge). Requiere api/.env y api/.env.test (ver api/README.md).
 - admin / store: pnpm dev · pnpm build
+- Hook (.claude/settings.json): cada Edit/Write en api/ ejecuta pnpm -C api check.
 
 ## Reglas no negociables
 - Un lote por sesión; modo plan y aprobación antes de editar.

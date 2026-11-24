@@ -1,14 +1,22 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "private": true,
+  "description": "API de CompuStore SV (Express + Prisma + MariaDB)",
+  "type": "module",
+  "engines": {
+    "node": ">=26 <27"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "scripts": {
+    "dev": "tsx watch --env-file=.env src/00-main.ts",
+    "build": "prisma generate && tsc -p tsconfig.json",
+    "start": "node dist/src/00-main.js",
+    "typecheck": "prisma generate && tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "circular": "madge --circular --extensions ts --ts-config tsconfig.json --exclude generated/ src",
+    "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm circular"
+  },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
@@ -17,12 +25,28 @@
     }
   },
   "packageManager": "pnpm@12.16.1",
-  "type": "module",
+  "dependencies": {
+    "@prisma/adapter-mariadb": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "cors": "2.8.6",
+    "express": "5.3.0",
+    "helmet": "8.3.0",
+    "zod": "4.6.7"
+  },
   "devDependencies": {
-    "@types/express": "^5.0.6",
-    "@types/node": "^26.6.6",
-    "nodemon": "^3.1.14",
-    "ts-node": "^10.9.2",
-    "typescript": "^7.0.2"
+    "@eslint/js": "10.0.1",
+    "@types/cors": "2.8.19",
+    "@types/express": "5.0.6",
+    "@types/node": "26.6.6",
+    "@types/supertest": "7.2.1",
+    "eslint": "10.15.0",
+    "globals": "17.14.0",
+    "madge": "8.0.0",
+    "prisma": "7.10.1",
+    "supertest": "7.3.2",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.74.0",
+    "vitest": "5.1.1"
   }
 }

@@ -82,7 +82,7 @@ No se agregan tecnologías sin una necesidad funcional comprobada.
 ### 3.4 Convenciones de la API
 - Prefijo `/api/v1`, recursos en español, en plural y en kebab-case.
 - Respuestas `{ data, meta? }`; errores `{ error: { code, message, details? } }` (D-06).
-- Códigos: 200, 201, 204, 400, 401, 403, 404, 409 (conflicto o restricción) y 422 (regla de negocio).
+- Códigos: 200, 201, 204, 400, 401, 403, 404, 409 (conflicto o restricción), 422 (regla de negocio) y 503 (dependencia no disponible, p. ej. BD en `/health`).
 
 ### 3.5 Frontends
 - Los adaptadores traducen el contrato de la API a los tipos existentes, dentro de la capa de datos de cada frontend (D-14).
@@ -275,8 +275,8 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 | ID | Decisión | Recomendación inicial | Lote |
 |---|---|---|---|
 | D-01 | Autenticación: Firebase o local (bcrypt + cookie) | **Resuelta (L00):** Firebase Auth + Admin SDK; Usuario en BD con `firebaseUid`, sin contraseñas | L00 |
-| D-02 | Motor de producción: MySQL (nativo en Railway) o MariaDB | **Resuelta (L00):** MariaDB 11.4 LTS en ambos entornos, local y Railway (imagen Docker con volumen); sin alternativa MySQL | L00 |
-| D-03 | Versiones de Node, Express y Prisma | Node LTS vigente, con versiones exactas fijadas | L01 |
+| D-02 | Motor de producción: MySQL (nativo en Railway) o MariaDB | **Resuelta (L00, versión ajustada en L01):** MariaDB 11.8 LTS en ambos entornos, local y Railway (imagen `mariadb:11.8` con volumen); sin alternativa MySQL | L00 |
+| D-03 | Versiones de Node, Express y Prisma | **Resuelta (L01):** Node 26 LTS; versiones exactas en `api/package.json` (Express 5.3.0, Prisma 7.10.1, Zod 4.6.7, TypeScript 6.0.3) | L01 |
 | D-04 | Formato de IDs y slugs | **Resuelta (L00):** producto `Int` (el admin lo muestra como `PRD-###`); categoría y marca con slug único e inmutable; lote `Int` | L00 |
 | D-05 | Dinero en JSON | **Resuelta (L00):** string decimal `"123.45"`; IVA como porcentaje `"13.00"` | L00 |
 | D-06 | Sobre de respuesta y paginación | **Resuelta (L00):** `{data, meta:{page,limit,total,totalPages}}`, `limit` ≤ 100; errores `{error:{code,message,details?}}` | L00 |
@@ -288,7 +288,7 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 | D-12 | Correlativos | Tabla de secuencias por tipo y serie con `SELECT … FOR UPDATE` | L15 |
 | D-13 | Antispam de reseñas | Límite de tasa por IP + honeypot | L17 |
 | D-14 | Ubicación de los adaptadores en los frontends | **Resuelta (L00):** admin, dentro de los pipelines de sus stores (25, 06, 84); store, nuevo `38-pipeline-datos-api` | L00 |
-| D-15 | BD de pruebas | `compustore_test` separada | L01 |
+| D-15 | BD de pruebas | **Resuelta (L01):** `compustore_test` separada, configurada en `api/.env.test` | L01 |
 | D-16 | Stock físico: suma de lotes o campo del producto | **Resuelta (L00):** campo `stock` en Producto; con lotes, el servidor lo mantiene = Σ lotes en la misma transacción | L00 |
 | D-17 | Subida de imágenes | Vía API (multer → Cloudinary) con validación de tipo y tamaño | L05 |
 | D-18 | Cotización → pedido: precio cotizado o vigente | Regla de negocio que confirma el propietario | L16 |
@@ -301,7 +301,7 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 | Lote | Fase | Funcionalidades | Estado | Commit / fecha |
 |---|---|---|---|---|
 | L00 | A | — | Completado | `feat(L00)` · 23-11-2026 |
-| L01 | A | — | Pendiente | |
+| L01 | A | — | Completado (solo local; Railway en L08) | `feat(L01)` · 23-11-2026 · rama `feat/api` |
 | L02 | A | — | Pendiente | |
 | L03 | A | 01, 05 | Pendiente | |
 | L04 | A | 07, 08 | Pendiente | |
@@ -349,6 +349,17 @@ Estados posibles: Pendiente · En progreso · Completado · Bloqueado.
 | 23-11-2026 | L00 | — | El slug de producto del admin no es único; lo garantiza el servidor | `admin/src/25-pipeline-persistencia-catalogo/01-store.ts` |
 | 23-11-2026 | L00 | — | Los textos de los mocks difieren entre admin y store; el seed de L02 toma el admin como fuente, más el icono de las marcas y las imágenes extra del store | `docs/fase-1/contratos-A.md` §8 |
 | 23-11-2026 | L00 | — | Hay 6 cuentas demo y A requiere 2; la elección se hace en L03 | `admin/src/86-pipeline-datos-demo-personas/02-users.mock.ts` |
+| 23-11-2026 | L01 | D-03 | Node 26 LTS y versiones exactas. Se descarta `prisma@latest` (8.0.0-rc.35, una RC). TypeScript 6.0.3, porque typescript-eslint exige <6.1; se retiran TS 7, nodemon y ts-node | `api/package.json` |
+| 23-11-2026 | L01 | D-15 | BD de pruebas `compustore_test`; `tests/00-setup.ts` carga `.env.test` | `api/tests/00-setup.ts` |
+| 23-11-2026 | L01 | D-02 | Se fija MariaDB 11.8 LTS (la versión instalada en local, 11.8.9) en lugar de 11.4 | `mariadb --version` |
+| 23-11-2026 | L01 | — | Desviación de §4: en `04-http` la validación es `01` y los errores `02`; la autenticación será `03` (L03), porque la numeración es por orden de creación y sin huecos | `api/src/04-pipeline-http/` |
+| 23-11-2026 | L01 | — | Se añade el código 503 (SERVICE_UNAVAILABLE) a §3.4 para `/health` sin BD | `api/src/01-app.ts` |
+| 23-11-2026 | L01 | — | Prisma 7.10.1 indica soporte para Node 20/22/24; funciona en Node 26 (generate, typecheck, ping). Si Railway da problemas, la alternativa es Node 24 LTS | aviso de `prisma` en el preinstall |
+| 23-11-2026 | L01 | — | El cliente Prisma se genera en `api/generated/` (fuera de `src/`, ignorado por git) y se excluye de madge porque contiene ciclos internos | `api/prisma/schema.prisma`, `api/package.json` |
+| 23-11-2026 | L01 | — | `pingBD` tiene un límite propio de 2 s: el pool de mariadb reintentaba durante unos 6 s antes de fallar | `api/src/03-pipeline-conexiones/01-prisma.ts` |
+| 23-11-2026 | L01 | — | Hook de `pnpm check` en `.claude/settings.json` (pendiente desde L00) | `.claude/settings.json` |
+| 23-11-2026 | L01 | D-02 | Decisión del propietario: el despliegue en Railway (MariaDB 11.8 + API) se pospone a L08; en L01 es opcional. El cierre de L01 queda demostrado solo en local (`pnpm check` en verde y `/health` → 200) | §7 L01 y L08; `api/README.md` |
+| 23-11-2026 | L01 | — | Shadow DB `compustore_shadow` (mismo usuario) para `prisma migrate dev`: `shadowDatabaseUrl` opcional desde `SHADOW_DATABASE_URL`, que solo se usa en desarrollo | `api/prisma.config.ts`, `api/.env.example` |
 
 ---
 

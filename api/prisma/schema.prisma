@@ -1,0 +1,12 @@
+// Esquema de CompuStore SV. Los modelos de la Fase A llegan en L02 (docs/fase-1/contratos-A.md).
+
+generator client {
+  provider            = "prisma-client"
+  output              = "../generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "mysql"
+}
