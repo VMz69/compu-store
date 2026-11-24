@@ -12,6 +12,7 @@ node_modules/
 dist/
 build/
 api/generated/
+api/respaldos/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

@@ -15,7 +15,13 @@
     "lint": "eslint .",
     "test": "vitest run",
     "circular": "madge --circular --extensions ts --ts-config tsconfig.json --exclude generated/ src",
-    "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm circular"
+    "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm circular",
+    "db:migrar": "prisma migrate dev",
+    "db:desplegar": "prisma migrate deploy",
+    "db:sembrar": "prisma db seed",
+    "db:reiniciar": "prisma migrate reset --force && prisma db seed",
+    "db:respaldar": "bash scripts/respaldo.sh",
+    "db:restaurar": "bash scripts/restaurar.sh"
   },
   "devEngines": {
     "packageManager": {

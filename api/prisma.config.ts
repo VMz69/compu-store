@@ -14,6 +14,11 @@ const shadowDatabaseUrl = process.env.SHADOW_DATABASE_URL
 
 export default defineConfig({
   schema: 'prisma/schema.prisma',
+  migrations: {
+    path: 'prisma/migrations',
+    // `prisma db seed` (pnpm db:sembrar). Hereda DATABASE_URL del entorno cargado arriba.
+    seed: 'tsx prisma/seed.ts',
+  },
   datasource: {
     url: process.env.DATABASE_URL ?? '',
     ...(shadowDatabaseUrl ? { shadowDatabaseUrl } : {}),

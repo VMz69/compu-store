@@ -29,6 +29,21 @@ Después, copia `.env.example` a `.env` (bases `compustore` y `compustore_shadow
 
 Comprobación rápida: `curl http://localhost:3000/api/v1/health` devuelve 200 con la BD activa y 503 si la BD no responde.
 
+## Datos y respaldo (L02)
+| Comando | Qué hace |
+|---|---|
+| `pnpm db:migrar` | `prisma migrate dev`: crea y aplica migraciones en desarrollo (usa la shadow DB) |
+| `pnpm db:desplegar` | `prisma migrate deploy`: aplica las migraciones pendientes (producción/CI) |
+| `pnpm db:sembrar` | seed idempotente del catálogo de A (`prisma/seed.ts`); solo crea lo que falta, nunca sobrescribe |
+| `pnpm db:reiniciar` | **borra la BD de desarrollo**, reaplica las migraciones y siembra (Prisma 7 no siembra solo al resetear) |
+| `pnpm db:respaldar` | volcado `mariadb-dump` comprimido en `respaldos/<bd>-<fechaUTC>.sql.gz` (ignorado por git) |
+| `pnpm db:restaurar <archivo>` | borra **todas** las tablas de la BD de destino y carga el respaldo; pide escribir el nombre de la BD |
+
+- Ambos scripts toman la BD de `DATABASE_URL` (entorno) o de `ENV_FILE` (por defecto `.env`); las credenciales viajan en un archivo temporal 0600, nunca en la línea de comandos. `CONFIRMAR=si` omite la pregunta (solo para automatizar).
+- El respaldo incluye `_prisma_migrations`: tras restaurar, `prisma migrate status` coincide con el momento del respaldo.
+- Las pruebas aplican las migraciones a `compustore_test` antes de ejecutarse y **abortan si la BD de `.env.test` no termina en `_test`**, porque vacían tablas.
+- Requiere `mariadb-dump`, `mariadb` y `gzip` (cliente de MariaDB 11.8).
+
 ## Despliegue en Railway (pospuesto a L08, decisión D-02)
 1. **Base de datos:** nuevo servicio desde la imagen Docker `mariadb:11.8`.
    - Volumen montado en `/var/lib/mysql`.

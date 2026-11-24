@@ -302,7 +302,7 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 |---|---|---|---|---|
 | L00 | A | — | Completado | `feat(L00)` · 23-11-2026 |
 | L01 | A | — | Completado (solo local; Railway en L08) | `feat(L01)` · 23-11-2026 · rama `feat/api` |
-| L02 | A | — | Pendiente | |
+| L02 | A | — | Completado | `feat(L02)` · 23-11-2026 · rama `feat/api` |
 | L03 | A | 01, 05 | Pendiente | |
 | L04 | A | 07, 08 | Pendiente | |
 | L05 | A | 06, 09 | Pendiente | |
@@ -360,6 +360,17 @@ Estados posibles: Pendiente · En progreso · Completado · Bloqueado.
 | 23-11-2026 | L01 | — | Hook de `pnpm check` en `.claude/settings.json` (pendiente desde L00) | `.claude/settings.json` |
 | 23-11-2026 | L01 | D-02 | Decisión del propietario: el despliegue en Railway (MariaDB 11.8 + API) se pospone a L08; en L01 es opcional. El cierre de L01 queda demostrado solo en local (`pnpm check` en verde y `/health` → 200) | §7 L01 y L08; `api/README.md` |
 | 23-11-2026 | L01 | — | Shadow DB `compustore_shadow` (mismo usuario) para `prisma migrate dev`: `shadowDatabaseUrl` opcional desde `SHADOW_DATABASE_URL`, que solo se usa en desarrollo | `api/prisma.config.ts`, `api/.env.example` |
+| 23-11-2026 | L02 | P1 | `MovimientoInventario.usuarioId` opcional (`null` = sistema). El seed registra la carga inicial como movimiento (motivo "Carga inicial (seed)"), así que Σ movimientos = stock desde el primer día | `api/prisma/schema.prisma`; `api/tests/03-seed.test.ts` |
+| 23-11-2026 | L02 | P2 | Seed idempotente y no destructivo: crea solo lo que falta (categoría y marca por slug; producto por id, sku o slug; configuración id = 1) y nunca sobrescribe lo editado en el admin. Conserva los ids 1–12 del store (favoritos) | `api/prisma/seed.ts` |
+| 23-11-2026 | L02 | P3 | Modelos y columnas en español (camelCase) y tablas en plural snake_case con `@@map` (D-19) | `api/prisma/schema.prisma` |
+| 23-11-2026 | L02 | — | Cantidades `UNSIGNED` (stock, punto de reorden, lote): la BD rechaza el stock negativo. No hay CHECK a mano: `precio > 0` y `precioAnterior > precio` se validan con Zod y en los services (L04–L06) | `api/prisma/migrations/20261124025011_modelo_a/` |
+| 23-11-2026 | L02 | — | El nombre único "sin acentos" de categoría y marca lo garantiza la intercalación `utf8mb4_unicode_ci` del índice único (también sin distinguir mayúsculas), probado | `api/tests/03-seed.test.ts` |
+| 23-11-2026 | L02 | — | El seed transcribe los mocks en `prisma/seed.ts` (la API no puede importar código de admin ni de store): datos del admin, más el icono de las marcas, las 3 imágenes extra por producto y la identidad del store | `api/prisma/seed.ts` |
+| 23-11-2026 | L02 | — | El rol del Usuario es texto (`RoleId` del admin) y no enum, porque en L09 pasa a ser una tabla. `publicId` de Cloudinary, emisor e IVA global de la tienda no se crean por anticipado (L05 y L10) | `api/prisma/schema.prisma` |
+| 23-11-2026 | L02 | D-15 | Conflicto corregido: `api/.env.test` apuntaba a `compustore` (desarrollo) y las pruebas del seed la vaciaban. Se cambió a `compustore_test` con permiso del propietario; `tests/02-bd.global-setup.ts` aplica las migraciones y aborta si la BD no termina en `_test` | `api/tests/02-bd.global-setup.ts` |
+| 23-11-2026 | L02 | — | Prisma 7: `migrate reset` no ejecuta el seed por sí solo (el seed se configura en `prisma.config.ts`), y bloquea el reset lanzado por un agente de IA sin el consentimiento explícito del propietario. Se añade `pnpm db:reiniciar` (reset + seed) | `api/package.json` |
+| 23-11-2026 | L02 | — | Respaldo con `mariadb-dump` (incluye `_prisma_migrations`). La restauración borra todas las tablas del destino y deja checksums idénticos en las 9 tablas; verificado en local tras borrar datos | `api/scripts/respaldo.sh`, `api/scripts/restaurar.sh` |
+| 23-11-2026 | L02 | — | Además de los scripts del plan se añade `db:reiniciar`; pnpm 12 no acepta `pnpm -s` | `api/package.json` |
 
 ---
 
