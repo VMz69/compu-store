@@ -85,16 +85,30 @@ model Producto {
 }
 
 /// Máx. 8 por producto (regla del service); orden 0 = portada.
+/// publicId de Cloudinary (D-17); null = URL externa (seed o pegada a mano), que nunca se destruye.
 model ImagenProducto {
   id         Int      @id @default(autoincrement())
   productoId Int
   producto   Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
   url        String   @db.VarChar(500)
+  publicId   String?  @db.VarChar(255)
   orden      Int      @db.UnsignedTinyInt
 
   @@unique([productoId, orden])
   @@unique([productoId, url])
   @@map("imagenes_producto")
+}
+
+/// Imagen subida a Cloudinary que aún no pertenece a ningún producto (o que falta destruir).
+/// Al guardar el producto pasa a ImagenProducto; las que superan su plazo se destruyen (limpieza de huérfanas).
+model ImagenPendiente {
+  id       Int      @id @default(autoincrement())
+  publicId String   @unique @db.VarChar(255)
+  url      String   @db.VarChar(500)
+  creadaEn DateTime @default(now())
+
+  @@index([creadaEn])
+  @@map("imagenes_pendientes")
 }
 
 model Especificacion {

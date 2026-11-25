@@ -3,6 +3,7 @@ import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { crearApp } from '../src/01-app.js'
 import { desconectarBD, prisma, type ProveedorIdentidad } from '../src/03-pipeline-conexiones/00-director-conexiones.js'
 import { vincular } from '../src/05-pipeline-acceso/00-director-acceso.js'
+import { crearImagenesFalsas } from './07-imagenes-prueba.js'
 
 /** Tokens del proveedor falso: "token-<uid>" es válido para ese uid; el resto se rechaza. */
 const PREFIJO = 'token-'
@@ -21,7 +22,7 @@ const identidad: ProveedorIdentidad = {
   buscarPorCorreo: async () => null,
 }
 
-const app = crearApp({ pingBD: async () => {}, identidad, origenes: [] })
+const app = crearApp({ pingBD: async () => {}, identidad, imagenes: crearImagenesFalsas().proveedor, origenes: [] })
 const bearer = (uid: string) => `Bearer ${PREFIJO}${uid}`
 
 async function prepararUsuarios() {

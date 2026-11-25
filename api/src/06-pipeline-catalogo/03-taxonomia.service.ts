@@ -54,7 +54,7 @@ const aMarcaPublica = (m: MarcaFila): MarcaPublicaDto => ({
 const aMarca = (m: MarcaFila): MarcaDto => ({ ...aMarcaPublica(m), activa: m.activa, creadaEn: m.creadaEn.toISOString() })
 
 /** Slug único e inmutable (D-04): si ya existe, se agrega un sufijo -2, -3… */
-async function slugUnico(nombre: string, respaldo: string, existentes: (prefijo: string) => Promise<string[]>): Promise<string> {
+export async function slugUnico(nombre: string, respaldo: string, existentes: (prefijo: string) => Promise<string[]>): Promise<string> {
   const base = slugify(nombre) || respaldo
   const tomados = new Set(await existentes(base))
   if (!tomados.has(base)) return base

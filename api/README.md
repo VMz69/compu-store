@@ -82,6 +82,39 @@ La API también acepta saltos de línea reales; en Railway se pega igual, con lo
 | `POST /api/v1/admin/sesion` | inicio de sesión: registra `ultimoAcceso` (UTC) |
 | `PUT /api/v1/admin/sesion/contrasena` | `{ "contrasena": "…" }`: cambio de la contraseña propia (≥8, minúscula, mayúscula y número); revoca los tokens anteriores → 204 |
 
+## Productos e imágenes (L05)
+Las imágenes de productos se guardan en Cloudinary (D-17). El admin sube cada archivo como binario al guardar el producto; la API lo valida y lo sube.
+
+### Variables de `api/.env`
+Panel de Cloudinary › *Settings* › *API Keys* (el API secret nunca va al repositorio):
+
+| Variable | Valor |
+|---|---|
+| `CLOUDINARY_CLOUD_NAME` | *Cloud name* |
+| `CLOUDINARY_API_KEY` | *API Key* |
+| `CLOUDINARY_API_SECRET` | *API Secret* |
+
+`pnpm dev`/`pnpm start` se niegan a arrancar si falta alguna; seed, respaldo y pruebas no las necesitan (las pruebas inyectan un almacén falso). Las imágenes van a la carpeta `compustore/productos`.
+
+### Imágenes huérfanas
+- Toda subida queda en `imagenes_pendientes` hasta que un producto la adopta al guardarse.
+- Si el guardado falla, el admin descarta en el acto lo que subió (`DELETE /admin/imagenes/:id`).
+- Cada subida barre las pendientes con más de 1 h (por si el navegador se cerró a medias).
+- Lo que se quita de un producto, o las imágenes de un producto eliminado, se destruye en Cloudinary tras el commit; si Cloudinary falla, se reencola para el siguiente barrido.
+- Las URLs externas (seed o pegadas a mano) tienen `publicId` nulo y nunca se destruyen.
+
+### Endpoints
+| Método y ruta | Uso |
+|---|---|
+| `GET /api/v1/admin/productos[/:id]` | listado paginado (D-06) y detalle, forma admin (contratos-A §4.2) |
+| `POST /api/v1/admin/productos` | alta: SKU opcional (si falta, `PRD-###`), slug único generado, stock inicial registrado como movimiento |
+| `PATCH /api/v1/admin/productos/:id` | edición parcial; `imagenes` y `especificaciones` reemplazan la lista; stock y lotes en L06 |
+| `PATCH /api/v1/admin/productos/:id/publicado` | `{ "publicado": bool }` |
+| `DELETE /api/v1/admin/productos/:id` | 204 sin historial de inventario; 409 si tiene movimientos (ocultarlo en su lugar) |
+| `POST /api/v1/admin/imagenes` | cuerpo binario `image/png\|jpeg\|webp`, máx. 1.5 MB → 201 `{ id, url }` |
+| `DELETE /api/v1/admin/imagenes/:id` | descarta una imagen pendiente (no adoptada) |
+| `GET /api/v1/tienda/productos[/:id]` | solo publicados, forma pública (§4.1); filtros y orden en L07 |
+
 ## Despliegue en Railway (pospuesto a L08, decisión D-02)
 1. **Base de datos:** nuevo servicio desde la imagen Docker `mariadb:11.8`.
    - Volumen montado en `/var/lib/mysql`.

@@ -6,3 +6,9 @@ export {
   type Identidad,
   type ProveedorIdentidad,
 } from './02-firebase.js'
+export {
+  comprobarConfiguracionCloudinary,
+  proveedorCloudinary,
+  type ImagenAlmacenada,
+  type ProveedorImagenes,
+} from './03-cloudinary.js'

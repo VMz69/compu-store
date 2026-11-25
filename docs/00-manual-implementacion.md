@@ -290,7 +290,7 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 | D-14 | Ubicación de los adaptadores en los frontends | **Resuelta (L00):** admin, dentro de los pipelines de sus stores (25, 06, 84); store, nuevo `38-pipeline-datos-api` | L00 |
 | D-15 | BD de pruebas | **Resuelta (L01):** `compustore_test` separada, configurada en `api/.env.test` | L01 |
 | D-16 | Stock físico: suma de lotes o campo del producto | **Resuelta (L00):** campo `stock` en Producto; con lotes, el servidor lo mantiene = Σ lotes en la misma transacción | L00 |
-| D-17 | Subida de imágenes | Vía API (multer → Cloudinary) con validación de tipo y tamaño | L05 |
+| D-17 | Subida de imágenes | **Resuelta (L05):** vía API, binario directo (`express.raw`, sin multer) → Cloudinary; máx. 1.5 MB (= `MAX_IMAGE_BYTES` del admin) con verificación de firma; sube el adaptador del admin al guardar | L05 |
 | D-18 | Cotización → pedido: precio cotizado o vigente | Regla de negocio que confirma el propietario | L16 |
 | D-19 | Idioma de los identificadores | **Resuelta (L00):** español en BD, API y JSON; los tipos de los frontends siguen en inglés y los adaptadores traducen | L00 |
 
@@ -305,7 +305,7 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 | L02 | A | — | Completado | `feat(L02)` · 23-11-2026 · rama `feat/api` |
 | L03 | A | 01, 05 | Completado (las 2 cuentas entran con Firebase real, 25-11-2026) | `feat(L03)` · 24-11-2026 · rama `feat/api` |
 | L04 | A | 07, 08 | Completado | `feat(L04)` · 25-11-2026 · rama `feat/api` |
-| L05 | A | 06, 09 | Pendiente | |
+| L05 | A | 06, 09 | Completado (demo con Cloudinary real, 25-11-2026) | `feat(L05)` · 25-11-2026 · rama `feat/api` |
 | L06 | A | 10, 11, 13 | Pendiente | |
 | L07 | A | 45–52, 55–64 | Pendiente | |
 | L08 | A | cierre | Pendiente | |
@@ -395,6 +395,16 @@ Estados posibles: Pendiente · En progreso · Completado · Bloqueado.
 | 25-11-2026 | L04 | D-14 | Admin: `deleteCategory`/`deleteBrand`/`toggleBrand` conservan su firma síncrona y son optimistas (si la API falla, se revierte y se avisa); `saveCategory`/`saveBrand` esperan a la API. La taxonomía se carga al iniciar o restaurar la sesión mediante `onAuthenticated` del cliente (84), sin que 25 importe de 06 | `admin/src/25-pipeline-persistencia-catalogo/01-store.ts` |
 | 25-11-2026 | L04 | — | Hasta L05 los productos del admin siguen siendo de demostración: los conteos y el bloqueo de eliminación de la UI salen de ellos (coinciden con el seed) y el servidor impone el 409 real. Renombrar una marca sigue actualizando en cascada el nombre en esos productos locales | `admin/src/26-…/03-useCategoriesTab.ts`, `28-…/03-useBrandsTab.ts` |
 | 25-11-2026 | L04 | — | Corrección de L03: el token espera `auth.authStateReady()`, porque al recargar una petición previa a la restauración de Firebase salía sin token, recibía 401 y cerraba la sesión | `admin/src/06-pipeline-sesion-permisos/06-sesion.api.ts` |
+| 25-11-2026 | L05 | D-17 | Binario directo (`POST /admin/imagenes`, `Content-Type` image/png\|jpeg\|webp) en lugar de multer: sin dependencia nueva. Límite 1.5 MB, el mismo `MAX_IMAGE_BYTES` que ya impone `useImagePicker`; el 400 con "La imagen supera 1.5 MB…" se ve en el toast existente. Se valida la firma de bytes, no solo la cabecera. Sube el adaptador del admin al guardar el producto | `api/src/06-pipeline-catalogo/09-imagenes.service.ts`; `admin/src/25-pipeline-persistencia-catalogo/05-catalogo.api.ts` |
+| 25-11-2026 | L05 | D-17 | Huérfanas: la subida queda en `imagenes_pendientes` hasta que un producto la adopta (`imagenes_producto.publicId`). Si el guardado falla, el admin la descarta en el acto (`DELETE /admin/imagenes/:id`); cada subida barre las pendientes de más de 1 h; lo retirado de un producto se destruye tras el commit y, si Cloudinary falla, se reencola. Las URLs externas (`publicId` null) nunca se destruyen | migración `imagenes_cloudinary`; `tests/08-productos.test.ts` |
+| 25-11-2026 | L05 | — | Cloudinary con 3 variables separadas (sin `CLOUDINARY_URL`), opcionales en `02-env` y exigidas por `00-main` como Firebase. SDK `cloudinary` 2.11.0; se destruye con la Upload API (`destroy`), que no consume la cuota de la Admin API. `crearApp` recibe el almacén por inyección (`imagenes`) y las pruebas 01/04/06 pasan uno falso | `api/src/03-pipeline-conexiones/03-cloudinary.ts`; `api/tests/07-imagenes-prueba.ts` |
+| 25-11-2026 | L05 | — | Decisión del propietario: en L05 solo se acepta el stock inicial del alta, registrado como movimiento del usuario ("Alta de producto"). Lo escribe el repositorio de catálogo porque `07-inventario` aún no existe; en L06 pasa al director de inventario. Al editar no viajan stock ni lotes; en el admin, ±, el control por lotes y los cambios de stock avisan "disponible con el módulo de inventario (L06)" sin escribir nada local | `api/src/06-pipeline-catalogo/08-productos.repository.ts`; `admin/src/25-…/01-store.ts` |
+| 25-11-2026 | L05 | — | Decisión del propietario: eliminar un producto con movimientos responde 409 "Tiene historial de inventario: ocúltalo de la tienda y, si corresponde, ajusta su stock a 0" (todos los del seed tienen la carga inicial). Sin movimientos se elimina junto con sus imágenes de Cloudinary | `api/src/06-pipeline-catalogo/07-productos.service.ts` |
+| 25-11-2026 | L05 | — | SKU opcional: vacío o null = automático `PRD-###` con el id (se guarda uno provisional `TMP-…` dentro de la misma transacción). El slug del producto se genera con el `slugUnico` de taxonomía (ahora exportado) y es inmutable. Una marca inactiva no se asigna, salvo que el producto ya la tenga (422) | `api/src/06-pipeline-catalogo/07-productos.service.ts` |
+| 25-11-2026 | L05 | — | `obtenerProductosVendibles` (§5) se pospone a L07, donde tiene consumidor ("no crear por anticipación"). `GET /tienda/productos[/:id]` se crea ya, sin filtros, para demostrar el cierre; L07 añade búsqueda, filtros y orden | `api/src/06-pipeline-catalogo/05-productos.routes.ts` |
+| 25-11-2026 | L05 | — | `02-errores`: un cuerpo mayor que el límite del parser (`entity.too.large`) respondía 500; ahora 400 `VALIDATION_ERROR` | `api/src/04-pipeline-http/02-errores.middleware.ts` |
+| 25-11-2026 | L05 | — | Pruebas: el helper del almacén falso toma `tests/07` y la suite de productos `tests/08` (numeración por orden de creación) | `api/tests/` |
+| 25-11-2026 | L05 | D-14 | Admin: los productos se cargan con la taxonomía en `onAuthenticated` (paginando de 100 en 100); persist v5 descarta la caché demo. `deleteProduct` y `toggleActive` son optimistas con reversión (patrón de L04). Cambios mínimos fuera del adaptador/store: `adjustStock` devuelve si se aplicó y `useProductActions` solo anuncia el éxito en ese caso; `useProductForm` atrapa el error de `saveProduct` para que el modal siga abierto | `admin/src/24-…/01-useProductActions.ts`; `admin/src/18-…/02-useProductForm.ts` |
 
 ---
 

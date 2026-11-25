@@ -1,16 +1,20 @@
 import { crearApp } from './01-app.js'
 import { env } from './02-env.js'
 import {
+  comprobarConfiguracionCloudinary,
   comprobarConfiguracionFirebase,
   desconectarBD,
   pingBD,
+  proveedorCloudinary,
   proveedorFirebase,
 } from './03-pipeline-conexiones/00-director-conexiones.js'
 
 // Sin credenciales de Firebase la API no puede autenticar: se detiene antes de abrir el puerto.
 comprobarConfiguracionFirebase()
+// Igual con Cloudinary: sin él no se pueden guardar imágenes de productos (D-17).
+comprobarConfiguracionCloudinary()
 
-const app = crearApp({ pingBD, identidad: proveedorFirebase, origenes: env.CORS_ORIGINS })
+const app = crearApp({ pingBD, identidad: proveedorFirebase, imagenes: proveedorCloudinary, origenes: env.CORS_ORIGINS })
 
 const servidor = app.listen(env.PORT, () => {
   console.log(`API CompuStore SV escuchando en el puerto ${env.PORT} (${env.NODE_ENV})`)

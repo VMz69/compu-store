@@ -54,7 +54,12 @@ export function useProductForm() {
       ? ensurePermission('canEditProduct', 'Permiso denegado para editar productos')
       : ensurePermission('canCreateProduct', 'Permiso denegado para crear productos')
     if (!allowed) return
-    const result = await saveProduct(toDraft(form.values))
+    let result: Awaited<ReturnType<typeof saveProduct>>
+    try {
+      result = await saveProduct(toDraft(form.values))
+    } catch {
+      return // el store ya avisó con el mensaje de la API; el modal sigue abierto para corregir
+    }
     closeModal()
     toast(result === 'updated' ? 'Producto actualizado exitosamente' : 'Nuevo producto añadido al catálogo', 'success')
   }

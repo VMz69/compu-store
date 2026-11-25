@@ -1,16 +1,23 @@
 import cors from 'cors'
 import express, { type Express } from 'express'
 import helmet from 'helmet'
-import type { ProveedorIdentidad } from './03-pipeline-conexiones/00-director-conexiones.js'
+import type { ProveedorIdentidad, ProveedorImagenes } from './03-pipeline-conexiones/00-director-conexiones.js'
 import { ErrorApp, manejarErrores, noEncontrado } from './04-pipeline-http/00-director-http.js'
 import { autenticar, crearRouterSesion } from './05-pipeline-acceso/00-director-acceso.js'
-import { crearRouterAdminTaxonomia, crearRouterTiendaTaxonomia } from './06-pipeline-catalogo/00-director-catalogo.js'
+import {
+  crearRouterAdminProductos,
+  crearRouterAdminTaxonomia,
+  crearRouterTiendaProductos,
+  crearRouterTiendaTaxonomia,
+} from './06-pipeline-catalogo/00-director-catalogo.js'
 
 export interface DependenciasApp {
   /** Comprueba la base de datos; se inyecta para poder simular fallos en las pruebas. */
   pingBD: () => Promise<void>
   /** Proveedor de identidad (Firebase); las pruebas inyectan uno falso. */
   identidad: ProveedorIdentidad
+  /** Almacén de imágenes (Cloudinary, D-17); las pruebas inyectan uno falso. */
+  imagenes: ProveedorImagenes
   /** Orígenes permitidos por CORS. */
   origenes: string[]
   /** Rutas adicionales montadas antes del 404 (solo para pruebas). */
@@ -18,7 +25,7 @@ export interface DependenciasApp {
 }
 
 /** Construye la aplicación Express sin abrir puertos (lo hace 00-main). */
-export function crearApp({ pingBD, identidad, origenes, extender }: DependenciasApp): Express {
+export function crearApp({ pingBD, identidad, imagenes, origenes, extender }: DependenciasApp): Express {
   const app = express()
   app.disable('x-powered-by')
   app.set('trust proxy', 1) // Railway y Vercel están detrás de un proxy.
@@ -42,10 +49,11 @@ export function crearApp({ pingBD, identidad, origenes, extender }: Dependencias
   admin.use(autenticar(identidad))
   admin.use(crearRouterSesion(identidad))
   admin.use(crearRouterAdminTaxonomia())
+  admin.use(crearRouterAdminProductos(imagenes))
   app.use('/api/v1/admin', admin)
 
   // /api/v1/tienda/* es público y de solo lectura.
-  app.use('/api/v1/tienda', crearRouterTiendaTaxonomia())
+  app.use('/api/v1/tienda', crearRouterTiendaTaxonomia(), crearRouterTiendaProductos())
 
   extender?.(app)
 

@@ -4,10 +4,11 @@ import { sembrar } from '../prisma/seed.js'
 import { crearApp } from '../src/01-app.js'
 import { desconectarBD, prisma } from '../src/03-pipeline-conexiones/00-director-conexiones.js'
 import { bearer, crearUsuarioHabilitado, eliminarUsuario, identidadFalsa } from './05-sesion-prueba.js'
+import { crearImagenesFalsas } from './07-imagenes-prueba.js'
 
 const UID = 'prueba-l04'
 const PREFIJO = 'prueba-l04'
-const app = crearApp({ pingBD: async () => {}, identidad: identidadFalsa, origenes: [] })
+const app = crearApp({ pingBD: async () => {}, identidad: identidadFalsa, imagenes: crearImagenesFalsas().proveedor, origenes: [] })
 const auth = { Authorization: bearer(UID) }
 
 async function limpiar() {

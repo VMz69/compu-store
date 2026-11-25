@@ -31,6 +31,10 @@ const esquemaEnv = z.object({
   FIREBASE_PRIVATE_KEY: opcional(z.string().transform((valor) => valor.replace(/\\n/g, '\n'))),
   /** Clave web pública: solo la usa el script de vinculación para enviar el correo de restablecimiento. */
   FIREBASE_WEB_API_KEY: opcional(z.string()),
+  // Cloudinary (D-17): imágenes de productos. Opcionales aquí (seed, scripts y pruebas); la API las exige al arrancar.
+  CLOUDINARY_CLOUD_NAME: opcional(z.string()),
+  CLOUDINARY_API_KEY: opcional(z.string()),
+  CLOUDINARY_API_SECRET: opcional(z.string()),
 })
 
 export type Env = z.infer<typeof esquemaEnv>

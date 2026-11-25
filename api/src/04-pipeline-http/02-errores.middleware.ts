@@ -40,6 +40,10 @@ export const noEncontrado: RequestHandler = (req, _res, next) => {
 const esJsonInvalido = (error: unknown): boolean =>
   error instanceof SyntaxError && (error as SyntaxError & { type?: string }).type === 'entity.parse.failed'
 
+/** Cuerpo mayor que el límite del parser (express.json / express.raw). */
+const esCuerpoGrande = (error: unknown): boolean =>
+  typeof error === 'object' && error !== null && (error as { type?: unknown }).type === 'entity.too.large'
+
 /**
  * Respaldo para errores de Prisma que un service no tradujo: unicidad (P2002) y
  * referencias (P2003) → 409; registro inexistente (P2025) → 404.
@@ -63,6 +67,7 @@ export const manejarErrores: ErrorRequestHandler = (error: unknown, _req, res, _
   else if (prisma) respuesta = prisma
   else if (error instanceof ZodError) respuesta = new ErrorApp('VALIDATION_ERROR', 400, 'Datos inválidos.', detallesZod(error))
   else if (esJsonInvalido(error)) respuesta = new ErrorApp('VALIDATION_ERROR', 400, 'El cuerpo no es un JSON válido.')
+  else if (esCuerpoGrande(error)) respuesta = new ErrorApp('VALIDATION_ERROR', 400, 'El cuerpo de la petición supera el tamaño permitido.')
   else {
     console.error('[error interno]', error instanceof Error ? error.message : error)
     respuesta = new ErrorApp('INTERNAL_ERROR', 500, 'Error interno del servidor.')

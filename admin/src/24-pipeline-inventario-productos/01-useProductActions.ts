@@ -28,8 +28,7 @@ export function useProductActions() {
 
   const adjustStock = (id: string, delta: number) => {
     if (!ensurePermission('canUpdateStock', 'No tienes permiso para actualizar inventario')) return
-    adjust(id, delta)
-    toast('Stock actualizado correctamente', 'success')
+    if (adjust(id, delta)) toast('Stock actualizado correctamente', 'success')
   }
 
   const promptDelete = (product: Product) =>
