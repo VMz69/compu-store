@@ -1,11 +1,15 @@
 import cors from 'cors'
 import express, { type Express } from 'express'
 import helmet from 'helmet'
+import type { ProveedorIdentidad } from './03-pipeline-conexiones/00-director-conexiones.js'
 import { ErrorApp, manejarErrores, noEncontrado } from './04-pipeline-http/00-director-http.js'
+import { autenticar, crearRouterSesion } from './05-pipeline-acceso/00-director-acceso.js'
 
 export interface DependenciasApp {
   /** Comprueba la base de datos; se inyecta para poder simular fallos en las pruebas. */
   pingBD: () => Promise<void>
+  /** Proveedor de identidad (Firebase); las pruebas inyectan uno falso. */
+  identidad: ProveedorIdentidad
   /** Orígenes permitidos por CORS. */
   origenes: string[]
   /** Rutas adicionales montadas antes del 404 (solo para pruebas). */
@@ -13,7 +17,7 @@ export interface DependenciasApp {
 }
 
 /** Construye la aplicación Express sin abrir puertos (lo hace 00-main). */
-export function crearApp({ pingBD, origenes, extender }: DependenciasApp): Express {
+export function crearApp({ pingBD, identidad, origenes, extender }: DependenciasApp): Express {
   const app = express()
   app.disable('x-powered-by')
   app.set('trust proxy', 1) // Railway y Vercel están detrás de un proxy.
@@ -30,6 +34,13 @@ export function crearApp({ pingBD, origenes, extender }: DependenciasApp): Expre
     }
     res.json({ data: { estado: 'ok', baseDatos: 'ok', fecha: new Date().toISOString() } })
   })
+
+  // /api/v1/admin/* está protegido por defecto (401 sin token, 403 sin Usuario activo),
+  // incluidas las rutas inexistentes, que solo dan 404 a un usuario habilitado.
+  const admin = express.Router()
+  admin.use(autenticar(identidad))
+  admin.use(crearRouterSesion(identidad))
+  app.use('/api/v1/admin', admin)
 
   extender?.(app)
 

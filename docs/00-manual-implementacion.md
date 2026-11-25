@@ -303,7 +303,7 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 | L00 | A | — | Completado | `feat(L00)` · 23-11-2026 |
 | L01 | A | — | Completado (solo local; Railway en L08) | `feat(L01)` · 23-11-2026 · rama `feat/api` |
 | L02 | A | — | Completado | `feat(L02)` · 23-11-2026 · rama `feat/api` |
-| L03 | A | 01, 05 | Pendiente | |
+| L03 | A | 01, 05 | Completado (pruebas en verde; la entrada de las 2 cuentas la demuestra el propietario con Firebase real) | `feat(L03)` · 24-11-2026 · rama `feat/api` |
 | L04 | A | 07, 08 | Pendiente | |
 | L05 | A | 06, 09 | Pendiente | |
 | L06 | A | 10, 11, 13 | Pendiente | |
@@ -371,6 +371,20 @@ Estados posibles: Pendiente · En progreso · Completado · Bloqueado.
 | 23-11-2026 | L02 | — | Prisma 7: `migrate reset` no ejecuta el seed por sí solo (el seed se configura en `prisma.config.ts`), y bloquea el reset lanzado por un agente de IA sin el consentimiento explícito del propietario. Se añade `pnpm db:reiniciar` (reset + seed) | `api/package.json` |
 | 23-11-2026 | L02 | — | Respaldo con `mariadb-dump` (incluye `_prisma_migrations`). La restauración borra todas las tablas del destino y deja checksums idénticos en las 9 tablas; verificado en local tras borrar datos | `api/scripts/respaldo.sh`, `api/scripts/restaurar.sh` |
 | 23-11-2026 | L02 | — | Además de los scripts del plan se añade `db:reiniciar`; pnpm 12 no acepta `pnpm -s` | `api/package.json` |
+| 24-11-2026 | L03 | D-01 | El proyecto de Firebase ya existe con las 2 cuentas, creadas por el propietario en la consola. La API usa el Admin SDK (`firebase-admin` 14.5.1) con 3 variables extraídas del JSON de la cuenta de servicio, que queda fuera del repositorio | `api/README.md` § Firebase y acceso |
+| 24-11-2026 | L03 | — | Decisión del propietario: el restablecimiento de A es el correo de Firebase, lanzado con `pnpm usuarios:vincular --enviar-restablecimiento`. `ResetPasswordModal` y los endpoints de usuarios pasan a L09 (en A no hay panel de usuarios) | `api/scripts/vincular-usuario.ts` |
+| 24-11-2026 | L03 | — | Decisión del propietario: las 2 cuentas de A tienen el rol `superadmin` (acceso total) hasta el RBAC de L09. El rol se valida contra los `RoleId` del admin | `api/src/05-pipeline-acceso/02-acceso.schema.ts` |
+| 24-11-2026 | L03 | — | Las cuentas se vinculan con un script idempotente (busca el uid por correo y hace upsert del Usuario por `firebaseUid`). No crea cuentas ni recibe contraseñas, y al repetirse no reactiva una cuenta desactivada | `api/scripts/vincular-usuario.ts`; `tests/04-acceso.test.ts` |
+| 24-11-2026 | L03 | — | Desviación de §4: el middleware de autenticación es `04-http/03` (genérico: token → identidad) y en `05-acceso` se añade `02-acceso.schema` (política de contraseñas), así que la autorización pasa a `05-autorizacion`. Numeración por orden de creación, sin huecos | `api/src/04-pipeline-http/`, `api/src/05-pipeline-acceso/` |
+| 24-11-2026 | L03 | — | `/api/v1/admin/*` se protege en bloque (`autenticar` = 401 + 403) antes de cualquier ruta: una ruta inexistente da 401 sin token y 404 solo a un usuario habilitado. El proveedor de identidad se inyecta en `crearApp` y las pruebas usan uno falso | `api/src/01-app.ts` |
+| 24-11-2026 | L03 | — | `GET /admin/sesion` restaura la sesión y `POST /admin/sesion` registra `ultimoAcceso` (inicio). El cambio de contraseña (`PUT /admin/sesion/contrasena`) se hace en el servidor con el Admin SDK, que revoca los tokens (`verifyIdToken(…, checkRevoked)`); el admin vuelve a iniciar sesión con la contraseña nueva | `api/src/05-pipeline-acceso/01-acceso.routes.ts` |
+| 24-11-2026 | L03 | — | Las variables de Firebase son opcionales en `02-env` para que seed, respaldo y pruebas funcionen sin credenciales; `00-main` se niega a arrancar si faltan. Un valor vacío (`CLAVE=`) cuenta como ausente | `api/src/02-env.ts`, `api/src/00-main.ts` |
+| 24-11-2026 | L03 | — | Vitest con `fileParallelism: false`: `03-seed.test` vacía `usuarios` y competía con `04-acceso.test` sobre la misma BD de pruebas | `api/vitest.config.ts` |
+| 24-11-2026 | L03 | — | pnpm 12 bloquea los scripts de build de `@firebase/util` y `protobufjs` (solo comprobaciones posteriores a la instalación): se marcan `false` en `allowBuilds` (api y admin) | `api/pnpm-workspace.yaml`, `admin/pnpm-workspace.yaml` |
+| 24-11-2026 | L03 | D-14 | Admin: el cliente HTTP (`84/05-api.client`) recibe por inyección el token y la reacción a 401/403, para que 84 no importe de 06. La sesión vive en `06/06-sesion.api` (Firebase web SDK + mapeo API → `User`). El store conserva su interfaz pública; sus únicos agregados son `isCurrentPassword` y un cambio de una línea en `usePasswordForms` (regla "distinta de la temporal" mediante reautenticación) | `admin/src/06-pipeline-sesion-permisos/06-sesion.api.ts` |
+| 24-11-2026 | L03 | — | Admin: el store de acceso v6 descarta los usuarios demo y sus hashes; `users` contiene solo al usuario de la sesión. Ajustes › Usuarios (alta, edición, restablecimiento de otros) sigue con escrituras locales: se bloquea en L08 y se conecta en L09 | `admin/src/06-pipeline-sesion-permisos/04-store.ts` |
+| 24-11-2026 | L03 | — | Pendiente para L09: hoy cualquier 401/403 de la API cierra la sesión en el admin. Cuando `requierePermiso` devuelva 403 por falta de permiso, solo deberá cerrar la sesión el 401 o el 403 de cuenta deshabilitada | `admin/src/84-pipeline-persistencia-demo/05-api.client.ts` |
+| 24-11-2026 | L03 | — | Con el SDK de Firebase, el bundle del admin queda en unos 907 kB (aviso de Vite > 500 kB); la división en chunks se evalúa en L08 | `pnpm -C admin build` |
 
 ---
 

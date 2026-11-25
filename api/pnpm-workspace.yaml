@@ -2,3 +2,5 @@ allowBuilds:
   '@prisma/engines': true
   esbuild: true
   prisma: true
+  '@firebase/util': false
+  protobufjs: false

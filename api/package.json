@@ -21,7 +21,8 @@
     "db:sembrar": "prisma db seed",
     "db:reiniciar": "prisma migrate reset --force && prisma db seed",
     "db:respaldar": "bash scripts/respaldo.sh",
-    "db:restaurar": "bash scripts/restaurar.sh"
+    "db:restaurar": "bash scripts/restaurar.sh",
+    "usuarios:vincular": "tsx --env-file=.env scripts/vincular-usuario.ts"
   },
   "devEngines": {
     "packageManager": {
@@ -36,6 +37,7 @@
     "@prisma/client": "7.10.1",
     "cors": "2.8.6",
     "express": "5.3.0",
+    "firebase-admin": "14.5.1",
     "helmet": "8.3.0",
     "zod": "4.6.7"
   },

@@ -3,15 +3,22 @@ import { persist } from 'zustand/middleware'
 import { delay } from '@/84-pipeline-persistencia-demo/04-delay'
 import { STORAGE_KEYS } from '@/84-pipeline-persistencia-demo/02-storage'
 import { normalizeAccess, templateAccess } from './03-access'
-import { hashPassword, verifyPassword } from '../10-pipeline-cambio-contrasena/04-password'
+import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
+import { configureSessionRejected } from '@/84-pipeline-persistencia-demo/05-api.client'
+import { hashPassword } from '../10-pipeline-cambio-contrasena/04-password'
 import { normalizeEmail } from '../08-pipeline-edicion-usuarios/03-userRules'
-import { DEFAULT_AVATAR, USERS_MOCK } from '../86-pipeline-datos-demo-personas/02-users.mock'
+import { DEFAULT_AVATAR } from '../86-pipeline-datos-demo-personas/02-users.mock'
+import { changeOwnPassword, INVALID_CREDENTIALS, isCurrentPassword, signIn, signOutSession, watchSession } from './06-sesion.api'
 import type { LoginResult, NewUserInput, Session, User, UserAccess, UserProfile } from './05-types'
 
 /**
  * Store de acceso: usuarios del sistema + sesión activa.
  *
- * Responsabilidad: datos y operaciones atómicas (con latencia simulada).
+ * L03: la sesión es real (Firebase Auth + `/admin/sesion`, ver 06-sesion.api). `users`
+ * contiene solo al usuario de la sesión; la administración de usuarios (alta, edición,
+ * restablecimiento de otros) sigue local hasta L09 y se bloquea en producción en L08.
+ *
+ * Responsabilidad: datos y operaciones atómicas.
  * Las validaciones de permisos y reglas de negocio viven en los hooks
  * (`useUsersAdmin`, `useUserForm`…), no aquí.
  */
@@ -29,77 +36,51 @@ interface AccessState {
   updateUser: (id: number, profile: UserProfile) => Promise<void>
   /** Guarda las vistas y acciones del usuario (RBAC por vistas). */
   updateAccess: (id: number, access: UserAccess) => Promise<void>
-  /** Define una contraseña nueva (alta, restablecimiento o cambio propio). */
+  /** Define una contraseña nueva. En L03 solo la propia (cambio obligatorio); la de otros, en L09. */
   setPassword: (id: number, password: string, mustChangePassword: boolean) => Promise<void>
+  /** ¿Coincide con la contraseña actual de la sesión? (regla "distinta de la temporal"). */
+  isCurrentPassword: (password: string) => Promise<boolean>
   setActive: (id: number, active: boolean) => void
   deleteUser: (id: number) => void
 }
-
-const INVALID_CREDENTIALS = 'Correo o contraseña incorrectos.'
 
 const patchUser = (users: User[], id: number, patch: Partial<User>) =>
   users.map((u) => (u.id === id ? { ...u, ...patch } : u))
 
 /**
  * Versión del esquema persistido.
- * v0: sesión por rol (selector de perfiles del demo) · v2: login con credenciales ·
- * v3: avatares generados con iniciales (se descartan las fotos externas de prueba) ·
- * v4: accesos por usuario (vistas + acciones) y Super Administrador = Administrador de Sistema ·
- * v5: acción "Confirmar y reservar" (`canReserveOrders`) separada de gestionar pedidos.
+ * v0–v5: usuarios de prueba con hashes en el navegador (modo mocking-first) ·
+ * v6: sesión real (L03); solo se guarda en caché el usuario de la sesión.
  */
-const ACCESS_SCHEMA_VERSION = 5
+const ACCESS_SCHEMA_VERSION = 6
 
-/** v4 → v5: quien ya podía confirmar pedidos (gestionarlos) conserva la acción de reservar. */
-const migrateToV5 = (users: User[]): User[] =>
-  users.map((u) =>
-    u.access.permissions.includes('canChangeOrderStatus') && !u.access.permissions.includes('canReserveOrders')
-      ? { ...u, access: { ...u.access, permissions: [...u.access.permissions, 'canReserveOrders'] } }
-      : u,
-  )
-
-const OWNER_EMAIL = 'propietario@compustoresv.com'
-
-/** v3 → v4: accesos desde la plantilla del rol; el dueño deja de ser Super Administrador. */
-function migrateToV4(users: Omit<User, 'access'>[]): User[] {
-  const migrated: User[] = users.map((u) => {
-    const role = u.email === OWNER_EMAIL && u.role === 'superadmin' ? 'gerencia' : u.role
-    return { ...u, role, access: templateAccess(role) }
-  })
-  // Debe existir un Administrador de Sistema: si no queda ninguno, se agrega la cuenta de fábrica.
-  const sysAdmin = USERS_MOCK.find((u) => u.role === 'superadmin')
-  if (sysAdmin && !migrated.some((u) => u.role === 'superadmin' && u.active)) {
-    const id = migrated.some((u) => u.id === sysAdmin.id) ? Math.max(...migrated.map((u) => u.id)) + 1 : sysAdmin.id
-    migrated.unshift({ ...sysAdmin, id })
-  }
-  return migrated
-}
+/** Estado con sesión (o sin ella) a partir del usuario que confirmó la API. */
+const sessionState = (user: User | null): Pick<AccessState, 'users' | 'session'> =>
+  user ? { users: [user], session: { userId: user.id } } : { users: [], session: null }
 
 export const useAccessStore = create<AccessState>()(
   persist(
     (set, get) => ({
-      users: USERS_MOCK,
+      users: [],
       session: null,
       isLoading: false,
 
       login: async (email, password) => {
         set({ isLoading: true })
-        await delay()
-        const user = get().users.find((u) => normalizeEmail(u.email) === normalizeEmail(email))
-        const matches = user ? await verifyPassword(password, user.passwordHash) : false
-        if (!user || !matches) {
+        try {
+          const user = await signIn(normalizeEmail(email), password)
+          set({ ...sessionState(user), isLoading: false })
+          return { ok: true, user }
+        } catch (error) {
           set({ isLoading: false })
-          return { ok: false, error: INVALID_CREDENTIALS }
+          return { ok: false, error: error instanceof Error ? error.message : INVALID_CREDENTIALS }
         }
-        if (!user.active) {
-          set({ isLoading: false })
-          return { ok: false, error: 'Tu cuenta está desactivada. Contacta al administrador.' }
-        }
-        const lastLoginAt = new Date().toISOString()
-        set((s) => ({ users: patchUser(s.users, user.id, { lastLoginAt }), session: { userId: user.id }, isLoading: false }))
-        return { ok: true, user: { ...user, lastLoginAt } }
       },
 
-      logout: () => set({ session: null }),
+      logout: () => {
+        set(sessionState(null))
+        void signOutSession().catch(() => undefined)
+      },
 
       createUser: async ({ password, ...input }) => {
         set({ isLoading: true })
@@ -142,12 +123,23 @@ export const useAccessStore = create<AccessState>()(
         set((s) => ({ users: patchUser(s.users, id, { access: normalizeAccess(access) }), isLoading: false }))
       },
 
-      setPassword: async (id, password, mustChangePassword) => {
+      setPassword: async (id, password) => {
+        if (id !== get().session?.userId) {
+          toast('Restablecer la contraseña de otros usuarios estará disponible en la Fase B.', 'warning')
+          return
+        }
         set({ isLoading: true })
-        const passwordHash = await hashPassword(password)
-        await delay()
-        set((s) => ({ users: patchUser(s.users, id, { passwordHash, mustChangePassword }), isLoading: false }))
+        try {
+          const user = await changeOwnPassword(password)
+          set({ ...sessionState(user), isLoading: false })
+        } catch (error) {
+          set({ isLoading: false })
+          toast(error instanceof Error ? error.message : 'No se pudo cambiar la contraseña.', 'danger')
+          throw error
+        }
       },
+
+      isCurrentPassword: (password) => isCurrentPassword(password),
 
       setActive: (id, active) => set((s) => ({ users: patchUser(s.users, id, { active }) })),
 
@@ -157,15 +149,8 @@ export const useAccessStore = create<AccessState>()(
       name: STORAGE_KEYS.ACCESS,
       version: ACCESS_SCHEMA_VERSION,
       partialize: (s) => ({ users: s.users, session: s.session }),
-      migrate: (persisted, version) => {
-        // < v2: los usuarios no tenían contraseña → se reemplazan y se cierra la sesión.
-        if (version < 2) return { users: USERS_MOCK, session: null }
-        // v2 → v3: se conservan usuarios y sesión; solo se quitan las fotos externas.
-        const state = persisted as Pick<AccessState, 'users' | 'session'>
-        const users = state.users.map((u) => (u.avatar.includes('unsplash.com') ? { ...u, avatar: DEFAULT_AVATAR } : u))
-        const v4 = version < 4 ? migrateToV4(users) : (users as User[])
-        return { ...state, users: version < 5 ? migrateToV5(v4) : v4 }
-      },
+      // < v6: datos del modo de prueba (hashes y usuarios demo) → se descartan.
+      migrate: () => sessionState(null),
     },
   ),
 )
@@ -174,9 +159,12 @@ export const useAccessStore = create<AccessState>()(
 export const getUsersSnapshot = () =>
   useAccessStore.getState().users.map((u) => ({ ...u, passwordHash: undefined }))
 
-/** Restablecimiento de fábrica: conserva la sesión solo si el usuario sigue existiendo. */
+/** Restablecimiento de fábrica (Mantenimiento): no inyecta usuarios demo; conserva solo la sesión real. */
 export const resetAccess = (): void => {
-  const { session } = useAccessStore.getState()
-  const keep = session && USERS_MOCK.some((u) => u.id === session.userId) ? session : null
-  useAccessStore.setState({ users: USERS_MOCK, session: keep })
+  const { session, users } = useAccessStore.getState()
+  useAccessStore.setState(sessionState(users.find((u) => u.id === session?.userId) ?? null))
 }
+
+// Restaura o invalida la sesión con Firebase + API al cargar, y la cierra si la API la rechaza.
+watchSession((user) => useAccessStore.setState(sessionState(user)))
+configureSessionRejected(() => useAccessStore.getState().logout())

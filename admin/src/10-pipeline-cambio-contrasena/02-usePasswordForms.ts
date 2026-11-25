@@ -3,7 +3,7 @@ import { useFormState } from '@/77-pipeline-edicion-formularios/03-useFormState'
 import { useToggle } from '@/76-pipeline-avisos-globales/03-useToggle'
 import { closeModal, useModalPayload } from '@/73-pipeline-modales-globales/03-modal.store'
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
-import { checkPassword, generatePassword, verifyPassword } from './04-password'
+import { checkPassword, generatePassword } from './04-password'
 import { ensurePermission } from '../06-pipeline-sesion-permisos/02-permissions'
 import { useAccessStore } from '../06-pipeline-sesion-permisos/04-store'
 import { useAccessActions } from '../07-pipeline-administracion-usuarios/03-useAccessActions'
@@ -79,6 +79,7 @@ export function useResetPasswordForm() {
 export function useChangePasswordForm() {
   const { user } = useSession()
   const setPassword = useAccessStore((s) => s.setPassword)
+  const isCurrentPassword = useAccessStore((s) => s.isCurrentPassword)
   const isLoading = useAccessStore((s) => s.isLoading)
   const { logout } = useAccessActions()
   const fields = useNewPasswordFields()
@@ -88,7 +89,7 @@ export function useChangePasswordForm() {
     event.preventDefault()
     setSameAsTemporary(false)
     if (!user || !fields.attempt()) return
-    if (await verifyPassword(fields.values.password, user.passwordHash)) {
+    if (await isCurrentPassword(fields.values.password)) {
       setSameAsTemporary(true)
       return
     }

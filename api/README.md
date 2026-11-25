@@ -26,6 +26,7 @@ Después, copia `.env.example` a `.env` (bases `compustore` y `compustore_shadow
 | `pnpm start` | ejecuta `dist/src/00-main.js` |
 | `pnpm test` | Vitest + Supertest contra `compustore_test` |
 | `pnpm check` | typecheck + lint + test + ciclos (madge) |
+| `pnpm usuarios:vincular` | vincula una cuenta de Firebase con su Usuario (ver "Firebase y acceso") |
 
 Comprobación rápida: `curl http://localhost:3000/api/v1/health` devuelve 200 con la BD activa y 503 si la BD no responde.
 
@@ -44,6 +45,43 @@ Comprobación rápida: `curl http://localhost:3000/api/v1/health` devuelve 200 c
 - Las pruebas aplican las migraciones a `compustore_test` antes de ejecutarse y **abortan si la BD de `.env.test` no termina en `_test`**, porque vacían tablas.
 - Requiere `mariadb-dump`, `mariadb` y `gzip` (cliente de MariaDB 11.8).
 
+## Firebase y acceso (L03)
+Firebase Auth identifica, MariaDB (`usuarios.firebase_uid`) habilita y la API lo impone: todo `/api/v1/admin/*` responde 401 sin un ID token válido y 403 si la cuenta no está vinculada a un Usuario activo. No hay contraseñas en la BD ni en el código.
+
+### Variables de `api/.env`
+Se extraen del JSON de la cuenta de servicio (Consola de Firebase › Configuración del proyecto › Cuentas de servicio › *Generar nueva clave privada*). El JSON se queda fuera del repositorio.
+
+| Variable | Origen | Cómo obtenerla |
+|---|---|---|
+| `FIREBASE_PROJECT_ID` | campo `project_id` | `jq -r .project_id cuenta.json` |
+| `FIREBASE_CLIENT_EMAIL` | campo `client_email` | `jq -r .client_email cuenta.json` |
+| `FIREBASE_PRIVATE_KEY` | campo `private_key` | `jq .private_key cuenta.json` (sin `-r`) |
+| `FIREBASE_WEB_API_KEY` | config. web de la app `compustore-admin` (`apiKey`) | Configuración del proyecto › General › Tus apps |
+
+La private key se pega **en una sola línea, entre comillas dobles y con los `\n` literales**, tal como la imprime `jq .private_key`:
+```dotenv
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEv...\n-----END PRIVATE KEY-----\n"
+```
+La API también acepta saltos de línea reales; en Railway se pega igual, con los `\n`. `pnpm dev`/`pnpm start` se niegan a arrancar si falta alguna de las tres primeras (se nombra la variable, nunca el valor). Seed, respaldo y pruebas no las necesitan: las pruebas inyectan un proveedor falso.
+
+### Alta de las 2 cuentas (procedimiento del propietario)
+1. En la consola de Firebase › Authentication, crea cada cuenta con correo y contraseña (o ya existen). La contraseña la define su dueño; nunca pasa por la API ni por el repositorio.
+2. Vincula cada cuenta con su Usuario (idempotente; repetirlo actualiza nombre, teléfono y rol):
+   ```bash
+   pnpm usuarios:vincular --correo <correo> --nombre "<Nombre Apellido>" [--telefono 7000-0000]
+   ```
+   - El rol por defecto es `superadmin` (las 2 cuentas de la Fase A); `--rol` acepta los `RoleId` del admin.
+   - `--debe-cambiar` obliga a definir una contraseña nueva en el siguiente ingreso.
+   - `--enviar-restablecimiento` hace que Firebase envíe a esa cuenta su correo para restablecer la contraseña (requiere `FIREBASE_WEB_API_KEY`).
+3. Para desactivar el acceso sin borrar historial: `UPDATE usuarios SET activo = 0 WHERE correo = '…';` (la siguiente petición responde 403).
+
+### Endpoints
+| Método y ruta | Uso |
+|---|---|
+| `GET /api/v1/admin/sesion` | restaurar sesión: usuario vinculado al token |
+| `POST /api/v1/admin/sesion` | inicio de sesión: registra `ultimoAcceso` (UTC) |
+| `PUT /api/v1/admin/sesion/contrasena` | `{ "contrasena": "…" }`: cambio de la contraseña propia (≥8, minúscula, mayúscula y número); revoca los tokens anteriores → 204 |
+
 ## Despliegue en Railway (pospuesto a L08, decisión D-02)
 1. **Base de datos:** nuevo servicio desde la imagen Docker `mariadb:11.8`.
    - Volumen montado en `/var/lib/mysql`.
@@ -54,6 +92,7 @@ Comprobación rápida: `curl http://localhost:3000/api/v1/health` devuelve 200 c
      - `NODE_ENV=production`
      - `DATABASE_URL=mysql://compustore:<MARIADB_PASSWORD>@<host-privado-mariadb>:3306/compustore`, usando las referencias de variables de Railway y la red privada.
      - `CORS_ORIGINS` (las URLs de Vercel cuando existan).
+     - `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL` y `FIREBASE_PRIVATE_KEY` (ver "Firebase y acceso").
    - `PORT` lo inyecta Railway.
    - Health check: `/api/v1/health`.
 3. Verifica con `curl https://<dominio>.up.railway.app/api/v1/health` (respuesta esperada: 200).

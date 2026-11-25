@@ -6,6 +6,14 @@ import { desconectarBD, pingBD } from '../src/03-pipeline-conexiones/00-director
 import { validar } from '../src/04-pipeline-http/00-director-http.js'
 
 const origenes = ['http://localhost:5173']
+/** Estas pruebas no autentican: cualquier token se rechaza. */
+const identidad = {
+  verificarToken: async () => {
+    throw new Error('sin proveedor')
+  },
+  actualizarContrasena: async () => {},
+  buscarPorCorreo: async () => null,
+}
 
 describe('GET /api/v1/health', () => {
   afterAll(async () => {
@@ -13,7 +21,7 @@ describe('GET /api/v1/health', () => {
   })
 
   it('responde 200 cuando la BD de pruebas está disponible', async () => {
-    const res = await request(crearApp({ pingBD, origenes })).get('/api/v1/health')
+    const res = await request(crearApp({ pingBD, identidad, origenes })).get('/api/v1/health')
 
     expect(res.status).toBe(200)
     expect(res.body.data).toMatchObject({ estado: 'ok', baseDatos: 'ok' })
@@ -24,7 +32,7 @@ describe('GET /api/v1/health', () => {
     const pingFallido = async () => {
       throw new Error('sin conexión')
     }
-    const res = await request(crearApp({ pingBD: pingFallido, origenes })).get('/api/v1/health')
+    const res = await request(crearApp({ pingBD: pingFallido, identidad, origenes })).get('/api/v1/health')
 
     expect(res.status).toBe(503)
     expect(res.body).toEqual({ error: { code: 'SERVICE_UNAVAILABLE', message: 'La base de datos no responde.' } })
@@ -34,6 +42,7 @@ describe('GET /api/v1/health', () => {
 describe('Errores y validación', () => {
   const app = crearApp({
     pingBD: async () => {},
+    identidad,
     origenes,
     extender: (a) =>
       a.post('/prueba', validar({ body: z.object({ cantidad: z.number().int().min(1) }) }), (req, res) => {

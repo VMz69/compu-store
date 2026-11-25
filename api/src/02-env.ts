@@ -4,6 +4,10 @@ import { z } from 'zod'
  * Variables de entorno validadas al arrancar. Si falta o es inválida alguna,
  * el proceso termina con un mensaje que nombra la variable (nunca su valor).
  */
+/** Variable opcional: una línea `CLAVE=` vacía (como en .env.example) cuenta como ausente. */
+const opcional = <T extends z.ZodType>(esquema: T) =>
+  z.preprocess((valor) => (valor === '' ? undefined : valor), esquema.optional())
+
 const esquemaEnv = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().min(1).max(65535).default(3000),
@@ -19,6 +23,14 @@ const esquemaEnv = z.object({
         .map((origen) => origen.trim())
         .filter(Boolean),
     ),
+  // Admin SDK de Firebase (D-01), extraídas del JSON de la cuenta de servicio (ver README).
+  // Opcionales aquí para que seed y scripts de BD funcionen sin ellas; la API las exige al arrancar.
+  FIREBASE_PROJECT_ID: opcional(z.string()),
+  FIREBASE_CLIENT_EMAIL: opcional(z.email()),
+  // Admite los \n literales (comillas simples o paneles como Railway) además de saltos reales.
+  FIREBASE_PRIVATE_KEY: opcional(z.string().transform((valor) => valor.replace(/\\n/g, '\n'))),
+  /** Clave web pública: solo la usa el script de vinculación para enviar el correo de restablecimiento. */
+  FIREBASE_WEB_API_KEY: opcional(z.string()),
 })
 
 export type Env = z.infer<typeof esquemaEnv>
