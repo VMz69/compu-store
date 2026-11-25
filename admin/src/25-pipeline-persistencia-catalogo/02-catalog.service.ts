@@ -1,7 +1,6 @@
 import { matchesQuery } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
 import type { BadgeTone, SelectOption } from '@/00-director-interfaz'
 import type {
-  InventoryMetrics,
   Product,
   StockFilter,
   StockLevel,
@@ -52,16 +51,6 @@ export function filterProducts(products: Product[], { category, search, stockFil
     const matchesSearch = matchesQuery([p.name, p.id, p.sku, p.brand, p.model, p.category], search)
     return matchesCategory && matchesSearch && matchesStock(p, stockFilter)
   })
-}
-
-export function getInventoryMetrics(products: Product[]): InventoryMetrics {
-  return {
-    total: products.length,
-    active: products.filter((p) => p.active).length,
-    lowStock: products.filter(isLowStock).length,
-    outOfStock: products.filter((p) => p.stock === 0).length,
-    totalValuation: products.reduce((acc, p) => acc + p.price * p.stock, 0),
-  }
 }
 
 export const getStockSeverity = (stock: number, reorderPoint: number): StockSeverity =>

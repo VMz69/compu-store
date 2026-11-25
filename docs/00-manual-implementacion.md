@@ -68,7 +68,7 @@ No se agregan tecnologías sin una necesidad funcional comprobada.
 - Toda modificación del esquema se hace con migraciones Prisma; nada de cambios manuales.
 - **Snapshot histórico** (nombre, SKU, precio) en las líneas de pedidos, cotizaciones y documentos.
 - Los documentos emitidos son inmutables: se corrigen por anulación.
-- **Stock:** `físico`, `reservado` y `disponible = físico − reservado`. Nunca es negativo y todo movimiento se registra con quién, por qué y cuándo.
+- **Stock:** `físico`, `reservado` y `disponible = físico − reservado`. Nunca es negativo y todo movimiento se registra con quién, por qué y cuándo. El «por qué» es un motivo automático según el origen (ajuste rápido, edición en la ficha, lote, alta, venta…); el motivo libre escrito por el usuario no forma parte de A (L06).
 - La eliminación se restringe si hay referencias. Se usa eliminación lógica donde la matriz lo indica (pedidos, clientes con historial).
 - El seed es idempotente y no lleva contraseñas.
 
@@ -143,7 +143,7 @@ api/
 |---|---|---|
 | acceso | `autenticar`, `requierePermiso(permiso)` (middlewares) | L03 · L09 |
 | catalogo | `obtenerProductosVendibles(ids)` → id, sku, nombre, precioBase, publicado | L05 |
-| inventario | `obtenerDisponibilidad(ids)` · `reservar/liberar(tx)` · `descontar/reponer(tx)` | L06 · L14 · L15 |
+| inventario | `registrarExistenciasIniciales(tx, …)` (L06) · `obtenerDisponibilidad(ids)` (L07) · `reservar/liberar(tx)` · `descontar/reponer(tx)` | L06 · L07 · L14 · L15 |
 | tienda | `obtenerIdentidad()` · `obtenerEmisor()` | L07 · L10 |
 | clientes | `obtenerCliente(id)` | L11 |
 | ofertas | `precioEfectivo(ids, fecha)`; antes de L12 se usa `precioBase` | L12 |
@@ -205,7 +205,7 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 - **Cierre:** crear, editar y ocultar un producto con imagen; persiste y se refleja en el endpoint público.
 
 **L06 — Inventario** · *10, 11, 13*
-- `07-inventario`: existencias, lotes y vencimientos, ajustes manuales con motivo y usuario, métricas, y `obtenerDisponibilidad`.
+- `07-inventario`: existencias, lotes y vencimientos, ajustes manuales con usuario y motivo automático según el origen, y métricas. `obtenerDisponibilidad` pasa a L07, donde tiene consumidor.
 - Admin: existencias, lotes y ajustes dentro de `/productos`.
 - **Cierre:** una prueba de concurrencia no deja stock negativo y las métricas coinciden con los datos.
 
@@ -306,7 +306,7 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 | L03 | A | 01, 05 | Completado (las 2 cuentas entran con Firebase real, 25-11-2026) | `feat(L03)` · 24-11-2026 · rama `feat/api` |
 | L04 | A | 07, 08 | Completado | `feat(L04)` · 25-11-2026 · rama `feat/api` |
 | L05 | A | 06, 09 | Completado (demo con Cloudinary real, 25-11-2026) | `feat(L05)` · 25-11-2026 · rama `feat/api` |
-| L06 | A | 10, 11, 13 | Pendiente | |
+| L06 | A | 10, 11, 13 | Completado | `feat(L06)` · 25-11-2026 · rama `feat/api` |
 | L07 | A | 45–52, 55–64 | Pendiente | |
 | L08 | A | cierre | Pendiente | |
 | L09 | B | 02, 03, 04 | Pendiente | |
@@ -405,6 +405,15 @@ Estados posibles: Pendiente · En progreso · Completado · Bloqueado.
 | 25-11-2026 | L05 | — | `02-errores`: un cuerpo mayor que el límite del parser (`entity.too.large`) respondía 500; ahora 400 `VALIDATION_ERROR` | `api/src/04-pipeline-http/02-errores.middleware.ts` |
 | 25-11-2026 | L05 | — | Pruebas: el helper del almacén falso toma `tests/07` y la suite de productos `tests/08` (numeración por orden de creación) | `api/tests/` |
 | 25-11-2026 | L05 | D-14 | Admin: los productos se cargan con la taxonomía en `onAuthenticated` (paginando de 100 en 100); persist v5 descarta la caché demo. `deleteProduct` y `toggleActive` son optimistas con reversión (patrón de L04). Cambios mínimos fuera del adaptador/store: `adjustStock` devuelve si se aplicó y `useProductActions` solo anuncia el éxito en ese caso; `useProductForm` atrapa el error de `saveProduct` para que el modal siga abierto | `admin/src/24-…/01-useProductActions.ts`; `admin/src/18-…/02-useProductForm.ts` |
+| 25-11-2026 | L06 | — | Decisión del propietario: el motivo de cada movimiento es automático según el origen (`Ajuste rápido (±n)`, `Edición de existencias`, `Lote X: creado/ajustado/retirado`, `Paso a control por lotes`, `Paso a stock manual`, `Alta de producto`); lo genera el servidor y el navegador no lo envía. Se corrigen §3.2 y §7 L06: el motivo libre no forma parte de A. Sin cambios de interacción en la UI | `api/src/07-pipeline-inventario/03-inventario.service.ts`, `05-lotes.service.ts` |
+| 25-11-2026 | L06 | — | Decisión del propietario: `obtenerDisponibilidad` se pospone a L07 (consumidor: `/tienda/carrito/validar`), con el mismo criterio que `obtenerProductosVendibles` en L05. Se corrigen §5 y §7 | §5 |
+| 25-11-2026 | L06 | — | Decisión del propietario: la valoración es Σ precio × stock (la fórmula que ya usaba el admin), no con costo como decía `docs/fase-0/01-inventario-admin.md`. `GET /admin/inventario/metricas` → `{total, publicados, stockBajo, agotados, valoracion}`, con agregados en SQL y la valoración como string decimal (D-05); una prueba la compara con un recálculo independiente | `api/src/07-pipeline-inventario/04-inventario.repository.ts`; `tests/09-inventario.test.ts` |
+| 25-11-2026 | L06 | — | Concurrencia: cada escritura de inventario bloquea la fila del producto (`SELECT … FOR UPDATE`) dentro de `$transaction` antes de leer el stock; `UNSIGNED` queda como red de seguridad. Probado: stock 3 y 8 ajustes −1 simultáneos → 3 × 200 y 5 × 422, stock 0; Σ movimientos = stock en todo el catálogo al terminar la suite. Es el mecanismo previsto para L14 | `api/src/07-pipeline-inventario/04-inventario.repository.ts` |
+| 25-11-2026 | L06 | — | Endpoints: `POST /admin/productos/:id/ajustes {delta}` (solo sin lotes; 422 si quedaría negativo), `PUT /admin/productos/:id/existencias {controlLotes, stock \| lotes, stockEsperado}` (409 si el stock cambió desde que se abrió la ficha; lotes por id: sin id = nuevo, ausente = retirado) y `GET /admin/inventario/metricas`. Responden solo la parte de inventario (`{productoId, stock, controlLotes, lotes}`) para que inventario no dependa de catálogo | `api/src/07-pipeline-inventario/01-inventario.routes.ts` |
+| 25-11-2026 | L06 | — | El alta (`POST /admin/productos`) acepta `controlLotes` + `lotes` y delega en `registrarExistenciasIniciales` del director de inventario dentro de la transacción del catálogo (§3.1.6); `fijarStock` y `registrarStockInicial` salen de `08-productos.repository`. Dependencia catálogo → inventario, sin ciclos | `api/src/06-pipeline-catalogo/07-productos.service.ts` |
+| 25-11-2026 | L06 | — | Un lote retirado registra su movimiento antes de borrarse; por `onDelete: SetNull` ese movimiento queda con `loteId` null y el número del lote se conserva en el motivo. Cambiar solo el vencimiento no genera movimiento. Los lotes se devuelven por id (el orden del formulario); el FEFO y el estado «vencido» derivado se aplican donde tienen consumidor (L14–L15, D-07) | `api/src/07-pipeline-inventario/05-lotes.service.ts` |
+| 25-11-2026 | L06 | — | Numeración de `07-inventario`: 00-director, 01-routes, 02-schema, 03-service, 04-repository, 05-lotes.service (coincide con §4). Pruebas en `tests/09-inventario.test.ts` | `api/src/07-pipeline-inventario/` |
+| 25-11-2026 | L06 | D-14 | Admin: `adjustStock` es optimista y deshace solo su delta si la API falla; `saveProduct` guarda el producto (PATCH) y, si la ficha cambió las existencias, hace el PUT con `stockEsperado` = el stock que se vio al abrirla. Si el PUT falla, la caché conserva los datos ya guardados y el modal sigue abierto. Se retira el aviso «disponible con el módulo de inventario (L06)». `useInventoryMetrics` lee las métricas de la API (se refrescan tras cada escritura) y se elimina el cálculo local `getInventoryMetrics`. Sin cambios en componentes | `admin/src/25-pipeline-persistencia-catalogo/01-store.ts`, `05-catalogo.api.ts`; `admin/src/24-…/02-useInventoryMetrics.ts` |
 
 ---
 

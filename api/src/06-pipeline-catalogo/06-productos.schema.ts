@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { esquemaLotes } from '../07-pipeline-inventario/00-director-inventario.js'
 
 /** Mismo patrón que el admin (`20-pipeline-validacion-producto/02-productValidation.ts`). */
 const SKU = /^[A-Z0-9][A-Z0-9-]{1,31}$/
@@ -59,24 +60,32 @@ const campos = {
 
 export const esquemaIdProducto = z.object({ id: z.coerce.number().int().positive('Id no válido.') })
 
-/** Alta: además acepta el stock inicial (se registra como movimiento). Los lotes llegan en L06. */
-export const esquemaCrearProducto = z.strictObject({
-  ...campos,
-  sku: campos.sku.default(null),
-  modelo: campos.modelo.default(''),
-  condicion: campos.condicion.default('nuevo'),
-  costo: campos.costo.default(null),
-  precioAnterior: campos.precioAnterior.default(null),
-  tasaIva: campos.tasaIva.default('13.00'),
-  puntoReorden: campos.puntoReorden.default(3),
-  publicado: campos.publicado.default(true),
-  descripcion: campos.descripcion.default(''),
-  compatibilidad: campos.compatibilidad.default(''),
-  conectividad: campos.conectividad.default(''),
-  especificaciones: campos.especificaciones.default([]),
-  imagenes: campos.imagenes.default([]),
-  stock: cantidad.default(0),
-})
+/**
+ * Alta: además acepta las existencias iniciales (stock manual o lotes), que registra el inventario como movimientos.
+ * Con `controlLotes` el stock es Σ lotes (D-16) y `stock` se ignora.
+ */
+export const esquemaCrearProducto = z
+  .strictObject({
+    ...campos,
+    sku: campos.sku.default(null),
+    modelo: campos.modelo.default(''),
+    condicion: campos.condicion.default('nuevo'),
+    costo: campos.costo.default(null),
+    precioAnterior: campos.precioAnterior.default(null),
+    tasaIva: campos.tasaIva.default('13.00'),
+    puntoReorden: campos.puntoReorden.default(3),
+    publicado: campos.publicado.default(true),
+    descripcion: campos.descripcion.default(''),
+    compatibilidad: campos.compatibilidad.default(''),
+    conectividad: campos.conectividad.default(''),
+    especificaciones: campos.especificaciones.default([]),
+    imagenes: campos.imagenes.default([]),
+    stock: cantidad.default(0),
+    controlLotes: z.boolean().default(false),
+    lotes: esquemaLotes.optional(),
+  })
+  .refine((datos) => !datos.controlLotes || datos.lotes !== undefined, { message: 'Registra al menos un lote.', path: ['lotes'] })
+  .refine((datos) => datos.controlLotes || datos.lotes === undefined, { message: 'Activa el control de lotes.', path: ['lotes'] })
 
 /** Edición parcial: stock, lotes y control por lotes se gestionan en el inventario (L06). */
 export const esquemaEditarProducto = z.strictObject({

@@ -1,6 +1,16 @@
 import { apiClient } from '@/84-pipeline-persistencia-demo/05-api.client'
 import { PLACEHOLDER_IMAGE } from '../17-pipeline-ficha-producto/03-productImages'
-import type { Brand, BrandDraft, Category, CategoryDraft, Product, ProductCondition, ProductDraft } from './04-types'
+import type {
+  Brand,
+  BrandDraft,
+  Category,
+  CategoryDraft,
+  InventoryMetrics,
+  Product,
+  ProductCondition,
+  ProductDraft,
+  ProductLot,
+} from './04-types'
 
 /**
  * Adaptador de catálogo (D-14): traduce el contrato de la API (español,
@@ -48,10 +58,33 @@ interface ProductDto {
   stock: number
   puntoReorden: number
   controlLotes: boolean
-  lotes: { id: number; numero: string; cantidad: number; vence: string | null }[]
+  lotes: LotDto[]
   publicado: boolean
   compatibilidad: string
   conectividad: string
+}
+
+interface LotDto {
+  id: number
+  numero: string
+  cantidad: number
+  vence: string | null
+}
+
+/** Existencias que devuelve el inventario (L06) tras un ajuste o una edición. */
+interface StockDto {
+  productoId: number
+  stock: number
+  controlLotes: boolean
+  lotes: LotDto[]
+}
+
+interface InventoryMetricsDto {
+  total: number
+  publicados: number
+  stockBajo: number
+  agotados: number
+  valoracion: string
 }
 
 interface Envelope<T> {
@@ -143,6 +176,9 @@ const money = (value: number) => value.toFixed(2)
 const optionalMoney = (value: number | null) => (value === null ? null : money(value))
 const optionalNumber = (value: string | null) => (value === null ? null : Number(value))
 
+const toLots = (lotes: LotDto[]): ProductLot[] =>
+  lotes.map((lot) => ({ id: String(lot.id), lotNumber: lot.numero, quantity: lot.cantidad, expiresAt: lot.vence }))
+
 const toProduct = (dto: ProductDto): Product => ({
   id: toProductId(dto.id),
   sku: dto.sku,
@@ -159,7 +195,7 @@ const toProduct = (dto: ProductDto): Product => ({
   stock: dto.stock,
   reorderPoint: dto.puntoReorden,
   lotControl: dto.controlLotes,
-  lots: dto.lotes.map((lot) => ({ id: String(lot.id), lotNumber: lot.numero, quantity: lot.cantidad, expiresAt: lot.vence })),
+  lots: toLots(dto.lotes),
   active: dto.publicado,
   badge: dto.etiqueta,
   rating: dto.calificacion ?? 0,
@@ -171,7 +207,7 @@ const toProduct = (dto: ProductDto): Product => ({
   specs: dto.especificaciones.map((spec) => ({ key: spec.clave, value: spec.valor })),
 })
 
-/** Cuerpo de escritura (§4.2). Stock y lotes no se editan aquí: el stock solo viaja en el alta. */
+/** Cuerpo de escritura (§4.2). Stock y lotes solo viajan en el alta; al editar van por el inventario (`saveStockApi`). */
 const productBody = (draft: ProductDraft, brandSlug: string) => ({
   sku: draft.sku || null,
   nombre: draft.name,
@@ -204,12 +240,51 @@ export async function fetchProducts(): Promise<Product[]> {
   }
 }
 
-/** Sin `id` crea (con stock inicial); con `id` edita. `brandSlug` traduce el nombre de marca del admin. */
+/** Sin `id` crea (con sus existencias iniciales); con `id` edita. `brandSlug` traduce el nombre de marca del admin. */
 export async function saveProductApi({ id, ...draft }: ProductDraft, brandSlug: string): Promise<Product> {
   const { data } = id
     ? await apiClient.patch<Envelope<ProductDto>>(productPath(id), productBody(draft, brandSlug))
-    : await apiClient.post<Envelope<ProductDto>>(productPath(), { ...productBody(draft, brandSlug), stock: draft.stock })
+    : await apiClient.post<Envelope<ProductDto>>(productPath(), { ...productBody(draft, brandSlug), ...stockBody(draft) })
   return toProduct(data.data)
+}
+
+/* ---------- Inventario (L06) ---------- */
+
+/** Parte de inventario del producto que devuelve la API tras escribir existencias. */
+export type ProductStock = Pick<Product, 'stock' | 'lotControl' | 'lots'>
+
+const toStock = (dto: StockDto): ProductStock => ({ stock: dto.stock, lotControl: dto.controlLotes, lots: toLots(dto.lotes) })
+
+/** Lotes con id numérico ya existen en la API; los de `uid()` (filas nuevas del formulario) se crean. */
+const EXISTING_LOT_ID = /^\d+$/
+
+const lotBody = (lot: ProductLot) => ({
+  ...(EXISTING_LOT_ID.test(lot.id) ? { id: Number(lot.id) } : {}),
+  numero: lot.lotNumber,
+  cantidad: lot.quantity,
+  vence: lot.expiresAt,
+})
+
+/** Stock manual o lotes (con lotes, el servidor calcula stock = Σ lotes). */
+const stockBody = (draft: ProductStock) =>
+  draft.lotControl ? { controlLotes: true, lotes: draft.lots.map(lotBody) } : { controlLotes: false, stock: draft.stock }
+
+/** Ajuste rápido ±n; el motivo lo registra el servidor. */
+export async function adjustStockApi(id: string, delta: number): Promise<ProductStock> {
+  const { data } = await apiClient.post<Envelope<StockDto>>(`${productPath(id)}/ajustes`, { delta })
+  return toStock(data.data)
+}
+
+/** Existencias editadas en la ficha. `expectedStock` es el stock que se vio al abrirla (409 si cambió). */
+export async function saveStockApi(id: string, draft: ProductStock, expectedStock: number): Promise<ProductStock> {
+  const { data } = await apiClient.put<Envelope<StockDto>>(`${productPath(id)}/existencias`, { ...stockBody(draft), stockEsperado: expectedStock })
+  return toStock(data.data)
+}
+
+export async function fetchInventoryMetrics(): Promise<InventoryMetrics> {
+  const { data } = await apiClient.get<Envelope<InventoryMetricsDto>>('/admin/inventario/metricas')
+  const m = data.data
+  return { total: m.total, active: m.publicados, lowStock: m.stockBajo, outOfStock: m.agotados, totalValuation: Number(m.valoracion) }
 }
 
 export async function deleteProductApi(id: string): Promise<void> {

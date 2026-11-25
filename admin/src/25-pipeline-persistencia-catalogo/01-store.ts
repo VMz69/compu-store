@@ -7,29 +7,35 @@ import { deductFromProducts, restockProducts, type StockLine } from '../24-pipel
 import { isDataUrl } from '../17-pipeline-ficha-producto/03-productImages'
 import { productsInCategory, productsOfBrand } from './03-taxonomy'
 import {
+  adjustStockApi,
   deleteBrandApi,
   deleteCategoryApi,
   deleteProductApi,
   discardImageApi,
+  fetchInventoryMetrics,
   fetchProducts,
   fetchTaxonomy,
   saveBrandApi,
   saveCategoryApi,
   saveProductApi,
+  saveStockApi,
   setBrandActiveApi,
   setProductPublishedApi,
   uploadImageApi,
+  type ProductStock,
 } from './05-catalogo.api'
-import type { Brand, BrandDraft, Category, CategoryDraft, Product, ProductDraft } from './04-types'
+import type { Brand, BrandDraft, Category, CategoryDraft, InventoryMetrics, Product, ProductDraft } from './04-types'
 
 interface CatalogState {
   products: Product[]
   categories: Category[]
   brands: Brand[]
+  /** Métricas de inventario calculadas por la API (L06); `null` hasta la primera carga. */
+  inventoryMetrics: InventoryMetrics | null
   isLoading: boolean
   saveProduct: (draft: ProductDraft) => Promise<'created' | 'updated'>
   deleteProduct: (id: string) => void
-  /** Ajuste rápido ±n. Devuelve si se aplicó (en L05 no: las existencias llegan con el inventario, L06). */
+  /** Ajuste rápido ±n (optimista; si la API lo rechaza se revierte). Devuelve si se aplicó. */
   adjustStock: (id: string, delta: number) => boolean
   /** Alterna la visibilidad web y devuelve el nuevo estado. */
   toggleActive: (id: string) => boolean
@@ -54,8 +60,11 @@ const restoreAt = <T extends { id: string }>(items: T[], item: T, index: number)
 const updateProduct = (products: Product[], id: string, patch: (p: Product) => Partial<Product>) =>
   products.map((p) => (p.id === id ? { ...p, ...patch(p) } : p))
 
-/** Las existencias y los lotes se gestionan con el inventario (L06); hasta entonces no se escriben. */
-const STOCK_PENDING = 'Existencias y lotes: disponible con el módulo de inventario (L06). Ese cambio no se guardó.'
+const lotsKey = (p: ProductStock) => JSON.stringify(p.lots.map((l) => [l.id, l.lotNumber, l.quantity, l.expiresAt]))
+
+/** ¿La ficha cambió las existencias? (modo, stock manual o lotes). */
+const stockChanged = (current: ProductStock, draft: ProductStock) =>
+  current.lotControl !== draft.lotControl || (draft.lotControl ? lotsKey(current) !== lotsKey(draft) : current.stock !== draft.stock)
 
 /** Sube las imágenes locales (data URL) y devuelve la galería con URLs; anota los ids subidos para descartarlos si algo falla. */
 async function uploadLocalImages(images: string[], uploaded: number[]): Promise<string[]> {
@@ -89,27 +98,34 @@ export const useCatalogStore = create<CatalogState>()(
       products: [],
       categories: [],
       brands: [],
+      inventoryMetrics: null,
       isLoading: false,
 
       saveProduct: async (draft) => {
         const { products, brands } = get()
         const current = draft.id ? products.find((p) => p.id === draft.id) : undefined
-        if (!current && draft.lotControl) {
-          toast(STOCK_PENDING, 'warning')
-          throw new Error(STOCK_PENDING)
-        }
         set({ isLoading: true })
         const uploaded: number[] = []
+        const store = (saved: Product) =>
+          set((s) => ({ products: current ? s.products.map((p) => (p.id === saved.id ? saved : p)) : [saved, ...s.products] }))
         try {
           const brandSlug = brands.find((b) => b.name === draft.brand)?.slug
           if (!brandSlug) throw new Error(`La marca "${draft.brand}" no existe en el catálogo.`)
           const images = await uploadLocalImages(draft.images, uploaded)
-          const saved = await saveProductApi({ ...draft, images }, brandSlug)
-          set((s) => ({
-            products: current ? s.products.map((p) => (p.id === saved.id ? saved : p)) : [saved, ...s.products],
-            isLoading: false,
-          }))
-          if (current && (draft.lotControl !== current.lotControl || draft.stock !== current.stock)) toast(STOCK_PENDING, 'warning')
+          let saved = await saveProductApi({ ...draft, images }, brandSlug)
+          uploaded.length = 0 // Las imágenes ya pertenecen al producto: no se descartan aunque falle lo que sigue.
+          // Al editar, las existencias van por el inventario (L06), con el stock que se vio al abrir la ficha.
+          if (current && stockChanged(current, draft)) {
+            try {
+              saved = { ...saved, ...(await saveStockApi(saved.id, draft, current.stock)) }
+            } catch (error) {
+              store(saved) // Los datos del producto sí se guardaron.
+              throw error
+            }
+          }
+          store(saved)
+          set({ isLoading: false })
+          void refreshInventoryMetrics()
           return current ? 'updated' : 'created'
         } catch (error) {
           set({ isLoading: false })
@@ -127,15 +143,33 @@ export const useCatalogStore = create<CatalogState>()(
         if (index < 0) return
         const removed = products[index]
         set({ products: products.filter((p) => p.id !== id) })
-        deleteProductApi(id).catch((error: unknown) => {
-          set((s) => ({ products: restoreAt(s.products, removed, index) }))
-          toast(`No se eliminó "${removed.name}": ${errorMessage(error, 'error del servidor.')}`, 'danger')
-        })
+        deleteProductApi(id)
+          .then(() => void refreshInventoryMetrics())
+          .catch((error: unknown) => {
+            set((s) => ({ products: restoreAt(s.products, removed, index) }))
+            toast(`No se eliminó "${removed.name}": ${errorMessage(error, 'error del servidor.')}`, 'danger')
+          })
       },
 
-      adjustStock: () => {
-        toast(STOCK_PENDING, 'warning')
-        return false
+      // Optimista: el ±n se ve al instante; la respuesta trae el stock real y, si falla, se deshace solo este ajuste.
+      adjustStock: (id, delta) => {
+        const product = get().products.find((p) => p.id === id)
+        if (!product) return false
+        if (product.stock + delta < 0) {
+          toast('No hay existencias suficientes para restar.', 'warning')
+          return false
+        }
+        set((s) => ({ products: updateProduct(s.products, id, (p) => ({ stock: p.stock + delta })) }))
+        adjustStockApi(id, delta)
+          .then((stock) => {
+            set((s) => ({ products: updateProduct(s.products, id, () => stock) }))
+            void refreshInventoryMetrics()
+          })
+          .catch((error: unknown) => {
+            set((s) => ({ products: updateProduct(s.products, id, (p) => ({ stock: Math.max(0, p.stock - delta) })) }))
+            toast(`No se actualizó el stock de "${product.name}": ${errorMessage(error, 'error del servidor.')}`, 'danger')
+          })
+        return true
       },
 
       toggleActive: (id) => {
@@ -143,7 +177,10 @@ export const useCatalogStore = create<CatalogState>()(
         const setActive = (active: boolean) => set((s) => ({ products: updateProduct(s.products, id, () => ({ active })) }))
         setActive(next)
         setProductPublishedApi(id, next)
-          .then((product) => set((s) => ({ products: s.products.map((p) => (p.id === id ? product : p)) })))
+          .then((product) => {
+            set((s) => ({ products: s.products.map((p) => (p.id === id ? product : p)) }))
+            void refreshInventoryMetrics()
+          })
           .catch((error: unknown) => {
             setActive(!next)
             toast(`No se cambió la visibilidad: ${errorMessage(error, 'error del servidor.')}`, 'danger')
@@ -243,8 +280,18 @@ export const useCatalogStore = create<CatalogState>()(
   ),
 )
 
-/** Carga categorías, marcas y productos desde la API (al iniciar o restaurar la sesión). */
+/** Relee las métricas de inventario de la API; si falla, se conservan las últimas (no se calculan en el cliente). */
+async function refreshInventoryMetrics(): Promise<void> {
+  try {
+    useCatalogStore.setState({ inventoryMetrics: await fetchInventoryMetrics() })
+  } catch {
+    // Silencioso: el tablero sigue mostrando la última lectura válida.
+  }
+}
+
+/** Carga categorías, marcas, productos y métricas desde la API (al iniciar o restaurar la sesión). */
 async function loadCatalog(): Promise<void> {
+  void refreshInventoryMetrics()
   try {
     const [taxonomy, products] = await Promise.all([fetchTaxonomy(), fetchProducts()])
     useCatalogStore.setState({ ...taxonomy, products })

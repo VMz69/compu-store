@@ -97,12 +97,6 @@ export async function reemplazarEspecificaciones(tx: Tx, productoId: number, esp
   }
 }
 
-/** Stock inicial del alta, registrado como movimiento del usuario (§3.2). */
-export const registrarStockInicial = (tx: Tx, productoId: number, stock: number, usuarioId: number, motivo: string) =>
-  tx.movimientoInventario.create({ data: { productoId, delta: stock, motivo, usuarioId } })
-
-export const fijarStock = (tx: Tx, id: number, stock: number) => tx.producto.update({ where: { id }, data: { stock } })
-
 export const eliminar = (tx: Tx, id: number) => tx.producto.delete({ where: { id } })
 
 export const transaccion = <T>(trabajo: (tx: Tx) => Promise<T>) => prisma.$transaction(trabajo)

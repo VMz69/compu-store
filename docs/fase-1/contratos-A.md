@@ -36,7 +36,7 @@ Los nombres definitivos del esquema Prisma se fijan en L02 a partir de esta tabl
 | GET/POST/PATCH/DELETE /admin/marcas[/:slug] · PATCH /admin/marcas/:slug/activa | CRUD y activación de marcas | L04 |
 | GET/POST/PATCH/DELETE /admin/productos[/:id] · PATCH /admin/productos/:id/publicado | CRUD y publicación de productos | L05 |
 | POST /admin/imagenes | subida a Cloudinary (D-17) | L05 |
-| POST /admin/productos/:id/ajustes · GET /admin/inventario/metricas | ajustes y métricas | L06 |
+| POST /admin/productos/:id/ajustes · PUT /admin/productos/:id/existencias · GET /admin/inventario/metricas | ajuste rápido, edición de stock/lotes y métricas | L06 |
 | GET /tienda/categorias · /tienda/marcas | solo activas, con `totalProductos` | L04/L07 |
 | GET /tienda/productos?q&categoria&marca&ofertas&orden&page&limit | listado público (solo publicados) | L07 |
 | GET /tienda/productos/:id · /tienda/productos/:id/relacionados | detalle y relacionados | L07 |

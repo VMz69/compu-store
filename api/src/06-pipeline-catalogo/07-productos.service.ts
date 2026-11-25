@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import type { ProveedorImagenes } from '../03-pipeline-conexiones/00-director-conexiones.js'
 import { ErrorApp, meta, rango, type Paginacion } from '../04-pipeline-http/00-director-http.js'
+import { registrarExistenciasIniciales, type ExistenciasIniciales } from '../07-pipeline-inventario/00-director-inventario.js'
 import type { CrearProducto, EditarProducto } from './06-productos.schema.js'
 import { slugUnico, type Pagina } from './03-taxonomia.service.js'
 import * as repo from './08-productos.repository.js'
@@ -80,7 +81,6 @@ const aAdmin = (p: repo.ProductoDetalle): ProductoAdminDto => ({
 
 /* ---------- Reglas ---------- */
 
-const MOTIVO_ALTA = 'Alta de producto'
 const MENSAJE_CON_HISTORIAL = 'Tiene historial de inventario: ocúltalo de la tienda y, si corresponde, ajusta su stock a 0.'
 
 /** SKU automático cuando el admin no indica uno (equivale al id del admin, `PRD-###`). */
@@ -145,7 +145,8 @@ export async function obtenerPublico(id: number): Promise<ProductoPublicoDto> {
 /* ---------- Escritura ---------- */
 
 export async function crear(datos: CrearProducto, usuarioId: number): Promise<ProductoAdminDto> {
-  const { sku, categoria, marca, imagenes: urls, especificaciones, stock, ...resto } = datos
+  const { sku, categoria, marca, imagenes: urls, especificaciones, stock, controlLotes, lotes, ...resto } = datos
+  const existencias: ExistenciasIniciales = controlLotes && lotes ? { controlLotes: true, lotes } : { controlLotes: false, stock }
   exigirPrecioAnterior(datos.precio, datos.precioAnterior)
   const categoriaId = await idCategoria(categoria)
   const marcaId = await idMarca(marca)
@@ -159,10 +160,7 @@ export async function crear(datos: CrearProducto, usuarioId: number): Promise<Pr
     const galeria = await imagenes.resolverGaleria(tx, urls, [])
     await repo.reemplazarImagenes(tx, id, galeria.imagenes)
     await repo.reemplazarEspecificaciones(tx, id, especificaciones)
-    if (stock > 0) {
-      await repo.fijarStock(tx, id, stock)
-      await repo.registrarStockInicial(tx, id, stock, usuarioId, MOTIVO_ALTA)
-    }
+    await registrarExistenciasIniciales(tx, id, existencias, usuarioId)
     return id
   })
   return obtener(id)
