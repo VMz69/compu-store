@@ -303,8 +303,8 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 | L00 | A | — | Completado | `feat(L00)` · 23-11-2026 |
 | L01 | A | — | Completado (solo local; Railway en L08) | `feat(L01)` · 23-11-2026 · rama `feat/api` |
 | L02 | A | — | Completado | `feat(L02)` · 23-11-2026 · rama `feat/api` |
-| L03 | A | 01, 05 | Completado (pruebas en verde; la entrada de las 2 cuentas la demuestra el propietario con Firebase real) | `feat(L03)` · 24-11-2026 · rama `feat/api` |
-| L04 | A | 07, 08 | Pendiente | |
+| L03 | A | 01, 05 | Completado (las 2 cuentas entran con Firebase real, 25-11-2026) | `feat(L03)` · 24-11-2026 · rama `feat/api` |
+| L04 | A | 07, 08 | Completado | `feat(L04)` · 25-11-2026 · rama `feat/api` |
 | L05 | A | 06, 09 | Pendiente | |
 | L06 | A | 10, 11, 13 | Pendiente | |
 | L07 | A | 45–52, 55–64 | Pendiente | |
@@ -385,6 +385,16 @@ Estados posibles: Pendiente · En progreso · Completado · Bloqueado.
 | 24-11-2026 | L03 | — | Admin: el store de acceso v6 descarta los usuarios demo y sus hashes; `users` contiene solo al usuario de la sesión. Ajustes › Usuarios (alta, edición, restablecimiento de otros) sigue con escrituras locales: se bloquea en L08 y se conecta en L09 | `admin/src/06-pipeline-sesion-permisos/04-store.ts` |
 | 24-11-2026 | L03 | — | Pendiente para L09: hoy cualquier 401/403 de la API cierra la sesión en el admin. Cuando `requierePermiso` devuelva 403 por falta de permiso, solo deberá cerrar la sesión el 401 o el 403 de cuenta deshabilitada | `admin/src/84-pipeline-persistencia-demo/05-api.client.ts` |
 | 24-11-2026 | L03 | — | Con el SDK de Firebase, el bundle del admin queda en unos 907 kB (aviso de Vite > 500 kB); la división en chunks se evalúa en L08 | `pnpm -C admin build` |
+| 25-11-2026 | L03 | — | Cierre demostrado: las 2 cuentas (`superadmin`) se vincularon con `pnpm usuarios:vincular` y entran al panel | `usuarios` #1 y #2 en `compustore` |
+| 25-11-2026 | L04 | — | Desviación de §4: en `06-catalogo` la taxonomía se crea primero y toma 01–04 (`taxonomia.routes/schema/service/repository`); los productos (L05) tomarán 05–08. Numeración por orden de creación | `api/src/06-pipeline-catalogo/` |
+| 25-11-2026 | L04 | — | Nuevo `04-http/04-paginacion` (page ≥ 1, limit 1–100 con 100 por defecto, `meta` de D-06), reutilizable en L05–L07 | `api/src/04-pipeline-http/04-paginacion.ts` |
+| 25-11-2026 | L04 | — | Respaldo genérico de errores de Prisma en `02-errores`: P2002/P2003 → 409, P2025 → 404. Los services responden antes con mensajes propios (nombre repetido, eliminación con productos) | `api/src/04-pipeline-http/02-errores.middleware.ts` |
+| 25-11-2026 | L04 | D-04 | Slug de categoría y marca generado en el servidor con la misma función que el admin, con sufijo `-2`, `-3`… si ya existe; inmutable al renombrar. El nombre repetido se detecta con la intercalación `utf8mb4_unicode_ci` (sin acentos ni mayúsculas) | `api/src/06-pipeline-catalogo/03-taxonomia.service.ts` |
+| 25-11-2026 | L04 | — | Públicos: `GET /tienda/categorias` (todas: la categoría no tiene estado) y `GET /tienda/marcas` (solo activas), ambos con `totalProductos` contando solo los publicados y sin `activa`/`creadaEn` | `api/src/06-pipeline-catalogo/01-taxonomia.routes.ts` |
+| 25-11-2026 | L04 | — | Pruebas: helper `tests/05-sesion-prueba.ts` (proveedor falso + usuario habilitado) reutilizable; `06-taxonomia.test` usa `sembrar()` (idempotente) para tener categorías y marcas con productos | `api/tests/` |
+| 25-11-2026 | L04 | D-14 | Admin: `deleteCategory`/`deleteBrand`/`toggleBrand` conservan su firma síncrona y son optimistas (si la API falla, se revierte y se avisa); `saveCategory`/`saveBrand` esperan a la API. La taxonomía se carga al iniciar o restaurar la sesión mediante `onAuthenticated` del cliente (84), sin que 25 importe de 06 | `admin/src/25-pipeline-persistencia-catalogo/01-store.ts` |
+| 25-11-2026 | L04 | — | Hasta L05 los productos del admin siguen siendo de demostración: los conteos y el bloqueo de eliminación de la UI salen de ellos (coinciden con el seed) y el servidor impone el 409 real. Renombrar una marca sigue actualizando en cascada el nombre en esos productos locales | `admin/src/26-…/03-useCategoriesTab.ts`, `28-…/03-useBrandsTab.ts` |
+| 25-11-2026 | L04 | — | Corrección de L03: el token espera `auth.authStateReady()`, porque al recargar una petición previa a la restauración de Firebase salía sin token, recibía 401 y cerraba la sesión | `admin/src/06-pipeline-sesion-permisos/06-sesion.api.ts` |
 
 ---
 

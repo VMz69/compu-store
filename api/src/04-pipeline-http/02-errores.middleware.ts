@@ -1,5 +1,6 @@
 import type { ErrorRequestHandler, RequestHandler } from 'express'
 import { ZodError } from 'zod'
+import { Prisma } from '../../generated/prisma/client.js'
 
 /** Códigos de error estables del contrato (docs/fase-1/contratos-A.md §1). */
 export type CodigoError =
@@ -40,12 +41,26 @@ const esJsonInvalido = (error: unknown): boolean =>
   error instanceof SyntaxError && (error as SyntaxError & { type?: string }).type === 'entity.parse.failed'
 
 /**
+ * Respaldo para errores de Prisma que un service no tradujo: unicidad (P2002) y
+ * referencias (P2003) → 409; registro inexistente (P2025) → 404.
+ */
+function errorPrisma(error: unknown): ErrorApp | null {
+  if (!(error instanceof Prisma.PrismaClientKnownRequestError)) return null
+  if (error.code === 'P2002') return new ErrorApp('CONFLICT', 409, 'Ya existe un registro con ese valor único.')
+  if (error.code === 'P2003') return new ErrorApp('CONFLICT', 409, 'El registro está referenciado por otros datos.')
+  if (error.code === 'P2025') return new ErrorApp('NOT_FOUND', 404, 'El recurso no existe.')
+  return null
+}
+
+/**
  * Último middleware: traduce cualquier error a `{ error: { code, message, details? } }`.
  * Los errores no previstos se registran sin datos de la petición y responden 500 genérico.
  */
 export const manejarErrores: ErrorRequestHandler = (error: unknown, _req, res, _next) => {
   let respuesta: ErrorApp
+  const prisma = errorPrisma(error)
   if (error instanceof ErrorApp) respuesta = error
+  else if (prisma) respuesta = prisma
   else if (error instanceof ZodError) respuesta = new ErrorApp('VALIDATION_ERROR', 400, 'Datos inválidos.', detallesZod(error))
   else if (esJsonInvalido(error)) respuesta = new ErrorApp('VALIDATION_ERROR', 400, 'El cuerpo no es un JSON válido.')
   else {

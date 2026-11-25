@@ -53,7 +53,13 @@ function getFirebaseAuth(): Auth {
   return auth
 }
 
-configureToken(async () => (auth?.currentUser ? auth.currentUser.getIdToken() : null))
+// Espera a que Firebase restaure la sesión guardada: una petición hecha al recargar la página
+// saldría sin token, recibiría 401 y cerraría la sesión.
+configureToken(async () => {
+  if (!auth) return null
+  await auth.authStateReady()
+  return auth.currentUser ? auth.currentUser.getIdToken() : null
+})
 
 const isRoleId = (rol: string): rol is RoleId => Object.hasOwn(ROLES, rol)
 

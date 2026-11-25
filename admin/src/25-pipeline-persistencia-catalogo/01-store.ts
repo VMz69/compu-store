@@ -2,10 +2,13 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { delay } from '@/84-pipeline-persistencia-demo/04-delay'
 import { STORAGE_KEYS } from '@/84-pipeline-persistencia-demo/02-storage'
+import { onAuthenticated } from '@/84-pipeline-persistencia-demo/05-api.client'
+import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
 import { nextSequentialId, slugify } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
 import { deductFromProducts, restockProducts, type StockLine } from '../24-pipeline-inventario-productos/03-inventory'
 import { normalizeProduct } from '../20-pipeline-validacion-producto/03-normalize'
-import { deriveBrands, productsInCategory, productsOfBrand, uniqueSlug } from './03-taxonomy'
+import { deriveBrands, productsInCategory, productsOfBrand } from './03-taxonomy'
+import { deleteBrandApi, deleteCategoryApi, fetchTaxonomy, saveBrandApi, saveCategoryApi, setBrandActiveApi } from './05-catalogo.api'
 import { BRANDS_MOCK } from '../87-pipeline-datos-demo-productos/03-brands.mock'
 import { CATEGORIES_MOCK } from '../87-pipeline-datos-demo-productos/02-categories.mock'
 import { PRODUCTS_MOCK } from '../87-pipeline-datos-demo-productos/00-director-datos-demo-productos'
@@ -34,6 +37,12 @@ interface CatalogState {
   reset: () => void
 }
 
+const errorMessage = (error: unknown, fallback: string) => (error instanceof Error ? error.message : fallback)
+
+/** Reinsertar en su posición original un elemento cuya eliminación optimista falló. */
+const restoreAt = <T extends { id: string }>(items: T[], item: T, index: number): T[] =>
+  items.some((i) => i.id === item.id) ? items : [...items.slice(0, index), item, ...items.slice(index)]
+
 const updateProduct = (products: Product[], id: string, patch: (p: Product) => Partial<Product>) =>
   products.map((p) => (p.id === id ? { ...p, ...patch(p) } : p))
 
@@ -42,6 +51,9 @@ const updateProduct = (products: Product[], id: string, patch: (p: Product) => P
  * v1: modelo original del demo · v2: SKU, costo, IVA, especificaciones clave/valor y lotes.
  * v3: galería de imágenes (`images[]`); `imageUrl` pasa a ser la portada derivada.
  * v4: marcas como entidad (`brands[]`), derivadas de las marcas escritas en los productos.
+ *
+ * L04: categorías y marcas vienen de la API (05-catalogo.api) y lo persistido es solo caché;
+ * los productos siguen siendo datos de demostración hasta L05.
  */
 const CATALOG_SCHEMA_VERSION = 4
 
@@ -49,8 +61,8 @@ export const useCatalogStore = create<CatalogState>()(
   persist(
     (set, get) => ({
       products: PRODUCTS_MOCK,
-      categories: CATEGORIES_MOCK,
-      brands: BRANDS_MOCK,
+      categories: [],
+      brands: [],
       isLoading: false,
 
       saveProduct: async (draft) => {
@@ -91,62 +103,88 @@ export const useCatalogStore = create<CatalogState>()(
         return next
       },
 
-      saveCategory: async ({ id, ...data }) => {
+      saveCategory: async (draft) => {
         set({ isLoading: true })
-        await delay()
-        const { categories } = get()
-        const current = id ? categories.find((c) => c.id === id) : undefined
-        if (current) {
-          const category = { ...current, ...data }
-          set({ categories: categories.map((c) => (c.id === id ? category : c)), isLoading: false })
-          return { category, created: false }
+        try {
+          const category = await saveCategoryApi(draft)
+          set((s) => ({
+            categories: draft.id ? s.categories.map((c) => (c.id === category.id ? category : c)) : [...s.categories, category],
+            isLoading: false,
+          }))
+          return { category, created: !draft.id }
+        } catch (error) {
+          set({ isLoading: false })
+          toast(errorMessage(error, 'No se pudo guardar la categoría.'), 'danger')
+          throw error
         }
-        const slug = uniqueSlug(data.name, categories.map((c) => c.id), 'categoria')
-        const category: Category = { id: slug, slug, ...data }
-        set({ categories: [...categories, category], isLoading: false })
-        return { category, created: true }
       },
 
+      // Optimista: se quita al instante; si la API la rechaza (p. ej. 409 con productos), se restaura.
       deleteCategory: (id) => {
         if (productsInCategory(get().products, id).length > 0) throw new Error('La categoría tiene productos asignados.')
-        set((s) => ({ categories: s.categories.filter((c) => c.id !== id) }))
+        const { categories } = get()
+        const index = categories.findIndex((c) => c.id === id)
+        if (index < 0) return
+        const removed = categories[index]
+        set({ categories: categories.filter((c) => c.id !== id) })
+        deleteCategoryApi(id).catch((error: unknown) => {
+          set((s) => ({ categories: restoreAt(s.categories, removed, index) }))
+          toast(`No se eliminó "${removed.name}": ${errorMessage(error, 'error del servidor.')}`, 'danger')
+        })
       },
 
-      saveBrand: async ({ id, ...data }) => {
+      saveBrand: async (draft) => {
         set({ isLoading: true })
-        await delay()
-        const { brands, products } = get()
-        const current = id ? brands.find((b) => b.id === id) : undefined
-        if (current) {
-          const brand = { ...current, ...data }
-          // Cascada: los productos guardan el nombre de la marca.
-          const affected = current.name === brand.name ? [] : productsOfBrand(products, current.name).map((p) => p.id)
+        try {
+          const current = draft.id ? get().brands.find((b) => b.id === draft.id) : undefined
+          const brand = await saveBrandApi(draft)
+          const { brands, products } = get()
+          // Cascada local: los productos de demostración guardan el nombre de la marca (hasta L05).
+          const affected = current && current.name !== brand.name ? productsOfBrand(products, current.name).map((p) => p.id) : []
           set({
-            brands: brands.map((b) => (b.id === id ? brand : b)),
+            brands: current ? brands.map((b) => (b.id === brand.id ? brand : b)) : [...brands, brand],
             products: affected.length ? products.map((p) => (affected.includes(p.id) ? { ...p, brand: brand.name } : p)) : products,
             isLoading: false,
           })
-          return { brand, created: false, renamed: affected.length }
+          return { brand, created: !current, renamed: affected.length }
+        } catch (error) {
+          set({ isLoading: false })
+          toast(errorMessage(error, 'No se pudo guardar la marca.'), 'danger')
+          throw error
         }
-        const slug = uniqueSlug(data.name, brands.map((b) => b.id), 'marca')
-        const brand: Brand = { id: slug, slug, ...data, createdAt: new Date().toISOString() }
-        set({ brands: [...brands, brand], isLoading: false })
-        return { brand, created: true, renamed: 0 }
       },
 
       deleteBrand: (id) => {
-        const brand = get().brands.find((b) => b.id === id)
-        if (brand && productsOfBrand(get().products, brand.name).length > 0) throw new Error('La marca tiene productos asignados.')
-        set((s) => ({ brands: s.brands.filter((b) => b.id !== id) }))
+        const { brands, products } = get()
+        const index = brands.findIndex((b) => b.id === id)
+        if (index < 0) return
+        const removed = brands[index]
+        if (productsOfBrand(products, removed.name).length > 0) throw new Error('La marca tiene productos asignados.')
+        set({ brands: brands.filter((b) => b.id !== id) })
+        deleteBrandApi(id).catch((error: unknown) => {
+          set((s) => ({ brands: restoreAt(s.brands, removed, index) }))
+          toast(`No se eliminó "${removed.name}": ${errorMessage(error, 'error del servidor.')}`, 'danger')
+        })
       },
 
       toggleBrand: (id) => {
         const next = !get().brands.find((b) => b.id === id)?.active
-        set((s) => ({ brands: s.brands.map((b) => (b.id === id ? { ...b, active: next } : b)) }))
+        const setActive = (active: boolean) => set((s) => ({ brands: s.brands.map((b) => (b.id === id ? { ...b, active } : b)) }))
+        setActive(next)
+        setBrandActiveApi(id, next)
+          .then((brand) => set((s) => ({ brands: s.brands.map((b) => (b.id === id ? brand : b)) })))
+          .catch((error: unknown) => {
+            setActive(!next)
+            toast(`No se cambió el estado de la marca: ${errorMessage(error, 'error del servidor.')}`, 'danger')
+          })
         return next
       },
 
-      reset: () => set({ products: PRODUCTS_MOCK, categories: CATEGORIES_MOCK, brands: BRANDS_MOCK }),
+      // Mantenimiento: los productos vuelven a la demo; la taxonomía se relee de la API (no hay mocks que restaurar).
+      reset: () => {
+        set({ products: PRODUCTS_MOCK })
+        void loadTaxonomy()
+      },
     }),
     {
       name: STORAGE_KEYS.CATALOG,
@@ -166,6 +204,17 @@ export const useCatalogStore = create<CatalogState>()(
     },
   ),
 )
+
+/** Carga categorías y marcas desde la API (al iniciar o restaurar la sesión). */
+async function loadTaxonomy(): Promise<void> {
+  try {
+    useCatalogStore.setState(await fetchTaxonomy())
+  } catch (error) {
+    toast(`No se pudieron cargar categorías y marcas: ${errorMessage(error, 'error del servidor.')}`, 'danger')
+  }
+}
+
+onAuthenticated(() => void loadTaxonomy())
 
 /** Lecturas fuera de React para otros features (respaldo, registro de pedidos). */
 export const getCatalogSnapshot = () => {

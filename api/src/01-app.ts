@@ -4,6 +4,7 @@ import helmet from 'helmet'
 import type { ProveedorIdentidad } from './03-pipeline-conexiones/00-director-conexiones.js'
 import { ErrorApp, manejarErrores, noEncontrado } from './04-pipeline-http/00-director-http.js'
 import { autenticar, crearRouterSesion } from './05-pipeline-acceso/00-director-acceso.js'
+import { crearRouterAdminTaxonomia, crearRouterTiendaTaxonomia } from './06-pipeline-catalogo/00-director-catalogo.js'
 
 export interface DependenciasApp {
   /** Comprueba la base de datos; se inyecta para poder simular fallos en las pruebas. */
@@ -40,7 +41,11 @@ export function crearApp({ pingBD, identidad, origenes, extender }: Dependencias
   const admin = express.Router()
   admin.use(autenticar(identidad))
   admin.use(crearRouterSesion(identidad))
+  admin.use(crearRouterAdminTaxonomia())
   app.use('/api/v1/admin', admin)
+
+  // /api/v1/tienda/* es público y de solo lectura.
+  app.use('/api/v1/tienda', crearRouterTiendaTaxonomia())
 
   extender?.(app)
 

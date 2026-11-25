@@ -4,7 +4,7 @@ import { delay } from '@/84-pipeline-persistencia-demo/04-delay'
 import { STORAGE_KEYS } from '@/84-pipeline-persistencia-demo/02-storage'
 import { normalizeAccess, templateAccess } from './03-access'
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
-import { configureSessionRejected } from '@/84-pipeline-persistencia-demo/05-api.client'
+import { configureSessionRejected, notifyAuthenticated } from '@/84-pipeline-persistencia-demo/05-api.client'
 import { hashPassword } from '../10-pipeline-cambio-contrasena/04-password'
 import { normalizeEmail } from '../08-pipeline-edicion-usuarios/03-userRules'
 import { DEFAULT_AVATAR } from '../86-pipeline-datos-demo-personas/02-users.mock'
@@ -70,6 +70,7 @@ export const useAccessStore = create<AccessState>()(
         try {
           const user = await signIn(normalizeEmail(email), password)
           set({ ...sessionState(user), isLoading: false })
+          notifyAuthenticated()
           return { ok: true, user }
         } catch (error) {
           set({ isLoading: false })
@@ -166,5 +167,8 @@ export const resetAccess = (): void => {
 }
 
 // Restaura o invalida la sesión con Firebase + API al cargar, y la cierra si la API la rechaza.
-watchSession((user) => useAccessStore.setState(sessionState(user)))
+watchSession((user) => {
+  useAccessStore.setState(sessionState(user))
+  if (user) notifyAuthenticated()
+})
 configureSessionRejected(() => useAccessStore.getState().logout())

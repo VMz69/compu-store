@@ -34,6 +34,16 @@ export const configureSessionRejected = (handler: () => void): void => {
   onSessionRejected = handler
 }
 
+const authenticatedListeners = new Set<() => void>()
+
+/** Registra una carga de datos que debe ejecutarse cada vez que hay sesión (inicio o restauración). */
+export const onAuthenticated = (listener: () => void): void => {
+  authenticatedListeners.add(listener)
+}
+
+/** Lo invoca el pipeline de sesión cuando la API confirma al usuario. */
+export const notifyAuthenticated = (): void => authenticatedListeners.forEach((listener) => listener())
+
 const API_URL = import.meta.env.VITE_API_URL
 
 export const apiClient = axios.create({ baseURL: API_URL, timeout: 15_000 })
