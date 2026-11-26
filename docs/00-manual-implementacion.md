@@ -324,7 +324,7 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 | L07 | A | 45–52, 55–64 | Completado (L07A: API · L07B: store conectado; funcionalidades verificadas con API real y Chrome headless) | `feat(L07A)` + `feat(L07B)` · 25-11-2026 · rama `feat/api` |
 | L08 | A | cierre (contingencia) | Contingencia: solo si B no se completa a tiempo | |
 | L09 | B | 02, 03, 04 | Completado (204 pruebas; demostración manual con Firebase real confirmada por el propietario) | `feat(L09)` · 25-11-2026 · rama `feat/api` |
-| L10 | B | 42 | Completado (233 pruebas; los canales, 43, pasan a L13) | `feat(L10)` · 25-11-2026 · rama `feat/api` |
+| L10 | B | 42 | Completado (233 pruebas; demostración manual con Firebase real confirmada por el propietario, 26-11-2026; los canales, 43, pasan a L13) | `feat(L10)` · 25-11-2026 · rama `feat/api` |
 | L11 | B | 14, 15, 16 | Pendiente | |
 | L12 | B | 37, 38, 39 | Pendiente | |
 | L13 | B | 18–22, 26, 27, 43 | Pendiente | |
