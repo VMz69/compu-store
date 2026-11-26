@@ -126,7 +126,7 @@ Rutas públicas de solo lectura bajo `/api/v1/tienda`, salvo la validación del 
 | `GET /tienda/identidad` | nombre, contacto, horarios, WhatsApp, textos, redes y moneda |
 | `POST /tienda/carrito/validar` | `{ lineas: [{ productoId, cantidad }] }` (1–50 líneas, cantidad 1–99, sin repetidos) → precios y existencias recalculados por línea (`ok \| ajustada \| agotado \| no-disponible`), `total` y `valido`. No reserva ni crea pedidos. 30 peticiones/min por IP → 429 `TOO_MANY_REQUESTS` |
 
-## Despliegue en Railway (pospuesto a L08, decisión D-02)
+## Despliegue en Railway (L19 «Despliegue final»; L08 solo como contingencia — decisión D-02)
 1. **Base de datos:** nuevo servicio desde la imagen Docker `mariadb:11.8`.
    - Volumen montado en `/var/lib/mysql`.
    - Variables: `MARIADB_ROOT_PASSWORD`, `MARIADB_DATABASE=compustore`, `MARIADB_USER=compustore` y `MARIADB_PASSWORD`, todas generadas en Railway.

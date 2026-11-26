@@ -156,12 +156,15 @@ Los nombres son orientativos: los definitivos se fijan en el plan de cada lote. 
 ## 6. Dependencias
 
 ```text
-L00 → L01 → L02 → L03 → L04 → L05 → L06 → L07 → L08   (Fase A)
-                                                  ↓
-L09 → L10 → L11 → L12 → L13 → L14 → L15 → L16 → L18   (Fase B)
+L00 → L01 → L02 → L03 → L04 → L05 → L06 → L07   (Fase A · tag v1.0-fase-a)
+                                            ↓
+L09 → L10 → L11 → L12 → L13 → L14 → L15 → L16 → L18 → L19   (Fase B + despliegue final)
                └──────────── L17 (después de L09) ─┘
+                                            ┆
+                    L08 (contingencia: solo si B no se completa a tiempo)
 ```
 L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita en producción solo al cerrar L15.
+**Cambio de plan (25-11-2026):** A queda estable en `v1.0-fase-a` al cerrar L07 y se sigue directo con B. El despliegue se hace una sola vez, al final, en L19 sobre A + B. L08 solo se ejecuta si B no llega a tiempo, para publicar A sola.
 
 ---
 
@@ -216,12 +219,13 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 - Store: los adaptadores reemplazan los mocks. Carrito, favoritos, tema, carrusel y contacto siguen locales; si el carrusel muestra productos o precios, los lee de la API. Las reseñas conservan su composición, sin datos ficticios presentados como reales.
 - **Cierre:** un cambio hecho en el admin se ve en la tienda, y el mensaje de WhatsApp sale con precios y existencias reales.
 
-**L08 — Cierre de la Fase A**
+**L08 — Cierre de la Fase A (lote de contingencia)**
+- **Solo se ejecuta si la Fase B no se completa a tiempo.** En ese caso publica A sola con estas tareas. Si B se completa, L08 no se ejecuta y sus tareas pasan a L19, aplicadas a A + B.
 - Admin: las vistas fuera de A quedan bloqueadas como "pendiente", sin escrituras simuladas en producción.
 - Vercel: `/admin` y `/store` como proyectos separados, con `VITE_API_URL`, CORS final y Open Graph para WhatsApp.
 - Respaldo en producción con una restauración verificada (D-08).
 - Checklist de aceptación de A: 2 cuentas seguras, 3 vistas reales, cambios reflejados en la tienda, carrito + WhatsApp, sin escrituras simuladas y respaldos verificables.
-- **Cierre:** Fase A aceptada con el tag `v1.0-fase-a`.
+- **Cierre:** Fase A desplegada y aceptada. El tag `v1.0-fase-a` ya marca la versión A estable (cierre de L07); si L08 se ejecuta, el despliegue se etiqueta `v1.1-fase-a`.
 
 ### FASE B — 37 funcionalidades
 
@@ -266,7 +270,15 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 - `15-reportes`: dashboard, métricas comerciales, historial y estadísticas de clientes. `16-mantenimiento`: herramientas definidas en D-09.
 - **Cierre:** ninguna vista del admin queda bloqueada; regresión completa y tag `v2.0-fase-b`.
 
-**Cobertura:** A = 01, 05, 06–11, 13, 45–52, 55–64 (27) · B = 02–04, 12, 14–44 (excepto 13), 53, 54 (37) · **Total: 64.**
+**L19 — Despliegue final** · *sin funcionalidades nuevas; tareas de L08 aplicadas a A + B*
+- Railway: API + MariaDB 11.8 (D-02), con migraciones y seed en producción. Vercel: `/admin` y `/store` como proyectos separados, con `VITE_API_URL`.
+- CORS final (orígenes de producción), Open Graph para WhatsApp, y `title` y `description` de `index.html` desde la identidad (deuda de L07B).
+- Respaldo en producción con una restauración verificada (D-08).
+- Vistas: ninguna queda «pendiente», porque B las conecta todas; sin escrituras simuladas en producción. División del bundle del admin (aviso > 500 kB, L03).
+- Checklist de aceptación de A + B: 2 cuentas seguras y RBAC, vistas reales, cambios del admin reflejados en la tienda, carrito + WhatsApp validados, circuito pedido → reserva → factura → stock, sin escrituras simuladas y respaldos verificables.
+- **Cierre:** A + B en producción y aceptadas, con el tag `v2.1-produccion`.
+
+**Cobertura:** A = 01, 05, 06–11, 13, 45–52, 55–64 (27) · B = 02–04, 12, 14–44 (excepto 13), 53, 54 (37) · **Total: 64.** L08 (contingencia) y L19 (despliegue final) no agregan funcionalidades.
 
 ---
 
@@ -281,7 +293,7 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 | D-05 | Dinero en JSON | **Resuelta (L00):** string decimal `"123.45"`; IVA como porcentaje `"13.00"` | L00 |
 | D-06 | Sobre de respuesta y paginación | **Resuelta (L00):** `{data, meta:{page,limit,total,totalPages}}`, `limit` ≤ 100; errores `{error:{code,message,details?}}` | L00 |
 | D-07 | Vencimientos de reservas, cotizaciones y lotes | Estado derivado por fecha al leer + barrido periódico en el proceso | L14 |
-| D-08 | Respaldos en producción | Backups de Railway + dump externo periódico; restauración probada | L08 |
+| D-08 | Respaldos en producción | Backups de Railway + dump externo periódico; restauración probada | L19 (L08 si hay contingencia) |
 | D-09 | Alcance de la 44 (mantenimiento desde la UI) | Definirlo tras inspeccionar la vista | L18 |
 | D-10 | Orden B: ofertas (10) antes que pedidos (11) y el nuevo 16 | **Resuelta (L00):** aceptada | L00 |
 | D-11 | Librería de PDF | pdfkit o pdfmake (sin navegador headless) | L15 |
@@ -308,7 +320,7 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 | L05 | A | 06, 09 | Completado (demo con Cloudinary real, 25-11-2026) | `feat(L05)` · 25-11-2026 · rama `feat/api` |
 | L06 | A | 10, 11, 13 | Completado | `feat(L06)` · 25-11-2026 · rama `feat/api` |
 | L07 | A | 45–52, 55–64 | Completado (L07A: API · L07B: store conectado; funcionalidades verificadas con API real y Chrome headless) | `feat(L07A)` + `feat(L07B)` · 25-11-2026 · rama `feat/api` |
-| L08 | A | cierre | Pendiente | |
+| L08 | A | cierre (contingencia) | Contingencia: solo si B no se completa a tiempo | |
 | L09 | B | 02, 03, 04 | Pendiente | |
 | L10 | B | 42, 43 | Pendiente | |
 | L11 | B | 14, 15, 16 | Pendiente | |
@@ -319,8 +331,11 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 | L16 | B | 29–32 | Pendiente | |
 | L17 | B | 40, 41, 53, 54 | Pendiente | |
 | L18 | B | 17, 28, 44 · cierre | Pendiente | |
+| L19 | A + B | despliegue final | Pendiente | |
 
-Estados posibles: Pendiente · En progreso · Completado · Bloqueado.
+Estados posibles: Pendiente · En progreso · Completado · Bloqueado · Contingencia.
+
+**Versión A estable:** `v1.0-fase-a` (25-11-2026), sobre el cierre de L07. Sin desplegar: el despliegue va en L19 (o en L08 si hay contingencia).
 
 ---
 
@@ -436,6 +451,8 @@ Estados posibles: Pendiente · En progreso · Completado · Bloqueado.
 | 25-11-2026 | L07B | — | `store/.env.example` (nuevo) con `VITE_API_URL` y `VITE_UI_TRACEABILITY`; `store/.env` sigue fuera de git | `store/.env.example` |
 | 25-11-2026 | L07 | — | fix(L07), requisito del alcance A: el WhatsApp de compra directa (ficha y barra móvil) se valida igual que el carrito. `useProductWhatsAppValidation` (`24/05`) llama a `POST /tienda/carrito/validar` con una línea al abrir la ficha y tras cada cambio de cantidad (300 ms); el mensaje usa el precio y la cantidad del servidor y avisa con los toasts existentes si cambiaron o si el producto se agotó o ya no está disponible. Mientras valida, o si la API falla, el enlace es `'#'`: los 3 botones de WhatsApp (carrito, ficha y barra móvil) ignoran el clic (`preventDefault`) y exponen `aria-disabled`, sin cambiar clases ni estructura. Verificado contra `compustore_test` con Chrome headless y clics reales: precio cambiado → toast y mensaje con $17.50; stock 1 con cantidad 3 → toast y «Cantidad: 1»; API caída → ficha y carrito no abren pestaña (un ancla testigo sin guarda sí la abre). La barra móvil comparte la guarda, pero no se ejecutó en un viewport móvil | `store/src/24-pipeline-compra-producto/05-validacion-consulta.ts`; `09/03`, `23/04`, `24/04` |
 | 25-11-2026 | L07 | — | Pedido del propietario: los cambios del admin se ven al navegar, sin recargar. El catálogo pasa a un store reactivo (`useCatalogStore`; los hooks `useProducts`/`useCategories`/`useBrands` entran en las dependencias de los `useMemo` de filtros, conteos, inicio, carrusel, sugerencias, favoritos y detalle). `refrescar()` (`38/06`) vuelve a pedir identidad y catálogo en segundo plano y depura carrito y favoritos. Se dispara así: (1) en cada cambio de ruta desde `useScrollToTop` (`37/01`), con un mínimo de 10 s entre descargas; (2) el clic en cualquier enlace a `#/` (el logo) lo fuerza, también estando ya en la portada. Sin pantalla de carga; si la API falla se conservan los datos en silencio. Desviación del plan: se planeó con `hashchange`, pero HashRouter navega con `pushState`, que no lo emite. Límite: lo que se calcula al cargar un módulo con `STORE_CONFIG` (redes del pie, pilares, asuntos de contacto) se actualiza solo al recargar (L10). Verificado con Chrome headless sobre `compustore_test` en puertos aislados (API 3001, store 5175): precio nuevo al navegar pasados 10 s, refresco forzado por el logo desde otra vista y desde la portada, sin descarga dentro de los 10 s, producto oculto retirado del listado y API caída sin pantalla de error; regresión de fix(L07) en verde | `store/src/38-pipeline-datos-api/03-catalogo.datos.ts`, `06-refresco.ts`; `store/src/37-pipeline-layout-tienda/01-restaurar-desplazamiento.ts` |
+| 25-11-2026 | — | — | Cambio de plan del propietario: (1) L08 pasa a ser lote de contingencia y solo se ejecuta si B no se completa a tiempo; (2) nuevo L19 «Despliegue final» al final de B, con las tareas de L08 (Railway, Vercel, CORS, Open Graph, respaldo en producción con D-08 y aceptación) aplicadas a A + B; (3) el estado actual se marca como versión A estable con el tag `v1.0-fase-a`. Se ajustan §6, §7 (L08, L19 y cobertura), §8 (D-08 → L19) y §9. Las referencias históricas a «L08» en esta bitácora (Railway de L01, Open Graph e `index.html` de L07B, bundle del admin de L03, bloqueo de Ajustes › Usuarios de L03) se leen como L19, o como L08 si hay contingencia | este documento |
+| 25-11-2026 | — | — | Alcance de `v1.0-fase-a`: las 27 funcionalidades de A implementadas y verificadas en local (API con 99 pruebas; store y admin conectados). Pendiente fuera del tag: despliegue (L19), y en el admin las vistas fuera de A siguen con datos de demostración hasta que B las conecte (antes se bloqueaban en L08) | `git tag v1.0-fase-a` |
 
 ---
 
