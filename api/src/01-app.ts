@@ -11,6 +11,7 @@ import {
   crearRouterTiendaTaxonomia,
 } from './06-pipeline-catalogo/00-director-catalogo.js'
 import { crearRouterAdminInventario } from './07-pipeline-inventario/00-director-inventario.js'
+import { crearRouterTienda } from './08-pipeline-tienda/00-director-tienda.js'
 
 export interface DependenciasApp {
   /** Comprueba la base de datos; se inyecta para poder simular fallos en las pruebas. */
@@ -55,7 +56,7 @@ export function crearApp({ pingBD, identidad, imagenes, origenes, extender }: De
   app.use('/api/v1/admin', admin)
 
   // /api/v1/tienda/* es público y de solo lectura.
-  app.use('/api/v1/tienda', crearRouterTiendaTaxonomia(), crearRouterTiendaProductos())
+  app.use('/api/v1/tienda', crearRouterTiendaTaxonomia(), crearRouterTiendaProductos(), crearRouterTienda())
 
   extender?.(app)
 

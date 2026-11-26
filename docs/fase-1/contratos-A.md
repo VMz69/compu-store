@@ -6,7 +6,7 @@
 - Prefijo `/api/v1`; `admin/*` autenticado (token de Firebase en `Authorization: Bearer`); `tienda/*` público.
 - Éxito `{data, meta?}`; `meta = {page, limit, total, totalPages}`; `limit` ≤ 100.
 - Error `{error:{code, message, details?}}`. Códigos: `VALIDATION_ERROR` 400/422, `UNAUTHENTICATED` 401,
-  `FORBIDDEN` 403, `NOT_FOUND` 404, `CONFLICT` 409, `BUSINESS_RULE` 422.
+  `FORBIDDEN` 403, `NOT_FOUND` 404, `CONFLICT` 409, `BUSINESS_RULE` 422, `TOO_MANY_REQUESTS` 429 (L07A).
 - Dinero: string `"0.00"` (DECIMAL 12,2). IVA: porcentaje como string `"13.00"`. El precio incluye IVA; el costo no.
 - Fechas: ISO 8601 UTC (`2026-11-23T15:00:00.000Z`). La fecha de vencimiento de un lote es `YYYY-MM-DD` o `null`.
 - Identificadores: producto `id:number`; categoría y marca por `slug` (inmutable); lote `id:number`.
@@ -39,7 +39,7 @@ Los nombres definitivos del esquema Prisma se fijan en L02 a partir de esta tabl
 | POST /admin/productos/:id/ajustes · PUT /admin/productos/:id/existencias · GET /admin/inventario/metricas | ajuste rápido, edición de stock/lotes y métricas | L06 |
 | GET /tienda/categorias · /tienda/marcas | solo activas, con `totalProductos` | L04/L07 |
 | GET /tienda/productos?q&categoria&marca&ofertas&orden&page&limit | listado público (solo publicados) | L07 |
-| GET /tienda/productos/:id · /tienda/productos/:id/relacionados | detalle y relacionados | L07 |
+| GET /tienda/productos/:id · /tienda/productos/:id/relacionados?limit | detalle y relacionados (`limit` 1–12, 4 por defecto) | L07 |
 | GET /tienda/identidad | identidad pública | L07 |
 | POST /tienda/carrito/validar | recálculo de precios y existencias | L07 |
 
@@ -90,7 +90,15 @@ Salida (no reserva stock ni crea pedidos):
   "cantidadDisponible": 1, "subtotal": "525.00", "estado": "ajustada" }],
   "total": "525.00", "valido": false }
 ```
-`estado` ∈ `ok | ajustada | agotado | no-disponible`.
+`estado` ∈ `ok | ajustada | agotado | no-disponible`. En `no-disponible` (producto inexistente u oculto), `precioUnitario` es `null` y `nombre` es `null` si el producto no existe; en `agotado` y `no-disponible`, el subtotal es `"0.00"`. `valido` = todas las líneas en `ok`. Repetir un `productoId` o enviar campos extra (precios, totales) → 400 (L07A).
+
+### 4.6 Identidad pública (L07A)
+```json
+{ "nombre": "CompuStore SV", "eslogan": "…", "ciudad": "…", "pais": "…", "direccion": "…", "direccionCorta": "…",
+  "telefonos": ["7038-8225"], "whatsapp": "50370388225", "correo": "…", "horario": "…", "horarioCorto": "…",
+  "acercaDe": "…", "mision": "…", "vision": "…", "valores": ["…"], "redes": { "facebook": "https://…" },
+  "moneda": { "codigo": "USD", "simbolo": "$", "locale": "en-US" } }
+```
 
 ## 5. Adaptadores (D-14): qué traduce cada frontend
 | Campo API | admin `Product` | store `Product` |

@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto'
 import type { ProveedorImagenes } from '../03-pipeline-conexiones/00-director-conexiones.js'
 import { ErrorApp, meta, rango, type Paginacion } from '../04-pipeline-http/00-director-http.js'
 import { registrarExistenciasIniciales, type ExistenciasIniciales } from '../07-pipeline-inventario/00-director-inventario.js'
-import type { CrearProducto, EditarProducto } from './06-productos.schema.js'
+import type { ConsultaTienda, CrearProducto, EditarProducto } from './06-productos.schema.js'
 import { slugUnico, type Pagina } from './03-taxonomia.service.js'
 import * as repo from './08-productos.repository.js'
 import * as imagenes from './09-imagenes.service.js'
@@ -130,16 +130,41 @@ export async function listar(paginacion: Paginacion): Promise<Pagina<ProductoAdm
 
 export const obtener = async (id: number): Promise<ProductoAdminDto> => aAdmin(await exigirProducto(id))
 
-/** Tienda: solo publicados (filtros, búsqueda y orden llegan en L07). */
-export async function listarPublicos(paginacion: Paginacion): Promise<Pagina<ProductoPublicoDto>> {
-  const [filas, total] = await repo.listar(rango(paginacion), true)
-  return { data: filas.map(aPublico), meta: meta(paginacion, total) }
+/** Tienda: solo publicados, con búsqueda, filtros, orden y paginación (L07). */
+export async function listarPublicos(consulta: ConsultaTienda): Promise<Pagina<ProductoPublicoDto>> {
+  const { page, limit, orden, ...filtros } = consulta
+  const [ids, total] = await Promise.all([repo.idsPublicos(filtros, orden, rango({ page, limit })), repo.contarPublicos(filtros)])
+  const filas = await repo.buscarVarios(ids)
+  return { data: filas.map(aPublico), meta: meta({ page, limit }, total) }
 }
 
-export async function obtenerPublico(id: number): Promise<ProductoPublicoDto> {
+async function exigirPublicado(id: number): Promise<repo.ProductoDetalle> {
   const producto = await repo.buscar(id)
   if (!producto?.publicado) throw noEncontrado(id)
-  return aPublico(producto)
+  return producto
+}
+
+export const obtenerPublico = async (id: number): Promise<ProductoPublicoDto> => aPublico(await exigirPublicado(id))
+
+/** Publicados de la misma categoría o marca (404 si el producto no está publicado). */
+export async function relacionados(id: number, limite: number): Promise<ProductoPublicoDto[]> {
+  const producto = await exigirPublicado(id)
+  return (await repo.relacionados(producto, limite)).map(aPublico)
+}
+
+/** Lo que otro dominio necesita para vender un producto (§5); los ids inexistentes no aparecen. */
+export interface ProductoVendible {
+  id: number
+  sku: string
+  nombre: string
+  /** Precio base como string decimal (D-05); en L12 lo sustituye el precio efectivo. */
+  precio: string
+  publicado: boolean
+}
+
+export async function obtenerProductosVendibles(ids: number[]): Promise<ProductoVendible[]> {
+  const filas = await repo.vendibles([...new Set(ids)])
+  return filas.map((p) => ({ id: p.id, sku: p.sku, nombre: p.nombre, precio: importe(p.precio), publicado: p.publicado }))
 }
 
 /* ---------- Escritura ---------- */

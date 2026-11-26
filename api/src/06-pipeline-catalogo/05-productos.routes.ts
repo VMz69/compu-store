@@ -3,11 +3,14 @@ import type { ProveedorImagenes } from '../03-pipeline-conexiones/00-director-co
 import { ErrorApp, esquemaPaginacion, validar, type Paginacion } from '../04-pipeline-http/00-director-http.js'
 import { usuarioDe } from '../05-pipeline-acceso/00-director-acceso.js'
 import {
+  esquemaConsultaTienda,
   esquemaCrearProducto,
   esquemaEditarProducto,
   esquemaIdImagen,
   esquemaIdProducto,
   esquemaPublicado,
+  esquemaRelacionados,
+  type ConsultaTienda,
   type CrearProducto,
   type EditarProducto,
 } from './06-productos.schema.js'
@@ -67,11 +70,15 @@ export function crearRouterAdminProductos(proveedor: ProveedorImagenes): Router 
 /** Lectura pública (se monta bajo /api/v1/tienda): solo productos publicados. */
 export function crearRouterTiendaProductos(): Router {
   const router = Router()
-  router.get('/productos', conPaginacion, async (req, res) => {
-    res.json(await servicio.listarPublicos(paginacionDe(req)))
+  router.get('/productos', validar({ query: esquemaConsultaTienda }), async (req, res) => {
+    res.json(await servicio.listarPublicos(req.query as unknown as ConsultaTienda))
   })
   router.get('/productos/:id', conId, async (req, res) => {
     res.json({ data: await servicio.obtenerPublico(idDe(req)) })
+  })
+  router.get('/productos/:id/relacionados', validar({ params: esquemaIdProducto, query: esquemaRelacionados }), async (req, res) => {
+    const { limit } = req.query as unknown as { limit: number }
+    res.json({ data: await servicio.relacionados(idDe(req), limit) })
   })
   return router
 }

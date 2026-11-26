@@ -32,6 +32,12 @@ export type Existencias = Prisma.ProductoGetPayload<{ select: typeof EXISTENCIAS
 export const existencias = (id: number, cliente: Tx = prisma) =>
   cliente.producto.findUnique({ where: { id }, select: EXISTENCIAS })
 
+/** Stock físico de varios productos (los ids inexistentes no aparecen). */
+export const stockDe = (ids: number[]) =>
+  ids.length === 0
+    ? Promise.resolve([])
+    : prisma.producto.findMany({ where: { id: { in: ids } }, select: { id: true, stock: true } })
+
 export interface Metricas {
   total: number
   publicados: number

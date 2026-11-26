@@ -10,6 +10,7 @@ export type CodigoError =
   | 'NOT_FOUND'
   | 'CONFLICT'
   | 'BUSINESS_RULE'
+  | 'TOO_MANY_REQUESTS'
   | 'SERVICE_UNAVAILABLE'
   | 'INTERNAL_ERROR'
 

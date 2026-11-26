@@ -1,5 +1,6 @@
 import { prisma } from '../03-pipeline-conexiones/00-director-conexiones.js'
-import type { CondicionProducto, Prisma } from '../../generated/prisma/client.js'
+import { Prisma, type CondicionProducto } from '../../generated/prisma/client.js'
+import type { OrdenTienda } from './06-productos.schema.js'
 
 /** Cliente de Prisma dentro o fuera de una transacción. */
 export type Tx = Prisma.TransactionClient
@@ -59,6 +60,102 @@ export const listar = (rango: Rango, soloPublicados: boolean) => {
     prisma.producto.count({ where }),
   ])
 }
+
+/* ---------- Tienda: búsqueda, filtros y orden ---------- */
+
+export type Orden = OrdenTienda
+
+export interface FiltrosTienda {
+  q?: string | undefined
+  categoria?: string | undefined
+  marca?: string | undefined
+  ofertas: boolean
+}
+
+/** Desempate por id para que la paginación sea estable. `<=>` evita que una etiqueta NULL quede al final. */
+const ORDEN_SQL: Record<Orden, Prisma.Sql> = {
+  destacados: Prisma.sql`(p.etiqueta <=> 'Destacado') DESC, p.id ASC`,
+  'precio-asc': Prisma.sql`p.precio ASC, p.id ASC`,
+  'precio-desc': Prisma.sql`p.precio DESC, p.id ASC`,
+  descuento: Prisma.sql`(CASE WHEN p.precioAnterior > p.precio THEN p.precioAnterior - p.precio ELSE 0 END) DESC, p.id ASC`,
+  'nombre-asc': Prisma.sql`p.nombre ASC, p.id ASC`,
+}
+
+/** Escapa los comodines de LIKE para que `%` y `_` se busquen literalmente. */
+const patronLike = (texto: string) => `%${texto.replace(/[\\%_]/g, (c) => `\\${c}`)}%`
+
+/**
+ * WHERE del listado público. La intercalación utf8mb4_unicode_ci hace que LIKE
+ * ignore mayúsculas y acentos. Todos los valores van parametrizados.
+ */
+function condicionesTienda({ q, categoria, marca, ofertas }: FiltrosTienda): Prisma.Sql {
+  const condiciones = [Prisma.sql`p.publicado = TRUE`]
+  if (categoria) condiciones.push(Prisma.sql`c.slug = ${categoria}`)
+  if (marca) condiciones.push(Prisma.sql`m.slug = ${marca}`)
+  if (ofertas) condiciones.push(Prisma.sql`p.precioAnterior IS NOT NULL AND p.precioAnterior > p.precio`)
+  if (q) {
+    const patron = patronLike(q)
+    condiciones.push(Prisma.sql`(
+      p.nombre LIKE ${patron} OR p.descripcion LIKE ${patron}
+      OR c.nombre LIKE ${patron} OR c.slug LIKE ${patron}
+      OR m.nombre LIKE ${patron} OR m.slug LIKE ${patron}
+      OR EXISTS (SELECT 1 FROM especificaciones e
+                 WHERE e.productoId = p.id AND (e.clave LIKE ${patron} OR e.valor LIKE ${patron}))
+    )`)
+  }
+  return Prisma.join(condiciones, ' AND ')
+}
+
+const DESDE_TIENDA = Prisma.sql`FROM productos p
+  JOIN categorias c ON c.id = p.categoriaId
+  JOIN marcas m ON m.id = p.marcaId`
+
+/** Ids de la página pedida, en el orden solicitado. */
+export async function idsPublicos(filtros: FiltrosTienda, orden: Orden, rango: Rango): Promise<number[]> {
+  const filas = await prisma.$queryRaw<{ id: number }[]>`
+    SELECT p.id ${DESDE_TIENDA}
+    WHERE ${condicionesTienda(filtros)}
+    ORDER BY ${ORDEN_SQL[orden]}
+    LIMIT ${rango.take} OFFSET ${rango.skip}`
+  return filas.map((fila) => Number(fila.id))
+}
+
+export async function contarPublicos(filtros: FiltrosTienda): Promise<number> {
+  const [fila] = await prisma.$queryRaw<{ total: number | bigint }[]>`
+    SELECT COUNT(*) AS total ${DESDE_TIENDA}
+    WHERE ${condicionesTienda(filtros)}`
+  return Number(fila?.total ?? 0)
+}
+
+/** Detalle de varios productos, en el orden de `ids`. */
+export async function buscarVarios(ids: number[]): Promise<ProductoDetalle[]> {
+  if (ids.length === 0) return []
+  const filas = await prisma.producto.findMany({ where: { id: { in: ids } }, include: DETALLE })
+  const porId = new Map(filas.map((fila) => [fila.id, fila]))
+  return ids.flatMap((id) => porId.get(id) ?? [])
+}
+
+/** Publicados de la misma categoría o marca, sin el propio producto (regla de `getRelatedProducts` del store). */
+export const relacionados = (producto: { id: number; categoriaId: number; marcaId: number }, limite: number) =>
+  prisma.producto.findMany({
+    where: {
+      publicado: true,
+      id: { not: producto.id },
+      OR: [{ categoriaId: producto.categoriaId }, { marcaId: producto.marcaId }],
+    },
+    include: DETALLE,
+    orderBy: { id: 'asc' },
+    take: limite,
+  })
+
+/** Datos mínimos para vender (§5): los ids inexistentes no aparecen. */
+export const vendibles = (ids: number[]) =>
+  ids.length === 0
+    ? Promise.resolve([])
+    : prisma.producto.findMany({
+        where: { id: { in: ids } },
+        select: { id: true, sku: true, nombre: true, precio: true, publicado: true },
+      })
 
 export const buscar = (id: number, cliente: Tx = prisma) => cliente.producto.findUnique({ where: { id }, include: DETALLE })
 

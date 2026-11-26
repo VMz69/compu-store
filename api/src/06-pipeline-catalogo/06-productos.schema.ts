@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { esquemaPaginacion } from '../04-pipeline-http/00-director-http.js'
 import { esquemaLotes } from '../07-pipeline-inventario/00-director-inventario.js'
 
 /** Mismo patrón que el admin (`20-pipeline-validacion-producto/02-productValidation.ts`). */
@@ -109,6 +110,24 @@ export const esquemaEditarProducto = z.strictObject({
 })
 
 export const esquemaPublicado = z.strictObject({ publicado: z.boolean() })
+
+/** Órdenes del listado público (equivalen a `SortBy` del store, contratos-A §3). */
+export const ORDENES_TIENDA = ['destacados', 'precio-asc', 'precio-desc', 'descuento', 'nombre-asc'] as const
+
+/** Query de `GET /tienda/productos`: paginación (D-06) + búsqueda, filtros y orden. */
+export const esquemaConsultaTienda = esquemaPaginacion.extend({
+  q: z.string().trim().max(100, 'Máximo 100 caracteres.').optional().transform((valor) => valor || undefined),
+  categoria: slug.optional(),
+  marca: slug.optional(),
+  ofertas: z.enum(['true', 'false']).default('false').transform((valor) => valor === 'true'),
+  orden: z.enum(ORDENES_TIENDA).default('destacados'),
+})
+
+/** Query de `GET /tienda/productos/:id/relacionados`. */
+export const esquemaRelacionados = z.object({ limit: z.coerce.number().int().min(1).max(12).default(4) })
+
+export type ConsultaTienda = z.infer<typeof esquemaConsultaTienda>
+export type OrdenTienda = (typeof ORDENES_TIENDA)[number]
 
 export const esquemaIdImagen = z.object({ id: z.coerce.number().int().positive('Id no válido.') })
 

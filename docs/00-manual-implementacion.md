@@ -82,7 +82,7 @@ No se agregan tecnologías sin una necesidad funcional comprobada.
 ### 3.4 Convenciones de la API
 - Prefijo `/api/v1`, recursos en español, en plural y en kebab-case.
 - Respuestas `{ data, meta? }`; errores `{ error: { code, message, details? } }` (D-06).
-- Códigos: 200, 201, 204, 400, 401, 403, 404, 409 (conflicto o restricción), 422 (regla de negocio) y 503 (dependencia no disponible, p. ej. BD en `/health`).
+- Códigos: 200, 201, 204, 400, 401, 403, 404, 409 (conflicto o restricción), 422 (regla de negocio), 429 (límite de tasa en escrituras públicas) y 503 (dependencia no disponible, p. ej. BD en `/health`).
 
 ### 3.5 Frontends
 - Los adaptadores traducen el contrato de la API a los tipos existentes, dentro de la capa de datos de cada frontend (D-14).
@@ -307,7 +307,7 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 | L04 | A | 07, 08 | Completado | `feat(L04)` · 25-11-2026 · rama `feat/api` |
 | L05 | A | 06, 09 | Completado (demo con Cloudinary real, 25-11-2026) | `feat(L05)` · 25-11-2026 · rama `feat/api` |
 | L06 | A | 10, 11, 13 | Completado | `feat(L06)` · 25-11-2026 · rama `feat/api` |
-| L07 | A | 45–52, 55–64 | Pendiente | |
+| L07 | A | 45–52, 55–64 | En progreso (L07A completado: API; L07B: store) | `feat(L07A)` · 25-11-2026 · rama `feat/api` |
 | L08 | A | cierre | Pendiente | |
 | L09 | B | 02, 03, 04 | Pendiente | |
 | L10 | B | 42, 43 | Pendiente | |
@@ -414,6 +414,15 @@ Estados posibles: Pendiente · En progreso · Completado · Bloqueado.
 | 25-11-2026 | L06 | — | Un lote retirado registra su movimiento antes de borrarse; por `onDelete: SetNull` ese movimiento queda con `loteId` null y el número del lote se conserva en el motivo. Cambiar solo el vencimiento no genera movimiento. Los lotes se devuelven por id (el orden del formulario); el FEFO y el estado «vencido» derivado se aplican donde tienen consumidor (L14–L15, D-07) | `api/src/07-pipeline-inventario/05-lotes.service.ts` |
 | 25-11-2026 | L06 | — | Numeración de `07-inventario`: 00-director, 01-routes, 02-schema, 03-service, 04-repository, 05-lotes.service (coincide con §4). Pruebas en `tests/09-inventario.test.ts` | `api/src/07-pipeline-inventario/` |
 | 25-11-2026 | L06 | D-14 | Admin: `adjustStock` es optimista y deshace solo su delta si la API falla; `saveProduct` guarda el producto (PATCH) y, si la ficha cambió las existencias, hace el PUT con `stockEsperado` = el stock que se vio al abrirla. Si el PUT falla, la caché conserva los datos ya guardados y el modal sigue abierto. Se retira el aviso «disponible con el módulo de inventario (L06)». `useInventoryMetrics` lee las métricas de la API (se refrescan tras cada escritura) y se elimina el cálculo local `getInventoryMetrics`. Sin cambios en componentes | `admin/src/25-pipeline-persistencia-catalogo/01-store.ts`, `05-catalogo.api.ts`; `admin/src/24-…/02-useInventoryMetrics.ts` |
+| 25-11-2026 | L07 | — | Decisión del propietario: L07 se divide en L07A (API, con pruebas de integración completas para que L07B parta de contratos estables) y L07B (adaptadores del store, en otra sesión). El cierre de L07 se demuestra al terminar L07B | §0 (LxxA/LxxB) |
+| 25-11-2026 | L07A | — | `GET /tienda/productos` con `q`, `categoria`, `marca`, `ofertas`, `orden` y paginación. El orden por expresión (destacados, descuento) no cabe en `orderBy` de Prisma: una consulta SQL parametrizada (`Prisma.sql`) obtiene los ids de la página y el `COUNT`, y `findMany` trae el detalle. LIKE con `%`/`_` escapados; sin mayúsculas ni acentos por `utf8mb4_unicode_ci`. Destacados usa `etiqueta <=> 'Destacado'`: con `=`, una etiqueta NULL quedaba al final (lo detectó la prueba) | `api/src/06-pipeline-catalogo/08-productos.repository.ts`; `tests/10-tienda.test.ts` |
+| 25-11-2026 | L07A | — | `GET /tienda/productos/:id/relacionados?limit` (1–12, 4 por defecto): misma categoría o marca, por id, como `getRelatedProducts` del store | `api/src/06-pipeline-catalogo/05-productos.routes.ts` |
+| 25-11-2026 | L07A | — | Contratos §5: `obtenerProductosVendibles(ids)` (catálogo, precio base hasta L12) y `obtenerDisponibilidad(ids)` (inventario, stock físico; en L14 físico − reservado con el mismo contrato). Las consume `08-tienda` a través de los directores: tienda → catálogo → inventario, sin ciclos | `api/src/08-pipeline-tienda/03-tienda.service.ts` |
+| 25-11-2026 | L07A | — | No se crea un endpoint propio de disponibilidad porque no tendría consumidor: la cubren el campo `disponible` del producto público y `POST /tienda/carrito/validar` | §7 L07 |
+| 25-11-2026 | L07A | — | `POST /tienda/carrito/validar`: importes en centavos enteros y string decimal; `strictObject` rechaza precios o totales del navegador; los ids repetidos → 400. `precioUnitario`/`nombre` son `null` en `no-disponible` (contratos-A §4.5) | `api/src/08-pipeline-tienda/` |
+| 25-11-2026 | L07A | — | Límite de tasa propio (`04-http/05-limite-tasa`): ventana fija en memoria por IP, sin dependencia nueva (una sola instancia en Railway); 30/min en validar el carrito y reutilizable en L17 (D-13). Nuevo código `TOO_MANY_REQUESTS` 429, agregado a §3.4 | `api/src/04-pipeline-http/05-limite-tasa.ts` |
+| 25-11-2026 | L07A | — | `GET /tienda/identidad` (contratos-A §4.6), desde `ConfiguracionTienda` id = 1; 404 si no existe | `api/src/08-pipeline-tienda/01-tienda.routes.ts` |
+| 25-11-2026 | L07B | D-14 | Decisiones del propietario para L07B: (1) el pipeline es `store/src/38-pipeline-datos-api` (el último era 37); (2) precarga al arrancar (identidad, categorías, marcas y todos los productos publicados, de 100 en 100), y las vistas siguen síncronas con las funciones puras existentes; (3) si la API no responde al iniciar, se muestra un mensaje de error con reintento, sin rediseñar la UI y **nunca** cayendo a los mocks. Límite asumido: la precarga sirve para un catálogo pequeño; los precios o el stock desactualizados en el navegador los corrige `POST /tienda/carrito/validar` antes de WhatsApp | conversación L07 |
 
 ---
 

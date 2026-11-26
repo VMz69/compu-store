@@ -42,6 +42,15 @@ export async function obtenerExistencias(id: number): Promise<ExistenciasDto> {
 /** Métricas de inventario (misma fórmula que `getInventoryMetrics` del admin; valoración a precio de venta). */
 export const metricas = (): Promise<repo.Metricas> => repo.metricas()
 
+/**
+ * Unidades disponibles por producto (§5). En A es el stock físico; en L14 pasa a
+ * físico − reservado sin cambiar el contrato. Los ids inexistentes no aparecen en el mapa.
+ */
+export async function obtenerDisponibilidad(ids: number[]): Promise<Map<number, number>> {
+  const filas = await repo.stockDe([...new Set(ids)])
+  return new Map(filas.map((fila) => [fila.id, fila.stock]))
+}
+
 /* ---------- Escritura ---------- */
 
 /** Ajuste ±n de un producto sin lotes. El stock nunca queda negativo, aun con peticiones simultáneas. */
