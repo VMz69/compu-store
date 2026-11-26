@@ -109,6 +109,11 @@ export const ProductBuyBox = ({
 
             <a
               href={whatsappUrl}
+              // '#' = enlace aún no validado: el clic no navega (L07).
+              onClick={(event) => {
+                if (whatsappUrl === '#') event.preventDefault()
+              }}
+              aria-disabled={whatsappUrl === '#'}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full bg-whatsapp hover:bg-whatsapp-hover text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2 text-sm shadow-md transition-all active:scale-95"

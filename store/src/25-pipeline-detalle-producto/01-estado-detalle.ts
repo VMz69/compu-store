@@ -6,7 +6,7 @@ import { useFavorites } from '@/15-pipeline-preferencias-producto/00-director-pr
 import { useProductReviews } from '@/20-pipeline-estado-resenas/00-director-estado-resenas'
 import { calculateDiscountPercentage } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { getProductById, getProductImages, getRelatedProducts } from '@/10-pipeline-consulta-catalogo/00-director-consulta-catalogo'
-import { buildSingleProductUrl } from '@/24-pipeline-compra-producto/00-director-compra-producto'
+import { buildSingleProductUrl, useProductWhatsAppValidation } from '@/24-pipeline-compra-producto/00-director-compra-producto'
 
 /**
  * Compone la vista de detalle: producto, galería, stock, cantidad, relacionados, reseñas y WhatsApp.
@@ -30,6 +30,9 @@ export const useProductDetail = (productId?: string) => {
   const setQuantity = (next: number) =>
     setQuantities((current) => ({ ...current, [productKey]: Math.max(1, Math.min(next, maxQuantity)) }))
 
+  // La compra directa por WhatsApp usa el precio y la cantidad que confirma el servidor (L07).
+  const { purchase } = useProductWhatsAppValidation(product, quantity)
+
   const increment = () => setQuantity(quantity + 1)
   const decrement = () => setQuantity(quantity - 1)
 
@@ -49,7 +52,10 @@ export const useProductDetail = (productId?: string) => {
       ? calculateDiscountPercentage(product.originalPrice, product.price)
       : 0,
     isFavorite: product ? isFavorite(product.id) : false,
-    whatsappUrl: product ? buildSingleProductUrl(product, quantity) : '#',
+    whatsappUrl:
+      product && purchase
+        ? buildSingleProductUrl({ ...product, price: purchase.price }, purchase.quantity)
+        : '#',
     addToCart: () => product && addToCart(product, quantity),
     toggleFavorite: () => product && toggleFavorite(product),
   }

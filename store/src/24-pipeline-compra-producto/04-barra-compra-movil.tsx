@@ -52,6 +52,11 @@ export const ProductMobileBar = ({
 
         <a
           href={whatsappUrl}
+          // '#' = enlace aún no validado: el clic no navega (L07).
+          onClick={(event) => {
+            if (whatsappUrl === '#') event.preventDefault()
+          }}
+          aria-disabled={whatsappUrl === '#'}
           target="_blank"
           rel="noopener noreferrer"
           className="h-12 flex-1 min-w-0 rounded-xl bg-whatsapp hover:bg-whatsapp-hover text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md transition-all active:scale-95"
