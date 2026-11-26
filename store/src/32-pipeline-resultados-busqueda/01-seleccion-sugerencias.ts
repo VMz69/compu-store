@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { filterAndSort, products, useFilterStore } from '@/00-director-catalogo'
+import { filterAndSort, useFilterStore, useProducts } from '@/00-director-catalogo'
 
 const MAX_SUGGESTIONS = 6
 
@@ -11,6 +11,7 @@ const MAX_SUGGESTIONS = 6
  */
 export const useSearchSuggestions = () => {
   const searchQuery = useFilterStore((state) => state.searchQuery)
+  const products = useProducts()
 
   const suggestions = useMemo(() => {
     const term = searchQuery.trim()
@@ -19,7 +20,7 @@ export const useSearchSuggestions = () => {
       0,
       MAX_SUGGESTIONS,
     )
-  }, [searchQuery])
+  }, [products, searchQuery])
 
   return { suggestions, hasQuery: searchQuery.trim().length > 0 }
 }

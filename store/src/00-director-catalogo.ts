@@ -6,7 +6,7 @@ export { useCatalogStats } from '@/11-pipeline-categorias/00-director-categorias
 export { useFavorites } from '@/15-pipeline-preferencias-producto/00-director-preferencias-producto'
 export { useFilters } from '@/10-pipeline-consulta-catalogo/00-director-consulta-catalogo'
 export { filterAndSort, getDeals } from '@/10-pipeline-consulta-catalogo/00-director-consulta-catalogo'
-export { products } from '@/38-pipeline-datos-api/00-director-datos-api'
+export { useProducts } from '@/38-pipeline-datos-api/00-director-datos-api'
 export { BrandDetail } from '@/14-pipeline-listados-catalogo/00-director-listados-catalogo'
 export { BrandsView } from '@/12-pipeline-marcas/00-director-marcas'
 export { CatalogHub } from '@/11-pipeline-categorias/00-director-categorias'

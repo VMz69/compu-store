@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { products } from '@/38-pipeline-datos-api/00-director-datos-api'
+import { useProducts } from '@/38-pipeline-datos-api/00-director-datos-api'
 import { filterAndSort } from './01-consultas-productos'
 import { useFilterStore } from './03-filtros.store'
 import type { ProductFilters } from '@/00-director-modelos'
@@ -13,6 +13,7 @@ export const useFilters = (options: ProductFilters = {}) => {
   const sortBy = useFilterStore((state) => state.sortBy)
   const setSortBy = useFilterStore((state) => state.setSortBy)
   const resetFilters = useFilterStore((state) => state.resetFilters)
+  const products = useProducts()
 
   const filteredProducts = useMemo(
     () =>
@@ -23,7 +24,7 @@ export const useFilters = (options: ProductFilters = {}) => {
         searchQuery,
         sortBy,
       }),
-    [category, brand, onlyOffers, searchQuery, sortBy],
+    [products, category, brand, onlyOffers, searchQuery, sortBy],
   )
 
   return { filteredProducts, searchQuery, sortBy, setSortBy, resetFilters }

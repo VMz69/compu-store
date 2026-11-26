@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { products } from '@/38-pipeline-datos-api/00-director-datos-api'
+import { useProducts } from '@/38-pipeline-datos-api/00-director-datos-api'
 import { useFavStore } from '@/15-pipeline-preferencias-producto/00-director-preferencias-producto'
 import { useFavorites } from '@/15-pipeline-preferencias-producto/00-director-preferencias-producto'
 import { useToastStore } from '@/03-pipeline-notificaciones/00-director-notificaciones'
@@ -10,13 +10,14 @@ import { useToastStore } from '@/03-pipeline-notificaciones/00-director-notifica
  */
 export const useFavoritesView = () => {
   const { ids } = useFavorites()
+  const products = useProducts()
   const clearFavoritesStore = useFavStore((state) => state.clearFavorites)
   const pushToast = useToastStore((state) => state.pushToast)
   const [isClearModalOpen, setIsClearModalOpen] = useState(false)
 
   const favoriteProducts = useMemo(
     () => products.filter((product) => ids.includes(product.id)),
-    [ids],
+    [products, ids],
   )
 
   const requestClearFavorites = () => setIsClearModalOpen(true)

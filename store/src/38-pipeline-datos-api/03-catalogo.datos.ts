@@ -1,20 +1,24 @@
+import { create } from 'zustand'
 import type { Brand, Category, Product } from '@/00-director-modelos'
 import { aCategoria, aMarca, aProducto, type CategoriaApi, type MarcaApi, type ProductoApi } from './02-adaptadores'
 import { obtenerTodas } from './01-cliente-api'
 
 /**
- * Catálogo público precargado al arrancar (decisión L07B): las vistas lo leen de
- * forma síncrona, igual que antes leían los mocks. Se rellena en el mismo arreglo
- * para que los módulos que ya lo importaron vean los datos; para ver cambios del
- * admin basta con recargar la página.
+ * Catálogo público en memoria (L07B): se precarga al arrancar y se refresca al navegar
+ * (`06-refresco`). Es un store reactivo: cada recarga entrega arreglos nuevos y los
+ * hooks que lo leen vuelven a calcular sus listados, conteos y relacionados.
  */
-export const products: Product[] = []
-export const categories: Category[] = []
-export const brands: Brand[] = []
-
-const reemplazar = <T>(destino: T[], filas: T[]) => {
-  destino.splice(0, destino.length, ...filas)
+interface CatalogState {
+  products: Product[]
+  categories: Category[]
+  brands: Brand[]
 }
+
+export const useCatalogStore = create<CatalogState>(() => ({ products: [], categories: [], brands: [] }))
+
+export const useProducts = (): Product[] => useCatalogStore((state) => state.products)
+export const useCategories = (): Category[] => useCatalogStore((state) => state.categories)
+export const useBrands = (): Brand[] => useCatalogStore((state) => state.brands)
 
 export async function cargarCatalogo(): Promise<void> {
   const [productos, categorias, marcas] = await Promise.all([
@@ -22,7 +26,9 @@ export async function cargarCatalogo(): Promise<void> {
     obtenerTodas<CategoriaApi>('/tienda/categorias'),
     obtenerTodas<MarcaApi>('/tienda/marcas'),
   ])
-  reemplazar(products, productos.map(aProducto))
-  reemplazar(categories, categorias.map(aCategoria))
-  reemplazar(brands, marcas.map(aMarca))
+  useCatalogStore.setState({
+    products: productos.map(aProducto),
+    categories: categorias.map(aCategoria),
+    brands: marcas.map(aMarca),
+  })
 }

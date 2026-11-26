@@ -4,7 +4,7 @@ import { HashRouter } from 'react-router-dom'
 import './00-estilos-globales.css'
 import { normalizeInitialView } from '@/02-vista-inicial'
 import { EmptyState } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
-import { precargar } from '@/38-pipeline-datos-api/00-director-datos-api'
+import { iniciarRefresco, precargar } from '@/38-pipeline-datos-api/00-director-datos-api'
 
 normalizeInitialView()
 
@@ -46,6 +46,8 @@ const iniciar = async () => {
     renderError(() => void iniciar())
     return
   }
+  // Refresco en segundo plano al navegar y al pulsar el logo (los cambios del admin se ven sin recargar).
+  iniciarRefresco()
   const { default: App } = await import('./00-director-aplicacion.tsx')
   root.render(
     <StrictMode>

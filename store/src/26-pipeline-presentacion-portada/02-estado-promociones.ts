@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { promotions as plantillas } from '@/06-pipeline-datos-mock/00-director-datos-mock'
-import { products } from '@/38-pipeline-datos-api/00-director-datos-api'
+import { useProducts } from '@/38-pipeline-datos-api/00-director-datos-api'
 import { useUIStore } from '@/02-pipeline-preferencias-interfaz/00-director-preferencias-interfaz'
 import { calculateDiscountPercentage, formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import type { Product, Promotion } from '@/00-director-modelos'
@@ -24,7 +24,7 @@ const resolverTexto = (plantilla: string, catalogo: Product[]): string => {
   return plantilla
 }
 
-const conDatosReales = (promocion: Promotion): Promotion => ({
+const conDatosReales = (promocion: Promotion, products: Product[]): Promotion => ({
   ...promocion,
   discountText: resolverTexto(
     promocion.discountText,
@@ -43,7 +43,8 @@ export const useHeroSlider = () => {
   const activeSlide = useUIStore((state) => state.activeHeroSlide)
   const setSlide = useUIStore((state) => state.setHeroSlide)
   const [isPaused, setIsPaused] = useState(false)
-  const promotions = useMemo(() => plantillas.map(conDatosReales), [])
+  const products = useProducts()
+  const promotions = useMemo(() => plantillas.map((promocion) => conDatosReales(promocion, products)), [products])
   const total = promotions.length
   const promotion = promotions[activeSlide] ?? promotions[0]
 
