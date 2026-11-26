@@ -1,7 +1,7 @@
 import express, { Router, type Request, type RequestHandler } from 'express'
 import type { ProveedorImagenes } from '../03-pipeline-conexiones/00-director-conexiones.js'
 import { ErrorApp, esquemaPaginacion, validar, type Paginacion } from '../04-pipeline-http/00-director-http.js'
-import { usuarioDe } from '../05-pipeline-acceso/00-director-acceso.js'
+import { requierePermiso, usuarioDe } from '../05-pipeline-acceso/00-director-acceso.js'
 import {
   esquemaConsultaTienda,
   esquemaCrearProducto,
@@ -36,30 +36,36 @@ const cuerpoImagen: RequestHandler = (req, res, next) => {
 export function crearRouterAdminProductos(proveedor: ProveedorImagenes): Router {
   const router = Router()
 
-  router.get('/productos', conPaginacion, async (req, res) => {
+  // L09: el tablero también lee los productos; las imágenes se suben al crear o editar.
+  router.get('/productos', requierePermiso('productos', 'tablero'), conPaginacion, async (req, res) => {
     res.json(await servicio.listar(paginacionDe(req)))
   })
-  router.get('/productos/:id', conId, async (req, res) => {
+  router.get('/productos/:id', requierePermiso('productos', 'tablero'), conId, async (req, res) => {
     res.json({ data: await servicio.obtener(idDe(req)) })
   })
-  router.post('/productos', validar({ body: esquemaCrearProducto }), async (req, res) => {
+  router.post('/productos', requierePermiso('productos.crear'), validar({ body: esquemaCrearProducto }), async (req, res) => {
     res.status(201).json({ data: await servicio.crear(req.body as CrearProducto, usuarioDe(res).id) })
   })
-  router.patch('/productos/:id/publicado', validar({ params: esquemaIdProducto, body: esquemaPublicado }), async (req, res) => {
-    res.json({ data: await servicio.publicar(idDe(req), (req.body as { publicado: boolean }).publicado) })
-  })
-  router.patch('/productos/:id', validar({ params: esquemaIdProducto, body: esquemaEditarProducto }), async (req, res) => {
+  router.patch(
+    '/productos/:id/publicado',
+    requierePermiso('productos.visibilidad'),
+    validar({ params: esquemaIdProducto, body: esquemaPublicado }),
+    async (req, res) => {
+      res.json({ data: await servicio.publicar(idDe(req), (req.body as { publicado: boolean }).publicado) })
+    },
+  )
+  router.patch('/productos/:id', requierePermiso('productos.editar'), validar({ params: esquemaIdProducto, body: esquemaEditarProducto }), async (req, res) => {
     res.json({ data: await servicio.editar(proveedor, idDe(req), req.body as EditarProducto) })
   })
-  router.delete('/productos/:id', conId, async (req, res) => {
+  router.delete('/productos/:id', requierePermiso('productos.eliminar'), conId, async (req, res) => {
     await servicio.eliminar(proveedor, idDe(req))
     res.status(204).end()
   })
 
-  router.post('/imagenes', cuerpoImagen, async (req, res) => {
+  router.post('/imagenes', requierePermiso('productos.crear', 'productos.editar'), cuerpoImagen, async (req, res) => {
     res.status(201).json({ data: await imagenes.subir(proveedor, req.body, req.get('content-type')) })
   })
-  router.delete('/imagenes/:id', validar({ params: esquemaIdImagen }), async (req, res) => {
+  router.delete('/imagenes/:id', requierePermiso('productos.crear', 'productos.editar'), validar({ params: esquemaIdImagen }), async (req, res) => {
     await imagenes.descartar(proveedor, idDe(req))
     res.status(204).end()
   })

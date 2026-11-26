@@ -82,6 +82,23 @@ La API también acepta saltos de línea reales; en Railway se pega igual, con lo
 | `POST /api/v1/admin/sesion` | inicio de sesión: registra `ultimoAcceso` (UTC) |
 | `PUT /api/v1/admin/sesion/contrasena` | `{ "contrasena": "…" }`: cambio de la contraseña propia (≥8, minúscula, mayúscula y número); revoca los tokens anteriores → 204 |
 
+## Usuarios y RBAC (L09)
+- Permisos por **vista** (`productos`, `ajustes`…) y **acción** (`productos.crear`, `ajustes.usuarios`…), copiados del admin. El catálogo, los 5 roles (plantillas) y sus permisos los inserta la migración `rbac`; los accesos propios de cada usuario están en `usuarios_permisos` (el superadmin tiene acceso total sin filas).
+- `requierePermiso(...)` protege **todas** las rutas `/admin` salvo las de `/sesion`, y lee los permisos de la BD en cada petición. Sin permiso → 403 `PERMISSION_DENIED`. La matriz completa está en `tests/11-permisos.test.ts`, que además falla si una ruta nueva no lleva `requierePermiso`.
+- Mientras `debeCambiarContrasena` esté activo, todo `/admin` salvo `/sesion` responde 403 `PASSWORD_CHANGE_REQUIRED`.
+- `pnpm usuarios:vincular --rol <rol>` asigna la plantilla del rol si el usuario es nuevo o cambia de rol.
+
+| Método y ruta | Permiso | Uso |
+|---|---|---|
+| `GET /api/v1/admin/usuarios` | vista `ajustes` | lista con `accesos` (forma de la sesión) |
+| `POST /api/v1/admin/usuarios` | `ajustes.usuarios` | `{nombre, correo, telefono?, rol, activo, contrasena, debeCambiarContrasena}`: cuenta de Firebase + Usuario con la plantilla del rol → 201 (409 si el correo ya existe; si la BD falla, se borra la cuenta creada) |
+| `PATCH /api/v1/admin/usuarios/:id` | `ajustes.usuarios` | perfil parcial; cambiar el rol reinicia los accesos; `activo`/`correo` se sincronizan con Firebase (desactivar = deshabilitar + revocar sesiones) |
+| `PUT /api/v1/admin/usuarios/:id/accesos` | `ajustes.usuarios` | `{vistas, acciones}` normalizados (≥ 1 vista) |
+| `PUT /api/v1/admin/usuarios/:id/contrasena` | `ajustes.usuarios` | `{contrasena, debeCambiarContrasena}`: contraseña temporal con el Admin SDK → 204 |
+| `DELETE /api/v1/admin/usuarios/:id` | `ajustes.usuarios` | borra en la BD y después en Firebase → 204; 409 si tiene historial de inventario («desactívalo en su lugar») |
+
+Reglas: nadie se elimina, se desactiva, cambia su rol ni edita sus accesos (422); siempre queda un superadmin activo (422, con bloqueo de filas); solo un superadmin asigna ese rol o toca cuentas superadmin, y quien no lo es solo otorga lo que tiene (403).
+
 ## Productos e imágenes (L05)
 Las imágenes de productos se guardan en Cloudinary (D-17). El admin sube cada archivo como binario al guardar el producto; la API lo valida y lo sube.
 

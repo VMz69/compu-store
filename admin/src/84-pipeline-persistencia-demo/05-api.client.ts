@@ -29,7 +29,10 @@ export const configureToken = (provider: TokenProvider): void => {
   getToken = provider
 }
 
-/** Se invoca cuando la API responde 401 o 403 (sesión inválida o cuenta deshabilitada). */
+/**
+ * Se invoca cuando la API rechaza la sesión: 401, o 403 `FORBIDDEN` (cuenta no vinculada o desactivada).
+ * Un 403 por permiso (`PERMISSION_DENIED`) o por contraseña temporal no cierra la sesión (L09).
+ */
 export const configureSessionRejected = (handler: () => void): void => {
   onSessionRejected = handler
 }
@@ -59,7 +62,7 @@ apiClient.interceptors.response.use(undefined, (error: AxiosError<{ error?: { co
   if (error instanceof ApiError) return Promise.reject(error)
   const status = error.response?.status ?? 0
   const body = error.response?.data?.error
-  if (status === 401 || status === 403) onSessionRejected()
+  if (status === 401 || (status === 403 && body?.code === 'FORBIDDEN')) onSessionRejected()
   const message = body?.message ?? (status ? 'Error del servidor. Intenta de nuevo.' : 'No se pudo conectar con el servidor.')
   return Promise.reject(new ApiError(message, status, body?.code ?? 'NETWORK_ERROR'))
 })

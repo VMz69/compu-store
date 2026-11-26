@@ -11,8 +11,8 @@ import {
 import { ApiError, apiClient, configureToken } from '@/84-pipeline-persistencia-demo/05-api.client'
 import { ROLES } from '../86-pipeline-datos-demo-personas/00-director-datos-demo-personas'
 import { DEFAULT_AVATAR } from '../86-pipeline-datos-demo-personas/02-users.mock'
-import { templateAccess } from './03-access'
-import type { RoleId, User } from './05-types'
+import { normalizeAccess } from './03-access'
+import type { Permission, RoleId, User, UserAccess, ViewId } from './05-types'
 
 /**
  * Adaptador de sesión (L03, D-01): Firebase Auth identifica al colaborador y la API
@@ -20,8 +20,14 @@ import type { RoleId, User } from './05-types'
  * de la API (español, contratos-A §4.4) al tipo `User` del admin.
  */
 
-/** Sesión tal como la devuelve la API. */
-interface SessionDto {
+/** Accesos en el contrato de la API (L09): vistas por id y acciones como "vista.accion". */
+export interface AccesosDto {
+  vistas: string[]
+  acciones: string[]
+}
+
+/** Sesión (y usuario de la lista de Ajustes › Usuarios) tal como la devuelve la API. */
+export interface SessionDto {
   id: number
   correo: string
   nombre: string
@@ -29,8 +35,45 @@ interface SessionDto {
   rol: string
   activo: boolean
   debeCambiarContrasena: boolean
+  creadoEn: string
   ultimoAcceso: string | null
+  accesos: AccesosDto
 }
+
+/** Acción del admin ↔ clave de la API (D-19: la API habla español). */
+const ACTION_KEYS: Record<Permission, string> = {
+  canCreateProduct: 'productos.crear',
+  canEditProduct: 'productos.editar',
+  canDeleteProduct: 'productos.eliminar',
+  canUpdateStock: 'productos.existencias',
+  canToggleVisibility: 'productos.visibilidad',
+  canChangeOrderStatus: 'pedidos.gestionar',
+  canReserveOrders: 'pedidos.reservar',
+  canDeleteOrders: 'pedidos.eliminar',
+  canInvoice: 'facturacion.emitir',
+  canManageCustomers: 'clientes.gestionar',
+  canDeleteCustomers: 'clientes.eliminar',
+  canManageTaxonomy: 'categorias.gestionar',
+  canManageOffers: 'ofertas.gestionar',
+  canManageQuotes: 'cotizaciones.gestionar',
+  canModerateReviews: 'interacciones.moderar',
+  canManageUsers: 'ajustes.usuarios',
+  canEditSettings: 'ajustes.configuracion',
+}
+const PERMISSION_OF = new Map(Object.entries(ACTION_KEYS).map(([permission, key]) => [key, permission as Permission]))
+
+/** Accesos de la API → `UserAccess` (las vistas ya usan los mismos ids). */
+export const toAccess = (dto: AccesosDto): UserAccess =>
+  normalizeAccess({
+    views: dto.vistas as ViewId[],
+    permissions: dto.acciones.flatMap((key) => PERMISSION_OF.get(key) ?? []),
+  })
+
+/** `UserAccess` → accesos de la API. */
+export const toAccesosDto = (access: UserAccess): AccesosDto => ({
+  vistas: access.views,
+  acciones: access.permissions.map((p) => ACTION_KEYS[p]),
+})
 
 export const INVALID_CREDENTIALS = 'Correo o contraseña incorrectos.'
 
@@ -63,8 +106,11 @@ configureToken(async () => {
 
 const isRoleId = (rol: string): rol is RoleId => Object.hasOwn(ROLES, rol)
 
-/** Contrato de la API → `User` del admin. Sin contraseña ni hash: viven en Firebase. */
-function toUser(dto: SessionDto): User {
+/**
+ * Contrato de la API → `User` del admin. Sin contraseña ni hash: viven en Firebase.
+ * L09: los accesos llegan del servidor (que es quien decide); la UI solo los usa para ocultar.
+ */
+export function toUser(dto: SessionDto): User {
   if (!isRoleId(dto.rol)) throw new ApiError('Tu cuenta tiene un rol desconocido. Contacta al administrador.', 403, 'FORBIDDEN')
   return {
     id: dto.id,
@@ -72,12 +118,12 @@ function toUser(dto: SessionDto): User {
     email: dto.correo,
     phone: dto.telefono ?? '',
     role: dto.rol,
-    access: templateAccess(dto.rol),
+    access: toAccess(dto.accesos),
     avatar: DEFAULT_AVATAR,
     active: dto.activo,
     passwordHash: '',
     mustChangePassword: dto.debeCambiarContrasena,
-    createdAt: '',
+    createdAt: dto.creadoEn,
     lastLoginAt: dto.ultimoAcceso,
   }
 }

@@ -7,6 +7,10 @@ export type CodigoError =
   | 'VALIDATION_ERROR'
   | 'UNAUTHENTICATED'
   | 'FORBIDDEN'
+  /** 403 por falta de permiso (L09): a diferencia de FORBIDDEN, no invalida la sesión. */
+  | 'PERMISSION_DENIED'
+  /** 403 mientras el usuario deba cambiar su contraseña temporal (L09). */
+  | 'PASSWORD_CHANGE_REQUIRED'
   | 'NOT_FOUND'
   | 'CONFLICT'
   | 'BUSINESS_RULE'

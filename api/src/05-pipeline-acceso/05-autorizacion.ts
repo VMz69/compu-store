@@ -14,6 +14,17 @@ export const usuarioHabilitado: RequestHandler = async (_req, res, next) => {
   next()
 }
 
+/**
+ * Contraseña temporal (L09): mientras `debeCambiarContrasena` esté activo, el resto de /admin
+ * responde 403 PASSWORD_CHANGE_REQUIRED. Se monta después del router de sesión, que sí queda libre.
+ */
+export const contrasenaVigente: RequestHandler = (_req, res, next) => {
+  if (usuarioDe(res).debeCambiarContrasena) {
+    throw new ErrorApp('PASSWORD_CHANGE_REQUIRED', 403, 'Debes cambiar tu contraseña temporal antes de continuar.')
+  }
+  next()
+}
+
 /** Usuario que dejó `usuarioHabilitado`; lanza 403 si la ruta no pasó por el middleware. */
 export function usuarioDe(res: Response): Usuario {
   const usuario = res.locals.usuario as Usuario | undefined

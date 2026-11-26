@@ -19,6 +19,20 @@ export interface ProveedorIdentidad {
   actualizarContrasena: (uid: string, contrasena: string) => Promise<void>
   /** uid de la cuenta con ese correo, o null si no existe. */
   buscarPorCorreo: (correo: string) => Promise<string | null>
+  /** Crea la cuenta (L09) y devuelve su uid; lanza `CorreoEnUso` si el correo ya tiene cuenta. */
+  crearCuenta: (correo: string, contrasena: string) => Promise<string>
+  /** Cambia el correo o habilita/deshabilita la cuenta; al deshabilitarla revoca sus sesiones. */
+  actualizarCuenta: (uid: string, cambios: { correo?: string; deshabilitada?: boolean }) => Promise<void>
+  /** Elimina la cuenta; si ya no existe, no hace nada. */
+  eliminarCuenta: (uid: string) => Promise<void>
+}
+
+/** El correo ya pertenece a otra cuenta del proveedor (el service lo traduce a 409). */
+export class CorreoEnUso extends Error {
+  constructor() {
+    super('El correo ya tiene una cuenta en el proveedor de identidad.')
+    this.name = 'CorreoEnUso'
+  }
 }
 
 const VARIABLES_FIREBASE = ['FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY'] as const
@@ -50,8 +64,10 @@ function obtenerAuth(): Auth {
   return auth
 }
 
-const esUsuarioInexistente = (error: unknown): boolean =>
-  typeof error === 'object' && error !== null && (error as { code?: unknown }).code === 'auth/user-not-found'
+const codigoDe = (error: unknown): unknown =>
+  typeof error === 'object' && error !== null ? (error as { code?: unknown }).code : undefined
+const esUsuarioInexistente = (error: unknown): boolean => codigoDe(error) === 'auth/user-not-found'
+const esCorreoEnUso = (error: unknown): boolean => codigoDe(error) === 'auth/email-already-exists'
 
 /** Proveedor real sobre el Admin SDK de Firebase. */
 export const proveedorFirebase: ProveedorIdentidad = {
@@ -69,6 +85,33 @@ export const proveedorFirebase: ProveedorIdentidad = {
     } catch (error) {
       if (esUsuarioInexistente(error)) return null
       throw error
+    }
+  },
+  async crearCuenta(correo, contrasena) {
+    try {
+      return (await obtenerAuth().createUser({ email: correo, password: contrasena })).uid
+    } catch (error) {
+      if (esCorreoEnUso(error)) throw new CorreoEnUso()
+      throw error
+    }
+  },
+  async actualizarCuenta(uid, { correo, deshabilitada }) {
+    try {
+      await obtenerAuth().updateUser(uid, {
+        ...(correo === undefined ? {} : { email: correo }),
+        ...(deshabilitada === undefined ? {} : { disabled: deshabilitada }),
+      })
+    } catch (error) {
+      if (esCorreoEnUso(error)) throw new CorreoEnUso()
+      throw error
+    }
+    if (deshabilitada) await obtenerAuth().revokeRefreshTokens(uid)
+  },
+  async eliminarCuenta(uid) {
+    try {
+      await obtenerAuth().deleteUser(uid)
+    } catch (error) {
+      if (!esUsuarioInexistente(error)) throw error
     }
   },
 }

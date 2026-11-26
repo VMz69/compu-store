@@ -15,6 +15,9 @@ const identidad = {
   },
   actualizarContrasena: async () => {},
   buscarPorCorreo: async () => null,
+  crearCuenta: async () => 'sin-proveedor',
+  actualizarCuenta: async () => {},
+  eliminarCuenta: async () => {},
 }
 
 describe('GET /api/v1/health', () => {

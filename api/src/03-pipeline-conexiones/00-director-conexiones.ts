@@ -2,6 +2,7 @@
 export { prisma, pingBD, desconectarBD } from './01-prisma.js'
 export {
   comprobarConfiguracionFirebase,
+  CorreoEnUso,
   proveedorFirebase,
   type Identidad,
   type ProveedorIdentidad,

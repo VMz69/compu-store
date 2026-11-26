@@ -3,7 +3,7 @@ import express, { type Express } from 'express'
 import helmet from 'helmet'
 import type { ProveedorIdentidad, ProveedorImagenes } from './03-pipeline-conexiones/00-director-conexiones.js'
 import { ErrorApp, manejarErrores, noEncontrado } from './04-pipeline-http/00-director-http.js'
-import { autenticar, crearRouterSesion } from './05-pipeline-acceso/00-director-acceso.js'
+import { autenticar, contrasenaVigente, crearRouterSesion, crearRouterUsuarios } from './05-pipeline-acceso/00-director-acceso.js'
 import {
   crearRouterAdminProductos,
   crearRouterAdminTaxonomia,
@@ -50,9 +50,12 @@ export function crearApp({ pingBD, identidad, imagenes, origenes, extender }: De
   const admin = express.Router()
   admin.use(autenticar(identidad))
   admin.use(crearRouterSesion(identidad))
+  // L09: con contraseña temporal solo queda libre la sesión; cada ruta siguiente exige su permiso.
+  admin.use(contrasenaVigente)
   admin.use(crearRouterAdminTaxonomia())
   admin.use(crearRouterAdminProductos(imagenes))
   admin.use(crearRouterAdminInventario())
+  admin.use(crearRouterUsuarios(identidad))
   app.use('/api/v1/admin', admin)
 
   // /api/v1/tienda/* es público y de solo lectura.

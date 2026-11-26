@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { STORAGE_KEYS } from '@/84-pipeline-persistencia-demo/02-storage'
-import { onAuthenticated } from '@/84-pipeline-persistencia-demo/05-api.client'
+import { ApiError, onAuthenticated } from '@/84-pipeline-persistencia-demo/05-api.client'
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
 import { deductFromProducts, restockProducts, type StockLine } from '../24-pipeline-inventario-productos/03-inventory'
 import { isDataUrl } from '../17-pipeline-ficha-producto/03-productImages'
@@ -296,6 +296,8 @@ async function loadCatalog(): Promise<void> {
     const [taxonomy, products] = await Promise.all([fetchTaxonomy(), fetchProducts()])
     useCatalogStore.setState({ ...taxonomy, products })
   } catch (error) {
+    // L09: sin la vista Productos (ni Tablero) la API responde 403 por permiso; no es un fallo.
+    if (error instanceof ApiError && error.code === 'PERMISSION_DENIED') return
     toast(`No se pudo cargar el catálogo: ${errorMessage(error, 'error del servidor.')}`, 'danger')
   }
 }

@@ -89,12 +89,16 @@ export function useUserForm() {
       role: values.role as RoleId,
       active: values.active,
     }
-    if (editing) {
-      await updateUser(editing.id, profile)
-      toast(`Usuario ${profile.name} actualizado`, 'success')
-    } else {
-      await createUser({ ...profile, password: values.password, mustChangePassword: values.mustChangePassword })
-      toast(`Usuario ${profile.name} creado. Comparte la contraseña inicial por un canal seguro.`, 'success')
+    try {
+      if (editing) {
+        await updateUser(editing.id, profile)
+        toast(`Usuario ${profile.name} actualizado`, 'success')
+      } else {
+        await createUser({ ...profile, password: values.password, mustChangePassword: values.mustChangePassword })
+        toast(`Usuario ${profile.name} creado. Comparte la contraseña inicial por un canal seguro.`, 'success')
+      }
+    } catch {
+      return // el store ya mostró el motivo de la API; el modal sigue abierto
     }
     closeModal()
   }

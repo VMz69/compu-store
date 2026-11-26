@@ -64,7 +64,11 @@ export function useResetPasswordForm() {
     if (!target || !fields.attempt()) return
     if (!ensurePermission('canManageUsers', 'No tienes permiso para gestionar usuarios (contraseñas).')) return
     // Si es la propia cuenta, no tiene sentido forzar otro cambio.
-    await setPassword(target.id, fields.values.password, isSelf ? false : fields.values.mustChangePassword)
+    try {
+      await setPassword(target.id, fields.values.password, isSelf ? false : fields.values.mustChangePassword)
+    } catch {
+      return // el store ya mostró el motivo de la API; el modal sigue abierto
+    }
     closeModal()
     toast(`Contraseña de ${target.name} actualizada`, 'success')
   }

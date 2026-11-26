@@ -20,6 +20,9 @@ const identidad: ProveedorIdentidad = {
   },
   actualizarContrasena,
   buscarPorCorreo: async () => null,
+  crearCuenta: async () => 'sin-uso',
+  actualizarCuenta: async () => {},
+  eliminarCuenta: async () => {},
 }
 
 const app = crearApp({ pingBD: async () => {}, identidad, imagenes: crearImagenesFalsas().proveedor, origenes: [] })
@@ -99,11 +102,23 @@ describe('Acceso: autorización y sesión', () => {
       rol: 'superadmin',
       activo: true,
       debeCambiarContrasena: true,
+      creadoEn: expect.stringMatching(/Z$/),
       ultimoAcceso: null,
+      accesos: { vistas: expect.arrayContaining(['tablero', 'ajustes']), acciones: expect.arrayContaining(['ajustes.usuarios']) },
     })
+    expect(res.body.data.accesos.vistas).toHaveLength(10)
+    expect(res.body.data.accesos.acciones).toHaveLength(17)
+  })
+
+  it('con contraseña temporal, el resto de /admin/* responde 403 PASSWORD_CHANGE_REQUIRED (L09)', async () => {
+    const res = await request(app).get('/api/v1/admin/no-existe').set('Authorization', bearer(UID_ACTIVO))
+
+    expect(res.status).toBe(403)
+    expect(res.body.error.code).toBe('PASSWORD_CHANGE_REQUIRED')
   })
 
   it('una ruta /admin/* inexistente da 404 a un usuario habilitado', async () => {
+    await prisma.usuario.update({ where: { firebaseUid: UID_ACTIVO }, data: { debeCambiarContrasena: false } })
     const res = await request(app).get('/api/v1/admin/no-existe').set('Authorization', bearer(UID_ACTIVO))
 
     expect(res.status).toBe(404)

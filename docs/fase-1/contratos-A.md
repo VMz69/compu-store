@@ -7,6 +7,8 @@
 - Éxito `{data, meta?}`; `meta = {page, limit, total, totalPages}`; `limit` ≤ 100.
 - Error `{error:{code, message, details?}}`. Códigos: `VALIDATION_ERROR` 400/422, `UNAUTHENTICATED` 401,
   `FORBIDDEN` 403, `NOT_FOUND` 404, `CONFLICT` 409, `BUSINESS_RULE` 422, `TOO_MANY_REQUESTS` 429 (L07A).
+  L09: `PERMISSION_DENIED` 403 (falta el permiso; no cierra la sesión) y `PASSWORD_CHANGE_REQUIRED` 403
+  (contraseña temporal pendiente). `FORBIDDEN` queda solo para la cuenta no vinculada o desactivada.
 - Dinero: string `"0.00"` (DECIMAL 12,2). IVA: porcentaje como string `"13.00"`. El precio incluye IVA; el costo no.
 - Fechas: ISO 8601 UTC (`2026-11-23T15:00:00.000Z`). La fecha de vencimiento de un lote es `YYYY-MM-DD` o `null`.
 - Identificadores: producto `id:number`; categoría y marca por `slug` (inmutable); lote `id:number`.
@@ -76,8 +78,11 @@ El servidor genera el slug único y recalcula `stock` cuando `controlLotes = tru
 ### 4.4 Sesión
 ```json
 { "id": 1, "correo": "…", "nombre": "…", "telefono": "…", "rol": "…",
-  "activo": true, "debeCambiarContrasena": false, "ultimoAcceso": "2026-11-23T15:00:00.000Z" }
+  "activo": true, "debeCambiarContrasena": false, "creadoEn": "2026-11-20T10:00:00.000Z",
+  "ultimoAcceso": "2026-11-23T15:00:00.000Z",
+  "accesos": { "vistas": ["productos", "clientes"], "acciones": ["productos.crear"] } }
 ```
+L09: `creadoEn` y `accesos` (efectivos: superadmin = todo; una acción solo cuenta con su vista). Es también la forma de cada elemento de `GET /admin/usuarios`.
 
 ### 4.5 Validar carrito
 Entrada (máx. 50 líneas, cantidad de 1 a 99):

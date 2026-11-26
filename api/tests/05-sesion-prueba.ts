@@ -14,6 +14,10 @@ export const identidadFalsa: ProveedorIdentidad = {
   },
   actualizarContrasena: async () => {},
   buscarPorCorreo: async () => null,
+  // L09: las pruebas de usuarios (tests/12) usan su propio proveedor con espías.
+  crearCuenta: async (correo) => `falso-${correo}`,
+  actualizarCuenta: async () => {},
+  eliminarCuenta: async () => {},
 }
 
 export const bearer = (uid: string) => `Bearer ${PREFIJO}${uid}`
@@ -27,3 +31,22 @@ export const crearUsuarioHabilitado = (uid: string) =>
   })
 
 export const eliminarUsuario = (uid: string) => prisma.usuario.deleteMany({ where: { firebaseUid: uid } })
+
+/**
+ * L09: crea (o reinicia) un Usuario no superadmin con exactamente esas claves de permiso.
+ * Devuelve el usuario; `fijarPermisos` cambia sus claves después (se leen en cada petición).
+ */
+export async function crearUsuarioConPermisos(uid: string, claves: string[], rol = 'caja_inventario') {
+  const usuario = await prisma.usuario.upsert({
+    where: { firebaseUid: uid },
+    create: { firebaseUid: uid, correo: `${uid}@prueba.test`, nombre: 'Prueba RBAC', rol },
+    update: { activo: true, rol, debeCambiarContrasena: false },
+  })
+  await fijarPermisos(usuario.id, claves)
+  return usuario
+}
+
+export async function fijarPermisos(usuarioId: number, claves: string[]) {
+  await prisma.usuarioPermiso.deleteMany({ where: { usuarioId } })
+  if (claves.length > 0) await prisma.usuarioPermiso.createMany({ data: claves.map((permisoClave) => ({ usuarioId, permisoClave })) })
+}

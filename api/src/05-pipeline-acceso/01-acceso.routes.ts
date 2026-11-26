@@ -14,8 +14,8 @@ import { usuarioDe } from './05-autorizacion.js'
 export function crearRouterSesion(identidad: Pick<ProveedorIdentidad, 'actualizarContrasena'>): Router {
   const router = Router()
 
-  router.get('/sesion', (_req, res) => {
-    res.json({ data: aSesion(usuarioDe(res)) })
+  router.get('/sesion', async (_req, res) => {
+    res.json({ data: await aSesion(usuarioDe(res)) })
   })
 
   router.post('/sesion', async (_req, res) => {

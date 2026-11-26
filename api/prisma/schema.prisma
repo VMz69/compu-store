@@ -155,7 +155,8 @@ model MovimientoInventario {
   @@map("movimientos_inventario")
 }
 
-/// Sin contraseña: la identidad la da Firebase (D-01). En A el rol es texto; en L09 pasa a tabla (RBAC).
+/// Sin contraseña: la identidad la da Firebase (D-01). El rol es la plantilla de accesos (L09).
+/// Los accesos propios del usuario viven en `usuarios_permisos`; el superadmin no los necesita (acceso total).
 model Usuario {
   id                    Int                    @id @default(autoincrement())
   firebaseUid           String                 @unique @db.VarChar(128)
@@ -163,13 +164,64 @@ model Usuario {
   nombre                String                 @db.VarChar(80)
   telefono              String?                @db.VarChar(20)
   rol                   String                 @db.VarChar(30)
+  plantilla             Rol                    @relation(fields: [rol], references: [id], onDelete: Restrict)
   activo                Boolean                @default(true)
   debeCambiarContrasena Boolean                @default(false)
   creadoEn              DateTime               @default(now())
   ultimoAcceso          DateTime?
   movimientos           MovimientoInventario[]
+  permisos              UsuarioPermiso[]
 
+  @@index([rol])
   @@map("usuarios")
+}
+
+enum TipoPermiso {
+  vista
+  accion
+}
+
+/// Plantilla de accesos (RoleId del admin). El catálogo lo inserta la migración `rbac`.
+model Rol {
+  id       String       @id @db.VarChar(30)
+  nombre   String       @db.VarChar(60)
+  orden    Int          @db.UnsignedSmallInt
+  permisos RolPermiso[]
+  usuarios Usuario[]
+
+  @@map("roles")
+}
+
+/// Vista del menú (clave = id de la vista) o acción dentro de una vista (clave = "vista.accion").
+model Permiso {
+  clave    String           @id @db.VarChar(40)
+  tipo     TipoPermiso
+  vista    String           @db.VarChar(20)
+  orden    Int              @db.UnsignedSmallInt
+  roles    RolPermiso[]
+  usuarios UsuarioPermiso[]
+
+  @@map("permisos")
+}
+
+model RolPermiso {
+  rolId        String  @db.VarChar(30)
+  rol          Rol     @relation(fields: [rolId], references: [id], onDelete: Cascade)
+  permisoClave String  @db.VarChar(40)
+  permiso      Permiso @relation(fields: [permisoClave], references: [clave], onDelete: Cascade)
+
+  @@id([rolId, permisoClave])
+  @@map("roles_permisos")
+}
+
+model UsuarioPermiso {
+  usuarioId    Int
+  usuario      Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  permisoClave String  @db.VarChar(40)
+  permiso      Permiso @relation(fields: [permisoClave], references: [clave], onDelete: Restrict)
+
+  @@id([usuarioId, permisoClave])
+  @@map("usuarios_permisos")
 }
 
 /// Fila única (id = 1) con la identidad pública de la tienda; se edita desde el admin en L10.

@@ -1,7 +1,12 @@
 import type { ProveedorIdentidad } from '../03-pipeline-conexiones/00-director-conexiones.js'
 import { marcarContrasenaCambiada, registrarAcceso, type Usuario } from './04-acceso.repository.js'
+import type { Accesos } from './06-permisos.catalogo.js'
+import { accesosEfectivos } from './07-requiere-permiso.js'
 
-/** Contrato de la sesión (docs/fase-1/contratos-A.md §4.4). Nunca expone `firebaseUid`. */
+/**
+ * Contrato de la sesión (docs/fase-1/contratos-A.md §4.4), también usado por la lista de usuarios.
+ * L09 añade `accesos` (efectivos: superadmin = todo) y `creadoEn`. Nunca expone `firebaseUid`.
+ */
 export interface Sesion {
   id: number
   correo: string
@@ -10,10 +15,13 @@ export interface Sesion {
   rol: string
   activo: boolean
   debeCambiarContrasena: boolean
+  creadoEn: string
   ultimoAcceso: string | null
+  accesos: Accesos
 }
 
-export const aSesion = (usuario: Usuario): Sesion => ({
+/** DTO con los accesos ya resueltos (útil cuando se leen en bloque). */
+export const aSesionCon = (usuario: Usuario, accesos: Accesos): Sesion => ({
   id: usuario.id,
   correo: usuario.correo,
   nombre: usuario.nombre,
@@ -21,12 +29,16 @@ export const aSesion = (usuario: Usuario): Sesion => ({
   rol: usuario.rol,
   activo: usuario.activo,
   debeCambiarContrasena: usuario.debeCambiarContrasena,
+  creadoEn: usuario.creadoEn.toISOString(),
   ultimoAcceso: usuario.ultimoAcceso?.toISOString() ?? null,
+  accesos,
 })
+
+export const aSesion = async (usuario: Usuario): Promise<Sesion> => aSesionCon(usuario, await accesosEfectivos(usuario))
 
 /** Inicio de sesión: registra la fecha (UTC) y devuelve la sesión actualizada. */
 export async function iniciarSesion(usuario: Usuario): Promise<Sesion> {
-  return aSesion(await registrarAcceso(usuario.id))
+  return await aSesion(await registrarAcceso(usuario.id))
 }
 
 /**

@@ -49,7 +49,11 @@ export function useUserAccess(userId: number) {
     const error = validateAccess(draft)
     if (error) return toast(error, 'warning')
     if (!ensurePermission('canManageUsers', 'No tienes permiso para gestionar accesos')) return
-    await updateAccess(user.id, draft)
+    try {
+      await updateAccess(user.id, draft)
+    } catch {
+      return // el store ya mostró el motivo de la API; el borrador se conserva
+    }
     toast(`Accesos de ${user.name} actualizados`, 'success')
   }
 
