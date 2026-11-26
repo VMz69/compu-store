@@ -1,4 +1,4 @@
-import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
+import { STORE_CONFIG, getStoreCityName } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { buildWhatsAppUrl } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import type { Product } from '@/00-director-modelos'
@@ -11,7 +11,7 @@ export const buildSingleProductMessage = (product: Product, quantity = 1): strin
   message += `• Cantidad: *${quantity}*\n`
   message += `• Precio unitario: *${formatCurrency(product.price)}*\n`
   message += `• Total: *${formatCurrency(product.price * quantity)}*\n\n`
-  message += `¿Tienen disponibilidad inmediata para retiro en Cojutepeque o envío? ¡Gracias!`
+  message += `¿Tienen disponibilidad inmediata para retiro en ${getStoreCityName()} o envío? ¡Gracias!`
   return message
 }
 

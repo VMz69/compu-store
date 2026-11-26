@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { isPublished } from './01-contrato-resenas'
-import { DEFAULT_REVIEWS } from '@/06-pipeline-datos-mock/00-director-datos-mock'
 import { useReviewStore } from './02-resenas.store'
 
 /**
@@ -11,7 +10,8 @@ import { useReviewStore } from './02-resenas.store'
 export const useProductReviews = (productId: number) => {
   const storedReviews = useReviewStore((state) => state.reviewsByProduct[productId])
   const published = useMemo(() => (storedReviews ?? []).filter(isPublished), [storedReviews])
-  const reviews = published.length > 0 ? published : DEFAULT_REVIEWS
+  // Sin respaldo de muestra: sin reseñas aprobadas, la sección queda vacía (0 opiniones) hasta L17.
+  const reviews = published
 
   const distribution = useMemo(
     () =>

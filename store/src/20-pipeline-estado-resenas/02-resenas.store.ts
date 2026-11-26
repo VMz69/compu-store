@@ -1,10 +1,11 @@
 import { create } from 'zustand'
 import { buildPendingReview, type ReviewSubmission } from './01-contrato-resenas'
-import { INITIAL_REVIEWS } from '@/06-pipeline-datos-mock/00-director-datos-mock'
 import type { Review } from '@/00-director-modelos'
 
 /**
  * Reseñas por producto. En esta fase viven en memoria (se pierden al recargar).
+ * Sin reseñas de muestra: la Fase A no presenta datos ficticios como reales (L07B);
+ * las reseñas reales llegan con la API en L17.
  *
  * Moderación: cada opinión nueva entra como `pendiente` y NO se muestra hasta que el
  * back office (/admin › Comentarios) la apruebe. Ver contrato en `lib/reviews.api.ts`.
@@ -21,7 +22,7 @@ interface ReviewStore {
 }
 
 export const useReviewStore = create<ReviewStore>((set) => ({
-  reviewsByProduct: INITIAL_REVIEWS,
+  reviewsByProduct: {},
 
   submitReview: (productId, data) => {
     // TODO(API): reemplazar por `await submitReview(productId, data)` (lib/reviews.api.ts).

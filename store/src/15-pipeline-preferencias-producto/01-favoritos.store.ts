@@ -10,6 +10,8 @@ interface FavStore {
   toggleFavorite: (productId: number) => boolean
   isFavorite: (productId: number) => boolean
   clearFavorites: () => void
+  /** Al arrancar: descarta en silencio los ids que ya no existen en el catálogo. */
+  purgeUnknown: (validIds: number[]) => void
 }
 
 export const useFavStore = create<FavStore>()(
@@ -30,6 +32,11 @@ export const useFavStore = create<FavStore>()(
       isFavorite: (productId) => get().ids.includes(productId),
 
       clearFavorites: () => set({ ids: [] }),
+
+      purgeUnknown: (validIds) => {
+        const valid = new Set(validIds)
+        set({ ids: get().ids.filter((id) => valid.has(id)) })
+      },
     }),
     { name: 'compustore_sv_favorites_v2' },
   ),

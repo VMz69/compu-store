@@ -4,6 +4,7 @@ import { calculateItemCount, calculateSubtotal } from '@/07-pipeline-estado-carr
 import { useCartStore } from '@/07-pipeline-estado-carrito/00-director-estado-carrito'
 import { useToastStore } from '@/03-pipeline-notificaciones/00-director-notificaciones'
 import type { CartItem } from '@/07-pipeline-estado-carrito/00-director-estado-carrito'
+import { useCartValidation } from './05-validacion-carrito'
 
 /**
  * Vista del carrito: líneas, totales, métodos de entrega y checkout por WhatsApp.
@@ -20,6 +21,8 @@ export const useCartView = () => {
   const pushToast = useToastStore((state) => state.pushToast)
 
   const [isClearModalOpen, setIsClearModalOpen] = useState(false)
+  // Precios y existencias se confirman con el servidor antes de armar el WhatsApp (L07B).
+  const { isValidated } = useCartValidation(items)
 
   const increment = (item: CartItem) => updateQuantity(item.product.id, item.quantity + 1)
   const decrement = (item: CartItem) => updateQuantity(item.product.id, item.quantity - 1)
@@ -53,6 +56,8 @@ export const useCartView = () => {
     cancelClearCart,
     isClearModalOpen,
     whatsappUrl:
-      items.length > 0 ? buildCartCheckoutUrl(items, deliveryMethod, customerNote) : '#',
+      items.length > 0 && isValidated
+        ? buildCartCheckoutUrl(items, deliveryMethod, customerNote)
+        : '#',
   }
 }

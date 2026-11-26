@@ -1,3 +1,4 @@
+import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 /**
  * Clases Tailwind de `SearchInput` por variante (desktop / mobile).
  * Extraídas del componente para mantenerlo como presentación pura.
@@ -34,4 +35,4 @@ export const submitClass = (isDesktop: boolean): string =>
 export const placeholderText = (isDesktop: boolean): string =>
   isDesktop
     ? 'Buscar por producto, marca o categoría (ej. Laptop, Dell, M.2)...'
-    : 'Buscar en CompuStore SV...'
+    : `Buscar en ${STORE_CONFIG.name}...`

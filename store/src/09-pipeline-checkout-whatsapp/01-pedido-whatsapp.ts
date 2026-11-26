@@ -1,4 +1,4 @@
-import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
+import { STORE_CONFIG, getStoreCityName } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { buildWhatsAppUrl } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import type { CartItem, DeliveryMethod } from '@/07-pipeline-estado-carrito/00-director-estado-carrito'
@@ -28,7 +28,7 @@ export const buildCartOrderMessage = (
   message += `📍 *Método de Entrega:*\n`
   message +=
     deliveryMethod === 'pickup'
-      ? `✅ *Retiro en Tienda Física (Cojutepeque)* - GRATIS\n`
+      ? `✅ *Retiro en Tienda Física (${getStoreCityName()})* - GRATIS\n`
       : `🚚 *Envío a Domicilio* (Departamental / Nacional)\n`
 
   if (customerNote.trim()) {

@@ -1,5 +1,3 @@
-export * from './01-categorias.mock'
-export * from './02-marcas.mock'
-export * from './03-productos.mock'
-export * from './04-resenas.mock'
+// Solo quedan las promociones del carrusel (contenido editorial local, manual §7 L07).
+// Productos, categorías, marcas y reseñas se eliminaron en L07B: el catálogo llega de la API.
 export * from './05-promociones.mock'

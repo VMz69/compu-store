@@ -1,11 +1,16 @@
 import type { Promotion } from '@/00-director-modelos'
 
+/**
+ * Campañas editoriales del carrusel (locales). `discountText` es una plantilla que
+ * `useHeroSlider` resuelve con el catálogo real de `targetCategory` (L07B):
+ * `{precioMinimo}` = precio más bajo; `{descuento}` = mayor % con precio anterior real.
+ */
 export const promotions: Promotion[] = [
   {
     id: 1,
     badge: 'OFERTA ESPECIAL GAMER',
     title: 'AUDÍFONOS GAMERS 7.1',
-    discountText: '20% DESCUENTO',
+    discountText: 'HASTA {descuento}% DESCUENTO',
     description:
       'Mejora tu experiencia de juego con sonido inmersivo y micrófono con cancelación de ruido. Unidades limitadas.',
     ctaText: 'Ver Oferta Ahora',
@@ -19,7 +24,7 @@ export const promotions: Promotion[] = [
     id: 2,
     badge: 'PRODUCTIVIDAD Y ESTUDIO',
     title: 'LAPTOPS REFURBISHED',
-    discountText: 'DESDE $525.00',
+    discountText: 'DESDE {precioMinimo}',
     description:
       'Equipos empresariales de alta durabilidad con procesadores Core i5 y unidades NVMe ultrarrápidas con garantía.',
     ctaText: 'Ver Laptops',
@@ -33,7 +38,7 @@ export const promotions: Promotion[] = [
     id: 3,
     badge: 'ZONA GAMING & STREAMING',
     title: 'PERIFÉRICOS MECÁNICOS RGB',
-    discountText: 'HASTA 15% OFF',
+    discountText: 'HASTA {descuento}% OFF',
     description:
       'Teclados mecánicos switches blue/red, mouses ergonómicos con sensores ópticos y mousepads extendidos.',
     ctaText: 'Explorar Gaming',

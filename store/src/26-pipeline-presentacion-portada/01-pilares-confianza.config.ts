@@ -1,8 +1,11 @@
+import { STORE_CONFIG, getStoreCityName } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
+
+/** Se evalúa después de la precarga (main.tsx importa la app al tener la identidad). */
 export const TRUST_PILLARS = [
   {
     icon: 'fa-solid fa-store',
-    title: 'Local Físico en Cojute',
-    description: 'Frente a Dollar City, Farmacias Económicas',
+    title: `Local Físico en ${getStoreCityName()}`,
+    description: STORE_CONFIG.addressShort,
     accent: 'text-brand',
     bg: 'bg-brand-50',
   },

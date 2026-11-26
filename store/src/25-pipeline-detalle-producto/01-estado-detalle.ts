@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { categories } from '@/06-pipeline-datos-mock/00-director-datos-mock'
-import { products } from '@/06-pipeline-datos-mock/00-director-datos-mock'
+import { categories } from '@/38-pipeline-datos-api/00-director-datos-api'
+import { products } from '@/38-pipeline-datos-api/00-director-datos-api'
 import { getAvailableStock, useCart, useCartStore } from '@/00-director-carrito'
 import { useFavorites } from '@/15-pipeline-preferencias-producto/00-director-preferencias-producto'
 import { useProductReviews } from '@/20-pipeline-estado-resenas/00-director-estado-resenas'

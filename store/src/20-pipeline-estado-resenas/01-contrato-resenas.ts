@@ -1,4 +1,5 @@
 import type { Review } from '@/00-director-modelos'
+import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 
 /**
  * Contrato de la futura API de reseñas (moderación desde el back office).
@@ -53,7 +54,7 @@ export interface ReviewSubmission {
 export const buildPendingReview = (data: ReviewSubmission): Review => ({
   id: Date.now(),
   author: data.author,
-  city: data.city || 'El Salvador',
+  city: data.city || STORE_CONFIG.country,
   rating: data.rating,
   date: 'Hace un momento',
   title: 'Opinión de cliente',

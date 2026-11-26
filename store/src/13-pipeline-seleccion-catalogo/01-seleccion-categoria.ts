@@ -1,4 +1,4 @@
-import { categories } from '@/06-pipeline-datos-mock/00-director-datos-mock'
+import { categories } from '@/38-pipeline-datos-api/00-director-datos-api'
 import { useFilters } from '@/10-pipeline-consulta-catalogo/00-director-consulta-catalogo'
 
 /**
