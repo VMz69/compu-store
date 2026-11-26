@@ -1,5 +1,6 @@
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { DeliveryMethod } from '@/07-pipeline-estado-carrito/00-director-estado-carrito'
+import { STORE_CONFIG, getStoreCityName } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 
 const SOURCE = 'src/09-pipeline-checkout-whatsapp/02-formulario-pedido.tsx'
 
@@ -45,7 +46,7 @@ export const CheckoutForm = ({
         <div className="flex-1">
           <p className="font-bold">Retiro en Sala de Ventas</p>
           <p className="text-[11px] text-slate-500 dark:text-slate-400">
-            Cojutepeque (Frente a Dollar City) - <b>GRATIS</b>
+            {getStoreCityName()} ({STORE_CONFIG.addressShort}) - <b>GRATIS</b>
           </p>
         </div>
       </label>
@@ -66,7 +67,7 @@ export const CheckoutForm = ({
         <div className="flex-1">
           <p className="font-bold">Envío a Domicilio</p>
           <p className="text-[11px] text-slate-500 dark:text-slate-400">
-            Todo El Salvador (Costo a convenir)
+            Todo {STORE_CONFIG.country} (Costo a convenir)
           </p>
         </div>
       </label>

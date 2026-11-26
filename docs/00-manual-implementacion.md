@@ -145,7 +145,7 @@ api/
 | acceso | `autenticar`, `requierePermiso(permiso)` (middlewares) | L03 · L09 |
 | catalogo | `obtenerProductosVendibles(ids)` → id, sku, nombre, precioBase, publicado | L05 |
 | inventario | `registrarExistenciasIniciales(tx, …)` (L06) · `obtenerDisponibilidad(ids)` (L07) · `reservar/liberar(tx)` · `descontar/reponer(tx)` | L06 · L07 · L14 · L15 |
-| tienda | `obtenerIdentidad()` · `obtenerEmisor()` | L07 · L10 |
+| tienda | `obtenerIdentidad()` · `obtenerEmisor()` (se crea en L15, donde tiene consumidor) | L07 · L15 |
 | clientes | `obtenerCliente(id)` | L11 |
 | ofertas | `precioEfectivo(ids, fecha)`; antes de L12 se usa `precioBase` | L12 |
 | pedidos | `crearDesdeCotizacion(tx, …)` | L16 |
@@ -234,8 +234,8 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 - Ampliar `05-acceso`: CRUD de usuarios, plantillas de roles, permisos por vista y acción, y `requierePermiso` aplicado a todas las rutas existentes. Las 2 cuentas migran al rol de propietario.
 - **Cierre:** matriz de permisos probada (permitido y denegado) en cada endpoint.
 
-**L10 — Ajustes e identidad** · *42, 43*
-- Ampliar `08-tienda`: identidad comercial, datos del emisor y canales de venta.
+**L10 — Ajustes e identidad** · *42*
+- Ampliar `08-tienda`: identidad comercial y datos del emisor (Ajustes › Identidad). Los canales de venta (43) pasan a L13.
 - **Cierre:** un cambio hecho en el admin se refleja en la tienda.
 
 **L11 — Clientes** · *14, 15, 16*
@@ -246,8 +246,9 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 - `10-ofertas`: CRUD, programación, vigencia, pausa y `precioEfectivo` como cálculo único para admin, tienda y validación del carrito.
 - **Cierre:** una misma oferta da el mismo precio en los tres puntos.
 
-**L13 — Pedidos y estados** · *18–22, 26, 27*
+**L13 — Pedidos y estados** · *18–22, 26, 27, 43*
 - `11-pedidos`: registro, edición, eliminación lógica, cargos adicionales, totales recalculados en el servidor con snapshot, máquina de estados con historial y etiquetas.
+- Canales de venta (43, desde L10): CRUD de canales, `Pedido.canalId` (FK) con snapshot del nombre y 409 al eliminar un canal con pedidos.
 - **Cierre:** las transiciones inválidas se rechazan y los totales del navegador se ignoran.
 
 **L14 — Reservas** · *23, 24, 25*
@@ -323,10 +324,10 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 | L07 | A | 45–52, 55–64 | Completado (L07A: API · L07B: store conectado; funcionalidades verificadas con API real y Chrome headless) | `feat(L07A)` + `feat(L07B)` · 25-11-2026 · rama `feat/api` |
 | L08 | A | cierre (contingencia) | Contingencia: solo si B no se completa a tiempo | |
 | L09 | B | 02, 03, 04 | Completado (204 pruebas; demostración manual con Firebase real confirmada por el propietario) | `feat(L09)` · 25-11-2026 · rama `feat/api` |
-| L10 | B | 42, 43 | Pendiente | |
+| L10 | B | 42 | Completado (233 pruebas; los canales, 43, pasan a L13) | `feat(L10)` · 25-11-2026 · rama `feat/api` |
 | L11 | B | 14, 15, 16 | Pendiente | |
 | L12 | B | 37, 38, 39 | Pendiente | |
-| L13 | B | 18–22, 26, 27 | Pendiente | |
+| L13 | B | 18–22, 26, 27, 43 | Pendiente | |
 | L14 | B | 23, 24, 25 | Pendiente | |
 | L15 | B | 12, 33–36 | Pendiente | |
 | L16 | B | 29–32 | Pendiente | |
@@ -465,6 +466,11 @@ Estados posibles: Pendiente · En progreso · Completado · Bloqueado · Conting
 | 25-11-2026 | L09 | D-14 | Admin, solo adaptadores y hooks: `toUser` toma los `accesos` de la API (antes, `templateAccess`); nuevo `06/07-usuarios.api`; el store llama a la API, con `setActive` y `deleteUser` optimistas con reversión (patrón L04) y los mensajes de la API como toast. La lista se carga solo con la vista Ajustes. Con contraseña temporal no se llama a `notifyAuthenticated` hasta cambiarla. La caché solo guarda el usuario de la sesión. `useUserForm`, `useUserAccess` y `useResetPasswordForm` capturan el error para dejar el modal abierto (patrón L05); `loadCatalog` no avisa ante `PERMISSION_DENIED`. Sin cambios en componentes | `admin/src/06-pipeline-sesion-permisos/04-store.ts` |
 | 25-11-2026 | L09 | — | Incidencia de sesión: un `prisma migrate dev --create-only` se ejecutó en paralelo con una edición del esquema que el clasificador denegó, y generó una migración vacía; se borró sin aplicarse. Regla desde entonces: los comandos de Prisma se ejecutan solo después de guardar el esquema | conversación L09 |
 | 25-11-2026 | L09 | — | Cierre: el propietario confirmó la demostración con Firebase real (alta con contraseña temporal y cambio obligatorio, menú limitado por accesos, permiso retirado aplicado en la siguiente petición, restablecimiento, desactivación, 409 al eliminar con historial y bloqueo de la autodesactivación). Limpieza posterior pedida por el propietario: el usuario de prueba `caja@test.com` (#3) se borró de la BD de desarrollo junto con sus 2 movimientos (−1 y +1 sobre el producto 12, que se anulaban: stock = Σ movimientos se mantiene) y de Firebase, sin cambiar la lógica; la regla 409 sigue vigente | `usuarios` #1 y #2 en `compustore` |
+| 25-11-2026 | L10 | — | Decisiones del propietario: (1) los canales de venta (43) pasan a L13 con la FK `canalId` y el 409 al eliminar con pedidos, porque los pedidos siguen locales hasta entonces; L10 conecta solo identidad y emisor. Se corrigen §5, §7 y §9; (2) la semilla del correlativo se guarda ya (1–999999 o null) y la regla «mayor que la última factura emitida» se completa en L15 (D-12); (3) los literales de negocio del store se sustituyen por campos de la identidad (solo texto); (4) `GET /admin/ajustes/identidad` lo leen las vistas `ajustes`, `tablero`, `facturacion` o `cotizaciones`; `PUT` exige `ajustes.configuracion` | conversación L10 |
+| 25-11-2026 | L10 | — | Emisor en `ConfiguracionTienda`: `razonSocial`, `nit`, `nrc`, `actividadEconomica`, `tipoEstablecimiento` y `semillaFactura` (UNSIGNED, null = continuar). Incidencia: la reescritura de la migración `emisor` se hizo con `f=$(ls …)`, pero `ls` tiene un alias decorado en esta terminal y el SQL fue a parar a un archivo con un nombre extraño (borrado antes del commit). Así se aplicó el SQL original de Prisma, así que MariaDB dejó `''` en la fila existente. Para no editar una migración aplicada (cambia el checksum y exige un reset), `emisor_valores` rellena la fila id = 1 con los valores de fábrica del admin solo si sigue vacía. En una BD nueva, el seed crea la fila completa. Riesgo aceptado: en modo estricto, `emisor` fallaría sobre una tabla con datos, pero no existe ninguna BD así fuera de desarrollo y pruebas (ya migradas) | `api/prisma/migrations/20261126053532_emisor/`, `20261126053733_emisor_valores/` |
+| 25-11-2026 | L10 | — | API: `08-tienda` 05–07 (`ajustes.routes/schema/service`) y `actualizarConfiguracion` en `04-tienda.repository`; `03-tienda.service` exporta `aIdentidad` (mapeo público, sin el emisor) para no duplicarlo. El body es un `strictObject` con las reglas de `validateIdentity`: el navegador no envía WhatsApp, redes, moneda ni IVA. El servidor normaliza la razón social a mayúsculas y el correo a minúsculas, y deriva `whatsapp` (503 + 8 dígitos) y `redes.whatsapp` del teléfono principal. `GET /tienda/identidad` conserva su contrato y nunca expone el emisor. Pruebas: `tests/13-ajustes.test.ts` y 2 filas nuevas en la matriz de `11-permisos` | `api/src/08-pipeline-tienda/` |
+| 25-11-2026 | L10 | D-14 | Admin, solo adaptador, store y hook: nuevo `62/05-ajustes.api`; `62/02-store` carga en `onAuthenticated` (403 `PERMISSION_DENIED` en silencio) y `updateSettings` hace el PUT (persist v1 descarta la caché demo; `reset` relee de la API). `useIdentityForm` atrapa el error y muestra el mensaje del servidor sin anunciar éxito. El IVA sigue siendo la constante normativa del admin. Límite: si la carga llega después de abrir Ajustes › Identidad, el formulario muestra los valores anteriores hasta volver a entrar | `admin/src/62-pipeline-parametros-emisor/` |
+| 25-11-2026 | L10 | — | Cierra la deuda de L07B: los literales de 11 `.tsx` del store leen `STORE_CONFIG` (`getStoreCityName()`, `country`, `addressShort`, `name`), sin cambiar estructura ni clases. El placeholder de la ciudad de la reseña lo aporta `useReviewForm` (`cityPlaceholder`): con el import, `02-formulario-resena.tsx` superaba el `max-lines` de 150. Cambio visible: «Frente a Dollar City • 2da Planta» muestra ahora la dirección corta de la BD. El eslogan, la ciudad, el horario, la misión, etc. siguen saliendo solo del seed (el admin no tiene campos para editarlos), y lo que se calcula al cargar un módulo (chips de garantía, garantías de la descripción, pie) se actualiza al recargar | `grep` en `store/src/**/*.tsx` |
 
 ---
 

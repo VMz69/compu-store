@@ -51,30 +51,30 @@ model Marca {
 
 /// Precio con IVA incluido; costo sin IVA. Con controlLotes, stock = Σ lotes (D-16).
 model Producto {
-  id               Int                     @id @default(autoincrement())
-  sku              String                  @unique @db.VarChar(32)
-  slug             String                  @unique @db.VarChar(120)
-  nombre           String                  @db.VarChar(120)
+  id               Int                    @id @default(autoincrement())
+  sku              String                 @unique @db.VarChar(32)
+  slug             String                 @unique @db.VarChar(120)
+  nombre           String                 @db.VarChar(120)
   categoriaId      Int
-  categoria        Categoria               @relation(fields: [categoriaId], references: [id], onDelete: Restrict)
+  categoria        Categoria              @relation(fields: [categoriaId], references: [id], onDelete: Restrict)
   marcaId          Int
-  marca            Marca                   @relation(fields: [marcaId], references: [id], onDelete: Restrict)
-  modelo           String                  @db.VarChar(80)
-  condicion        CondicionProducto       @default(nuevo)
-  costo            Decimal?                @db.Decimal(12, 2)
-  precio           Decimal                 @db.Decimal(12, 2)
-  precioAnterior   Decimal?                @db.Decimal(12, 2)
-  tasaIva          Decimal                 @default(13.00) @db.Decimal(5, 2)
-  stock            Int                     @default(0) @db.UnsignedInt
-  puntoReorden     Int                     @default(3) @db.UnsignedInt
-  controlLotes     Boolean                 @default(false)
-  publicado        Boolean                 @default(true)
-  etiqueta         String?                 @db.VarChar(30)
-  descripcion      String                  @db.Text
-  compatibilidad   String                  @db.Text
-  conectividad     String                  @db.Text
-  creadoEn         DateTime                @default(now())
-  actualizadoEn    DateTime                @updatedAt
+  marca            Marca                  @relation(fields: [marcaId], references: [id], onDelete: Restrict)
+  modelo           String                 @db.VarChar(80)
+  condicion        CondicionProducto      @default(nuevo)
+  costo            Decimal?               @db.Decimal(12, 2)
+  precio           Decimal                @db.Decimal(12, 2)
+  precioAnterior   Decimal?               @db.Decimal(12, 2)
+  tasaIva          Decimal                @default(13.00) @db.Decimal(5, 2)
+  stock            Int                    @default(0) @db.UnsignedInt
+  puntoReorden     Int                    @default(3) @db.UnsignedInt
+  controlLotes     Boolean                @default(false)
+  publicado        Boolean                @default(true)
+  etiqueta         String?                @db.VarChar(30)
+  descripcion      String                 @db.Text
+  compatibilidad   String                 @db.Text
+  conectividad     String                 @db.Text
+  creadoEn         DateTime               @default(now())
+  actualizadoEn    DateTime               @updatedAt
   imagenes         ImagenProducto[]
   especificaciones Especificacion[]
   lotes            Lote[]
@@ -226,30 +226,38 @@ model UsuarioPermiso {
 
 /// Fila única (id = 1) con la identidad pública de la tienda; se edita desde el admin en L10.
 model ConfiguracionTienda {
-  id             Int      @id @default(1)
-  nombre         String   @db.VarChar(80)
-  eslogan        String   @db.VarChar(120)
-  ciudad         String   @db.VarChar(80)
-  pais           String   @db.VarChar(60)
-  direccion      String   @db.VarChar(255)
-  direccionCorta String   @db.VarChar(120)
+  id                  Int      @id @default(1)
+  nombre              String   @db.VarChar(80)
+  eslogan             String   @db.VarChar(120)
+  ciudad              String   @db.VarChar(80)
+  pais                String   @db.VarChar(60)
+  direccion           String   @db.VarChar(255)
+  direccionCorta      String   @db.VarChar(120)
   /// string[]
-  telefonos      Json
-  whatsapp       String   @db.VarChar(20)
-  correo         String   @db.VarChar(254)
-  horario        String   @db.VarChar(120)
-  horarioCorto   String   @db.VarChar(60)
-  acercaDe       String   @db.Text
-  mision         String   @db.Text
-  vision         String   @db.Text
+  telefonos           Json
+  whatsapp            String   @db.VarChar(20)
+  correo              String   @db.VarChar(254)
+  horario             String   @db.VarChar(120)
+  horarioCorto        String   @db.VarChar(60)
+  acercaDe            String   @db.Text
+  mision              String   @db.Text
+  vision              String   @db.Text
   /// string[]
-  valores        Json
+  valores             Json
   /// Record<string, string> (red → URL)
-  redes          Json
-  monedaCodigo   String   @db.Char(3)
-  monedaSimbolo  String   @db.VarChar(5)
-  monedaLocale   String   @db.VarChar(10)
-  actualizadaEn  DateTime @updatedAt
+  redes               Json
+  monedaCodigo        String   @db.Char(3)
+  monedaSimbolo       String   @db.VarChar(5)
+  monedaLocale        String   @db.VarChar(10)
+  // Emisor (L10): datos del contribuyente que se imprimen en facturas y cotizaciones; no son públicos.
+  razonSocial         String   @db.VarChar(100)
+  nit                 String   @db.VarChar(17)
+  nrc                 String   @db.VarChar(9)
+  actividadEconomica  String   @db.VarChar(120)
+  tipoEstablecimiento String   @db.VarChar(30)
+  /// Próximo número de factura (solo adelanta la secuencia; la regla completa llega en L15). null = continuar.
+  semillaFactura      Int?     @db.UnsignedInt
+  actualizadaEn       DateTime @updatedAt
 
   @@map("configuracion_tienda")
 }

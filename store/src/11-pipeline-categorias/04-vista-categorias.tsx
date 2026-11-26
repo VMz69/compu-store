@@ -3,6 +3,7 @@ import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-pr
 import { PageBanner } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { useCatalogHub } from './02-estado-categorias'
 import { uiMeta } from '@/04-trazabilidad-ui'
+import { getStoreCityName } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 
 const SOURCE = 'src/11-pipeline-categorias/04-vista-categorias.tsx'
 
@@ -22,7 +23,7 @@ export const CatalogHub = () => {
       <PageBanner
         badge="Categorías"
         title="Todas las Categorías de Productos"
-        description="Explora nuestra amplia variedad de categorías en productos tecnológicos con garantía y disponibilidad inmediata en nuestra sala de ventas en Cojutepeque."
+        description={`Explora nuestra amplia variedad de categorías en productos tecnológicos con garantía y disponibilidad inmediata en nuestra sala de ventas en ${getStoreCityName()}.`}
         traceId="categorias.banner"
       >
         <div className="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl text-center border border-white/20 flex-shrink-0">

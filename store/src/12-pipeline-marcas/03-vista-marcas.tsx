@@ -3,6 +3,7 @@ import { Breadcrumbs } from '@/04-pipeline-presentacion-secciones/00-director-pr
 import { PageBanner } from '@/04-pipeline-presentacion-secciones/00-director-presentacion-secciones'
 import { useBrandsPage } from './01-estado-marcas'
 import { uiMeta } from '@/04-trazabilidad-ui'
+import { STORE_CONFIG, getStoreCityName } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 
 const SOURCE = 'src/12-pipeline-marcas/03-vista-marcas.tsx'
 
@@ -19,7 +20,7 @@ export const BrandsView = () => {
       <PageBanner
         badge="Fabricantes"
         title="Marcas y Fabricantes Oficiales"
-        description="En CompuStore SV trabajamos exclusivamente con marcas reconocidas a nivel global. Todos los componentes y equipos cuentan con garantía directa y soporte en nuestro local físico en Cojutepeque."
+        description={`En ${STORE_CONFIG.name} trabajamos exclusivamente con marcas reconocidas a nivel global. Todos los componentes y equipos cuentan con garantía directa y soporte en nuestro local físico en ${getStoreCityName()}.`}
         traceId="marcas.banner"
       >
         <div className="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl text-center border border-white/20 flex-shrink-0">

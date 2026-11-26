@@ -1,4 +1,4 @@
-import { formatSku } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
+import { formatSku, getStoreCityName } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
 
@@ -17,7 +17,7 @@ export const ProductSpecsTab = ({ product, availableStock }: ProductSpecsTabProp
     ['Código SKU de Inventario', formatSku(product.id)],
     ['Condición de Hardware', '100% Original | Pruebas de estrés superadas'],
     ['Disponibilidad en Tienda', `${availableStock} unidad(es) lista(s) para entrega`],
-    ['Garantía Local', 'Garantía por escrito en sala de ventas Cojutepeque'],
+    ['Garantía Local', `Garantía por escrito en sala de ventas ${getStoreCityName()}`],
     ['Compatibilidad', 'Windows 11 / Windows 10 / Linux / macOS (según aplique)'],
     ['Conectividad e Interfaces', 'Puertos estándar certificados de alta velocidad'],
   ]
@@ -94,7 +94,7 @@ export const ProductSpecsTab = ({ product, availableStock }: ProductSpecsTabProp
           <span>
             ¿Tienes dudas sobre si este componente es compatible con tu placa madre, procesador
             o fuente de poder? Contáctanos por WhatsApp antes de tu compra y nuestros técnicos
-            en Cojutepeque te confirmarán compatibilidad sin costo.
+            en {getStoreCityName()} te confirmarán compatibilidad sin costo.
           </span>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useToastStore } from '@/03-pipeline-notificaciones/00-director-notificaciones'
 import { useReviewStore } from './02-resenas.store'
+import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 
 const RATING_LABELS: Record<number, string> = {
   1: 'Malo',
@@ -56,6 +57,8 @@ export const useReviewForm = (productId: number) => {
     setAuthor,
     city,
     setCity,
+    /** Ejemplo de ciudad desde la identidad de la tienda (L10). */
+    cityPlaceholder: `Ej. ${STORE_CONFIG.city}`,
     comment,
     setComment,
     sentForReview,

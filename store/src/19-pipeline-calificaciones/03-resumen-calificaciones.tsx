@@ -1,5 +1,6 @@
 import { RatingStars } from '@/19-pipeline-calificaciones/02-estrellas'
 import { uiMeta } from '@/04-trazabilidad-ui'
+import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 
 const SOURCE = 'src/19-pipeline-calificaciones/03-resumen-calificaciones.tsx'
 
@@ -38,7 +39,7 @@ export const RatingSummary = ({
       <RatingStars rating={rating} className="text-base gap-1" traceId="producto.reviews.rating" />
     </div>
     <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-      Basado en <b>{reviewsCount} opiniones</b> de clientes en El Salvador
+      Basado en <b>{reviewsCount} opiniones</b> de clientes en {STORE_CONFIG.country}
     </p>
 
     <div className="space-y-1.5 pt-2 text-[11px] text-slate-600 dark:text-slate-300 text-left">

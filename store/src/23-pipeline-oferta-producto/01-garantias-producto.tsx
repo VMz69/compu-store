@@ -1,11 +1,12 @@
 import { uiMeta } from '@/04-trazabilidad-ui'
+import { STORE_CONFIG, getStoreCityName } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 
 const SOURCE = 'src/23-pipeline-oferta-producto/01-garantias-producto.tsx'
 
 const CHIPS = [
   {
     icon: 'fa-solid fa-truck-fast text-brand',
-    label: 'Envíos a todo El Salvador',
+    label: `Envíos a todo ${STORE_CONFIG.country}`,
   },
   {
     icon: 'fa-solid fa-shield-halved text-emerald-600',
@@ -13,7 +14,7 @@ const CHIPS = [
   },
   {
     icon: 'fa-solid fa-store text-sky-600',
-    label: 'Retiro en Cojutepeque',
+    label: `Retiro en ${getStoreCityName()}`,
   },
 ]
 

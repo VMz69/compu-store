@@ -2,7 +2,7 @@ import { FooterBrand } from './01-identidad-pie'
 import { FooterLinks } from './02-enlaces-pie'
 import { FooterSocial } from './03-redes-sociales'
 import { FooterStoreInfo } from './04-informacion-pie'
-import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
+import { STORE_CONFIG, getStoreCityName } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 
 const SOURCE = 'src/36-pipeline-pie-tienda/05-pie-tienda.tsx'
@@ -36,8 +36,8 @@ export const Footer = () => (
             source: SOURCE,
           })}
         >
-          &copy; 2026 {STORE_CONFIG.name}. Todos los derechos reservados. Cojutepeque, El
-          Salvador.
+          &copy; 2026 {STORE_CONFIG.name}. Todos los derechos reservados. {getStoreCityName()},{' '}
+          {STORE_CONFIG.country}.
         </p>
       </div>
     </div>

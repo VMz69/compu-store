@@ -1,6 +1,11 @@
+import type { Prisma } from '../../generated/prisma/client.js'
 import { prisma } from '../03-pipeline-conexiones/00-director-conexiones.js'
 
 /** Fila única de la configuración pública de la tienda (id = 1, sembrada en L02). */
 export const configuracion = () => prisma.configuracionTienda.findUnique({ where: { id: 1 } })
 
 export type Configuracion = NonNullable<Awaited<ReturnType<typeof configuracion>>>
+
+/** Actualiza la fila id = 1 (L10). Si no existe, Prisma lanza P2025 → 404. */
+export const actualizarConfiguracion = (datos: Prisma.ConfiguracionTiendaUpdateInput) =>
+  prisma.configuracionTienda.update({ where: { id: 1 }, data: datos })

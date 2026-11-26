@@ -226,6 +226,12 @@ const CONFIGURACION = {
   monedaCodigo: 'USD',
   monedaSimbolo: '$',
   monedaLocale: 'en-US',
+  // Emisor (L10): valores de fábrica del admin (admin/src/85-pipeline-identificadores-texto/03-store.config.ts).
+  razonSocial: 'COMPU STORE SAS DE CV',
+  nit: '07181607251010',
+  nrc: '367628-0',
+  actividadEconomica: 'Venta al por menor de computadoras y equipo periférico',
+  tipoEstablecimiento: 'Casa matriz',
 }
 
 // ── Siembra ────────────────────────────────────────────────────────────────

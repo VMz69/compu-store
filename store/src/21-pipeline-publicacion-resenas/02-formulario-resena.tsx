@@ -100,7 +100,7 @@ export const ReviewForm = ({ productId }: { productId: number }) => {
             type="text"
             value={form.city}
             onChange={(event) => form.setCity(event.target.value)}
-            placeholder="Ej. Cojutepeque, Cuscatlán"
+            placeholder={form.cityPlaceholder}
             className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-xl text-xs bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-brand"
             {...uiMeta({
               id: 'producto.reviews.form.city',

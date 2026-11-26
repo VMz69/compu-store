@@ -1,7 +1,7 @@
 import { ProductTrustChips } from './01-garantias-producto'
 import { QuantitySelector } from '@/05-pipeline-controles-compra/00-director-controles-compra'
 import { formatCurrency } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
-import { STORE_CONFIG } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
+import { STORE_CONFIG, getStoreCityName } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
 
@@ -76,7 +76,7 @@ export const ProductBuyBox = ({
           </span>
           <p className="text-xs text-slate-500 dark:text-slate-400">
             <i className="fa-solid fa-bolt-lightning text-amber-500 mr-1.5" />
-            Entrega inmediata en Cojutepeque
+            Entrega inmediata en {getStoreCityName()}
           </p>
         </div>
       )}

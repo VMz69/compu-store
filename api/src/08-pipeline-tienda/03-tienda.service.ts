@@ -34,8 +34,18 @@ const mapaTexto = (valor: unknown): Record<string, string> =>
     : {}
 
 export async function obtenerIdentidad(): Promise<IdentidadDto> {
+  return aIdentidad(await configuracionExistente())
+}
+
+/** Configuración id = 1; 404 si el seed aún no la creó. */
+export async function configuracionExistente(): Promise<repo.Configuracion> {
   const c = await repo.configuracion()
   if (!c) throw new ErrorApp('NOT_FOUND', 404, 'La tienda aún no está configurada.')
+  return c
+}
+
+/** Parte pública de la configuración (contratos-A §4.6); el emisor nunca sale por aquí. */
+export function aIdentidad(c: repo.Configuracion): IdentidadDto {
   return {
     nombre: c.nombre,
     eslogan: c.eslogan,

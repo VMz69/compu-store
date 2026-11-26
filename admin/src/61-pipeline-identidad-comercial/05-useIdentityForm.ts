@@ -36,19 +36,24 @@ export function useIdentityForm() {
     setSubmitted(true)
     if (Object.keys(validateIdentity(values, lastIssued)).length > 0) return toast('Revisa los datos marcados.', 'warning')
     if (!ensurePermission('canEditSettings', 'No tienes permiso para editar la configuración')) return
-    await updateSettings({
-      name: values.name.trim(),
-      email: values.email.trim().toLowerCase(),
-      address: values.address.trim(),
-      phones: [values.phone.trim(), values.phone2.trim()].filter(Boolean),
-      whatsappNumber: toWhatsappNumber(values.phone),
-      legalName: values.legalName.trim().toUpperCase(),
-      nit: values.nit.trim(),
-      nrc: values.nrc.trim(),
-      economicActivity: values.economicActivity.trim(),
-      establishmentType: values.establishmentType,
-      invoiceSeed: values.invoiceSeed.trim() ? Number(values.invoiceSeed.trim()) : null,
-    })
+    try {
+      await updateSettings({
+        name: values.name.trim(),
+        email: values.email.trim().toLowerCase(),
+        address: values.address.trim(),
+        phones: [values.phone.trim(), values.phone2.trim()].filter(Boolean),
+        whatsappNumber: toWhatsappNumber(values.phone),
+        legalName: values.legalName.trim().toUpperCase(),
+        nit: values.nit.trim(),
+        nrc: values.nrc.trim(),
+        economicActivity: values.economicActivity.trim(),
+        establishmentType: values.establishmentType,
+        invoiceSeed: values.invoiceSeed.trim() ? Number(values.invoiceSeed.trim()) : null,
+      })
+    } catch (error) {
+      // L10: el servidor valida; su mensaje se muestra y el formulario conserva lo escrito.
+      return toast(error instanceof Error ? error.message : 'No se pudieron guardar los datos del emisor.', 'danger')
+    }
     toast('Datos del emisor guardados · aplican a los próximos documentos', 'success')
   }
 

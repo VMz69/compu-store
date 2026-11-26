@@ -59,6 +59,9 @@ const MATRIZ: Fila[] = [
   { metodo: 'put', patron: '/usuarios/:id/accesos', url: '/usuarios/999999/accesos', permisos: ['ajustes.usuarios'] },
   { metodo: 'put', patron: '/usuarios/:id/contrasena', url: '/usuarios/999999/contrasena', permisos: ['ajustes.usuarios'] },
   { metodo: 'delete', patron: '/usuarios/:id', url: '/usuarios/999999', permisos: ['ajustes.usuarios'] },
+  // L10: el emisor lo leen las vistas que lo muestran o imprimen; guardarlo exige editar la configuración.
+  { metodo: 'get', patron: '/ajustes/identidad', url: '/ajustes/identidad', permisos: ['ajustes', 'tablero', 'facturacion', 'cotizaciones'] },
+  { metodo: 'put', patron: '/ajustes/identidad', url: '/ajustes/identidad', permisos: ['ajustes.configuracion'] },
 ]
 
 const TODAS: Permiso[] = [...VISTAS, ...ACCIONES]

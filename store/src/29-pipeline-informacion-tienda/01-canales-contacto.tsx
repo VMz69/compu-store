@@ -23,7 +23,7 @@ export const ContactInfoCards = () => (
         {STORE_CONFIG.address}
       </p>
       <span className="inline-block text-[11px] font-bold text-brand bg-brand-50 dark:bg-brand-950/60 px-2.5 py-1 rounded-full">
-        Frente a Dollar City • 2da Planta
+        {STORE_CONFIG.addressShort}
       </span>
     </div>
 

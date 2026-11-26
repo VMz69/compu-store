@@ -1,5 +1,6 @@
 import { uiMeta } from '@/04-trazabilidad-ui'
 import type { Product } from '@/00-director-modelos'
+import { getStoreCityName } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 
 const SOURCE = 'src/22-pipeline-informacion-producto/02-descripcion-producto.tsx'
 
@@ -9,7 +10,7 @@ const HIGHLIGHTS = [
     tone: 'bg-brand-50 text-brand',
     title: 'Garantía Escrita',
     description:
-      'Respaldo de 6 a 12 meses directamente en nuestra sala de ventas en Cojutepeque.',
+      `Respaldo de 6 a 12 meses directamente en nuestra sala de ventas en ${getStoreCityName()}.`,
   },
   {
     icon: 'fa-solid fa-microchip',
