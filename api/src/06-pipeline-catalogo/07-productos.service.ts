@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto'
 import type { ProveedorImagenes } from '../03-pipeline-conexiones/00-director-conexiones.js'
 import { ErrorApp, meta, rango, type Paginacion } from '../04-pipeline-http/00-director-http.js'
 import { registrarExistenciasIniciales, type ExistenciasIniciales } from '../07-pipeline-inventario/00-director-inventario.js'
+import { hoyNegocio, precioEfectivo, type PrecioEfectivo } from '../10-pipeline-ofertas/00-director-ofertas.js'
 import type { ConsultaTienda, CrearProducto, EditarProducto } from './06-productos.schema.js'
 import { slugUnico, type Pagina } from './03-taxonomia.service.js'
 import * as repo from './08-productos.repository.js'
@@ -46,7 +47,11 @@ export interface ProductoAdminDto extends ProductoPublicoDto {
 const importe = (valor: { toFixed: (decimales: number) => string }) => valor.toFixed(2)
 const importeOpcional = (valor: { toFixed: (decimales: number) => string } | null) => (valor ? valor.toFixed(2) : null)
 
-const aPublico = (p: repo.ProductoDetalle): ProductoPublicoDto => ({
+/**
+ * Contrato público. Con una oferta vigente (L12), `precio` es el precio efectivo y `precioAnterior`
+ * el precio base; sin `vigente` (admin) se devuelven siempre el precio base y el anterior manual.
+ */
+const aPublico = (p: repo.ProductoDetalle, vigente?: PrecioEfectivo): ProductoPublicoDto => ({
   id: p.id,
   slug: p.slug,
   sku: p.sku,
@@ -54,8 +59,8 @@ const aPublico = (p: repo.ProductoDetalle): ProductoPublicoDto => ({
   descripcion: p.descripcion,
   categoria: p.categoria,
   marca: p.marca,
-  precio: importe(p.precio),
-  precioAnterior: importeOpcional(p.precioAnterior),
+  precio: vigente?.ofertaId ? vigente.precio : importe(p.precio),
+  precioAnterior: vigente?.ofertaId ? vigente.precioBase : importeOpcional(p.precioAnterior),
   disponible: p.stock,
   etiqueta: p.etiqueta,
   imagenes: p.imagenes.map((img) => img.url),
@@ -64,6 +69,7 @@ const aPublico = (p: repo.ProductoDetalle): ProductoPublicoDto => ({
   totalResenas: 0,
 })
 
+/** El admin edita el precio base: nunca recibe el de oferta (así guardar no lo convierte en base). */
 const aAdmin = (p: repo.ProductoDetalle): ProductoAdminDto => ({
   ...aPublico(p),
   modelo: p.modelo,
@@ -130,12 +136,19 @@ export async function listar(paginacion: Paginacion): Promise<Pagina<ProductoAdm
 
 export const obtener = async (id: number): Promise<ProductoAdminDto> => aAdmin(await exigirProducto(id))
 
-/** Tienda: solo publicados, con búsqueda, filtros, orden y paginación (L07). */
+/** Contrato público con el precio efectivo de hoy (un solo «hoy» por petición). */
+async function aPublicos(filas: repo.ProductoDetalle[], hoy: string = hoyNegocio()): Promise<ProductoPublicoDto[]> {
+  const precios = await precioEfectivo(filas.map((p) => p.id), hoy)
+  return filas.map((p) => aPublico(p, precios.get(p.id)))
+}
+
+/** Tienda: solo publicados, con búsqueda, filtros, orden y paginación (L07), con el precio efectivo (L12). */
 export async function listarPublicos(consulta: ConsultaTienda): Promise<Pagina<ProductoPublicoDto>> {
   const { page, limit, orden, ...filtros } = consulta
-  const [ids, total] = await Promise.all([repo.idsPublicos(filtros, orden, rango({ page, limit })), repo.contarPublicos(filtros)])
+  const hoy = hoyNegocio()
+  const [ids, total] = await Promise.all([repo.idsPublicos(filtros, orden, rango({ page, limit }), hoy), repo.contarPublicos(filtros, hoy)])
   const filas = await repo.buscarVarios(ids)
-  return { data: filas.map(aPublico), meta: meta({ page, limit }, total) }
+  return { data: await aPublicos(filas, hoy), meta: meta({ page, limit }, total) }
 }
 
 async function exigirPublicado(id: number): Promise<repo.ProductoDetalle> {
@@ -144,12 +157,13 @@ async function exigirPublicado(id: number): Promise<repo.ProductoDetalle> {
   return producto
 }
 
-export const obtenerPublico = async (id: number): Promise<ProductoPublicoDto> => aPublico(await exigirPublicado(id))
+export const obtenerPublico = async (id: number): Promise<ProductoPublicoDto> =>
+  (await aPublicos([await exigirPublicado(id)]))[0] as ProductoPublicoDto
 
 /** Publicados de la misma categoría o marca (404 si el producto no está publicado). */
 export async function relacionados(id: number, limite: number): Promise<ProductoPublicoDto[]> {
   const producto = await exigirPublicado(id)
-  return (await repo.relacionados(producto, limite)).map(aPublico)
+  return aPublicos(await repo.relacionados(producto, limite))
 }
 
 /** Lo que otro dominio necesita para vender un producto (§5); los ids inexistentes no aparecen. */
@@ -157,14 +171,15 @@ export interface ProductoVendible {
   id: number
   sku: string
   nombre: string
-  /** Precio base como string decimal (D-05); en L12 lo sustituye el precio efectivo. */
+  /** Precio efectivo de hoy como string decimal (D-05): el de la oferta vigente o el base (L12). */
   precio: string
   publicado: boolean
 }
 
 export async function obtenerProductosVendibles(ids: number[]): Promise<ProductoVendible[]> {
-  const filas = await repo.vendibles([...new Set(ids)])
-  return filas.map((p) => ({ id: p.id, sku: p.sku, nombre: p.nombre, precio: importe(p.precio), publicado: p.publicado }))
+  const unicos = [...new Set(ids)]
+  const [filas, precios] = await Promise.all([repo.vendibles(unicos), precioEfectivo(unicos)])
+  return filas.map((p) => ({ id: p.id, sku: p.sku, nombre: p.nombre, precio: precios.get(p.id)?.precio ?? importe(p.precio), publicado: p.publicado }))
 }
 
 /* ---------- Escritura ---------- */

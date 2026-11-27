@@ -79,6 +79,7 @@ model Producto {
   especificaciones Especificacion[]
   lotes            Lote[]
   movimientos      MovimientoInventario[]
+  ofertas          OfertaProducto[]
 
   @@index([publicado, categoriaId])
   @@map("productos")
@@ -286,4 +287,41 @@ model Cliente {
 
   @@index([nombre])
   @@map("clientes")
+}
+
+enum TipoDescuento {
+  porcentaje
+  monto
+}
+
+/// Oferta (L12): regla de precio con vigencia sobre productos concretos. No modifica Producto.precio:
+/// el precio efectivo se calcula al leer (10-ofertas/05-precio-efectivo). Fechas de calendario
+/// inclusive, evaluadas con el «hoy» de El Salvador. `valor` = % (≤ 90) o monto en $ con IVA.
+model Oferta {
+  id            Int              @id @default(autoincrement())
+  titulo        String           @db.VarChar(80)
+  etiqueta      String           @db.VarChar(40)
+  descripcion   String           @db.Text
+  tipoDescuento TipoDescuento
+  valor         Decimal          @db.Decimal(12, 2)
+  inicio        DateTime         @db.Date
+  fin           DateTime         @db.Date
+  pausada       Boolean          @default(false)
+  creadaEn      DateTime         @default(now())
+  actualizadaEn DateTime         @updatedAt
+  productos     OfertaProducto[]
+
+  @@index([inicio, fin])
+  @@map("ofertas")
+}
+
+model OfertaProducto {
+  ofertaId   Int
+  oferta     Oferta   @relation(fields: [ofertaId], references: [id], onDelete: Cascade)
+  productoId Int
+  producto   Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
+
+  @@id([ofertaId, productoId])
+  @@index([productoId])
+  @@map("ofertas_productos")
 }

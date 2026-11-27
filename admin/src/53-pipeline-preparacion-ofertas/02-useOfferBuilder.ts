@@ -48,13 +48,18 @@ export function useOfferBuilder() {
     setSubmitted(true)
     if (Object.keys(validateOffer(input, analyses, offers)).length > 0) return toast('Revisa los datos de la oferta.', 'warning')
     if (!ensurePermission('canManageOffers', 'No tienes permiso para gestionar ofertas')) return
-    const { offer, created } = await saveOffer({
-      id: editing?.id, title: values.title.trim(), badge: values.badge.trim(), description: values.description.trim(),
-      productIds, discountType: type, discountValue: value, startDate: values.startDate, endDate: values.endDate,
-      paused: editing?.paused ?? false,
-    })
-    toast(created ? `Oferta "${offer.title}" creada` : `Oferta "${offer.title}" actualizada`, 'success')
-    navigate('/ofertas')
+    try {
+      const { offer, created } = await saveOffer({
+        id: editing?.id, title: values.title.trim(), badge: values.badge.trim(), description: values.description.trim(),
+        productIds, discountType: type, discountValue: value, startDate: values.startDate, endDate: values.endDate,
+        paused: editing?.paused ?? false,
+      })
+      toast(created ? `Oferta "${offer.title}" creada` : `Oferta "${offer.title}" actualizada`, 'success')
+      navigate('/ofertas')
+    } catch (error) {
+      // L12: el servidor decide (bajo costo, solapamiento, vigencia); el formulario sigue abierto.
+      toast(error instanceof Error ? error.message : 'No se pudo guardar la oferta.', 'danger')
+    }
   }
 
   return {

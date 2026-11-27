@@ -1,88 +1,110 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { getCatalogSnapshot } from '@/00-director-catalogo'
-import { delay } from '@/84-pipeline-persistencia-demo/04-delay'
+import { getCurrentViews, type ViewId } from '@/00-director-acceso'
+import { onAuthenticated } from '@/84-pipeline-persistencia-demo/05-api.client'
 import { STORAGE_KEYS } from '@/84-pipeline-persistencia-demo/02-storage'
-import { nextSequentialId } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
-import { offerStatus, today } from './02-offerPricing'
-import { OFFERS_MOCK } from '../87-pipeline-datos-demo-productos/04-promotions.mock'
+import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
+import { offerStatus } from './02-offerPricing'
+import { deleteOfferApi, fetchOffers, saveOfferApi, setOfferPausedApi } from './05-ofertas.api'
 import type { Offer, OfferDraft } from './04-types'
 
+/** Store de ofertas. Desde L12 la fuente es la API; esto es su caché. */
 interface OffersState {
   offers: Offer[]
   isLoading: boolean
+  /** Guarda en la API; si falla, la caché no cambia y el error se propaga al formulario. */
   saveOffer: (draft: OfferDraft) => Promise<{ offer: Offer; created: boolean }>
-  /** Solo ofertas que no están vigentes (una vigente se pausa primero). */
+  /** Solo ofertas que no están vigentes (una vigente se pausa primero). Optimista: si la API falla, se revierte y se avisa. */
   deleteOffer: (id: string) => void
+  /** Optimista: devuelve el nuevo estado de pausa; si la API falla, se revierte y se avisa. */
   togglePause: (id: string) => boolean
   reset: () => void
 }
 
-/** Campaña del modelo anterior (banner con texto libre por categoría). */
-type LegacyPromotion = { id: string; title: string; badge: string; description: string; targetCategory: string }
+/** v0: banners · v1: ofertas locales · v2 (L12): las ofertas viven en la API; toda caché anterior era demo. */
+const OFFERS_SCHEMA_VERSION = 2
 
-/**
- * v0: banners por categoría sin precio · v1: ofertas con productos, descuento y vigencia.
- * Las campañas antiguas pasan a ofertas PAUSADAS de 10% con los productos de su
- * categoría, para revisarlas antes de activarlas.
- */
-const OFFERS_SCHEMA_VERSION = 1
+/** Vistas que usan las ofertas (listado, o precio vigente al armar pedidos y cotizaciones); las que la API acepta. */
+const READER_VIEWS: ViewId[] = ['ofertas', 'pedidos', 'cotizaciones']
 
-const migrateLegacy = (legacy: LegacyPromotion[]): Offer[] => {
-  const { products } = getCatalogSnapshot()
-  const start = today()
-  return legacy.map((p) => ({
-    id: p.id, title: p.title, badge: p.badge, description: p.description,
-    productIds: products.filter((x) => x.category === p.targetCategory).map((x) => x.id),
-    discountType: 'percent', discountValue: 10, startDate: start, endDate: start, paused: true,
-    createdAt: new Date().toISOString(),
-  }))
-}
+const errorMessage = (error: unknown, fallback: string) => (error instanceof Error ? error.message : fallback)
+
+const replaceOffer = (offers: Offer[], saved: Offer) => offers.map((o) => (o.id === saved.id ? saved : o))
 
 export const usePromotionsStore = create<OffersState>()(
   persist(
     (set, get) => ({
-      offers: OFFERS_MOCK,
+      offers: [],
       isLoading: false,
 
-      saveOffer: async ({ id, ...data }) => {
+      saveOffer: async (draft) => {
         set({ isLoading: true })
-        await delay()
-        const current = id ? get().offers.find((o) => o.id === id) : undefined
-        if (current) {
-          const offer = { ...current, ...data }
-          set((s) => ({ offers: s.offers.map((o) => (o.id === id ? offer : o)), isLoading: false }))
-          return { offer, created: false }
+        try {
+          const offer = await saveOfferApi(draft)
+          const created = !get().offers.some((o) => o.id === offer.id)
+          set((s) => ({ offers: created ? [offer, ...s.offers] : replaceOffer(s.offers, offer), isLoading: false }))
+          return { offer, created }
+        } catch (error) {
+          set({ isLoading: false })
+          throw error
         }
-        const offer: Offer = { id: nextSequentialId(get().offers.map((o) => o.id), 'PRM-'), ...data, createdAt: new Date().toISOString() }
-        set((s) => ({ offers: [offer, ...s.offers], isLoading: false }))
-        return { offer, created: true }
       },
 
       deleteOffer: (id) => {
-        const offer = get().offers.find((o) => o.id === id)
-        if (offer && offerStatus(offer) === 'vigente') throw new Error('Pausa la oferta antes de eliminarla.')
-        set((s) => ({ offers: s.offers.filter((o) => o.id !== id) }))
+        const { offers } = get()
+        const index = offers.findIndex((o) => o.id === id)
+        if (index < 0) return
+        const removed = offers[index]
+        if (offerStatus(removed) === 'vigente') throw new Error('Pausa la oferta antes de eliminarla.')
+        set({ offers: offers.filter((o) => o.id !== id) })
+        deleteOfferApi(id).catch((error: unknown) => {
+          set((s) => ({ offers: [...s.offers.slice(0, index), removed, ...s.offers.slice(index)] }))
+          toast(`No se eliminó la oferta "${removed.title}": ${errorMessage(error, 'error del servidor.')}`, 'danger')
+        })
       },
 
       togglePause: (id) => {
-        const paused = !get().offers.find((o) => o.id === id)?.paused
+        const current = get().offers.find((o) => o.id === id)
+        if (!current) return false
+        const paused = !current.paused
         set((s) => ({ offers: s.offers.map((o) => (o.id === id ? { ...o, paused } : o)) }))
+        setOfferPausedApi(id, paused)
+          .then((saved) => set((s) => ({ offers: replaceOffer(s.offers, saved) })))
+          .catch((error: unknown) => {
+            set((s) => ({ offers: s.offers.map((o) => (o.id === id ? { ...o, paused: current.paused } : o)) }))
+            toast(`No se cambió la pausa de "${current.title}": ${errorMessage(error, 'error del servidor.')}`, 'danger')
+          })
         return paused
       },
 
-      reset: () => set({ offers: OFFERS_MOCK }),
+      // Mantenimiento: las ofertas se releen de la API (no hay datos de fábrica que restaurar).
+      reset: () => {
+        void loadOffers()
+      },
     }),
     {
       name: STORAGE_KEYS.PROMOTIONS,
       version: OFFERS_SCHEMA_VERSION,
       partialize: (s) => ({ offers: s.offers }),
-      migrate: (persisted) => {
-        const state = persisted as { offers?: Offer[]; promotions?: LegacyPromotion[] }
-        return { offers: state.offers ?? (state.promotions ? migrateLegacy(state.promotions) : OFFERS_MOCK) }
-      },
+      // Toda versión anterior era demo: se descarta y se relee de la API al autenticarse.
+      migrate: () => ({ offers: [] }),
     },
   ),
 )
+
+/**
+ * Precarga de las ofertas (al iniciar o restaurar la sesión). Solo si el usuario tiene alguna
+ * vista que las usa: sin ellas no se pide nada (la API respondería 403) ni se avisa.
+ */
+async function loadOffers(): Promise<void> {
+  if (!getCurrentViews().some((view) => READER_VIEWS.includes(view))) return
+  try {
+    usePromotionsStore.setState({ offers: await fetchOffers() })
+  } catch (error) {
+    toast(`No se pudieron cargar las ofertas: ${errorMessage(error, 'error del servidor.')}`, 'danger')
+  }
+}
+
+onAuthenticated(() => void loadOffers())
 
 export const resetPromotions = (): void => usePromotionsStore.getState().reset()

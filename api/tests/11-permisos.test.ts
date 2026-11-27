@@ -68,6 +68,13 @@ const MATRIZ: Fila[] = [
   { metodo: 'post', patron: '/clientes', url: '/clientes', permisos: ['clientes.gestionar'] },
   { metodo: 'patch', patron: '/clientes/:id', url: '/clientes/999999', permisos: ['clientes.gestionar'] },
   { metodo: 'delete', patron: '/clientes/:id', url: '/clientes/999999', permisos: ['clientes.eliminar'] },
+  // L12: las ofertas las leen la vista Ofertas y los constructores de pedidos y cotizaciones (precio vigente).
+  { metodo: 'get', patron: '/ofertas', url: '/ofertas', permisos: ['ofertas', 'pedidos', 'cotizaciones'] },
+  { metodo: 'get', patron: '/ofertas/:id', url: '/ofertas/999999', permisos: ['ofertas', 'pedidos', 'cotizaciones'] },
+  { metodo: 'post', patron: '/ofertas', url: '/ofertas', permisos: ['ofertas.gestionar'] },
+  { metodo: 'patch', patron: '/ofertas/:id', url: '/ofertas/999999', permisos: ['ofertas.gestionar'] },
+  { metodo: 'patch', patron: '/ofertas/:id/pausa', url: '/ofertas/999999/pausa', permisos: ['ofertas.gestionar'] },
+  { metodo: 'delete', patron: '/ofertas/:id', url: '/ofertas/999999', permisos: ['ofertas.gestionar'] },
 ]
 
 const TODAS: Permiso[] = [...VISTAS, ...ACCIONES]

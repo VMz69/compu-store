@@ -1,9 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { sembrar } from '../prisma/seed.js'
 import { desconectarBD, prisma } from '../src/03-pipeline-conexiones/00-director-conexiones.js'
+import { hoyNegocio } from '../src/10-pipeline-ofertas/00-director-ofertas.js'
 
 /** Deja la BD de pruebas vacía respetando las FK (imágenes, especificaciones y lotes caen en cascada). */
 async function vaciarBD() {
+  await prisma.oferta.deleteMany()
   await prisma.movimientoInventario.deleteMany()
   await prisma.producto.deleteMany()
   await prisma.categoria.deleteMany()
@@ -22,7 +24,7 @@ describe('Seed de la Fase A', () => {
   it('crea el catálogo completo desde una BD vacía', async () => {
     const resumen = await sembrar(prisma)
 
-    expect(resumen).toEqual({ categorias: 5, marcas: 8, productos: 12, configuracion: 1, clientes: 8 })
+    expect(resumen).toEqual({ categorias: 5, marcas: 8, productos: 12, configuracion: 1, clientes: 8, ofertas: 0 })
     const ids = (await prisma.producto.findMany({ select: { id: true }, orderBy: { id: 'asc' } })).map((p) => p.id)
     expect(ids).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
   })
@@ -30,7 +32,7 @@ describe('Seed de la Fase A', () => {
   it('es idempotente: una segunda ejecución no crea ni duplica nada', async () => {
     const resumen = await sembrar(prisma)
 
-    expect(resumen).toEqual({ categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0 })
+    expect(resumen).toEqual({ categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0, ofertas: 0 })
     expect(await prisma.producto.count()).toBe(12)
     expect(await prisma.cliente.count()).toBe(8)
     expect(await prisma.imagenProducto.count()).toBe(53)
@@ -42,6 +44,27 @@ describe('Seed de la Fase A', () => {
     expect(clientes.map((c) => c.id)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
     expect(clientes[0]).toMatchObject({ nombre: 'María Hernández', telefonoNormalizado: '74889922', documento: '04512378-9' })
     expect(clientes[7]?.activo).toBe(false)
+  })
+
+  it('sin demo no siembra ofertas; con demo siembra 3 (vigente, programada y vencida), idempotente', async () => {
+    expect(await prisma.oferta.count()).toBe(0)
+    const hoy = hoyNegocio()
+    expect((await sembrar(prisma, { demo: true })).ofertas).toBe(3)
+    expect((await sembrar(prisma, { demo: true })).ofertas).toBe(0)
+
+    const ofertas = await prisma.oferta.findMany({ orderBy: { id: 'asc' }, include: { productos: { orderBy: { productoId: 'asc' } } } })
+    const texto = (fecha: Date) => fecha.toISOString().slice(0, 10)
+    expect(ofertas.map((o) => o.id)).toEqual([1, 2, 3])
+    const [vigente, programada, vencida] = ofertas
+    expect(texto(vigente!.inicio) < hoy && texto(vigente!.fin) > hoy).toBe(true)
+    expect(vigente!.productos.map((p) => p.productoId)).toEqual([6, 10])
+    expect(texto(programada!.inicio) > hoy).toBe(true)
+    expect(texto(vencida!.fin) < hoy).toBe(true)
+    expect(vencida).toMatchObject({ tipoDescuento: 'monto', pausada: false })
+    expect(vencida!.valor.toFixed(2)).toBe('25.00')
+
+    // El resto de suites parte sin ofertas.
+    await prisma.oferta.deleteMany()
   })
 
   it('no sobrescribe lo editado desde el admin', async () => {

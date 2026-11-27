@@ -21,6 +21,11 @@ export interface Offer {
   /** Pausa manual: deja de aplicar aunque esté dentro de su vigencia. */
   paused: boolean
   createdAt: string
+  /**
+   * Precio de oferta por producto calculado por el servidor (L12): la misma fórmula que usan
+   * la tienda y la validación del carrito. El cálculo local queda para la vista previa del formulario.
+   */
+  prices?: Record<string, number>
 }
 
 export type OfferDraft = Omit<Offer, 'id' | 'createdAt'> & { id?: string }

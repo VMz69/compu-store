@@ -7,6 +7,8 @@
  * sobrescribe lo editado desde el admin.
  *
  * Uso: `pnpm db:sembrar` (prisma db seed). En pruebas se importa `sembrar`.
+ * Con `SEED_DEMO=true` también siembra las ofertas de demostración (L12), con fechas
+ * relativas al día de la ejecución para que no venzan: `SEED_DEMO=true pnpm db:sembrar`.
  */
 import { resolve } from 'node:path'
 import type { CondicionProducto, PrismaClient } from '../generated/prisma/client.js'
@@ -262,6 +264,23 @@ const CLIENTES: ClienteSeed[] = [
   { id: 8, tipo: 'persona', nombre: 'Mauricio Gómez', documento: null, telefono: '7233-4411', correo: null, ciudad: 'Cojutepeque', direccion: '', notas: '', activo: false, creadoEn: '2026-05-30T16:00:00.000Z' },
 ]
 
+// ── Ofertas de demostración (L12, solo con SEED_DEMO=true) ─────────────────
+// Las 3 del mock del admin (ids 1–3 = PRM-001…003) con sus descuentos y productos. Las fechas
+// son relativas al «hoy» de El Salvador del momento del seed: una vigente, una programada y una vencida.
+
+const OFERTAS_DEMO = [
+  { id: 1, titulo: 'Audífonos gamers 7.1', etiqueta: 'OFERTA ESPECIAL GAMER', descripcion: 'Sonido inmersivo y micrófono con cancelación de ruido.', productoIds: [6, 10], tipoDescuento: 'porcentaje', valor: '15', desde: -1, hasta: 30 },
+  { id: 2, titulo: 'Periféricos mecánicos RGB', etiqueta: 'ZONA GAMING', descripcion: 'Teclados mecánicos y mouses ergonómicos.', productoIds: [4, 12], tipoDescuento: 'porcentaje', valor: '10', desde: 5, hasta: 20 },
+  { id: 3, titulo: 'Laptops refurbished', etiqueta: 'PRODUCTIVIDAD Y ESTUDIO', descripcion: 'Equipos empresariales con garantía real.', productoIds: [1], tipoDescuento: 'monto', valor: '25', desde: -31, hasta: -1 },
+] as const
+
+/** Fecha de calendario (columna DATE) a `dias` de `hoy` (`YYYY-MM-DD`). */
+const fechaRelativa = (hoy: string, dias: number) => {
+  const fecha = new Date(`${hoy}T00:00:00.000Z`)
+  fecha.setUTCDate(fecha.getUTCDate() + dias)
+  return fecha
+}
+
 // ── Siembra ────────────────────────────────────────────────────────────────
 
 export interface ResumenSeed {
@@ -270,6 +289,12 @@ export interface ResumenSeed {
   productos: number
   configuracion: number
   clientes: number
+  ofertas: number
+}
+
+export interface OpcionesSeed {
+  /** Siembra también los datos de demostración (ofertas de L12). */
+  demo?: boolean
 }
 
 /** Crea un producto con sus hijos y registra el stock inicial como movimiento del sistema. */
@@ -317,9 +342,11 @@ async function crearProducto(tx: Tx, p: ProductoSeed, categoriaId: number, marca
 }
 
 /** Siembra el catálogo de A. Devuelve cuántos registros se crearon en esta ejecución. */
-export async function sembrar(prisma: PrismaClient): Promise<ResumenSeed> {
+export async function sembrar(prisma: PrismaClient, { demo = false }: OpcionesSeed = {}): Promise<ResumenSeed> {
+  // El «hoy» del negocio sale del pipeline de ofertas (misma zona horaria que la vigencia).
+  const hoy = demo ? (await import('../src/10-pipeline-ofertas/00-director-ofertas.js')).hoyNegocio() : ''
   return prisma.$transaction(async (tx) => {
-    const resumen: ResumenSeed = { categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0 }
+    const resumen: ResumenSeed = { categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0, ofertas: 0 }
 
     const categoriaIds = new Map<string, number>()
     for (const c of CATEGORIAS) {
@@ -364,6 +391,23 @@ export async function sembrar(prisma: PrismaClient): Promise<ResumenSeed> {
       resumen.clientes++
     }
 
+    // Solo si no existe ese id; enlaza los productos que sigan existiendo.
+    for (const { id, productoIds, desde, hasta, ...o } of demo ? OFERTAS_DEMO : []) {
+      if (await tx.oferta.findUnique({ where: { id } })) continue
+      const existentes = await tx.producto.findMany({ where: { id: { in: [...productoIds] } }, select: { id: true } })
+      await tx.oferta.create({
+        data: {
+          id,
+          ...o,
+          inicio: fechaRelativa(hoy, desde),
+          fin: fechaRelativa(hoy, hasta),
+          creadaEn: CREADA_EN,
+          productos: { create: existentes.map((p) => ({ productoId: p.id })) },
+        },
+      })
+      resumen.ofertas++
+    }
+
     return resumen
   })
 }
@@ -372,7 +416,7 @@ export async function sembrar(prisma: PrismaClient): Promise<ResumenSeed> {
 if (process.argv[1] && resolve(process.argv[1]) === import.meta.filename) {
   const { prisma, desconectarBD } = await import('../src/03-pipeline-conexiones/00-director-conexiones.js')
   try {
-    const resumen = await sembrar(prisma)
+    const resumen = await sembrar(prisma, { demo: process.env.SEED_DEMO === 'true' })
     console.log('Seed aplicado. Registros creados:', resumen)
   } finally {
     await desconectarBD()

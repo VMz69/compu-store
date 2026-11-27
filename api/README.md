@@ -36,6 +36,7 @@ Comprobación rápida: `curl http://localhost:3000/api/v1/health` devuelve 200 c
 | `pnpm db:migrar` | `prisma migrate dev`: crea y aplica migraciones en desarrollo (usa la shadow DB) |
 | `pnpm db:desplegar` | `prisma migrate deploy`: aplica las migraciones pendientes (producción/CI) |
 | `pnpm db:sembrar` | seed idempotente del catálogo de A (`prisma/seed.ts`); solo crea lo que falta, nunca sobrescribe |
+| `SEED_DEMO=true pnpm db:sembrar` | además siembra las 3 ofertas de demostración (L12) con fechas relativas al día del seed (una vigente, una programada y una vencida); idempotente por id. Sin la variable no hay ofertas de muestra |
 | `pnpm db:reiniciar` | **borra la BD de desarrollo**, reaplica las migraciones y siembra (Prisma 7 no siembra solo al resetear) |
 | `pnpm db:respaldar` | volcado `mariadb-dump` comprimido en `respaldos/<bd>-<fechaUTC>.sql.gz` (ignorado por git) |
 | `pnpm db:restaurar <archivo>` | borra **todas** las tablas de la BD de destino y carga el respaldo; pide escribir el nombre de la BD |

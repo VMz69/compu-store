@@ -1,5 +1,6 @@
 import { prisma } from '../03-pipeline-conexiones/00-director-conexiones.js'
 import { Prisma, type CondicionProducto } from '../../generated/prisma/client.js'
+import { sqlPrecioVigente } from '../10-pipeline-ofertas/00-director-ofertas.js'
 import type { OrdenTienda } from './06-productos.schema.js'
 
 /** Cliente de Prisma dentro o fuera de una transacción. */
@@ -72,14 +73,21 @@ export interface FiltrosTienda {
   ofertas: boolean
 }
 
-/** Desempate por id para que la paginación sea estable. `<=>` evita que una etiqueta NULL quede al final. */
-const ORDEN_SQL: Record<Orden, Prisma.Sql> = {
-  destacados: Prisma.sql`(p.etiqueta <=> 'Destacado') DESC, p.id ASC`,
-  'precio-asc': Prisma.sql`p.precio ASC, p.id ASC`,
-  'precio-desc': Prisma.sql`p.precio DESC, p.id ASC`,
-  descuento: Prisma.sql`(CASE WHEN p.precioAnterior > p.precio THEN p.precioAnterior - p.precio ELSE 0 END) DESC, p.id ASC`,
-  'nombre-asc': Prisma.sql`p.nombre ASC, p.id ASC`,
-}
+/** Precio y precio anterior efectivos de hoy (L12): los de la oferta vigente, o los del producto. */
+type Vigente = ReturnType<typeof sqlPrecioVigente>
+
+/**
+ * Desempate por id para que la paginación sea estable. `<=>` evita que una etiqueta NULL quede al final.
+ * Precio y descuento se ordenan por los valores efectivos, los mismos que muestra la tienda.
+ */
+const ordenSql = (orden: Orden, { precio, precioAnterior }: Vigente): Prisma.Sql =>
+  ({
+    destacados: Prisma.sql`(p.etiqueta <=> 'Destacado') DESC, p.id ASC`,
+    'precio-asc': Prisma.sql`${precio} ASC, p.id ASC`,
+    'precio-desc': Prisma.sql`${precio} DESC, p.id ASC`,
+    descuento: Prisma.sql`(CASE WHEN ${precioAnterior} > ${precio} THEN ${precioAnterior} - ${precio} ELSE 0 END) DESC, p.id ASC`,
+    'nombre-asc': Prisma.sql`p.nombre ASC, p.id ASC`,
+  })[orden]
 
 /** Escapa los comodines de LIKE para que `%` y `_` se busquen literalmente. */
 const patronLike = (texto: string) => `%${texto.replace(/[\\%_]/g, (c) => `\\${c}`)}%`
@@ -88,11 +96,11 @@ const patronLike = (texto: string) => `%${texto.replace(/[\\%_]/g, (c) => `\\${c
  * WHERE del listado público. La intercalación utf8mb4_unicode_ci hace que LIKE
  * ignore mayúsculas y acentos. Todos los valores van parametrizados.
  */
-function condicionesTienda({ q, categoria, marca, ofertas }: FiltrosTienda): Prisma.Sql {
+function condicionesTienda({ q, categoria, marca, ofertas }: FiltrosTienda, { precio, precioAnterior }: Vigente): Prisma.Sql {
   const condiciones = [Prisma.sql`p.publicado = TRUE`]
   if (categoria) condiciones.push(Prisma.sql`c.slug = ${categoria}`)
   if (marca) condiciones.push(Prisma.sql`m.slug = ${marca}`)
-  if (ofertas) condiciones.push(Prisma.sql`p.precioAnterior IS NOT NULL AND p.precioAnterior > p.precio`)
+  if (ofertas) condiciones.push(Prisma.sql`${precioAnterior} IS NOT NULL AND ${precioAnterior} > ${precio}`)
   if (q) {
     const patron = patronLike(q)
     condiciones.push(Prisma.sql`(
@@ -106,24 +114,27 @@ function condicionesTienda({ q, categoria, marca, ofertas }: FiltrosTienda): Pri
   return Prisma.join(condiciones, ' AND ')
 }
 
-const DESDE_TIENDA = Prisma.sql`FROM productos p
+const desdeTienda = (vigente: Vigente) => Prisma.sql`FROM productos p
   JOIN categorias c ON c.id = p.categoriaId
-  JOIN marcas m ON m.id = p.marcaId`
+  JOIN marcas m ON m.id = p.marcaId
+  ${vigente.join}`
 
-/** Ids de la página pedida, en el orden solicitado. */
-export async function idsPublicos(filtros: FiltrosTienda, orden: Orden, rango: Rango): Promise<number[]> {
+/** Ids de la página pedida, en el orden solicitado (`hoy` decide qué ofertas rigen). */
+export async function idsPublicos(filtros: FiltrosTienda, orden: Orden, rango: Rango, hoy: string): Promise<number[]> {
+  const vigente = sqlPrecioVigente(hoy)
   const filas = await prisma.$queryRaw<{ id: number }[]>`
-    SELECT p.id ${DESDE_TIENDA}
-    WHERE ${condicionesTienda(filtros)}
-    ORDER BY ${ORDEN_SQL[orden]}
+    SELECT p.id ${desdeTienda(vigente)}
+    WHERE ${condicionesTienda(filtros, vigente)}
+    ORDER BY ${ordenSql(orden, vigente)}
     LIMIT ${rango.take} OFFSET ${rango.skip}`
   return filas.map((fila) => Number(fila.id))
 }
 
-export async function contarPublicos(filtros: FiltrosTienda): Promise<number> {
+export async function contarPublicos(filtros: FiltrosTienda, hoy: string): Promise<number> {
+  const vigente = sqlPrecioVigente(hoy)
   const [fila] = await prisma.$queryRaw<{ total: number | bigint }[]>`
-    SELECT COUNT(*) AS total ${DESDE_TIENDA}
-    WHERE ${condicionesTienda(filtros)}`
+    SELECT COUNT(*) AS total ${desdeTienda(vigente)}
+    WHERE ${condicionesTienda(filtros, vigente)}`
   return Number(fila?.total ?? 0)
 }
 

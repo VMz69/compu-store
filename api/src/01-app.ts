@@ -13,6 +13,7 @@ import {
 import { crearRouterAdminInventario } from './07-pipeline-inventario/00-director-inventario.js'
 import { crearRouterAjustes, crearRouterTienda } from './08-pipeline-tienda/00-director-tienda.js'
 import { crearRouterClientes } from './09-pipeline-clientes/00-director-clientes.js'
+import { crearRouterAdminOfertas } from './10-pipeline-ofertas/00-director-ofertas.js'
 
 export interface DependenciasApp {
   /** Comprueba la base de datos; se inyecta para poder simular fallos en las pruebas. */
@@ -59,6 +60,7 @@ export function crearApp({ pingBD, identidad, imagenes, origenes, extender }: De
   admin.use(crearRouterUsuarios(identidad))
   admin.use(crearRouterAjustes())
   admin.use(crearRouterClientes())
+  admin.use(crearRouterAdminOfertas())
   app.use('/api/v1/admin', admin)
 
   // /api/v1/tienda/* es público y de solo lectura.
