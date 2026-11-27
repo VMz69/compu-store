@@ -10,6 +10,8 @@ const DETALLE = {
   lineas: { orderBy: { id: 'asc' } },
   cargos: { orderBy: { id: 'asc' } },
   historial: { orderBy: [{ fecha: 'asc' }, { id: 'asc' }] },
+  // L15: la factura activa (emitida) por la relación; pedidos no importa el pipeline de facturación.
+  facturas: { where: { pedidoActivoId: { not: null } }, select: { id: true, numeroControl: true, correlativo: true } },
 } satisfies Prisma.PedidoInclude
 
 export type PedidoFila = Prisma.PedidoGetPayload<{ include: typeof DETALLE }>

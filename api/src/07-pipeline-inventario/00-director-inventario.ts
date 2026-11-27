@@ -13,3 +13,4 @@ export {
   type PuertoReservas,
   type Reservante,
 } from './06-reservas.service.js'
+export { descontar, reponer, type ConsumoLote, type ConsumoVenta, type ContextoMovimiento, type LineaVenta } from './07-ventas.service.js'

@@ -30,8 +30,8 @@ export interface PedidoDto {
   estado: EstadoPedido
   /** Último día de la reserva (`YYYY-MM-DD`, inclusive) mientras está Reservado (L14). */
   reservadoHasta: string | null
-  /** Factura que cerró la venta: llega en L15. */
-  facturaId: null
+  /** Factura activa que cerró la venta (L15); null si no tiene o si se anuló. */
+  factura: { id: number; numeroControl: string; correlativo: number } | null
   lineas: { productoId: number; sku: string; nombre: string; cantidad: number; precioUnitario: string; descuento: string; importe: string }[]
   cargos: { id: number; concepto: string; monto: string }[]
   total: string
@@ -49,7 +49,7 @@ const aPedido = (p: PedidoFila): PedidoDto => ({
   notas: p.notas,
   estado: p.estado,
   reservadoHasta: p.reservadoHasta ? p.reservadoHasta.toISOString().slice(0, 10) : null,
-  facturaId: null,
+  factura: p.facturas[0] ?? null,
   lineas: p.lineas.map((l) => ({
     productoId: l.productoId,
     sku: l.sku,

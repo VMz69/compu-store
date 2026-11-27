@@ -38,8 +38,8 @@ export async function obtenerIdentidad(): Promise<IdentidadDto> {
 }
 
 /** Configuración id = 1; 404 si el seed aún no la creó. */
-export async function configuracionExistente(): Promise<repo.Configuracion> {
-  const c = await repo.configuracion()
+export async function configuracionExistente(cliente?: repo.Cliente): Promise<repo.Configuracion> {
+  const c = await repo.configuracion(cliente)
   if (!c) throw new ErrorApp('NOT_FOUND', 404, 'La tienda aún no está configurada.')
   return c
 }
@@ -64,6 +64,44 @@ export function aIdentidad(c: repo.Configuracion): IdentidadDto {
     valores: listaTexto(c.valores),
     redes: mapaTexto(c.redes),
     moneda: { codigo: c.monedaCodigo, simbolo: c.monedaSimbolo, locale: c.monedaLocale },
+  }
+}
+
+/* ---------- Emisor (L15) ---------- */
+
+/** Datos del contribuyente que se copian a cada factura (= `InvoiceIssuer` del admin). */
+export interface EmisorDto {
+  nombreComercial: string
+  razonSocial: string
+  nit: string
+  nrc: string
+  direccion: string
+  /** Teléfonos unidos con « / », como los imprime el admin. */
+  telefono: string
+  correo: string
+  tipoEstablecimiento: string
+  actividadEconomica: string
+}
+
+/**
+ * Emisor vigente y semilla del correlativo interno (Ajustes › Identidad), para emitir una factura.
+ * `cliente`: la transacción del seed, que puede haber creado la configuración en esa misma transacción.
+ */
+export async function obtenerEmisor(cliente?: repo.Cliente): Promise<{ emisor: EmisorDto; semillaFactura: number | null }> {
+  const c = await configuracionExistente(cliente)
+  return {
+    emisor: {
+      nombreComercial: c.nombre,
+      razonSocial: c.razonSocial,
+      nit: c.nit,
+      nrc: c.nrc,
+      direccion: c.direccion,
+      telefono: listaTexto(c.telefonos).join(' / '),
+      correo: c.correo,
+      tipoEstablecimiento: c.tipoEstablecimiento,
+      actividadEconomica: c.actividadEconomica,
+    },
+    semillaFactura: c.semillaFactura,
   }
 }
 

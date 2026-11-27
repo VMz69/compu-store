@@ -95,6 +95,10 @@ export async function bloquearProductos(tx: Tx, ids: number[]): Promise<Producto
 export const fijarReservado = (tx: Tx, id: number, reservado: number) =>
   tx.producto.update({ where: { id }, data: { reservado }, select: { id: true } })
 
+/** Venta o anulación (L15): stock y reservado juntos, con la fila bloqueada. */
+export const fijarExistencias = (tx: Tx, id: number, stock: number, reservado: number) =>
+  tx.producto.update({ where: { id }, data: { stock, reservado }, select: { id: true } })
+
 export const fijarStock = (tx: Tx, id: number, stock: number, controlLotes?: boolean) =>
   tx.producto.update({ where: { id }, data: { stock, ...(controlLotes !== undefined ? { controlLotes } : {}) }, select: { id: true } })
 
@@ -114,7 +118,10 @@ export const crearLote = (tx: Tx, productoId: number, datos: DatosLote) =>
 
 export const actualizarLote = (tx: Tx, id: number, datos: DatosLote) => tx.lote.update({ where: { id }, data: datos, select: { id: true } })
 
-export const eliminarLotes = (tx: Tx, ids: number[]) =>
+export const fijarCantidadLote = (tx: Tx, id: number, cantidad: number) =>
+  tx.lote.update({ where: { id }, data: { cantidad }, select: { id: true } })
+
+export const eliminarLotes =(tx: Tx, ids: number[]) =>
   ids.length === 0 ? Promise.resolve() : tx.lote.deleteMany({ where: { id: { in: ids } } }).then(() => undefined)
 
 export const registrarMovimientos = (tx: Tx, movimientos: MovimientoNuevo[]) =>

@@ -126,7 +126,7 @@ describe('Pedidos: registro con importes del servidor', () => {
       estado: 'registrado',
       notas: 'Llamar antes',
       reservadoHasta: null,
-      facturaId: null,
+      factura: null,
       lineas: [{ productoId: cien.id, cantidad: 2, precioUnitario: '100.00', descuento: '0.00', importe: '200.00' }],
       cargos: [],
       total: '200.00',

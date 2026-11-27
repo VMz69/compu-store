@@ -83,6 +83,7 @@ model Producto {
   movimientos      MovimientoInventario[]
   ofertas          OfertaProducto[]
   lineasPedido     LineaPedido[]
+  lineasFactura    LineaFactura[]
 
   @@index([publicado, categoriaId])
   @@map("productos")
@@ -177,6 +178,8 @@ model Usuario {
   permisos              UsuarioPermiso[]
   eventosPedido         EventoPedido[]
   pedidosEliminados     Pedido[]
+  facturasCreadas       Factura[]              @relation("FacturaCreadaPor")
+  facturasAnuladas      Factura[]              @relation("FacturaAnuladaPor")
 
   @@index([rol])
   @@map("usuarios")
@@ -396,6 +399,7 @@ model Pedido {
   lineas            LineaPedido[]
   cargos            CargoPedido[]
   historial         EventoPedido[]
+  facturas          Factura[]
 
   @@index([eliminadoEn, creadoEn])
   @@index([estado])
@@ -446,4 +450,94 @@ model EventoPedido {
 
   @@index([pedidoId])
   @@map("pedidos_historial")
+}
+
+/* ---------- Facturación (L15) ---------- */
+
+/// Último número usado por secuencia (D-12): se bloquea con `SELECT … FOR UPDATE` al emitir. Filas de la migración.
+model Correlativo {
+  clave  String @id @db.VarChar(30)
+  ultimo Int    @db.UnsignedInt
+
+  @@map("correlativos")
+}
+
+enum EstadoFactura {
+  emitida
+  anulada
+}
+
+enum CondicionPago {
+  efectivo
+  tarjeta
+  transferencia
+  credito
+}
+
+enum TipoLineaFactura {
+  producto
+  cargo
+}
+
+/// Factura interna (DTE-01, consumidor final) emitida desde un pedido. Inmutable: se corrige anulándola.
+model Factura {
+  id                Int              @id @default(autoincrement())
+  /// `DTE-01-M001P001-` + 15 dígitos.
+  numeroControl     String           @unique @db.VarChar(31)
+  /// Correlativo interno (6 dígitos en el documento); nunca se reutiliza, tampoco el de una anulada.
+  correlativo       Int              @unique @db.UnsignedInt
+  codigoGeneracion  String           @unique @db.Char(36)
+  /// Sello de recepción SIMULADO (no hay transmisión a Hacienda).
+  selloRecepcion    String           @db.Char(40)
+  pedidoId          Int
+  pedido            Pedido           @relation(fields: [pedidoId], references: [id], onDelete: Restrict)
+  /// = pedidoId mientras está emitida; null al anularse. Único: la BD impide dos facturas activas por pedido.
+  pedidoActivoId    Int?             @unique
+  consumidorFinal   Boolean
+  receptorNombre    String           @db.VarChar(100)
+  receptorDocumento String           @db.VarChar(17)
+  receptorDireccion String           @db.VarChar(255)
+  receptorCorreo    String           @db.VarChar(254)
+  receptorTelefono  String           @db.VarChar(20)
+  condicionPago     CondicionPago
+  notas             String           @db.Text
+  /// Snapshot del emisor al emitir (nombre comercial, razón social, NIT, NRC, dirección…).
+  emisor            Json
+  total             Decimal          @db.Decimal(12, 2)
+  estado            EstadoFactura    @default(emitida)
+  creadaEn          DateTime         @default(now())
+  creadaPorId       Int?
+  creadaPorUsuario  Usuario?         @relation("FacturaCreadaPor", fields: [creadaPorId], references: [id], onDelete: SetNull)
+  creadaPor         String           @db.VarChar(80)
+  anuladaEn         DateTime?
+  anuladaPorId      Int?
+  anuladaPorUsuario Usuario?         @relation("FacturaAnuladaPor", fields: [anuladaPorId], references: [id], onDelete: SetNull)
+  anuladaPor        String?          @db.VarChar(80)
+  lineas            LineaFactura[]
+
+  @@index([estado, creadaEn])
+  @@index([pedidoId])
+  @@map("facturas")
+}
+
+/// Línea copiada del pedido: producto (sale del inventario) o cargo (servicio, sin stock). Descuento en dólares.
+model LineaFactura {
+  id             Int              @id @default(autoincrement())
+  facturaId      Int
+  factura        Factura          @relation(fields: [facturaId], references: [id], onDelete: Cascade)
+  tipo           TipoLineaFactura
+  productoId     Int?
+  producto       Producto?        @relation(fields: [productoId], references: [id], onDelete: Restrict)
+  sku            String?          @db.VarChar(32)
+  descripcion    String           @db.VarChar(120)
+  unidad         String           @db.VarChar(20)
+  cantidad       Int              @db.UnsignedInt
+  precioUnitario Decimal          @db.Decimal(12, 2)
+  descuento      Decimal          @db.Decimal(12, 2)
+  importe        Decimal          @db.Decimal(12, 2)
+  /// Lotes consumidos al facturar ([{loteId, numero, vence, cantidad}]); la anulación repone a esos mismos lotes.
+  lotes          Json?
+
+  @@index([facturaId])
+  @@map("facturas_lineas")
 }

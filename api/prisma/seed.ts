@@ -9,7 +9,7 @@
  * Uso: `pnpm db:sembrar` (prisma db seed). En pruebas se importa `sembrar`.
  * Con `SEED_DEMO=true` también siembra las ofertas de demostración (L12), con fechas
  * relativas al día de la ejecución para que no venzan, y los pedidos de demostración (L13; los
- * reservados de L14 se reservan con la misma operación que la API):
+ * reservados de L14 se reservan y los facturados de L15 se facturan con la misma operación que la API):
  * `SEED_DEMO=true pnpm db:sembrar`.
  */
 import { resolve } from 'node:path'
@@ -294,13 +294,22 @@ const CANALES = [
 ]
 
 // ── Pedidos de demostración (L13, solo con SEED_DEMO=true) ──────────────────
-// Del mock (admin/src/88-…/01-orders.mock.ts), con sus ids: ORD-2026-002 y 003 (Reservado, L14),
-// 004 (Registrado) y 006 (Cancelado). Las horas del mock son de El Salvador (UTC−6). Los reservados se
-// crean como Registrado y se reservan con `reservarEnTx` (bloqueo de fila, stock reservado e historial
-// reales), `reservaDias` días desde el día del seed. Facturado y Entregado (001 y 005) llegan con L15.
+// Del mock (admin/src/88-…/01-orders.mock.ts, retirado en L13B), con sus ids: ORD-2026-001 (Entregado),
+// 002 y 003 (Reservado, L14), 004 (Registrado), 005 (Facturado) y 006 (Cancelado). Las horas del mock son
+// de El Salvador (UTC−6). Los reservados se crean como Registrado y se reservan con `reservarEnTx` (bloqueo
+// de fila, stock reservado e historial reales), `reservaDias` días desde el día del seed; 001 y 005 se
+// facturan después con `emitirEnTx` (L15: descuenta el stock de verdad) y 001 se entrega.
 // Los importes salen del mismo cálculo que la API.
 
 const PEDIDOS_DEMO = [
+  {
+    id: 1, clienteId: 1, ciudad: 'Cojutepeque', canalId: 1, formaPago: 'Efectivo',
+    formaEntrega: 'Retiro en Sala de Ventas (2da Planta)', notas: '',
+    estado: 'registrado', creadoEn: '2026-11-02T15:40:00.000Z', reservaDias: 3,
+    lineas: [{ productoId: 1, sku: 'ACR-A515-REF', nombre: 'Laptop Acer Aspire 5 Refurbished', cantidad: 1, precioUnitario: '525.00', descuento: '0.00' }],
+    cargos: [],
+    historial: [{ estado: 'registrado', por: 'Licda. Sofía Alvarado', horas: 0, nota: null }],
+  },
   {
     id: 2, clienteId: 2, ciudad: 'San Rafael Cedros', canalId: 2, formaPago: 'Wompi / QR',
     formaEntrega: 'Retiro en Sala de Ventas (2da Planta)', notas: '',
@@ -332,6 +341,17 @@ const PEDIDOS_DEMO = [
     historial: [{ estado: 'registrado', por: 'Ing. Marvin Castro', horas: 0, nota: null }],
   },
   {
+    id: 5, clienteId: 5, ciudad: 'Santa Cruz Michapa', canalId: 2, formaPago: 'Efectivo',
+    formaEntrega: 'Retiro en Sala de Ventas (2da Planta)', notas: '',
+    estado: 'registrado', creadoEn: '2026-11-01T22:20:00.000Z', reservaDias: 3,
+    lineas: [
+      { productoId: 5, sku: 'LOG-M185-GR', nombre: 'Mouse Inalámbrico Logitech M185', cantidad: 1, precioUnitario: '20.00', descuento: '0.00' },
+      { productoId: 7, sku: 'RDG-CP-ALU', nombre: 'Base Enfriadora para Laptop de Aluminio', cantidad: 1, precioUnitario: '18.00', descuento: '0.00' },
+    ],
+    cargos: [],
+    historial: [{ estado: 'registrado', por: 'Gabriela Solís', horas: 0, nota: null }],
+  },
+  {
     id: 6, clienteId: 7, ciudad: 'San Pedro Perulapán', canalId: 2, formaPago: 'Transferencia',
     formaEntrega: 'Envío local Cojutepeque', notas: '',
     estado: 'cancelado', creadoEn: '2026-11-03T21:10:00.000Z', reservaDias: null,
@@ -344,6 +364,22 @@ const PEDIDOS_DEMO = [
   },
 ] as const
 
+// Facturas de los pedidos 001 y 005 (admin/src/88-…/03-invoices.mock.ts). Se emiten en orden de pedido, así que
+// en una BD nueva toman los números del mock: 2075/015782 (001) y 2076/015783 (005). `entregadoPor`: 001 se entrega.
+const FACTURAS_DEMO: Record<number, { receptor: { consumidorFinal: boolean; nombre: string; documento: string; direccion: string; correo: string }; notas: string; entregadoPor: string | null }> = {
+  1: {
+    receptor: { consumidorFinal: true, nombre: '', documento: '', direccion: '', correo: '' },
+    notas: 'Garantía de 6 meses en equipo reacondicionado.',
+    entregadoPor: 'Licda. Sofía Alvarado',
+  },
+  5: {
+    receptor: { consumidorFinal: false, nombre: 'Gabriela Solís', documento: '03342190-5', direccion: 'Cantón El Carmen, Santa Cruz Michapa', correo: '' },
+    notas: '',
+    entregadoPor: null,
+  },
+}
+const FACTURADOR_DEMO = 'José Henríquez'
+
 // ── Siembra ────────────────────────────────────────────────────────────────
 
 export interface ResumenSeed {
@@ -355,10 +391,11 @@ export interface ResumenSeed {
   ofertas: number
   canales: number
   pedidos: number
+  facturas: number
 }
 
 export interface OpcionesSeed {
-  /** Siembra también los datos de demostración (ofertas de L12 y pedidos de L13). */
+  /** Siembra también los datos de demostración (ofertas de L12, pedidos de L13–L14 y facturas de L15). */
   demo?: boolean
 }
 
@@ -411,8 +448,10 @@ export async function sembrar(prisma: PrismaClient, { demo = false }: OpcionesSe
   // El «hoy» del negocio sale del pipeline de ofertas (misma zona horaria que la vigencia).
   const hoy = demo ? (await import('../src/10-pipeline-ofertas/00-director-ofertas.js')).hoyNegocio() : ''
   const { importeLinea, reservarEnTx, totalPedido } = await import('../src/11-pipeline-pedidos/00-director-pedidos.js')
+  const { emitirEnTx } = await import('../src/12-pipeline-facturacion/00-director-facturacion.js')
+  const { obtenerEmisor } = await import('../src/08-pipeline-tienda/00-director-tienda.js')
   return prisma.$transaction(async (tx) => {
-    const resumen: ResumenSeed = { categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0, ofertas: 0, canales: 0, pedidos: 0 }
+    const resumen: ResumenSeed = { categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0, ofertas: 0, canales: 0, pedidos: 0, facturas: 0 }
 
     const categoriaIds = new Map<string, number>()
     for (const c of CATEGORIAS) {
@@ -513,6 +552,20 @@ export async function sembrar(prisma: PrismaClient, { demo = false }: OpcionesSe
       if (reservaDias !== null) {
         const hasta = fechaRelativa(hoy, reservaDias).toISOString().slice(0, 10)
         await reservarEnTx(tx, id, hasta, { id: null, nombre: historial[0].por })
+      }
+      // Factura real (L15): descuenta stock y reserva, toma los correlativos y pasa el pedido a Facturado.
+      const factura = FACTURAS_DEMO[id]
+      if (factura) {
+        const operador = { id: null, nombre: FACTURADOR_DEMO }
+        await emitirEnTx(tx, { pedidoId: id, receptor: factura.receptor, condicionPago: 'efectivo', notas: factura.notas }, operador, await obtenerEmisor(tx))
+        resumen.facturas++
+        if (factura.entregadoPor) {
+          // Entregar no mueve stock: el mismo cambio que `PATCH /pedidos/:id/estado`.
+          await tx.pedido.update({
+            where: { id },
+            data: { estado: 'entregado', historial: { create: { estado: 'entregado', usuarioId: null, por: factura.entregadoPor } } },
+          })
+        }
       }
       resumen.pedidos++
     }

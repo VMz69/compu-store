@@ -92,6 +92,11 @@ const MATRIZ: Fila[] = [
   { metodo: 'delete', patron: '/pedidos/:id', url: '/pedidos/999999', permisos: ['pedidos.eliminar'] },
   // L14: «Confirmar y reservar» tiene su propia acción (`canReserveOrders` en el admin).
   { metodo: 'post', patron: '/pedidos/:id/reserva', url: '/pedidos/999999/reserva', permisos: ['pedidos.reservar'] },
+  // L15: las facturas se consultan en Facturación; emitir y anular, «Emitir facturas» (`canInvoice`).
+  { metodo: 'get', patron: '/facturas', url: '/facturas', permisos: ['facturacion'] },
+  { metodo: 'get', patron: '/facturas/:id', url: '/facturas/999999', permisos: ['facturacion'] },
+  { metodo: 'post', patron: '/facturas', url: '/facturas', permisos: ['facturacion.emitir'] },
+  { metodo: 'post', patron: '/facturas/:id/anulacion', url: '/facturas/999999/anulacion', permisos: ['facturacion.emitir'] },
 ]
 
 const TODAS: Permiso[] = [...VISTAS, ...ACCIONES]

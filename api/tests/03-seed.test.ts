@@ -5,6 +5,7 @@ import { hoyNegocio } from '../src/10-pipeline-ofertas/00-director-ofertas.js'
 
 /** Deja la BD de pruebas vacía respetando las FK (imágenes, especificaciones y lotes caen en cascada). */
 async function vaciarBD() {
+  await prisma.factura.deleteMany()
   await prisma.pedido.deleteMany()
   await prisma.canalVenta.deleteMany()
   await prisma.oferta.deleteMany()
@@ -17,6 +18,21 @@ async function vaciarBD() {
   await prisma.cliente.deleteMany()
 }
 
+/**
+ * Borra pedidos y facturas demo y devuelve el stock al del seed (borrar a mano no libera reservas ni repone):
+ * fuera las ventas de las facturas demo y stock = Σ movimientos de los productos que no llevan lotes.
+ */
+async function deshacerPedidosDemo() {
+  await prisma.factura.deleteMany()
+  await prisma.pedido.deleteMany()
+  await prisma.producto.updateMany({ data: { reservado: 0 } })
+  await prisma.movimientoInventario.deleteMany({ where: { motivo: { startsWith: 'Venta · Factura' } } })
+  for (const id of [1, 5, 7]) {
+    const { _sum } = await prisma.movimientoInventario.aggregate({ where: { productoId: id }, _sum: { delta: true } })
+    await prisma.producto.update({ where: { id }, data: { stock: _sum.delta ?? 0 } })
+  }
+}
+
 describe('Seed de la Fase A', () => {
   beforeAll(vaciarBD)
   afterAll(async () => {
@@ -26,7 +42,7 @@ describe('Seed de la Fase A', () => {
   it('crea el catálogo completo desde una BD vacía', async () => {
     const resumen = await sembrar(prisma)
 
-    expect(resumen).toEqual({ categorias: 5, marcas: 8, productos: 12, configuracion: 1, clientes: 8, ofertas: 0, canales: 4, pedidos: 0 })
+    expect(resumen).toEqual({ categorias: 5, marcas: 8, productos: 12, configuracion: 1, clientes: 8, ofertas: 0, canales: 4, pedidos: 0, facturas: 0 })
     const ids = (await prisma.producto.findMany({ select: { id: true }, orderBy: { id: 'asc' } })).map((p) => p.id)
     expect(ids).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
   })
@@ -34,7 +50,7 @@ describe('Seed de la Fase A', () => {
   it('es idempotente: una segunda ejecución no crea ni duplica nada', async () => {
     const resumen = await sembrar(prisma)
 
-    expect(resumen).toEqual({ categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0, ofertas: 0, canales: 0, pedidos: 0 })
+    expect(resumen).toEqual({ categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0, ofertas: 0, canales: 0, pedidos: 0, facturas: 0 })
     expect(await prisma.producto.count()).toBe(12)
     expect(await prisma.cliente.count()).toBe(8)
     expect(await prisma.imagenProducto.count()).toBe(53)
@@ -69,19 +85,37 @@ describe('Seed de la Fase A', () => {
     await prisma.oferta.deleteMany()
   })
 
-  it('siembra los 4 canales siempre y, con demo, los pedidos 2 y 3 (Reservado), 4 (Registrado) y 6 (Cancelado), idempotente', async () => {
+  it('siembra los 4 canales siempre y, con demo, los pedidos 1 (Entregado), 2 y 3 (Reservado), 4 (Registrado), 5 (Facturado) y 6 (Cancelado), idempotente', async () => {
     const canales = await prisma.canalVenta.findMany({ orderBy: { id: 'asc' } })
     expect(canales.map((c) => c.nombre)).toEqual(['Sala de Ventas', 'WhatsApp', 'Tienda Web', 'Corporativo'])
-    // La prueba anterior ya sembró con demo; se parte de cero para contar (borrar a mano no libera reservas).
-    await prisma.pedido.deleteMany()
-    await prisma.producto.updateMany({ data: { reservado: 0 } })
+    // La prueba anterior ya sembró con demo; se parte de cero para contar.
+    await deshacerPedidosDemo()
 
-    expect((await sembrar(prisma, { demo: true })).pedidos).toBe(4)
-    expect((await sembrar(prisma, { demo: true })).pedidos).toBe(0)
+    const interno = (await prisma.correlativo.findUniqueOrThrow({ where: { clave: 'factura-interno' } })).ultimo
+    const stockAntes = await prisma.producto.findMany({ where: { id: { in: [1, 5, 7] } }, orderBy: { id: 'asc' }, select: { stock: true } })
+    expect(await sembrar(prisma, { demo: true })).toMatchObject({ pedidos: 6, facturas: 2 })
+    expect(await sembrar(prisma, { demo: true })).toMatchObject({ pedidos: 0, facturas: 0 })
 
-    const pedidos = await prisma.pedido.findMany({ orderBy: { id: 'asc' }, include: { lineas: true, cargos: true, historial: true } })
-    expect(pedidos.map((p) => [p.id, p.estado])).toEqual([[2, 'confirmado'], [3, 'confirmado'], [4, 'registrado'], [6, 'cancelado']])
-    const [whatsapp, web, corporativo, cancelado] = pedidos
+    const pedidos = await prisma.pedido.findMany({ orderBy: { id: 'asc' }, include: { lineas: true, cargos: true, historial: { orderBy: { id: 'asc' } } } })
+    expect(pedidos.map((p) => [p.id, p.estado])).toEqual([
+      [1, 'entregado'], [2, 'confirmado'], [3, 'confirmado'], [4, 'registrado'], [5, 'facturado'], [6, 'cancelado'],
+    ])
+    const [entregado, whatsapp, web, corporativo, facturado, cancelado] = pedidos
+
+    // L15: facturas reales en orden de pedido (correlativos consecutivos); la venta descontó el stock.
+    const facturas = await prisma.factura.findMany({ orderBy: { id: 'asc' }, include: { lineas: { orderBy: { id: 'asc' } } } })
+    expect(facturas.map((f) => [f.pedidoId, f.correlativo, f.estado, f.creadaPor])).toEqual([
+      [1, interno + 1, 'emitida', 'José Henríquez'],
+      [5, interno + 2, 'emitida', 'José Henríquez'],
+    ])
+    expect(facturas[0]).toMatchObject({ consumidorFinal: true, receptorNombre: 'Consumidor Final', notas: 'Garantía de 6 meses en equipo reacondicionado.' })
+    expect(facturas[0]!.total.toFixed(2)).toBe('525.00')
+    expect(facturas[1]).toMatchObject({ receptorNombre: 'Gabriela Solís', receptorDocumento: '03342190-5' })
+    expect(facturas[1]!.total.toFixed(2)).toBe('38.00')
+    expect(entregado!.historial.map((e) => e.estado)).toEqual(['registrado', 'confirmado', 'facturado', 'entregado'])
+    expect(facturado!.historial.map((e) => e.estado)).toEqual(['registrado', 'confirmado', 'facturado'])
+    const stockDespues = await prisma.producto.findMany({ where: { id: { in: [1, 5, 7] } }, orderBy: { id: 'asc' }, select: { stock: true } })
+    expect(stockDespues.map((p) => p.stock)).toEqual(stockAntes.map((p) => p.stock - 1))
 
     // L14: reservados con la operación real (hoy + 11 y hoy + 9); la segunda ejecución no reserva de nuevo.
     const fecha = (dias: number) => {
@@ -102,10 +136,11 @@ describe('Seed de la Fase A', () => {
     expect(cancelado!.total.toFixed(2)).toBe('90.00')
     expect(cancelado!.historial.map((e) => e.estado)).toEqual(['registrado', 'cancelado'])
 
-    // El resto de suites parte sin pedidos ni reservas (los canales se quedan).
+    // El resto de suites parte sin pedidos ni reservas (los canales se quedan) y con el stock del seed.
     await prisma.oferta.deleteMany()
-    await prisma.pedido.deleteMany()
-    await prisma.producto.updateMany({ data: { reservado: 0 } })
+    await deshacerPedidosDemo()
+    const restaurado = await prisma.producto.findMany({ where: { id: { in: [1, 5, 7] } }, orderBy: { id: 'asc' }, select: { stock: true } })
+    expect(restaurado).toEqual(stockAntes)
   })
 
   it('no sobrescribe lo editado desde el admin', async () => {

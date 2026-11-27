@@ -24,14 +24,18 @@ const VALIDO = {
     actividadEconomica: 'Venta de equipo de prueba',
     tipoEstablecimiento: 'Sucursal / Agencia',
   },
+  /** Mayor que el último correlativo (L15): se fija en `beforeAll`, porque la BD de pruebas acumula facturas. */
   semillaFactura: 15800,
 }
+let ultimoCorrelativo = 0
 
 let original: Awaited<ReturnType<typeof prisma.configuracionTienda.findUniqueOrThrow>>
 
 beforeAll(async () => {
   await sembrar(prisma) // garantiza la fila id = 1 (idempotente)
   original = await prisma.configuracionTienda.findUniqueOrThrow({ where: { id: 1 } })
+  ultimoCorrelativo = (await prisma.correlativo.findUniqueOrThrow({ where: { clave: 'factura-interno' } })).ultimo
+  VALIDO.semillaFactura = ultimoCorrelativo + 19
   await crearUsuarioHabilitado(UID)
 })
 
@@ -74,7 +78,7 @@ describe('PUT /admin/ajustes/identidad', () => {
       whatsapp: '50377771234',
       direccion: VALIDO.direccion,
       emisor: { ...VALIDO.emisor, razonSocial: 'COMPU PRUEBA SA DE CV' },
-      semillaFactura: 15800,
+      semillaFactura: VALIDO.semillaFactura,
     })
     expect(res.body.data.redes.whatsapp).toBe('https://wa.me/50377771234')
     // Lo que el admin no edita se conserva.
@@ -88,6 +92,15 @@ describe('PUT /admin/ajustes/identidad', () => {
     expect(res.body.data).toMatchObject({ nombre: 'CompuStore Prueba', telefonos: ['7777-1234', '2222-3333'], whatsapp: '50377771234' })
     expect(res.body.data).not.toHaveProperty('emisor')
     expect(res.body.data).not.toHaveProperty('semillaFactura')
+  })
+
+  it('L15: la semilla solo adelanta la numeración (≤ último correlativo → 422)', async () => {
+    for (const semilla of [ultimoCorrelativo, ultimoCorrelativo - 1]) {
+      const res = await request(app).put(URL).set(auth).send({ ...VALIDO, semillaFactura: semilla })
+      expect(res.status).toBe(422)
+      expect(res.body.error.message).toBe(`Debe ser mayor que el último emitido (${String(ultimoCorrelativo).padStart(6, '0')}).`)
+      expect(res.body.error.details).toEqual([{ campo: 'semillaFactura', mensaje: res.body.error.message }])
+    }
   })
 
   it('semilla null = continuar la secuencia; un solo teléfono es válido', async () => {
