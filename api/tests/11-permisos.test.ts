@@ -62,6 +62,12 @@ const MATRIZ: Fila[] = [
   // L10: el emisor lo leen las vistas que lo muestran o imprimen; guardarlo exige editar la configuración.
   { metodo: 'get', patron: '/ajustes/identidad', url: '/ajustes/identidad', permisos: ['ajustes', 'tablero', 'facturacion', 'cotizaciones'] },
   { metodo: 'put', patron: '/ajustes/identidad', url: '/ajustes/identidad', permisos: ['ajustes.configuracion'] },
+  // L11: el directorio lo leen las vistas que eligen cliente o precargan sus datos fiscales.
+  { metodo: 'get', patron: '/clientes', url: '/clientes', permisos: ['clientes', 'pedidos', 'cotizaciones', 'facturacion'] },
+  { metodo: 'get', patron: '/clientes/:id', url: '/clientes/999999', permisos: ['clientes', 'pedidos', 'cotizaciones', 'facturacion'] },
+  { metodo: 'post', patron: '/clientes', url: '/clientes', permisos: ['clientes.gestionar'] },
+  { metodo: 'patch', patron: '/clientes/:id', url: '/clientes/999999', permisos: ['clientes.gestionar'] },
+  { metodo: 'delete', patron: '/clientes/:id', url: '/clientes/999999', permisos: ['clientes.eliminar'] },
 ]
 
 const TODAS: Permiso[] = [...VISTAS, ...ACCIONES]

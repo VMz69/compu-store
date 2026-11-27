@@ -10,6 +10,7 @@ async function vaciarBD() {
   await prisma.marca.deleteMany()
   await prisma.usuario.deleteMany()
   await prisma.configuracionTienda.deleteMany()
+  await prisma.cliente.deleteMany()
 }
 
 describe('Seed de la Fase A', () => {
@@ -21,7 +22,7 @@ describe('Seed de la Fase A', () => {
   it('crea el catálogo completo desde una BD vacía', async () => {
     const resumen = await sembrar(prisma)
 
-    expect(resumen).toEqual({ categorias: 5, marcas: 8, productos: 12, configuracion: 1 })
+    expect(resumen).toEqual({ categorias: 5, marcas: 8, productos: 12, configuracion: 1, clientes: 8 })
     const ids = (await prisma.producto.findMany({ select: { id: true }, orderBy: { id: 'asc' } })).map((p) => p.id)
     expect(ids).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
   })
@@ -29,10 +30,18 @@ describe('Seed de la Fase A', () => {
   it('es idempotente: una segunda ejecución no crea ni duplica nada', async () => {
     const resumen = await sembrar(prisma)
 
-    expect(resumen).toEqual({ categorias: 0, marcas: 0, productos: 0, configuracion: 0 })
+    expect(resumen).toEqual({ categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0 })
     expect(await prisma.producto.count()).toBe(12)
+    expect(await prisma.cliente.count()).toBe(8)
     expect(await prisma.imagenProducto.count()).toBe(53)
     expect(await prisma.movimientoInventario.count()).toBe(12)
+  })
+
+  it('siembra los clientes con los ids 1–8 (CLI-001…008) y el teléfono normalizado', async () => {
+    const clientes = await prisma.cliente.findMany({ orderBy: { id: 'asc' } })
+    expect(clientes.map((c) => c.id)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
+    expect(clientes[0]).toMatchObject({ nombre: 'María Hernández', telefonoNormalizado: '74889922', documento: '04512378-9' })
+    expect(clientes[7]?.activo).toBe(false)
   })
 
   it('no sobrescribe lo editado desde el admin', async () => {

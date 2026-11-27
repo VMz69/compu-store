@@ -14,7 +14,7 @@ export { useAccessActions } from './07-pipeline-administracion-usuarios/03-useAc
 export { useUserAccess } from './09-pipeline-accesos-por-vista/00-director-accesos-por-vista'
 export type { UserAccessApi } from './09-pipeline-accesos-por-vista/00-director-accesos-por-vista'
 export { useHomePath, usePermission, useSession, useViewAccess } from './06-pipeline-sesion-permisos/00-director-sesion-permisos'
-export { ensurePermission, getCurrentRole } from './06-pipeline-sesion-permisos/02-permissions'
+export { ensurePermission, getCurrentRole, getCurrentViews } from './06-pipeline-sesion-permisos/02-permissions'
 export { ROLE_LIST, ROLES } from './86-pipeline-datos-demo-personas/00-director-datos-demo-personas'
 export { ACCESS_MODALS } from './08-pipeline-edicion-usuarios/05-modals'
 export { LoginPage } from './05-pipeline-inicio-sesion/00-director-inicio-sesion'

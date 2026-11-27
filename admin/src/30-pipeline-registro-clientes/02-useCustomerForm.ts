@@ -53,18 +53,25 @@ export function useCustomerForm() {
     setSubmitted(true)
     if (Object.keys(validateCustomer(values, customers)).length > 0) return
     if (!ensurePermission('canManageCustomers', 'No tienes permiso para gestionar clientes')) return
-    const result = await saveCustomer({
-      id: values.id || undefined,
-      type: values.type as CustomerType,
-      name: values.name.trim(),
-      documentId: values.documentId.trim(),
-      phone: values.phone.trim(),
-      email: values.email.trim().toLowerCase(),
-      city: values.city.trim(),
-      address: values.address.trim(),
-      notes: values.notes.trim(),
-      active: values.active,
-    })
+    let result: 'created' | 'updated'
+    try {
+      result = await saveCustomer({
+        id: values.id || undefined,
+        type: values.type as CustomerType,
+        name: values.name.trim(),
+        documentId: values.documentId.trim(),
+        phone: values.phone.trim(),
+        email: values.email.trim().toLowerCase(),
+        city: values.city.trim(),
+        address: values.address.trim(),
+        notes: values.notes.trim(),
+        active: values.active,
+      })
+    } catch (error) {
+      // L11: el servidor decide (p. ej. 409 teléfono repetido); el modal sigue abierto.
+      toast(error instanceof Error ? error.message : 'No se pudo guardar el cliente.', 'danger')
+      return
+    }
     closeModal()
     toast(result === 'updated' ? 'Cliente actualizado' : `Cliente ${values.name.trim()} registrado`, 'success')
   }

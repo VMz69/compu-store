@@ -1,7 +1,7 @@
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
 import { useAccessStore } from './04-store'
-import type { Permission, Role } from './05-types'
-import { effectiveRole } from './03-access'
+import type { Permission, Role, ViewId } from './05-types'
+import { effectiveAccess, effectiveRole } from './03-access'
 
 /**
  * Rol de la sesión activa leído fuera de React (para hooks de acciones).
@@ -12,6 +12,13 @@ export const getCurrentRole = (): Role | null => {
   const { session, users } = useAccessStore.getState()
   const user = session ? users.find((u) => u.id === session.userId) : undefined
   return user?.active ? effectiveRole(user) : null
+}
+
+/** Vistas habilitadas de la sesión activa, fuera de React (p. ej. para decidir qué precargar). */
+export const getCurrentViews = (): ViewId[] => {
+  const { session, users } = useAccessStore.getState()
+  const user = session ? users.find((u) => u.id === session.userId) : undefined
+  return user?.active ? effectiveAccess(user).views : []
 }
 
 /**

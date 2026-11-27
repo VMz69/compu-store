@@ -261,3 +261,29 @@ model ConfiguracionTienda {
 
   @@map("configuracion_tienda")
 }
+
+enum TipoCliente {
+  persona
+  empresa
+}
+
+/// Directorio de clientes (L11). El teléfono es único por sus dígitos (`telefonoNormalizado`).
+/// Documento = DUI (persona) o NIT (empresa), opcional. La relación con pedidos llega en L13.
+model Cliente {
+  id                  Int         @id @default(autoincrement())
+  tipo                TipoCliente
+  nombre              String      @db.VarChar(100)
+  documento           String?     @db.VarChar(17)
+  telefono            String      @db.VarChar(20)
+  telefonoNormalizado String      @unique @db.VarChar(15)
+  correo              String?     @db.VarChar(254)
+  ciudad              String      @db.VarChar(80)
+  direccion           String      @db.VarChar(255)
+  notas               String      @db.Text
+  activo              Boolean     @default(true)
+  creadoEn            DateTime    @default(now())
+  actualizadoEn       DateTime    @updatedAt
+
+  @@index([nombre])
+  @@map("clientes")
+}

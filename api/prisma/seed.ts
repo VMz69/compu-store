@@ -234,6 +234,34 @@ const CONFIGURACION = {
   tipoEstablecimiento: 'Casa matriz',
 }
 
+// ── Clientes (L11, admin/src/86-pipeline-datos-demo-personas/03-customers.mock.ts) ──
+// Conservan los ids 1–8 (= CLI-001…008), a los que apuntan los pedidos y cotizaciones locales hasta L13/L16.
+
+interface ClienteSeed {
+  id: number
+  tipo: 'persona' | 'empresa'
+  nombre: string
+  documento: string | null
+  telefono: string
+  correo: string | null
+  ciudad: string
+  direccion: string
+  notas: string
+  activo: boolean
+  creadoEn: string
+}
+
+const CLIENTES: ClienteSeed[] = [
+  { id: 1, tipo: 'persona', nombre: 'María Hernández', documento: '04512378-9', telefono: '7488-9922', correo: 'maria.hernandez@gmail.com', ciudad: 'Cojutepeque', direccion: 'Barrio El Centro, 3a Calle Poniente #12', notas: 'Prefiere retirar en sala de ventas.', activo: true, creadoEn: '2026-06-14T15:20:00.000Z' },
+  { id: 2, tipo: 'persona', nombre: 'Carlos Henríquez', documento: '05873421-0', telefono: '6833-1100', correo: 'carlos.henriquez@outlook.com', ciudad: 'San Rafael Cedros', direccion: 'Colonia Las Flores, pasaje 4', notas: 'Cliente gamer; avisar nuevas ofertas de periféricos.', activo: true, creadoEn: '2026-07-02T10:00:00.000Z' },
+  { id: 3, tipo: 'persona', nombre: 'Kevin Rodríguez', documento: null, telefono: '7012-3456', correo: 'kevin.rdz@gmail.com', ciudad: 'Cojutepeque', direccion: '', notas: '', activo: true, creadoEn: '2026-09-19T18:45:00.000Z' },
+  { id: 4, tipo: 'empresa', nombre: 'Empresa Consultores SV', documento: '0614-250318-102-3', telefono: '2288-4400', correo: 'compras@consultoressv.com', ciudad: 'San Salvador', direccion: 'Edificio Torre Futura, nivel 9, Colonia Escalón', notas: 'Crédito fiscal a 30 días. Contacto: Lic. Ana Rivas.', activo: true, creadoEn: '2026-03-08T09:00:00.000Z' },
+  { id: 5, tipo: 'persona', nombre: 'Gabriela Solís', documento: '03342190-5', telefono: '7654-9812', correo: null, ciudad: 'Santa Cruz Michapa', direccion: 'Cantón El Carmen', notas: '', activo: true, creadoEn: '2026-08-21T14:10:00.000Z' },
+  { id: 6, tipo: 'empresa', nombre: 'Despacho Jurídico Portillo & Asociados', documento: '0702-110520-101-7', telefono: '7845-1290', correo: 'rportillo@portilloabogados.sv', ciudad: 'Cojutepeque', direccion: '2a Avenida Norte #8', notas: 'Cotizando 3 laptops HP ProBook con CCF.', activo: true, creadoEn: '2026-11-04T13:30:00.000Z' },
+  { id: 7, tipo: 'persona', nombre: 'Andrea Morales', documento: null, telefono: '6120-9988', correo: 'andrea.morales@gmail.com', ciudad: 'San Pedro Perulapán', direccion: '', notas: 'Consultó compatibilidad de RAM para Dell Inspiron.', activo: true, creadoEn: '2026-11-04T12:05:00.000Z' },
+  { id: 8, tipo: 'persona', nombre: 'Mauricio Gómez', documento: null, telefono: '7233-4411', correo: null, ciudad: 'Cojutepeque', direccion: '', notas: '', activo: false, creadoEn: '2026-05-30T16:00:00.000Z' },
+]
+
 // ── Siembra ────────────────────────────────────────────────────────────────
 
 export interface ResumenSeed {
@@ -241,6 +269,7 @@ export interface ResumenSeed {
   marcas: number
   productos: number
   configuracion: number
+  clientes: number
 }
 
 /** Crea un producto con sus hijos y registra el stock inicial como movimiento del sistema. */
@@ -290,7 +319,7 @@ async function crearProducto(tx: Tx, p: ProductoSeed, categoriaId: number, marca
 /** Siembra el catálogo de A. Devuelve cuántos registros se crearon en esta ejecución. */
 export async function sembrar(prisma: PrismaClient): Promise<ResumenSeed> {
   return prisma.$transaction(async (tx) => {
-    const resumen: ResumenSeed = { categorias: 0, marcas: 0, productos: 0, configuracion: 0 }
+    const resumen: ResumenSeed = { categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0 }
 
     const categoriaIds = new Map<string, number>()
     for (const c of CATEGORIAS) {
@@ -324,6 +353,15 @@ export async function sembrar(prisma: PrismaClient): Promise<ResumenSeed> {
     if (!configuracion) {
       await tx.configuracionTienda.create({ data: { id: 1, ...CONFIGURACION } })
       resumen.configuracion++
+    }
+
+    // Solo si no existe ese id ni ese teléfono (único por sus dígitos): nunca pisa lo editado en el admin.
+    for (const { creadoEn, ...c } of CLIENTES) {
+      const telefonoNormalizado = c.telefono.replace(/\D/g, '')
+      const existente = await tx.cliente.findFirst({ where: { OR: [{ id: c.id }, { telefonoNormalizado }] } })
+      if (existente) continue
+      await tx.cliente.create({ data: { ...c, telefonoNormalizado, creadoEn: new Date(creadoEn) } })
+      resumen.clientes++
     }
 
     return resumen
