@@ -38,7 +38,7 @@ export const formatInvoiceNumber = (n: number): string => String(n).padStart(6, 
 
 /**
  * Próxima factura que se emitirá: la semilla solo adelanta la secuencia
- * (misma regla que `nextInternalNumber` en Facturación).
+ * (misma regla que la emisión en el servidor, L15: máx(último + 1, semilla)).
  */
 export const nextInvoiceNumber = (seed: string, lastIssued: number | null): number | null => {
   const s = /^\d+$/.test(seed.trim()) ? Number(seed.trim()) : 0

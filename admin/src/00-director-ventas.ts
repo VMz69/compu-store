@@ -37,5 +37,5 @@ export { EditOrderPage } from './36-pipeline-preparacion-pedidos/02-EditOrderPag
 export { NewOrderPage } from './36-pipeline-preparacion-pedidos/00-director-preparacion-pedidos'
 export { OrdersPage } from './34-pipeline-listado-pedidos/00-director-listado-pedidos'
 export { startOrderFromQuote } from './43-pipeline-reglas-pedidos/00-director-reglas-pedidos'
-export { findOrder, getSalesSnapshot, resetSales, setOrderInvoice, useSalesStore } from './42-pipeline-persistencia-pedidos/00-director-persistencia-pedidos'
+export { findOrder, getSalesSnapshot, refreshOrder, resetSales, useSalesStore } from './42-pipeline-persistencia-pedidos/00-director-persistencia-pedidos'
 export type { Channel, Order, OrderCharge, OrderItem, OrderMetrics, OrderPrefill, OrderStatus, OrderStatusId } from './42-pipeline-persistencia-pedidos/05-types'

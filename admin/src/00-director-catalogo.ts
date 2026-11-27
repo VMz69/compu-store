@@ -17,5 +17,5 @@ export { provideReservedStock } from './24-pipeline-inventario-productos/04-rese
 export type { EffectivePrice, EffectivePriceHook, EffectivePriceResolver } from './23-pipeline-seleccion-productos/03-pricePort'
 export { checkAvailability } from './24-pipeline-inventario-productos/03-inventory'
 export type { AvailabilityRow, StockLine } from './24-pipeline-inventario-productos/03-inventory'
-export { deductStock, findProduct, getCatalogSnapshot, resetCatalog, restoreStock, useCatalogStore } from './25-pipeline-persistencia-catalogo/00-director-persistencia-catalogo'
+export { findProduct, getCatalogSnapshot, refreshProducts, resetCatalog, useCatalogStore } from './25-pipeline-persistencia-catalogo/00-director-persistencia-catalogo'
 export type { Brand, Category, InventoryMetrics, Product } from './25-pipeline-persistencia-catalogo/04-types'

@@ -3,14 +3,12 @@ import type { BadgeTone } from '@/00-director-interfaz'
 import type { Invoice, InvoiceItem, InvoiceStatus, InvoiceTotals, PaymentCondition } from './03-types'
 
 /**
- * Lógica pura de facturación (sin React ni store): totales, correlativos e
- * identificadores del DTE. Compartida por la pantalla y el PDF.
+ * Lógica pura de facturación (sin React ni store): totales y último correlativo.
+ * Compartida por la pantalla y el PDF. Desde L15 los números, el código de generación y el
+ * sello (simulado) los asigna el servidor al emitir (D-12).
  */
 
-/** Prefijo del número de control: DTE-01 (Factura) · establecimiento M001 · punto de venta P001. */
-export const CONTROL_PREFIX = 'DTE-01-M001P001-'
-/** Últimos correlativos usados antes de este sistema (según el documento de muestra). */
-const LAST_CONTROL = 2074
+/** Último correlativo interno antes de este sistema (= fila inicial de `correlativos` en la API). */
 const LAST_INTERNAL = 15781
 
 const money = (value: number): number => Math.round(value * 100) / 100
@@ -41,34 +39,8 @@ export function invoiceTotals(items: InvoiceItem[]): InvoiceTotals {
 const maxSuffix = (values: string[], prefix: string, fallback: number): number =>
   values.reduce((max, v) => Math.max(max, parseInt(v.replace(prefix, ''), 10) || 0), fallback)
 
-/** Siguiente número de control (15 dígitos). */
-export const nextControlNumber = (invoices: Invoice[]): string =>
-  `${CONTROL_PREFIX}${String(maxSuffix(invoices.map((i) => i.id), CONTROL_PREFIX, LAST_CONTROL) + 1).padStart(15, '0')}`
-
-/** Siguiente correlativo interno (6 dígitos). */
 /** Último correlativo interno usado (incluye anuladas: un número nunca se reutiliza). */
 export const lastInternalNumber = (invoices: Invoice[]): number => maxSuffix(invoices.map((i) => i.internalId), '', LAST_INTERNAL)
-
-/**
- * Siguiente correlativo interno (6 dígitos). La semilla configurada en Ajustes ›
- * Identidad solo puede ADELANTAR la secuencia: si es menor o igual al último
- * emitido se ignora, para que nunca se repita un número.
- */
-export const nextInternalNumber = (invoices: Invoice[], seed: number | null = null): number =>
-  Math.max(lastInternalNumber(invoices) + 1, seed ?? 0)
-
-export const nextInternalId = (invoices: Invoice[], seed: number | null = null): string =>
-  String(nextInternalNumber(invoices, seed)).padStart(6, '0')
-
-/** Código de generación con formato UUID v4 en mayúsculas. */
-export const newGenerationCode = (): string => crypto.randomUUID().toUpperCase()
-
-/** Sello de recepción SIMULADO (40 caracteres, como el que devuelve Hacienda). */
-export function simulatedSeal(date = new Date()): string {
-  const bytes = crypto.getRandomValues(new Uint8Array(18))
-  const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('').toUpperCase()
-  return `${date.getFullYear()}${hex}`
-}
 
 export const PAYMENT_CONDITIONS: PaymentCondition[] = ['Efectivo', 'Tarjeta', 'Transferencia', 'Crédito']
 

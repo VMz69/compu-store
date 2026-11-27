@@ -19,7 +19,8 @@ interface PedidoDto {
   notas: string
   estado: OrderStatusId
   reservadoHasta: string | null
-  facturaId: string | null
+  /** Factura activa (L15); null si no tiene o si se anuló. */
+  factura: { id: number; numeroControl: string; correlativo: number } | null
   lineas: { productoId: number; sku: string; nombre: string; cantidad: number; precioUnitario: string; descuento: string; importe: string }[]
   cargos: { id: number; concepto: string; monto: string }[]
   total: string
@@ -78,7 +79,8 @@ const toOrder = (dto: PedidoDto): Order => ({
   })),
   charges: dto.cargos.map((c) => ({ id: `CHG-${c.id}`, concept: c.concepto, amount: Number(c.monto) })),
   reservedUntil: dto.reservadoHasta,
-  invoiceId: dto.facturaId,
+  // El admin identifica la factura por su número de control (= `Invoice.id`).
+  invoiceId: dto.factura?.numeroControl ?? null,
   // La cotización de origen se enlaza en L16 (D-18).
   quoteId: null,
   history: dto.historial.map((e) => ({ status: e.estado, at: e.fecha, by: e.por, ...(e.nota ? { note: e.nota } : {}) })),
@@ -117,6 +119,12 @@ export async function fetchOrders(): Promise<Order[]> {
     orders.push(...data.data.map(toOrder))
     if (page >= data.meta.totalPages) return orders
   }
+}
+
+/** Un pedido tal como está en el servidor (tras facturar o anular, L15). */
+export async function fetchOrderApi(id: string): Promise<Order> {
+  const { data } = await apiClient.get<Envelope<PedidoDto>>(orderPath(id))
+  return toOrder(data.data)
 }
 
 export async function createOrderApi(draft: OrderDraft, canalId: number): Promise<Order> {

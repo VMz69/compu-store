@@ -3,7 +3,6 @@ import { persist } from 'zustand/middleware'
 import { STORAGE_KEYS } from '@/84-pipeline-persistencia-demo/02-storage'
 import { ApiError, onAuthenticated } from '@/84-pipeline-persistencia-demo/05-api.client'
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
-import { deductFromProducts, restockProducts, type StockLine } from '../24-pipeline-inventario-productos/03-inventory'
 import { isDataUrl } from '../17-pipeline-ficha-producto/03-productImages'
 import { productsInCategory, productsOfBrand } from './03-taxonomy'
 import {
@@ -315,12 +314,16 @@ export const findProduct = (id: string): Product | undefined =>
 
 export const resetCatalog = (): void => useCatalogStore.getState().reset()
 
-/** Salida de inventario por venta facturada (respeta lotes: vence primero, sale primero). */
-export const deductStock = (lines: StockLine[]): void => {
-  useCatalogStore.setState((s) => ({ products: deductFromProducts(s.products, lines) }))
-}
-
-/** Reingreso de inventario por anulación de factura. */
-export const restoreStock = (lines: StockLine[]): void => {
-  useCatalogStore.setState((s) => ({ products: restockProducts(s.products, lines) }))
+/**
+ * Relee productos y métricas de la API (L15): tras facturar o anular, el servidor ya movió el stock (por lotes
+ * FEFO y, al anular, a los mismos lotes). Si falla se avisa; la siguiente precarga corrige la caché.
+ */
+export async function refreshProducts(): Promise<void> {
+  void refreshInventoryMetrics()
+  try {
+    useCatalogStore.setState({ products: await fetchProducts() })
+  } catch (error) {
+    if (error instanceof ApiError && error.code === 'PERMISSION_DENIED') return
+    toast(`No se pudo actualizar el inventario: ${errorMessage(error, 'error del servidor.')}`, 'warning')
+  }
 }

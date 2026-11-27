@@ -1,9 +1,8 @@
 import { useState, type FormEvent } from 'react'
-import { ensurePermission, useSession } from '@/00-director-acceso'
-import { checkAvailability, deductStock, getCatalogSnapshot, useCatalogStore } from '@/00-director-catalogo'
+import { ensurePermission } from '@/00-director-acceso'
+import { checkAvailability, getCatalogSnapshot, refreshProducts, useCatalogStore } from '@/00-director-catalogo'
 import { normalizePhone, useCustomersStore } from '@/00-director-clientes'
-import { isInvoiceable, orderStatusName, setOrderInvoice, useSalesStore } from '@/00-director-ventas'
-import { useStoreSettings } from '@/00-director-ajustes'
+import { isInvoiceable, orderStatusName, refreshOrder, useSalesStore } from '@/00-director-ventas'
 import { useFormState } from '@/77-pipeline-edicion-formularios/03-useFormState'
 import { lineDiscount } from '@/82-pipeline-calculo-importes/00-director-calculo-importes'
 import { closeModal, openModal, useModalPayload } from '@/73-pipeline-modales-globales/03-modal.store'
@@ -16,13 +15,11 @@ import type { InvoiceItem, InvoiceReceptor, PaymentCondition } from '../47-pipel
 /**
  * Emisión de factura desde un pedido (payload del modal: id del pedido).
  *
- * Al emitir, en este orden:
- *  1. Revalida el stock con los datos más recientes (otra venta pudo agotarlo).
- *  2. Crea la factura (número de control, código de generación, sello).
- *  3. Descuenta el inventario (por lotes si aplica).
- *  4. Vincula la factura al pedido y lo pasa a "Facturado" (libera la reserva;
- *     la entrega se marca después en Pedidos).
- *  5. Abre la vista previa del PDF.
+ * Al emitir (L15), el servidor hace en UNA transacción: revalida el pedido (Reservado con la reserva
+ * vigente), copia sus líneas y cargos, asigna números, código y sello (simulado), descuenta el inventario
+ * (stock y reserva, por lotes FEFO) y pasa el pedido a "Facturado". Aquí solo se envían el receptor, la
+ * condición de pago y las notas; después se releen el pedido y el catálogo y se abre la vista previa del PDF.
+ * Si el servidor lo rechaza, su mensaje se muestra y el modal sigue abierto.
  */
 export function useInvoiceEmit() {
   const orderId = useModalPayload<string>()
@@ -31,8 +28,6 @@ export function useInvoiceEmit() {
   const customers = useCustomersStore((s) => s.customers)
   const createInvoice = useBillingStore((s) => s.createInvoice)
   const isLoading = useBillingStore((s) => s.isLoading)
-  const settings = useStoreSettings()
-  const { user } = useSession()
   const [submitted, setSubmitted] = useState(false)
 
   // Cliente enlazado al pedido (o, si fue ocasional, por teléfono): se precargan sus datos fiscales.
@@ -83,21 +78,18 @@ export function useInvoiceEmit() {
     if (!checkAvailability(getCatalogSnapshot().products, lines).every((r) => r.ok)) {
       return toast('Stock insuficiente: revisa el inventario antes de facturar.', 'warning')
     }
-    const invoice = await createInvoice({
-      orderId: order.id,
-      receptor: receptor(),
-      paymentCondition: values.paymentCondition as PaymentCondition,
-      items,
-      notes: values.notes.trim(),
-      createdBy: user?.name ?? 'Equipo CompuStore',
-      issuer: {
-        tradeName: settings.name, legalName: settings.legalName, nit: settings.nit, nrc: settings.nrc,
-        address: settings.address, phone: settings.phones.join(' / '), email: settings.email,
-        establishmentType: settings.establishmentType, economicActivity: settings.economicActivity,
-      },
-    }, settings.invoiceSeed)
-    deductStock(lines)
-    setOrderInvoice(order.id, invoice.id, user?.name ?? 'Equipo CompuStore')
+    let invoice
+    try {
+      invoice = await createInvoice({
+        orderId: order.id,
+        receptor: receptor(),
+        paymentCondition: values.paymentCondition as PaymentCondition,
+        notes: values.notes.trim(),
+      })
+    } catch (error) {
+      return toast(error instanceof Error ? error.message : 'No se pudo emitir la factura.', 'danger')
+    }
+    await Promise.all([refreshOrder(order.id), refreshProducts()])
     toast(`Factura ${invoice.internalId} emitida · inventario actualizado`, 'success')
     openModal(BILLING_MODALS.preview, invoice.id)
   }

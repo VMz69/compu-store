@@ -5,7 +5,7 @@ import { formatShortISO, todayISO } from '@/71-pipeline-seleccion-fechas/05-date
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
 import { onAuthenticated } from '@/84-pipeline-persistencia-demo/05-api.client'
 import { STORAGE_KEYS } from '@/84-pipeline-persistencia-demo/02-storage'
-import { expiredReservations, reservationBounds } from '../38-pipeline-reserva-pedidos/04-reservation'
+import { expiredReservations } from '../38-pipeline-reserva-pedidos/04-reservation'
 import { findOrderByQuote, ordersOfChannel } from './02-order.service'
 import { applyStatusLabels, canTransition, deleteBlockedReason, editBlockedReason, ORDER_STATUSES, statusOf, type StatusLabel, type StatusLabels } from '../39-pipeline-transiciones-pedidos/02-orderFlow'
 import {
@@ -14,6 +14,7 @@ import {
   deleteChannelApi,
   deleteOrderApi,
   fetchChannels,
+  fetchOrderApi,
   fetchOrders,
   fetchStatusLabels,
   reserveOrderApi,
@@ -26,7 +27,8 @@ import type { Channel, ChannelDraft, DeletedOrder, Order, OrderDraft, OrderStatu
 
 /**
  * Store de ventas. Desde L13 la fuente de pedidos, canales y etiquetas de estado es la API; esto es su
- * caché. Reservar (L14) aparta el stock en el servidor; facturar (L15) aún no tiene operación en el servidor.
+ * caché. Reservar (L14) aparta el stock en el servidor; facturar y anular (L15) también ocurren allí, y
+ * Facturación relee el pedido con `refreshOrder`.
  */
 interface SalesState {
   /** Pedidos vigentes: lo único que leen listados, métricas, stock y facturación. */
@@ -61,8 +63,11 @@ interface SalesState {
   expireReservations: (today?: string) => string[]
   /** Aplica una transición válida del flujo. Devuelve `false` si no está permitida. */
   transition: (orderId: string, to: OrderStatusId, by: string, note?: string) => boolean
-  /** Vincula la factura (→ Facturado) o la desvincula al anularla (→ Reservado con vigencia por defecto). */
-  setInvoice: (orderId: string, invoiceId: string | null, by: string) => void
+  /**
+   * Relee el pedido del servidor y reemplaza la caché (L15): tras emitir (→ Facturado) o anular la factura
+   * (→ Reservado hasta hoy + 3), que el servidor aplica en la misma transacción que la factura.
+   */
+  refreshOrder: (orderId: string) => Promise<void>
   /** Alterna el canal y devuelve su nuevo estado. */
   toggleChannel: (channelId: string) => Channel | undefined
   /** Crea o edita. Renombrar actualiza el canal en sus pedidos (guardan el nombre). */
@@ -187,7 +192,7 @@ export const useSalesStore = create<SalesState>()(
 
       transition: (orderId, to, by, note) => {
         const order = get().orders.find((o) => o.id === orderId)
-        // "Facturado" solo se alcanza al emitir la factura (setInvoice) y "Reservado" con
+        // "Facturado" solo se alcanza al emitir la factura (Facturación) y "Reservado" con
         // `reserve` (requiere vigencia); nunca por esta vía.
         if (!order || (to !== 'cancelado' && to !== 'entregado') || !canTransition(order.status, to)) return false
         // Optimista: el servidor decide (422 si ya no procede) y su respuesta reemplaza la caché.
@@ -201,19 +206,10 @@ export const useSalesStore = create<SalesState>()(
         return true
       },
 
-      setInvoice: (orderId, invoiceId, by) =>
-        set((s) => ({
-          orders: patchOrder(s.orders, orderId, (o) =>
-            invoiceId
-              ? stamp({ ...o, invoiceId, reservedUntil: null }, 'facturado', by, `Factura ${invoiceId}`)
-              : stamp(
-                  { ...o, invoiceId: null, reservedUntil: reservationBounds().suggested },
-                  'confirmado',
-                  by,
-                  `Factura ${o.invoiceId} anulada · reservado hasta ${formatShortISO(reservationBounds().suggested)}`,
-                ),
-          ),
-        })),
+      refreshOrder: async (orderId) => {
+        const saved = await fetchOrderApi(orderId)
+        set((s) => ({ orders: patchOrder(s.orders, orderId, () => saved) }))
+      },
 
       toggleChannel: (channelId) => {
         const current = get().channels.find((c) => c.id === channelId)
@@ -328,9 +324,15 @@ async function loadSales(): Promise<void> {
 
 onAuthenticated(() => void loadSales())
 
-/** Usado por Facturación al emitir (`invoiceId`) o anular (`null`) una factura. */
-export const setOrderInvoice = (orderId: string, invoiceId: string | null, by: string): void =>
-  useSalesStore.getState().setInvoice(orderId, invoiceId, by)
+/**
+ * Usado por Facturación tras emitir o anular una factura (L15): relee el pedido del servidor. Si la lectura
+ * falla, se avisa; la factura ya quedó guardada y la siguiente precarga corrige la caché.
+ */
+export const refreshOrder = (orderId: string): Promise<void> =>
+  useSalesStore
+    .getState()
+    .refreshOrder(orderId)
+    .catch((error: unknown) => toast(`No se pudo actualizar el pedido ${orderId}: ${errorMessage(error, 'error del servidor.')}`, 'warning'))
 
 export const findOrder = (orderId: string): Order | undefined =>
   useSalesStore.getState().orders.find((o) => o.id === orderId)

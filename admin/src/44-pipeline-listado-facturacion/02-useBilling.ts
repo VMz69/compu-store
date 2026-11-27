@@ -1,14 +1,14 @@
 import { useDeferredValue, useEffect, useMemo, useState, type ChangeEvent } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { ensurePermission, usePermission, useSession } from '@/00-director-acceso'
-import { restoreStock } from '@/00-director-catalogo'
-import { findOrder, isInvoiceable, orderSearchFields, orderStatusName, setOrderInvoice, useSalesStore } from '@/00-director-ventas'
+import { ensurePermission, usePermission } from '@/00-director-acceso'
+import { refreshProducts } from '@/00-director-catalogo'
+import { findOrder, isInvoiceable, orderSearchFields, orderStatusName, refreshOrder, useSalesStore } from '@/00-director-ventas'
 import { usePagination } from '@/70-pipeline-orden-paginacion/04-usePagination'
 import { matchesQuery } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
 import { askConfirm } from '@/72-pipeline-confirmaciones-globales/03-confirm.store'
 import { openModal } from '@/73-pipeline-modales-globales/03-modal.store'
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
-import { filterInvoices, INVOICE_STATUS_META, invoiceTotals, lastInternalNumber, stockLines } from '../47-pipeline-persistencia-facturas/02-invoice.service'
+import { filterInvoices, INVOICE_STATUS_META, invoiceTotals, lastInternalNumber } from '../47-pipeline-persistencia-facturas/02-invoice.service'
 import { BILLING_MODALS } from '../45-pipeline-emision-facturas/05-modals'
 import { useBillingStore } from '../47-pipeline-persistencia-facturas/00-director-persistencia-facturas'
 import type { Invoice, InvoiceStatus } from '../47-pipeline-persistencia-facturas/03-types'
@@ -41,7 +41,6 @@ export function useBilling() {
   const invoices = useBillingStore((s) => s.invoices)
   const voidInvoice = useBillingStore((s) => s.voidInvoice)
   const canInvoice = usePermission('canInvoice')
-  const { user } = useSession()
 
   useEffect(() => {
     const orderId = params.get('pedido')
@@ -65,9 +64,9 @@ export function useBilling() {
   const active = invoices.filter((i) => i.status === 'emitida')
 
   /**
-   * Anular: repone el inventario y devuelve el pedido a "Reservado" (vigencia por defecto)
-   * (su stock queda reservado de nuevo). Regla: si el pedido ya se entregó,
-   * no se anula desde aquí (requeriría un flujo de devolución).
+   * Anular (L15, en el servidor y en una transacción): repone el inventario a los mismos lotes y devuelve
+   * el pedido a "Reservado" por 3 días (su stock queda reservado de nuevo). Regla: si el pedido ya se
+   * entregó, no se anula desde aquí (requeriría un flujo de devolución); el servidor también lo rechaza.
    */
   const promptVoid = (invoice: Invoice) => {
     if (findOrder(invoice.orderId)?.status === 'entregado') {
@@ -81,11 +80,13 @@ export function useBilling() {
       onConfirm: () => {
         if (!ensurePermission('canInvoice', 'No tienes permiso para anular facturas')) return
         voidInvoice(invoice.id)
-        // Solo productos: los cargos extra (envío, instalación…) no son inventario.
-        restoreStock(stockLines(invoice.items))
-        const order = findOrder(invoice.orderId)
-        if (order?.invoiceId === invoice.id) setOrderInvoice(order.id, null, user?.name ?? 'Equipo CompuStore')
-        toast(`Factura ${invoice.internalId} anulada · stock repuesto`, 'info')
+          .then(async () => {
+            await Promise.all([refreshOrder(invoice.orderId), refreshProducts()])
+            toast(`Factura ${invoice.internalId} anulada · stock repuesto`, 'info')
+          })
+          .catch((error: unknown) => {
+            toast(`No se anuló la factura ${invoice.internalId}: ${error instanceof Error ? error.message : 'error del servidor.'}`, 'danger')
+          })
       },
     })
   }
