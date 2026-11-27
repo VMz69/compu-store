@@ -61,7 +61,9 @@ export const buscarPorId = (id: number) => prisma.cliente.findUnique({ where: { 
 
 export const buscarPorTelefono = (telefonoNormalizado: string) => prisma.cliente.findUnique({ where: { telefonoNormalizado } })
 
-export const crear = (data: Prisma.ClienteCreateInput) => prisma.cliente.create({ data })
+export const buscarPorDocumento = (documento: string) => prisma.cliente.findUnique({ where: { documento } })
+
+export const crear =(data: Prisma.ClienteCreateInput) => prisma.cliente.create({ data })
 
 /** Los campos `undefined` (no enviados) no se tocan. */
 export function actualizar(id: number, cambios: Record<string, unknown>) {

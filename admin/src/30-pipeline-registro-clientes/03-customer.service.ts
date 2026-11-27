@@ -88,6 +88,10 @@ export function validateCustomer(v: CustomerFormFields, customers: Customer[]): 
   if (doc) {
     const valid = v.type === 'empresa' ? NIT_PATTERN.test(doc) : DUI_PATTERN.test(doc)
     if (!valid) e.documentId = v.type === 'empresa' ? 'Formato NIT: 0614-250318-102-3' : 'Formato DUI: 01234567-8'
+    // L11: el DUI/NIT es único (lo impone el servidor; aquí se avisa antes, en el directorio y en el pedido).
+    else if (customers.some((c) => c.id !== v.id && c.documentId.trim() === doc)) {
+      e.documentId = `Ya hay un cliente con este ${v.type === 'empresa' ? 'NIT' : 'DUI'}.`
+    }
   }
   return e
 }

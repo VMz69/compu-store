@@ -78,8 +78,8 @@ describe('Clientes: alta, edición y eliminación', () => {
     expect(malDui.body.error.details).toEqual([{ campo: 'documento', mensaje: 'Formato DUI: 01234567-8' }])
     const malNit = await crear({ tipo: 'empresa', nombre: 'Doc Empresa', telefono: '9911-0004', documento: '01234567-8' })
     expect(malNit.status).toBe(400)
-    expect((await crear({ tipo: 'empresa', nombre: 'Doc Empresa', telefono: '9911-0004', documento: '0614-250318-102-3' })).status).toBe(201)
-    expect((await crear({ nombre: 'Doc Persona', telefono: '9911-0005', documento: '01234567-8' })).status).toBe(201)
+    expect((await crear({ tipo: 'empresa', nombre: 'Doc Empresa', telefono: '9911-0004', documento: '9911-111111-111-1' })).status).toBe(201)
+    expect((await crear({ nombre: 'Doc Persona', telefono: '9911-0005', documento: '99111111-1' })).status).toBe(201)
   })
 
   it('400 con datos inválidos o campos que el navegador no debe enviar', async () => {
@@ -95,13 +95,13 @@ describe('Clientes: alta, edición y eliminación', () => {
   })
 
   it('edita parcialmente: teléfono libre, 409 si es de otro, y el documento contra el tipo resultante', async () => {
-    const { body } = await crear({ nombre: 'Para Editar', telefono: '9911-0007', documento: '01234567-8' })
+    const { body } = await crear({ nombre: 'Para Editar', telefono: '9911-0007', documento: '99111111-2' })
     const id = body.data.id as number
     const editar = (cambios: Record<string, unknown>) => request(app).patch(`${URL}/${id}`).set(auth).send(cambios)
 
     const ok = await editar({ nombre: 'Editado', telefono: '9911 0077', activo: false, notas: 'Nota interna' })
     expect(ok.status).toBe(200)
-    expect(ok.body.data).toMatchObject({ nombre: 'Editado', telefono: '9911 0077', activo: false, notas: 'Nota interna', documento: '01234567-8' })
+    expect(ok.body.data).toMatchObject({ nombre: 'Editado', telefono: '9911 0077', activo: false, notas: 'Nota interna', documento: '99111111-2' })
     expect((await prisma.cliente.findUniqueOrThrow({ where: { id } })).telefonoNormalizado).toBe('99110077')
 
     expect((await editar({ telefono: '9911-0077' })).status).toBe(200) // su propio teléfono
@@ -109,6 +109,25 @@ describe('Clientes: alta, edición y eliminación', () => {
     expect((await editar({ tipo: 'empresa' })).status).toBe(400) // conserva un DUI
     expect((await editar({ tipo: 'empresa', documento: null })).body.data).toMatchObject({ tipo: 'empresa', documento: null })
     expect((await request(app).patch(`${URL}/999999`).set(auth).send({ nombre: 'Nadie' })).status).toBe(404)
+  })
+
+  it('409 si el DUI o el NIT ya pertenece a otro cliente (también inactivo); sin documento no choca', async () => {
+    await crear({ nombre: 'Dueño Dui', telefono: '9911-0009', documento: '99111111-3', activo: false })
+    const dup = await crear({ nombre: 'Copia Dui', telefono: '9911-0010', documento: '99111111-3' })
+    expect(dup.status).toBe(409)
+    expect(dup.body.error).toMatchObject({ code: 'CONFLICT', message: 'Ya hay un cliente con este DUI.' })
+    const nit = await crear({ tipo: 'empresa', nombre: 'Copia Nit', telefono: '9911-0010', documento: '9911-111111-111-1' })
+    expect(nit.status).toBe(409)
+    expect(nit.body.error.message).toBe('Ya hay un cliente con este NIT.')
+    expect((await crear({ nombre: 'Sin Doc Uno', telefono: '9911-0011' })).status).toBe(201)
+    expect((await crear({ nombre: 'Sin Doc Dos', telefono: '9911-0012', documento: '' })).status).toBe(201)
+  })
+
+  it('al editar: 409 si toma el documento de otro y 200 si conserva el suyo', async () => {
+    const { body } = await crear({ nombre: 'Edita Doc', telefono: '9911-0013', documento: '99111111-4' })
+    const editar = (cambios: Record<string, unknown>) => request(app).patch(`${URL}/${body.data.id}`).set(auth).send(cambios)
+    expect((await editar({ documento: '99111111-3' })).status).toBe(409)
+    expect((await editar({ documento: '99111111-4', nombre: 'Edita Doc 2' })).status).toBe(200)
   })
 
   it('elimina (204) y luego da 404', async () => {

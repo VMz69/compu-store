@@ -268,12 +268,12 @@ enum TipoCliente {
 }
 
 /// Directorio de clientes (L11). El teléfono es único por sus dígitos (`telefonoNormalizado`).
-/// Documento = DUI (persona) o NIT (empresa), opcional. La relación con pedidos llega en L13.
+/// Documento = DUI (persona) o NIT (empresa), opcional y único. La relación con pedidos llega en L13.
 model Cliente {
   id                  Int         @id @default(autoincrement())
   tipo                TipoCliente
   nombre              String      @db.VarChar(100)
-  documento           String?     @db.VarChar(17)
+  documento           String?     @unique @db.VarChar(17)
   telefono            String      @db.VarChar(20)
   telefonoNormalizado String      @unique @db.VarChar(15)
   correo              String?     @db.VarChar(254)

@@ -52,6 +52,15 @@ async function exigirTelefonoLibre(telefonoNormalizado: string, propioId?: numbe
   if (otro && otro.id !== propioId) throw new ErrorApp('CONFLICT', 409, 'Ya hay un cliente con este teléfono.')
 }
 
+/** 409 si otro cliente (activo o no) ya tiene ese DUI o NIT; el índice único es la red de seguridad. */
+async function exigirDocumentoLibre(tipo: TipoCliente, documento: string | null, propioId?: number): Promise<void> {
+  if (!documento) return
+  const otro = await repo.buscarPorDocumento(documento)
+  if (otro && otro.id !== propioId) {
+    throw new ErrorApp('CONFLICT', 409, `Ya hay un cliente con este ${tipo === 'empresa' ? 'NIT' : 'DUI'}.`)
+  }
+}
+
 export async function listarClientes(
   filtro: FiltroClientes,
   paginacion: Paginacion,
@@ -70,15 +79,19 @@ export async function crearCliente(datos: CrearCliente): Promise<ClienteDto> {
   validarDocumento(datos.tipo, datos.documento)
   const telefonoNormalizado = normalizarTelefono(datos.telefono)
   await exigirTelefonoLibre(telefonoNormalizado)
+  await exigirDocumentoLibre(datos.tipo, datos.documento)
   return aCliente(await repo.crear({ ...datos, telefonoNormalizado }))
 }
 
 export async function editarCliente(id: number, cambios: EditarCliente): Promise<ClienteDto> {
   const actual = await repo.buscarPorId(id)
   if (!actual) throw noExiste()
-  validarDocumento(cambios.tipo ?? actual.tipo, cambios.documento === undefined ? actual.documento : cambios.documento)
+  const tipo = cambios.tipo ?? actual.tipo
+  const documento = cambios.documento === undefined ? actual.documento : cambios.documento
+  validarDocumento(tipo, documento)
   const telefonoNormalizado = cambios.telefono === undefined ? undefined : normalizarTelefono(cambios.telefono)
   if (telefonoNormalizado !== undefined) await exigirTelefonoLibre(telefonoNormalizado, id)
+  await exigirDocumentoLibre(tipo, documento, id)
   return aCliente(await repo.actualizar(id, { ...cambios, telefonoNormalizado }))
 }
 
