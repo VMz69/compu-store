@@ -327,7 +327,7 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 | L10 | B | 42 | Completado (233 pruebas; demostración manual con Firebase real confirmada por el propietario, 26-11-2026; los canales, 43, pasan a L13) | `feat(L10)` · 25-11-2026 · rama `feat/api` |
 | L11 | B | 14, 15, 16 | Completado (264 pruebas; el propietario cerró el lote sin demostración manual, 26-11-2026) | `feat(L11)` · 26-11-2026 · rama `feat/api` |
 | L12 | B | 37, 38, 39 | Completado (303 pruebas; mismo precio verificado en admin, tienda y carrito; demostración manual confirmada por el propietario, 26-11-2026) | `feat(L12)` · 26-11-2026 · rama `feat/api` |
-| L13 | B | 18–22, 26, 27, 43 | Completado (L13A: API, 368 pruebas · L13B: admin conectado; la demostración manual en el admin queda a cargo del propietario) | `feat(L13A)` + `feat(L13B)` · 26-11-2026 · rama `feat/api` |
+| L13 | B | 18–22, 26, 27, 43 | Completado (L13A: API, 368 pruebas · L13B: admin conectado; demostración manual confirmada por el propietario, 26-11-2026) | `feat(L13A)` + `feat(L13B)` · 26-11-2026 · rama `feat/api` |
 | L14 | B | 23, 24, 25 | Pendiente | |
 | L15 | B | 12, 33–36 | Pendiente | |
 | L16 | B | 29–32 | Pendiente | |
@@ -499,6 +499,7 @@ Estados posibles: Pendiente · En progreso · Completado · Bloqueado · Conting
 | 26-11-2026 | L13B | — | Se eliminan `88/01-orders.mock`, `88/02-channels.mock` (sus datos pasan al seed) y `42/03-migrate` (migraba cachés locales v1–v4, ya descartadas), y `nextOrderId`/`ORDER_ID_PREFIX` (el id lo asigna el servidor). Quedan como huecos intencionales; el director de 88 reexporta las facturas y cotizaciones de demostración, que siguen locales hasta L15/L16 | `admin/src/88-pipeline-datos-demo-documentos/` |
 | 26-11-2026 | L13B | — | Límites aceptados hasta L14–L16: (1) sin reservas en el servidor, ningún pedido de la API llega a «Reservado», así que no hay pedidos facturables y el barrido de vencimientos no encuentra nada; Facturación sigue con sus documentos de demostración y `setInvoice` solo toca la caché; (2) convertir una cotización crea el pedido con los precios vigentes y sin enlace a la cotización (D-18 y el enlace llegan en L16), así que la cotización no aparece como «Convertida» y podría convertirse otra vez; (3) la papelera `deletedOrders` del respaldo JSON (63) queda vacía: la auditoría de los eliminados vive en el servidor (L18) | conversación L13 |
 | 26-11-2026 | L13B | — | Verificación: admin con `build`, `lint` y madge sin ciclos; API de desarrollo arrancada con la migración (`/health` 200; `/admin/pedidos` y `/admin/canales-venta` 401 sin token). La demostración manual con Firebase real (registrar, editar, cancelar, eliminar con motivo, aviso de reservas, canales con 409 y etiquetas de estado; «Entregar» no es alcanzable hasta L15) queda a cargo del propietario | conversación L13 |
+| 26-11-2026 | L13 | — | Cierre: el propietario confirmó la demostración manual en el admin con Firebase real (registro, edición con snapshot de precios, cancelación, eliminación con motivo, aviso de reservas, canales con 409 y etiquetas de estado) | conversación L13 |
 
 ---
 
