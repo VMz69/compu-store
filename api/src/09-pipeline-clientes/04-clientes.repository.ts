@@ -42,6 +42,8 @@ function condicionTermino(termino: string): Prisma.ClienteWhereInput {
 function donde({ q, tipo, estado }: FiltroClientes): Prisma.ClienteWhereInput {
   const terminos = q.split(/\s+/).filter(Boolean)
   return {
+    // L13: los eliminados lógicamente no salen en el directorio, la búsqueda ni el selector.
+    eliminadoEn: null,
     ...(tipo && { tipo }),
     ...(estado && { activo: estado === 'activos' }),
     AND: terminos.map(condicionTermino),
@@ -57,13 +59,17 @@ export async function listar(filtro: FiltroClientes, paginacion: Paginacion): Pr
   ])
 }
 
-export const buscarPorId = (id: number) => prisma.cliente.findUnique({ where: { id } })
+/** Cliente del directorio (sin los eliminados lógicamente). */
+export const buscarPorId = (id: number) => prisma.cliente.findFirst({ where: { id, eliminadoEn: null } })
+
+/** Cualquier cliente, también eliminado: lo usan los pedidos para su snapshot. */
+export const buscarCualquiera = (id: number) => prisma.cliente.findUnique({ where: { id } })
 
 export const buscarPorTelefono = (telefonoNormalizado: string) => prisma.cliente.findUnique({ where: { telefonoNormalizado } })
 
 export const buscarPorDocumento = (documento: string) => prisma.cliente.findUnique({ where: { documento } })
 
-export const crear =(data: Prisma.ClienteCreateInput) => prisma.cliente.create({ data })
+export const crear = (data: Prisma.ClienteCreateInput) => prisma.cliente.create({ data })
 
 /** Los campos `undefined` (no enviados) no se tocan. */
 export function actualizar(id: number, cambios: Record<string, unknown>) {
@@ -71,4 +77,14 @@ export function actualizar(id: number, cambios: Record<string, unknown>) {
   return prisma.cliente.update({ where: { id }, data })
 }
 
-export const eliminar = (id: number) => prisma.cliente.delete({ where: { id } })
+/**
+ * L13: con pedidos, eliminación lógica (los pedidos conservan la FK y su snapshot); sin pedidos,
+ * borrado real. Cuenta por la relación de Prisma para no importar el pipeline de pedidos.
+ * Si un pedido nuevo lo referencia entre el conteo y el borrado, la FK (Restrict) responde 409.
+ */
+export const eliminar = (id: number) =>
+  prisma.$transaction(async (tx) => {
+    const pedidos = await tx.pedido.count({ where: { clienteId: id } })
+    if (pedidos > 0) await tx.cliente.update({ where: { id }, data: { eliminadoEn: new Date() } })
+    else await tx.cliente.delete({ where: { id } })
+  })

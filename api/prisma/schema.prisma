@@ -80,6 +80,7 @@ model Producto {
   lotes            Lote[]
   movimientos      MovimientoInventario[]
   ofertas          OfertaProducto[]
+  lineasPedido     LineaPedido[]
 
   @@index([publicado, categoriaId])
   @@map("productos")
@@ -172,6 +173,8 @@ model Usuario {
   ultimoAcceso          DateTime?
   movimientos           MovimientoInventario[]
   permisos              UsuarioPermiso[]
+  eventosPedido         EventoPedido[]
+  pedidosEliminados     Pedido[]
 
   @@index([rol])
   @@map("usuarios")
@@ -284,6 +287,9 @@ model Cliente {
   activo              Boolean     @default(true)
   creadoEn            DateTime    @default(now())
   actualizadoEn       DateTime    @updatedAt
+  /// Eliminación lógica (L13): un cliente con pedidos sale del directorio, pero sus pedidos lo conservan.
+  eliminadoEn         DateTime?
+  pedidos             Pedido[]
 
   @@index([nombre])
   @@map("clientes")
@@ -324,4 +330,116 @@ model OfertaProducto {
   @@id([ofertaId, productoId])
   @@index([productoId])
   @@map("ofertas_productos")
+}
+
+// ---------- Pedidos (L13) ----------
+
+/// Canal de venta (funcionalidad 43). Un canal con pedidos no se elimina: se desactiva.
+model CanalVenta {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @unique @db.VarChar(40)
+  insignia    String   @db.VarChar(30)
+  icono       String   @db.VarChar(60)
+  color       String   @default("blue") @db.VarChar(20)
+  descripcion String   @db.VarChar(160)
+  activo      Boolean  @default(true)
+  creadoEn    DateTime @default(now())
+  pedidos     Pedido[]
+
+  @@map("canales_venta")
+}
+
+/// Estados del flujo; ids, orden y transiciones son fijos en código (`11-pedidos/05-flujo`).
+enum EstadoPedido {
+  registrado
+  confirmado
+  facturado
+  entregado
+  cancelado
+}
+
+/// Nombre visible y descripción de cada estado (lo único configurable del flujo). Filas de la migración.
+model EtiquetaEstadoPedido {
+  estado      EstadoPedido @id
+  nombre      String       @unique @db.VarChar(30)
+  descripcion String       @db.VarChar(200)
+
+  @@map("estados_pedido")
+}
+
+/// Pedido con snapshot del cliente y del canal. Eliminación lógica (`eliminadoEn`).
+model Pedido {
+  id                Int            @id @default(autoincrement())
+  clienteId         Int?
+  cliente           Cliente?       @relation(fields: [clienteId], references: [id], onDelete: Restrict)
+  clienteNombre     String         @db.VarChar(100)
+  clienteTelefono   String         @db.VarChar(20)
+  clienteCorreo     String         @db.VarChar(254)
+  ciudad            String         @db.VarChar(80)
+  canalId           Int
+  canal             CanalVenta     @relation(fields: [canalId], references: [id], onDelete: Restrict)
+  canalNombre       String         @db.VarChar(40)
+  formaPago         String         @db.VarChar(60)
+  formaEntrega      String         @db.VarChar(120)
+  notas             String         @db.Text
+  estado            EstadoPedido   @default(registrado)
+  total             Decimal        @db.Decimal(12, 2)
+  creadoEn          DateTime       @default(now())
+  eliminadoEn       DateTime?
+  eliminadoPorId    Int?
+  eliminadoPor      Usuario?       @relation(fields: [eliminadoPorId], references: [id], onDelete: SetNull)
+  motivoEliminacion String?        @db.VarChar(200)
+  lineas            LineaPedido[]
+  cargos            CargoPedido[]
+  historial         EventoPedido[]
+
+  @@index([eliminadoEn, creadoEn])
+  @@index([estado])
+  @@map("pedidos")
+}
+
+/// Línea con snapshot de SKU, nombre y precio: si el catálogo cambia, el pedido no.
+model LineaPedido {
+  id             Int      @id @default(autoincrement())
+  pedidoId       Int
+  pedido         Pedido   @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  productoId     Int
+  producto       Producto @relation(fields: [productoId], references: [id], onDelete: Restrict)
+  sku            String   @db.VarChar(32)
+  nombre         String   @db.VarChar(120)
+  cantidad       Int      @db.UnsignedInt
+  precioUnitario Decimal  @db.Decimal(12, 2)
+  descuento      Decimal  @default(0) @db.Decimal(5, 2)
+  importe        Decimal  @db.Decimal(12, 2)
+
+  @@unique([pedidoId, productoId])
+  @@map("pedidos_lineas")
+}
+
+/// Cargo adicional (envío, instalación…): suma al total y no mueve inventario.
+model CargoPedido {
+  id       Int     @id @default(autoincrement())
+  pedidoId Int
+  pedido   Pedido  @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  concepto String  @db.VarChar(60)
+  monto    Decimal @db.Decimal(12, 2)
+
+  @@index([pedidoId])
+  @@map("pedidos_cargos")
+}
+
+/// Historial del pedido: quién lo movió (nombre como snapshot), cuándo y por qué.
+model EventoPedido {
+  id        Int          @id @default(autoincrement())
+  pedidoId  Int
+  pedido    Pedido       @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  estado    EstadoPedido
+  fecha     DateTime     @default(now())
+  usuarioId Int?
+  usuario   Usuario?     @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  por       String       @db.VarChar(80)
+  nota      String?      @db.VarChar(255)
+
+  @@index([pedidoId])
+  @@map("pedidos_historial")
 }

@@ -8,7 +8,8 @@
  *
  * Uso: `pnpm db:sembrar` (prisma db seed). En pruebas se importa `sembrar`.
  * Con `SEED_DEMO=true` también siembra las ofertas de demostración (L12), con fechas
- * relativas al día de la ejecución para que no venzan: `SEED_DEMO=true pnpm db:sembrar`.
+ * relativas al día de la ejecución para que no venzan, y los pedidos de demostración (L13):
+ * `SEED_DEMO=true pnpm db:sembrar`.
  */
 import { resolve } from 'node:path'
 import type { CondicionProducto, PrismaClient } from '../generated/prisma/client.js'
@@ -281,6 +282,44 @@ const fechaRelativa = (hoy: string, dias: number) => {
   return fecha
 }
 
+// ── Canales de venta (L13, admin/src/88-pipeline-datos-demo-documentos/02-channels.mock.ts) ──
+// Ids 1–4 en el orden del mock; siempre se siembran (los pedidos exigen un canal).
+
+const CANALES = [
+  { id: 1, nombre: 'Sala de Ventas', insignia: 'Presencial', icono: 'fa-solid fa-store', color: 'emerald', descripcion: 'Ventas y cotizaciones directas en sucursal Cojutepeque (2da planta frente a Dollar City).' },
+  { id: 2, nombre: 'WhatsApp', insignia: 'Chat & Call', icono: 'fa-brands fa-whatsapp', color: 'green', descripcion: 'Ventas coordinadas mediante el canal comercial 7038-8225.' },
+  { id: 3, nombre: 'Tienda Web', insignia: 'Front Office', icono: 'fa-solid fa-globe', color: 'blue', descripcion: 'Órdenes originadas desde el catálogo web digital sincronizado.' },
+  { id: 4, nombre: 'Corporativo', insignia: 'Crédito Fiscal', icono: 'fa-solid fa-briefcase', color: 'purple', descripcion: 'Ventas B2B para colegios, despachos jurídicos, empresas e instituciones.' },
+]
+
+// ── Pedidos de demostración (L13, solo con SEED_DEMO=true) ──────────────────
+// Del mock (admin/src/88-…/01-orders.mock.ts) solo los alcanzables sin reservas ni facturas:
+// ORD-2026-004 (Registrado) y ORD-2026-006 (Cancelado), con sus ids. Las horas del mock son de
+// El Salvador (UTC−6). Los pedidos Reservado/Facturado/Entregado se sembrarán al cerrar L14–L15,
+// creados con la lógica real. Los importes salen del mismo cálculo que la API.
+
+const PEDIDOS_DEMO = [
+  {
+    id: 4, clienteId: 4, ciudad: 'San Salvador', canalId: 4, formaPago: 'Crédito Fiscal 30 Días',
+    formaEntrega: 'Envío departamental (encomienda)', notas: 'Requiere Crédito Fiscal. Validar línea de crédito con gerencia.',
+    estado: 'registrado', creadoEn: '2026-11-02T17:30:00.000Z',
+    lineas: [{ productoId: 9, sku: 'HP-450G8-I5', nombre: 'Laptop HP ProBook 450 G8 Core i5', cantidad: 2, precioUnitario: '799.00', descuento: '5.00' }],
+    cargos: [{ concepto: 'Envío departamental (encomienda)', monto: '8.00' }],
+    historial: [{ estado: 'registrado', por: 'Ing. Marvin Castro', horas: 0, nota: null }],
+  },
+  {
+    id: 6, clienteId: 7, ciudad: 'San Pedro Perulapán', canalId: 2, formaPago: 'Transferencia',
+    formaEntrega: 'Envío local Cojutepeque', notas: '',
+    estado: 'cancelado', creadoEn: '2026-11-03T21:10:00.000Z',
+    lineas: [{ productoId: 11, sku: 'KNG-FB16-3200', nombre: 'Memoria RAM Kingston Fury Beast 16GB DDR4', cantidad: 2, precioUnitario: '45.00', descuento: '0.00' }],
+    cargos: [],
+    historial: [
+      { estado: 'registrado', por: 'Gabriela Solís', horas: 0, nota: null },
+      { estado: 'cancelado', por: 'Gabriela Solís', horas: 1, nota: 'La clienta desistió: RAM incompatible con su equipo.' },
+    ],
+  },
+] as const
+
 // ── Siembra ────────────────────────────────────────────────────────────────
 
 export interface ResumenSeed {
@@ -290,10 +329,12 @@ export interface ResumenSeed {
   configuracion: number
   clientes: number
   ofertas: number
+  canales: number
+  pedidos: number
 }
 
 export interface OpcionesSeed {
-  /** Siembra también los datos de demostración (ofertas de L12). */
+  /** Siembra también los datos de demostración (ofertas de L12 y pedidos de L13). */
   demo?: boolean
 }
 
@@ -345,8 +386,9 @@ async function crearProducto(tx: Tx, p: ProductoSeed, categoriaId: number, marca
 export async function sembrar(prisma: PrismaClient, { demo = false }: OpcionesSeed = {}): Promise<ResumenSeed> {
   // El «hoy» del negocio sale del pipeline de ofertas (misma zona horaria que la vigencia).
   const hoy = demo ? (await import('../src/10-pipeline-ofertas/00-director-ofertas.js')).hoyNegocio() : ''
+  const { importeLinea, totalPedido } = await import('../src/11-pipeline-pedidos/00-director-pedidos.js')
   return prisma.$transaction(async (tx) => {
-    const resumen: ResumenSeed = { categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0, ofertas: 0 }
+    const resumen: ResumenSeed = { categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0, ofertas: 0, canales: 0, pedidos: 0 }
 
     const categoriaIds = new Map<string, number>()
     for (const c of CATEGORIAS) {
@@ -406,6 +448,44 @@ export async function sembrar(prisma: PrismaClient, { demo = false }: OpcionesSe
         },
       })
       resumen.ofertas++
+    }
+
+    // Solo si no existe ese id ni ese nombre: nunca pisa lo editado en el admin.
+    for (const c of CANALES) {
+      if (await tx.canalVenta.findFirst({ where: { OR: [{ id: c.id }, { nombre: c.nombre }] } })) continue
+      await tx.canalVenta.create({ data: { ...c, creadoEn: CREADA_EN } })
+      resumen.canales++
+    }
+
+    // Solo si no existe ese id y siguen existiendo su cliente, su canal y sus productos.
+    for (const { id, clienteId, canalId, lineas, cargos, historial, creadoEn, ...p } of demo ? PEDIDOS_DEMO : []) {
+      if (await tx.pedido.findUnique({ where: { id } })) continue
+      const cliente = await tx.cliente.findUnique({ where: { id: clienteId } })
+      const canal = await tx.canalVenta.findUnique({ where: { id: canalId } })
+      const productos = await tx.producto.count({ where: { id: { in: lineas.map((l) => l.productoId) } } })
+      if (!cliente || !canal || productos !== lineas.length) continue
+      const conImporte = lineas.map((l) => ({ ...l, importe: importeLinea(l) }))
+      const inicio = new Date(creadoEn)
+      await tx.pedido.create({
+        data: {
+          id,
+          ...p,
+          clienteId,
+          clienteNombre: cliente.nombre,
+          clienteTelefono: cliente.telefono,
+          clienteCorreo: cliente.correo ?? '',
+          canalId,
+          canalNombre: canal.nombre,
+          total: totalPedido(conImporte, [...cargos]),
+          creadoEn: inicio,
+          lineas: { create: conImporte },
+          cargos: { create: [...cargos] },
+          historial: {
+            create: historial.map(({ horas, ...e }) => ({ ...e, fecha: new Date(inicio.getTime() + horas * 3_600_000) })),
+          },
+        },
+      })
+      resumen.pedidos++
     }
 
     return resumen

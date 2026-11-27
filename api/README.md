@@ -36,7 +36,7 @@ Comprobación rápida: `curl http://localhost:3000/api/v1/health` devuelve 200 c
 | `pnpm db:migrar` | `prisma migrate dev`: crea y aplica migraciones en desarrollo (usa la shadow DB) |
 | `pnpm db:desplegar` | `prisma migrate deploy`: aplica las migraciones pendientes (producción/CI) |
 | `pnpm db:sembrar` | seed idempotente del catálogo de A (`prisma/seed.ts`); solo crea lo que falta, nunca sobrescribe |
-| `SEED_DEMO=true pnpm db:sembrar` | además siembra las 3 ofertas de demostración (L12) con fechas relativas al día del seed (una vigente, una programada y una vencida); idempotente por id. Sin la variable no hay ofertas de muestra |
+| `SEED_DEMO=true pnpm db:sembrar` | además siembra las 3 ofertas de demostración (L12) con fechas relativas al día del seed (una vigente, una programada y una vencida); idempotente por id. Sin la variable no hay ofertas de muestra. Desde L13 también siembra los pedidos 4 (Registrado) y 6 (Cancelado) del mock; los 4 canales de venta se siembran siempre |
 | `pnpm db:reiniciar` | **borra la BD de desarrollo**, reaplica las migraciones y siembra (Prisma 7 no siembra solo al resetear) |
 | `pnpm db:respaldar` | volcado `mariadb-dump` comprimido en `respaldos/<bd>-<fechaUTC>.sql.gz` (ignorado por git) |
 | `pnpm db:restaurar <archivo>` | borra **todas** las tablas de la BD de destino y carga el respaldo; pide escribir el nombre de la BD |
@@ -143,6 +143,18 @@ Rutas públicas de solo lectura bajo `/api/v1/tienda`, salvo la validación del 
 | `GET /tienda/categorias` · `GET /tienda/marcas` | con `totalProductos` (L04) |
 | `GET /tienda/identidad` | nombre, contacto, horarios, WhatsApp, textos, redes y moneda |
 | `POST /tienda/carrito/validar` | `{ lineas: [{ productoId, cantidad }] }` (1–50 líneas, cantidad 1–99, sin repetidos) → precios y existencias recalculados por línea (`ok \| ajustada \| agotado \| no-disponible`), `total` y `valido`. No reserva ni crea pedidos. 30 peticiones/min por IP → 429 `TOO_MANY_REQUESTS` |
+
+## Pedidos y canales (L13A)
+Bajo `/api/v1/admin`. El servidor fija precios (precio efectivo de L12) y calcula importes y totales; el navegador solo envía cantidades, descuentos (0–100 %) y cargos.
+
+| Método y ruta | Uso |
+|---|---|
+| `GET /pedidos?estado&page&limit` · `GET /pedidos/:id` | vigentes (sin eliminados), los más recientes primero |
+| `POST /pedidos` · `PATCH /pedidos/:id` | registrar / reemplazar los datos editables (solo Registrado o Reservado); las líneas existentes conservan su precio |
+| `PATCH /pedidos/:id/estado` | `{ estado: "cancelado" \| "entregado", nota? }`; 422 si la transición no es válida |
+| `DELETE /pedidos/:id` | `{ motivo }` (5–200); eliminación lógica, 422 si está facturado o entregado |
+| `GET/POST /canales-venta` · `PATCH/DELETE /canales-venta/:id` | 409 al eliminar un canal con pedidos |
+| `GET /estados-pedido` · `PUT /estados-pedido/:estado` | nombre visible y descripción de cada estado |
 
 ## Despliegue en Railway (L19 «Despliegue final»; L08 solo como contingencia — decisión D-02)
 1. **Base de datos:** nuevo servicio desde la imagen Docker `mariadb:11.8`.

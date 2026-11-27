@@ -75,6 +75,21 @@ const MATRIZ: Fila[] = [
   { metodo: 'patch', patron: '/ofertas/:id', url: '/ofertas/999999', permisos: ['ofertas.gestionar'] },
   { metodo: 'patch', patron: '/ofertas/:id/pausa', url: '/ofertas/999999/pausa', permisos: ['ofertas.gestionar'] },
   { metodo: 'delete', patron: '/ofertas/:id', url: '/ofertas/999999', permisos: ['ofertas.gestionar'] },
+  // L13: canales (constructor de pedidos, Ajustes y tablero) y etiquetas de estado (toda vista que muestra un estado).
+  { metodo: 'get', patron: '/canales-venta', url: '/canales-venta', permisos: ['pedidos', 'ajustes', 'tablero'] },
+  { metodo: 'post', patron: '/canales-venta', url: '/canales-venta', permisos: ['ajustes.configuracion'] },
+  { metodo: 'patch', patron: '/canales-venta/:id', url: '/canales-venta/999999', permisos: ['ajustes.configuracion'] },
+  { metodo: 'delete', patron: '/canales-venta/:id', url: '/canales-venta/999999', permisos: ['ajustes.configuracion'] },
+  { metodo: 'get', patron: '/estados-pedido', url: '/estados-pedido', permisos: ['pedidos', 'tablero', 'facturacion', 'clientes', 'cotizaciones', 'ajustes'] },
+  { metodo: 'put', patron: '/estados-pedido/:estado', url: '/estados-pedido/no-existe', permisos: ['ajustes.configuracion'] },
+  // L13: los pedidos los leen Pedidos y las vistas que los resumen o enlazan; registrar, editar y
+  // cambiar de estado exigen gestionar; la eliminación lógica, su propia acción.
+  { metodo: 'get', patron: '/pedidos', url: '/pedidos', permisos: ['pedidos', 'tablero', 'facturacion', 'clientes', 'cotizaciones'] },
+  { metodo: 'get', patron: '/pedidos/:id', url: '/pedidos/999999', permisos: ['pedidos', 'tablero', 'facturacion', 'clientes', 'cotizaciones'] },
+  { metodo: 'post', patron: '/pedidos', url: '/pedidos', permisos: ['pedidos.gestionar'] },
+  { metodo: 'patch', patron: '/pedidos/:id', url: '/pedidos/999999', permisos: ['pedidos.gestionar'] },
+  { metodo: 'patch', patron: '/pedidos/:id/estado', url: '/pedidos/999999/estado', permisos: ['pedidos.gestionar'] },
+  { metodo: 'delete', patron: '/pedidos/:id', url: '/pedidos/999999', permisos: ['pedidos.eliminar'] },
 ]
 
 const TODAS: Permiso[] = [...VISTAS, ...ACCIONES]

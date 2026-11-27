@@ -46,19 +46,28 @@ function validarDocumento(tipo: TipoCliente, documento: string | null): void {
   throw new ErrorApp('VALIDATION_ERROR', 400, 'Datos inválidos.', [{ campo: 'documento', mensaje }])
 }
 
-/** 409 si otro cliente (activo o no) ya tiene ese teléfono; el índice único es la red de seguridad. */
+/** 409 si otro cliente (activo, inactivo o eliminado) ya tiene ese teléfono; el índice único es la red de seguridad. */
 async function exigirTelefonoLibre(telefonoNormalizado: string, propioId?: number): Promise<void> {
   const otro = await repo.buscarPorTelefono(telefonoNormalizado)
-  if (otro && otro.id !== propioId) throw new ErrorApp('CONFLICT', 409, 'Ya hay un cliente con este teléfono.')
+  if (!otro || otro.id === propioId) return
+  throw new ErrorApp(
+    'CONFLICT',
+    409,
+    otro.eliminadoEn ? 'Este teléfono pertenece a un cliente eliminado.' : 'Ya hay un cliente con este teléfono.',
+  )
 }
 
 /** 409 si otro cliente (activo o no) ya tiene ese DUI o NIT; el índice único es la red de seguridad. */
 async function exigirDocumentoLibre(tipo: TipoCliente, documento: string | null, propioId?: number): Promise<void> {
   if (!documento) return
   const otro = await repo.buscarPorDocumento(documento)
-  if (otro && otro.id !== propioId) {
-    throw new ErrorApp('CONFLICT', 409, `Ya hay un cliente con este ${tipo === 'empresa' ? 'NIT' : 'DUI'}.`)
-  }
+  if (!otro || otro.id === propioId) return
+  const clase = tipo === 'empresa' ? 'NIT' : 'DUI'
+  throw new ErrorApp(
+    'CONFLICT',
+    409,
+    otro.eliminadoEn ? `Este ${clase} pertenece a un cliente eliminado.` : `Ya hay un cliente con este ${clase}.`,
+  )
 }
 
 export async function listarClientes(
@@ -95,8 +104,24 @@ export async function editarCliente(id: number, cambios: EditarCliente): Promise
   return aCliente(await repo.actualizar(id, { ...cambios, telefonoNormalizado }))
 }
 
-/** Borrado real: aún no hay pedidos en la BD. En L13, un cliente con pedidos pasa a eliminación lógica. */
+/** Con pedidos, eliminación lógica; sin pedidos, borrado real (L13). */
 export async function eliminarCliente(id: number): Promise<void> {
   if (!(await repo.buscarPorId(id))) throw noExiste()
   await repo.eliminar(id)
+}
+
+/** Datos que necesita un pedido (L13): también de clientes inactivos o eliminados, para que el pedido decida. */
+export interface ClienteParaPedido {
+  id: number
+  nombre: string
+  telefono: string
+  correo: string | null
+  activo: boolean
+  eliminado: boolean
+}
+
+export async function obtenerClienteParaPedido(id: number): Promise<ClienteParaPedido | null> {
+  const c = await repo.buscarCualquiera(id)
+  if (!c) return null
+  return { id: c.id, nombre: c.nombre, telefono: c.telefono, correo: c.correo, activo: c.activo, eliminado: c.eliminadoEn !== null }
 }
