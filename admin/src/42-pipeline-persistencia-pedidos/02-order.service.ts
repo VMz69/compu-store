@@ -1,8 +1,5 @@
-import { nextSequentialId } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
 import type { Channel, Order, OrderMetrics, OrderStatusId } from './05-types'
 import { ACTIVE_STATUSES, SOLD_STATUSES } from '../39-pipeline-transiciones-pedidos/02-orderFlow'
-
-export const ORDER_ID_PREFIX = 'ORD-2026-'
 
 /** Formas de pago aceptadas en pedidos nuevos (los históricos conservan la que tenían). */
 export const PAYMENT_METHODS = ['Efectivo', 'Transferencia']
@@ -57,12 +54,6 @@ const belongsToChannel = (order: Order, channel: Channel): boolean => {
   const b = channel.name.toLowerCase()
   return a.includes(b) || b.includes(a)
 }
-
-export const nextOrderId = (orders: Order[]): string =>
-  nextSequentialId(
-    orders.map((o) => o.id),
-    ORDER_ID_PREFIX,
-  )
 
 /** Marca de tiempo local "YYYY-MM-DD HH:mm". */
 export function nowStamp(date: Date = new Date()): string {

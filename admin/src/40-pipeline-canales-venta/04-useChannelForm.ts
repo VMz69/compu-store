@@ -44,14 +44,19 @@ export function useChannelForm() {
     setSubmitted(true)
     if (Object.keys(validateChannel(input, channels)).length > 0) return
     if (!ensurePermission('canEditSettings', 'No tienes permiso para editar la configuración (canales de venta)')) return
-    await saveChannel({
-      id: channel?.id,
-      name: values.name.trim(),
-      badge: values.badge.trim() || 'Canal',
-      icon: values.icon,
-      description: values.description.trim(),
-      active: values.active,
-    })
+    try {
+      await saveChannel({
+        id: channel?.id,
+        name: values.name.trim(),
+        badge: values.badge.trim() || 'Canal',
+        icon: values.icon,
+        description: values.description.trim(),
+        active: values.active,
+      })
+    } catch (error) {
+      // El modal sigue abierto con el mensaje del servidor (p. ej. nombre repetido).
+      return toast(error instanceof Error ? error.message : 'No se pudo guardar el canal.', 'danger')
+    }
     closeModal()
     toast(channel ? `Canal "${values.name.trim()}" actualizado` : `Canal "${values.name.trim()}" creado`, 'success')
   }

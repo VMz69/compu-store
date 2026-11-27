@@ -1,22 +1,36 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { getCurrentViews, type ViewId } from '@/00-director-acceso'
 import { formatShortISO, todayISO } from '@/71-pipeline-seleccion-fechas/05-date'
-import { delay } from '@/84-pipeline-persistencia-demo/04-delay'
+import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
+import { onAuthenticated } from '@/84-pipeline-persistencia-demo/05-api.client'
 import { STORAGE_KEYS } from '@/84-pipeline-persistencia-demo/02-storage'
-import { slugify } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
-import { orderTotals } from '../43-pipeline-reglas-pedidos/04-charges'
-import { migrateOrder } from './03-migrate'
-import { expiredReservations, reservationBounds, validateReservationDate } from '../38-pipeline-reserva-pedidos/04-reservation'
-import { findOrderByQuote, nextOrderId, nowStamp, ordersOfChannel } from './02-order.service'
-import { applyStatusLabels, canTransition, deleteBlockedReason, editBlockedReason, ORDER_STATUSES, type StatusLabel, type StatusLabels } from '../39-pipeline-transiciones-pedidos/02-orderFlow'
-import { CHANNELS_MOCK } from '../88-pipeline-datos-demo-documentos/02-channels.mock'
-import { ORDERS_MOCK } from '../88-pipeline-datos-demo-documentos/00-director-datos-demo-documentos'
+import { expiredReservations, reservationBounds } from '../38-pipeline-reserva-pedidos/04-reservation'
+import { findOrderByQuote, ordersOfChannel } from './02-order.service'
+import { applyStatusLabels, canTransition, deleteBlockedReason, editBlockedReason, ORDER_STATUSES, statusOf, type StatusLabel, type StatusLabels } from '../39-pipeline-transiciones-pedidos/02-orderFlow'
+import {
+  changeOrderStatusApi,
+  createOrderApi,
+  deleteChannelApi,
+  deleteOrderApi,
+  fetchChannels,
+  fetchOrders,
+  fetchStatusLabels,
+  saveChannelApi,
+  saveStatusLabelApi,
+  setChannelActiveApi,
+  updateOrderApi,
+} from './06-pedidos.api'
 import type { Channel, ChannelDraft, DeletedOrder, Order, OrderDraft, OrderStatusId } from './05-types'
 
+/**
+ * Store de ventas. Desde L13 la fuente de pedidos, canales y etiquetas de estado es la API; esto es su
+ * caché. Reservar (L14) y facturar (L15) aún no tienen operación en el servidor.
+ */
 interface SalesState {
   /** Pedidos vigentes: lo único que leen listados, métricas, stock y facturación. */
   orders: Order[]
-  /** Papelera de auditoría (eliminación lógica): nunca se muestran ni se cuentan. */
+  /** Papelera de auditoría: desde L13 la conserva el servidor (eliminación lógica); aquí queda vacía. */
   deletedOrders: DeletedOrder[]
   channels: Channel[]
   /** Nombres/descripciones personalizados de los estados del flujo (lo demás es fijo). */
@@ -69,63 +83,67 @@ const patchOrder = (orders: Order[], id: string, fn: (o: Order) => Order) => ord
 /**
  * Versión del esquema persistido.
  * v1: estados en texto libre, una sola línea · v2: flujo tipado, cliente enlazado, descuentos, historial
- * · v3: cargos extra (`charges`) · v4: reserva con vigencia (`reservedUntil`).
+ * · v3: cargos extra (`charges`) · v4: reserva con vigencia (`reservedUntil`)
+ * · v5 (L13): pedidos, canales y etiquetas viven en la API; toda caché anterior era de demostración.
  */
-const SALES_SCHEMA_VERSION = 4
+const SALES_SCHEMA_VERSION = 5
+
+/** Aviso hasta que el servidor tenga la reserva de stock (L14). */
+export const RESERVATION_PENDING = 'Confirmar y reservar estará disponible con las reservas de stock (L14).'
+
+const errorMessage = (error: unknown, fallback: string) => (error instanceof Error ? error.message : fallback)
+
+/** Id del canal elegido (el constructor lo maneja por nombre). */
+function channelIdOf(channels: Channel[], name: string): number {
+  const channel = channels.find((c) => c.name === name)
+  if (!channel) throw new Error('Selecciona un canal de venta válido.')
+  return Number(channel.id)
+}
 
 export const useSalesStore = create<SalesState>()(
   persist(
     (set, get) => ({
-      orders: ORDERS_MOCK,
+      orders: [],
       deletedOrders: [],
-      channels: CHANNELS_MOCK,
+      channels: [],
       statusLabels: {},
       isLoading: false,
 
-      addOrder: async (draft, by) => {
-        // Regla: una cotización se convierte en un solo pedido activo.
+      addOrder: async (draft) => {
+        // Regla: una cotización se convierte en un solo pedido activo (el enlace en la API llega en L16).
         if (draft.quoteId && findOrderByQuote(get().orders, draft.quoteId)) {
           throw new Error(`La cotización ${draft.quoteId} ya tiene un pedido activo.`)
         }
         set({ isLoading: true })
-        await delay()
-        const base: Order = {
-          ...draft,
-          // Incluye los eliminados: un id de pedido nunca se reutiliza (trazabilidad).
-          id: nextOrderId([...get().orders, ...get().deletedOrders]),
-          date: nowStamp(),
-          total: orderTotals(draft.items, draft.charges).total,
-          status: 'registrado',
-          invoiceId: null,
-          reservedUntil: null,
-          history: [],
+        try {
+          const order = await createOrderApi(draft, channelIdOf(get().channels, draft.channel))
+          set((s) => ({ orders: [order, ...s.orders], isLoading: false }))
+          return order
+        } catch (error) {
+          set({ isLoading: false })
+          throw error
         }
-        const order = stamp(base, 'registrado', by, draft.quoteId ? `Convertido desde ${draft.quoteId}` : undefined)
-        set((s) => ({ orders: [order, ...s.orders], isLoading: false }))
-        return order
       },
 
-      updateOrder: async (orderId, draft, by) => {
+      updateOrder: async (orderId, draft) => {
         const blocked = editBlockedReason(get().orders.find((o) => o.id === orderId))
         if (blocked) throw new Error(blocked)
         set({ isLoading: true })
-        await delay()
-        // Se relee tras la espera: otra acción pudo facturarlo o cancelarlo mientras tanto.
-        const current = get().orders.find((o) => o.id === orderId)
-        const late = editBlockedReason(current)
-        if (late || !current) {
+        try {
+          // El servidor vuelve a comprobar la regla con el pedido bloqueado.
+          const updated = await updateOrderApi(orderId, draft, channelIdOf(get().channels, draft.channel))
+          set((s) => ({ orders: patchOrder(s.orders, orderId, () => updated), isLoading: false }))
+          return updated
+        } catch (error) {
           set({ isLoading: false })
-          throw new Error(late ?? 'El pedido no existe.')
+          throw error
         }
-        const total = orderTotals(draft.items, draft.charges).total
-        const note = total === current.total ? 'Pedido editado' : `Pedido editado · total ${current.total.toFixed(2)} → ${total.toFixed(2)}`
-        const updated = stamp({ ...current, ...draft, quoteId: current.quoteId, total }, current.status, by, note)
-        set((s) => ({ orders: patchOrder(s.orders, orderId, () => updated), isLoading: false }))
-        return updated
       },
 
       deleteOrder: (orderId, by, reason) => {
-        const order = get().orders.find((o) => o.id === orderId)
+        const { orders } = get()
+        const index = orders.findIndex((o) => o.id === orderId)
+        const order = orders[index]
         const blocked = deleteBlockedReason(order)
         if (blocked || !order) throw new Error(blocked ?? 'El pedido no existe.')
         const deleted: DeletedOrder = {
@@ -135,20 +153,17 @@ export const useSalesStore = create<SalesState>()(
           deleteReason: reason,
           history: [...order.history, { status: order.status, at: new Date().toISOString(), by, note: `Pedido eliminado · ${reason}` }],
         }
-        // No se borra: se mueve a la papelera de auditoría. Su reserva de stock se libera
-        // sola porque las reservas se derivan de `orders`.
-        set((s) => ({ orders: s.orders.filter((o) => o.id !== orderId), deletedOrders: [deleted, ...s.deletedOrders] }))
+        // Optimista: sale de la lista ya; si la API falla, vuelve a su lugar y se avisa.
+        set({ orders: orders.filter((o) => o.id !== orderId) })
+        deleteOrderApi(orderId, reason).catch((error: unknown) => {
+          set((s) => ({ orders: [...s.orders.slice(0, index), order, ...s.orders.slice(index)] }))
+          toast(`No se eliminó el pedido ${order.id}: ${errorMessage(error, 'error del servidor.')}`, 'danger')
+        })
         return deleted
       },
 
-      reserve: (orderId, until, by) => {
-        const order = get().orders.find((o) => o.id === orderId)
-        if (!order || !canTransition(order.status, 'confirmado')) throw new Error('El pedido ya no está en estado Registrado.')
-        const invalid = validateReservationDate(until)
-        if (invalid) throw new Error(invalid)
-        set((s) => ({
-          orders: patchOrder(s.orders, orderId, (o) => stamp({ ...o, reservedUntil: until }, 'confirmado', by, `Reservado hasta ${formatShortISO(until)}`)),
-        }))
+      reserve: () => {
+        throw new Error(RESERVATION_PENDING)
       },
 
       expireReservations: (today = todayISO()) => {
@@ -168,8 +183,15 @@ export const useSalesStore = create<SalesState>()(
         const order = get().orders.find((o) => o.id === orderId)
         // "Facturado" solo se alcanza al emitir la factura (setInvoice) y "Reservado" con
         // `reserve` (requiere vigencia); nunca por esta vía.
-        if (!order || to === 'facturado' || to === 'confirmado' || !canTransition(order.status, to)) return false
+        if (!order || (to !== 'cancelado' && to !== 'entregado') || !canTransition(order.status, to)) return false
+        // Optimista: el servidor decide (422 si ya no procede) y su respuesta reemplaza la caché.
         set((s) => ({ orders: patchOrder(s.orders, orderId, (o) => stamp({ ...o, reservedUntil: null }, to, by, note)) }))
+        changeOrderStatusApi(orderId, to, note)
+          .then((saved) => set((s) => ({ orders: patchOrder(s.orders, orderId, () => saved) })))
+          .catch((error: unknown) => {
+            set((s) => ({ orders: patchOrder(s.orders, orderId, () => order) }))
+            toast(`No se cambió el pedido ${order.id} a "${statusOf(to).name}": ${errorMessage(error, 'error del servidor.')}`, 'danger')
+          })
         return true
       },
 
@@ -188,65 +210,117 @@ export const useSalesStore = create<SalesState>()(
         })),
 
       toggleChannel: (channelId) => {
-        set((s) => ({
-          channels: s.channels.map((c) => (c.id === channelId ? { ...c, active: !c.active } : c)),
-        }))
-        return get().channels.find((c) => c.id === channelId)
+        const current = get().channels.find((c) => c.id === channelId)
+        if (!current) return undefined
+        const active = !current.active
+        set((s) => ({ channels: s.channels.map((c) => (c.id === channelId ? { ...c, active } : c)) }))
+        setChannelActiveApi(channelId, active)
+          .then((saved) => set((s) => ({ channels: s.channels.map((c) => (c.id === channelId ? saved : c)) })))
+          .catch((error: unknown) => {
+            set((s) => ({ channels: s.channels.map((c) => (c.id === channelId ? current : c)) }))
+            toast(`No se cambió el canal "${current.name}": ${errorMessage(error, 'error del servidor.')}`, 'danger')
+          })
+        return { ...current, active }
       },
 
       saveChannel: async (draft) => {
         set({ isLoading: true })
-        await delay()
-        const id = draft.id || slugify(draft.name)
-        const previous = get().channels.find((c) => c.id === id)
-        const renamed = previous && previous.name !== draft.name ? previous.name : null
-        set((s) => ({
-          isLoading: false,
-          channels: previous
-            ? s.channels.map((c) => (c.id === id ? { ...c, ...draft, id } : c))
-            : [...s.channels, { color: 'blue', ...draft, id }],
-          // Cascada: los pedidos guardan el nombre del canal.
-          orders: renamed ? s.orders.map((o) => (o.channel === renamed ? { ...o, channel: draft.name } : o)) : s.orders,
-        }))
-        return previous ? 'updated' : 'created'
+        try {
+          const previous = draft.id ? get().channels.find((c) => c.id === draft.id) : undefined
+          const saved = await saveChannelApi({ ...draft, id: previous?.id })
+          const renamed = previous && previous.name !== saved.name ? previous.name : null
+          set((s) => ({
+            isLoading: false,
+            channels: previous ? s.channels.map((c) => (c.id === saved.id ? saved : c)) : [...s.channels, saved],
+            // Los pedidos muestran el nombre actual del canal (el servidor lo resuelve por la FK).
+            orders: renamed ? s.orders.map((o) => (o.channel === renamed ? { ...o, channel: saved.name } : o)) : s.orders,
+          }))
+          return previous ? 'updated' : 'created'
+        } catch (error) {
+          set({ isLoading: false })
+          throw error
+        }
       },
 
       deleteChannel: (channelId) => {
-        const channel = get().channels.find((c) => c.id === channelId)
-        if (channel && ordersOfChannel(get().orders, channel).length > 0) throw new Error('El canal tiene pedidos registrados.')
-        set((s) => ({ channels: s.channels.filter((c) => c.id !== channelId) }))
+        const { channels, orders } = get()
+        const index = channels.findIndex((c) => c.id === channelId)
+        const channel = channels[index]
+        if (!channel) return
+        if (ordersOfChannel(orders, channel).length > 0) throw new Error('El canal tiene pedidos registrados.')
+        // Optimista; el servidor responde 409 si tiene pedidos (también eliminados).
+        set({ channels: channels.filter((c) => c.id !== channelId) })
+        deleteChannelApi(channelId).catch((error: unknown) => {
+          set((s) => ({ channels: [...s.channels.slice(0, index), channel, ...s.channels.slice(index)] }))
+          toast(`No se eliminó el canal "${channel.name}": ${errorMessage(error, 'error del servidor.')}`, 'danger')
+        })
       },
 
       updateStatusLabel: (statusId, label) => {
-        const statusLabels = { ...get().statusLabels, [statusId]: { name: label.name.trim(), description: label.description.trim() } }
+        const previous = get().statusLabels
+        const next = { name: label.name.trim(), description: label.description.trim() }
+        const statusLabels = { ...previous, [statusId]: next }
         applyStatusLabels(statusLabels)
         set({ statusLabels })
+        saveStatusLabelApi(statusId, next).catch((error: unknown) => {
+          applyStatusLabels(previous)
+          set({ statusLabels: previous })
+          toast(`No se guardó el estado "${next.name}": ${errorMessage(error, 'error del servidor.')}`, 'danger')
+        })
       },
 
+      // Mantenimiento: se relee de la API (no hay datos de fábrica que restaurar).
       reset: () => {
-        applyStatusLabels({})
-        set({ orders: ORDERS_MOCK, deletedOrders: [], channels: CHANNELS_MOCK, statusLabels: {} })
+        void loadSales()
       },
     }),
     {
       name: STORAGE_KEYS.SALES,
-      partialize: (s) => ({ orders: s.orders, deletedOrders: s.deletedOrders, channels: s.channels, statusLabels: s.statusLabels }),
+      partialize: (s) => ({ orders: s.orders, channels: s.channels, statusLabels: s.statusLabels }),
       // Los textos personalizados del flujo se aplican a `statusOf` al cargar.
       onRehydrateStorage: () => (state) => applyStatusLabels(state?.statusLabels ?? {}),
       version: SALES_SCHEMA_VERSION,
-      // Convierte los pedidos del modelo anterior en vez de descartarlos.
-      migrate: (persisted) => {
-        const state = persisted as { orders?: Parameters<typeof migrateOrder>[0][]; deletedOrders?: DeletedOrder[]; channels?: Channel[] }
-        return {
-          orders: state.orders ? state.orders.map(migrateOrder) : ORDERS_MOCK,
-          deletedOrders: state.deletedOrders ?? [],
-          channels: state.channels ?? CHANNELS_MOCK,
-          statusLabels: {},
-        }
-      },
+      // Toda versión anterior era demo: se descarta y se relee de la API al autenticarse.
+      migrate: () => ({ orders: [] as Order[], channels: [] as Channel[], statusLabels: {} as StatusLabels }),
     },
   ),
 )
+
+/** Vistas que la API acepta para leer cada recurso (las que lo usan). */
+const ORDER_VIEWS: ViewId[] = ['pedidos', 'tablero', 'facturacion', 'clientes', 'cotizaciones']
+const CHANNEL_VIEWS: ViewId[] = ['pedidos', 'ajustes', 'tablero']
+const LABEL_VIEWS: ViewId[] = [...ORDER_VIEWS, 'ajustes']
+
+async function loadInto(views: ViewId[], what: string, load: () => Promise<void>): Promise<void> {
+  if (!getCurrentViews().some((view) => views.includes(view))) return
+  try {
+    await load()
+  } catch (error) {
+    toast(`No se pudieron cargar ${what}: ${errorMessage(error, 'error del servidor.')}`, 'danger')
+  }
+}
+
+/**
+ * Precarga (al iniciar o restaurar la sesión): pedidos, canales y etiquetas de estado, cada uno solo
+ * si el usuario tiene alguna vista que lo usa (sin ellas no se pide nada ni se avisa).
+ */
+async function loadSales(): Promise<void> {
+  await Promise.all([
+    loadInto(LABEL_VIEWS, 'los estados de pedido', async () => {
+      const statusLabels = await fetchStatusLabels()
+      applyStatusLabels(statusLabels)
+      useSalesStore.setState({ statusLabels })
+    }),
+    loadInto(CHANNEL_VIEWS, 'los canales de venta', async () => {
+      useSalesStore.setState({ channels: await fetchChannels() })
+    }),
+    loadInto(ORDER_VIEWS, 'los pedidos', async () => {
+      useSalesStore.setState({ orders: await fetchOrders() })
+    }),
+  ])
+}
+
+onAuthenticated(() => void loadSales())
 
 /** Usado por Facturación al emitir (`invoiceId`) o anular (`null`) una factura. */
 export const setOrderInvoice = (orderId: string, invoiceId: string | null, by: string): void =>
