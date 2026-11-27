@@ -1,5 +1,5 @@
 import { prisma } from '../03-pipeline-conexiones/00-director-conexiones.js'
-import type { Prisma } from '../../generated/prisma/client.js'
+import { Prisma } from '../../generated/prisma/client.js'
 
 /** Cliente de Prisma dentro o fuera de una transacción. */
 export type Tx = Prisma.TransactionClient
@@ -7,6 +7,8 @@ export type Tx = Prisma.TransactionClient
 export interface ProductoBloqueado {
   id: number
   stock: number
+  /** Unidades apartadas por pedidos reservados (L14). */
+  reservado: number
   controlLotes: boolean
 }
 
@@ -32,11 +34,11 @@ export type Existencias = Prisma.ProductoGetPayload<{ select: typeof EXISTENCIAS
 export const existencias = (id: number, cliente: Tx = prisma) =>
   cliente.producto.findUnique({ where: { id }, select: EXISTENCIAS })
 
-/** Stock físico de varios productos (los ids inexistentes no aparecen). */
+/** Stock físico y reservado de varios productos (los ids inexistentes no aparecen). */
 export const stockDe = (ids: number[]) =>
   ids.length === 0
     ? Promise.resolve([])
-    : prisma.producto.findMany({ where: { id: { in: ids } }, select: { id: true, stock: true } })
+    : prisma.producto.findMany({ where: { id: { in: ids } }, select: { id: true, stock: true, reservado: true } })
 
 export interface Metricas {
   total: number
@@ -72,11 +74,26 @@ export async function metricas(): Promise<Metricas> {
  * su stock vigente: las escrituras de inventario sobre un mismo producto quedan serializadas.
  */
 export async function bloquearProducto(tx: Tx, id: number): Promise<ProductoBloqueado | null> {
-  const filas = await tx.$queryRaw<{ id: number; stock: number | bigint; controlLotes: number | boolean }[]>`
-    SELECT id, stock, controlLotes FROM productos WHERE id = ${id} FOR UPDATE`
-  const fila = filas[0]
-  return fila ? { id: Number(fila.id), stock: Number(fila.stock), controlLotes: Boolean(fila.controlLotes) } : null
+  const [fila] = await bloquearProductos(tx, [id])
+  return fila ?? null
 }
+
+type FilaBloqueada = { id: number; stock: number | bigint; reservado: number | bigint; controlLotes: number | boolean }
+
+/**
+ * Bloquea varias filas de productos en orden de id ascendente (L14): el mismo orden en todas las
+ * transacciones evita interbloqueos entre reservas, liberaciones y ajustes. Los ids inexistentes no aparecen.
+ */
+export async function bloquearProductos(tx: Tx, ids: number[]): Promise<ProductoBloqueado[]> {
+  if (ids.length === 0) return []
+  const filas = await tx.$queryRaw<FilaBloqueada[]>`
+    SELECT id, stock, reservado, controlLotes FROM productos WHERE id IN (${Prisma.join(ids)}) ORDER BY id FOR UPDATE`
+  return filas.map((f) => ({ id: Number(f.id), stock: Number(f.stock), reservado: Number(f.reservado), controlLotes: Boolean(f.controlLotes) }))
+}
+
+/** Debe llamarse con la fila bloqueada; el CHECK de la BD impide `reservado > stock`. */
+export const fijarReservado = (tx: Tx, id: number, reservado: number) =>
+  tx.producto.update({ where: { id }, data: { reservado }, select: { id: true } })
 
 export const fijarStock = (tx: Tx, id: number, stock: number, controlLotes?: boolean) =>
   tx.producto.update({ where: { id }, data: { stock, ...(controlLotes !== undefined ? { controlLotes } : {}) }, select: { id: true } })
@@ -103,4 +120,6 @@ export const eliminarLotes = (tx: Tx, ids: number[]) =>
 export const registrarMovimientos = (tx: Tx, movimientos: MovimientoNuevo[]) =>
   movimientos.length === 0 ? Promise.resolve() : tx.movimientoInventario.createMany({ data: movimientos }).then(() => undefined)
 
-export const transaccion = <T>(trabajo: (tx: Tx) => Promise<T>) => prisma.$transaction(trabajo)
+/** READ COMMITTED, como pedidos (L14): ver `11-pipeline-pedidos/09-pedidos.repository`. */
+export const transaccion = <T>(trabajo: (tx: Tx) => Promise<T>) =>
+  prisma.$transaction(trabajo, { isolationLevel: Prisma.TransactionIsolationLevel.ReadCommitted })

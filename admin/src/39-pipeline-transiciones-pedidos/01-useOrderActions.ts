@@ -5,7 +5,7 @@ import { openModal } from '@/73-pipeline-modales-globales/03-modal.store'
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
 import { ACTION_TARGET, availableActions, deleteBlockedReason, isDeletable, statusOf, type OrderAction } from './02-orderFlow'
 import { SALES_MODALS } from './05-modals'
-import { RESERVATION_PENDING, useSalesStore } from '../42-pipeline-persistencia-pedidos/00-director-persistencia-pedidos'
+import { useSalesStore } from '../42-pipeline-persistencia-pedidos/00-director-persistencia-pedidos'
 import type { Order } from '../42-pipeline-persistencia-pedidos/05-types'
 
 export interface OrderActionButton {
@@ -45,9 +45,7 @@ export function useOrderActions() {
    */
   const confirm = (order: Order) => {
     if (!ensurePermission('canReserveOrders', 'No tienes permiso para confirmar y reservar pedidos.')) return
-    // L13: el servidor aún no reserva stock; en L14 vuelve a abrirse el modal de vigencia
-    // (`openModal(SALES_MODALS.reserveOrder, order.id)`).
-    toast(`Pedido ${order.id}: ${RESERVATION_PENDING}`, 'info')
+    openModal(SALES_MODALS.reserveOrder, order.id)
   }
 
   const deliver = (order: Order) => {

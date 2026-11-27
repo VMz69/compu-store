@@ -8,7 +8,8 @@
  *
  * Uso: `pnpm db:sembrar` (prisma db seed). En pruebas se importa `sembrar`.
  * Con `SEED_DEMO=true` también siembra las ofertas de demostración (L12), con fechas
- * relativas al día de la ejecución para que no venzan, y los pedidos de demostración (L13):
+ * relativas al día de la ejecución para que no venzan, y los pedidos de demostración (L13; los
+ * reservados de L14 se reservan con la misma operación que la API):
  * `SEED_DEMO=true pnpm db:sembrar`.
  */
 import { resolve } from 'node:path'
@@ -293,16 +294,39 @@ const CANALES = [
 ]
 
 // ── Pedidos de demostración (L13, solo con SEED_DEMO=true) ──────────────────
-// Del mock (admin/src/88-…/01-orders.mock.ts) solo los alcanzables sin reservas ni facturas:
-// ORD-2026-004 (Registrado) y ORD-2026-006 (Cancelado), con sus ids. Las horas del mock son de
-// El Salvador (UTC−6). Los pedidos Reservado/Facturado/Entregado se sembrarán al cerrar L14–L15,
-// creados con la lógica real. Los importes salen del mismo cálculo que la API.
+// Del mock (admin/src/88-…/01-orders.mock.ts), con sus ids: ORD-2026-002 y 003 (Reservado, L14),
+// 004 (Registrado) y 006 (Cancelado). Las horas del mock son de El Salvador (UTC−6). Los reservados se
+// crean como Registrado y se reservan con `reservarEnTx` (bloqueo de fila, stock reservado e historial
+// reales), `reservaDias` días desde el día del seed. Facturado y Entregado (001 y 005) llegan con L15.
+// Los importes salen del mismo cálculo que la API.
 
 const PEDIDOS_DEMO = [
   {
+    id: 2, clienteId: 2, ciudad: 'San Rafael Cedros', canalId: 2, formaPago: 'Wompi / QR',
+    formaEntrega: 'Retiro en Sala de Ventas (2da Planta)', notas: '',
+    estado: 'registrado', creadoEn: '2026-11-02T16:15:00.000Z', reservaDias: 11,
+    lineas: [
+      { productoId: 6, sku: 'RDG-H510-71', nombre: 'Audífonos Gaming Diadema 7.1 Surround', cantidad: 1, precioUnitario: '45.00', descuento: '0.00' },
+      { productoId: 4, sku: 'RDG-K552-RGB', nombre: 'Teclado Mecánico RGB Redragon Gamer', cantidad: 1, precioUnitario: '60.00', descuento: '0.00' },
+    ],
+    cargos: [],
+    historial: [{ estado: 'registrado', por: 'Gabriela Solís', horas: 0, nota: null }],
+  },
+  {
+    id: 3, clienteId: 3, ciudad: 'Cojutepeque', canalId: 3, formaPago: 'Tarjeta de Crédito',
+    formaEntrega: 'Envío local Cojutepeque', notas: '',
+    estado: 'registrado', creadoEn: '2026-11-02T17:05:00.000Z', reservaDias: 9,
+    lineas: [{ productoId: 3, sku: 'SAM-980-1TB', nombre: 'Disco M.2 1 TB SAMSUNG NVMe 980', cantidad: 1, precioUnitario: '75.00', descuento: '0.00' }],
+    cargos: [
+      { concepto: 'Envío local', monto: '3.50' },
+      { concepto: 'Instalación y clonado de disco', monto: '15.00' },
+    ],
+    historial: [{ estado: 'registrado', por: 'Tienda Web', horas: 0, nota: null }],
+  },
+  {
     id: 4, clienteId: 4, ciudad: 'San Salvador', canalId: 4, formaPago: 'Crédito Fiscal 30 Días',
     formaEntrega: 'Envío departamental (encomienda)', notas: 'Requiere Crédito Fiscal. Validar línea de crédito con gerencia.',
-    estado: 'registrado', creadoEn: '2026-11-02T17:30:00.000Z',
+    estado: 'registrado', creadoEn: '2026-11-02T17:30:00.000Z', reservaDias: null,
     lineas: [{ productoId: 9, sku: 'HP-450G8-I5', nombre: 'Laptop HP ProBook 450 G8 Core i5', cantidad: 2, precioUnitario: '799.00', descuento: '5.00' }],
     cargos: [{ concepto: 'Envío departamental (encomienda)', monto: '8.00' }],
     historial: [{ estado: 'registrado', por: 'Ing. Marvin Castro', horas: 0, nota: null }],
@@ -310,7 +334,7 @@ const PEDIDOS_DEMO = [
   {
     id: 6, clienteId: 7, ciudad: 'San Pedro Perulapán', canalId: 2, formaPago: 'Transferencia',
     formaEntrega: 'Envío local Cojutepeque', notas: '',
-    estado: 'cancelado', creadoEn: '2026-11-03T21:10:00.000Z',
+    estado: 'cancelado', creadoEn: '2026-11-03T21:10:00.000Z', reservaDias: null,
     lineas: [{ productoId: 11, sku: 'KNG-FB16-3200', nombre: 'Memoria RAM Kingston Fury Beast 16GB DDR4', cantidad: 2, precioUnitario: '45.00', descuento: '0.00' }],
     cargos: [],
     historial: [
@@ -386,7 +410,7 @@ async function crearProducto(tx: Tx, p: ProductoSeed, categoriaId: number, marca
 export async function sembrar(prisma: PrismaClient, { demo = false }: OpcionesSeed = {}): Promise<ResumenSeed> {
   // El «hoy» del negocio sale del pipeline de ofertas (misma zona horaria que la vigencia).
   const hoy = demo ? (await import('../src/10-pipeline-ofertas/00-director-ofertas.js')).hoyNegocio() : ''
-  const { importeLinea, totalPedido } = await import('../src/11-pipeline-pedidos/00-director-pedidos.js')
+  const { importeLinea, reservarEnTx, totalPedido } = await import('../src/11-pipeline-pedidos/00-director-pedidos.js')
   return prisma.$transaction(async (tx) => {
     const resumen: ResumenSeed = { categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0, ofertas: 0, canales: 0, pedidos: 0 }
 
@@ -458,7 +482,7 @@ export async function sembrar(prisma: PrismaClient, { demo = false }: OpcionesSe
     }
 
     // Solo si no existe ese id y siguen existiendo su cliente, su canal y sus productos.
-    for (const { id, clienteId, canalId, lineas, cargos, historial, creadoEn, ...p } of demo ? PEDIDOS_DEMO : []) {
+    for (const { id, clienteId, canalId, lineas, cargos, historial, creadoEn, reservaDias, ...p } of demo ? PEDIDOS_DEMO : []) {
       if (await tx.pedido.findUnique({ where: { id } })) continue
       const cliente = await tx.cliente.findUnique({ where: { id: clienteId } })
       const canal = await tx.canalVenta.findUnique({ where: { id: canalId } })
@@ -485,6 +509,11 @@ export async function sembrar(prisma: PrismaClient, { demo = false }: OpcionesSe
           },
         },
       })
+      // Reserva real (L14): si el stock no alcanzara, falla el seed en vez de inventar la reserva.
+      if (reservaDias !== null) {
+        const hasta = fechaRelativa(hoy, reservaDias).toISOString().slice(0, 10)
+        await reservarEnTx(tx, id, hasta, { id: null, nombre: historial[0].por })
+      }
       resumen.pedidos++
     }
 

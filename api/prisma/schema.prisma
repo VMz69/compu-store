@@ -66,6 +66,8 @@ model Producto {
   precioAnterior   Decimal?               @db.Decimal(12, 2)
   tasaIva          Decimal                @default(13.00) @db.Decimal(5, 2)
   stock            Int                    @default(0) @db.UnsignedInt
+  /// Unidades apartadas por pedidos reservados (L14); disponible = stock − reservado. CHECK reservado ≤ stock en la migración.
+  reservado        Int                    @default(0) @db.UnsignedInt
   puntoReorden     Int                    @default(3) @db.UnsignedInt
   controlLotes     Boolean                @default(false)
   publicado        Boolean                @default(true)
@@ -383,6 +385,8 @@ model Pedido {
   formaEntrega      String         @db.VarChar(120)
   notas             String         @db.Text
   estado            EstadoPedido   @default(registrado)
+  /// Último día de la reserva (inclusive, calendario de El Salvador, L14); null si no está reservado.
+  reservadoHasta    DateTime?      @db.Date
   total             Decimal        @db.Decimal(12, 2)
   creadoEn          DateTime       @default(now())
   eliminadoEn       DateTime?

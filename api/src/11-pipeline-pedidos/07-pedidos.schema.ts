@@ -79,6 +79,12 @@ export const esquemaEliminarPedido = z.strictObject({
 
 export const esquemaListarPedidos = esquemaPaginacion.extend({ estado: z.enum(ESTADOS_PEDIDO).optional() })
 
+/** «Confirmar y reservar» (L14): último día de la reserva; el rango (hoy … hoy + 15) lo valida el service (422). */
+export const esquemaReserva = z.strictObject({
+  hasta: z.iso.date('Fecha no válida (AAAA-MM-DD).'),
+})
+
 export type DatosPedido = z.infer<typeof esquemaPedido>
 export type CambioEstado = z.infer<typeof esquemaCambioEstado>
 export type ListarPedidos = z.infer<typeof esquemaListarPedidos>
+export type Reserva = z.infer<typeof esquemaReserva>

@@ -14,7 +14,7 @@ import { crearRouterAdminInventario } from './07-pipeline-inventario/00-director
 import { crearRouterAjustes, crearRouterTienda } from './08-pipeline-tienda/00-director-tienda.js'
 import { crearRouterClientes } from './09-pipeline-clientes/00-director-clientes.js'
 import { crearRouterAdminOfertas } from './10-pipeline-ofertas/00-director-ofertas.js'
-import { crearRouterAjustesVentas, crearRouterPedidos } from './11-pipeline-pedidos/00-director-pedidos.js'
+import { conectarReservas, crearRouterAjustesVentas, crearRouterPedidos } from './11-pipeline-pedidos/00-director-pedidos.js'
 
 export interface DependenciasApp {
   /** Comprueba la base de datos; se inyecta para poder simular fallos en las pruebas. */
@@ -31,6 +31,8 @@ export interface DependenciasApp {
 
 /** Construye la aplicación Express sin abrir puertos (lo hace 00-main). */
 export function crearApp({ pingBD, identidad, imagenes, origenes, extender }: DependenciasApp): Express {
+  // Inventario vence las reservas caducadas antes de calcular el disponible (D-07, L14).
+  conectarReservas()
   const app = express()
   app.disable('x-powered-by')
   app.set('trust proxy', 1) // Railway y Vercel están detrás de un proxy.

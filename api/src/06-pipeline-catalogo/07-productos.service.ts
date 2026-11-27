@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import type { ProveedorImagenes } from '../03-pipeline-conexiones/00-director-conexiones.js'
 import { ErrorApp, meta, rango, type Paginacion } from '../04-pipeline-http/00-director-http.js'
-import { registrarExistenciasIniciales, type ExistenciasIniciales } from '../07-pipeline-inventario/00-director-inventario.js'
+import { liberarVencidas, registrarExistenciasIniciales, type ExistenciasIniciales } from '../07-pipeline-inventario/00-director-inventario.js'
 import { hoyNegocio, precioEfectivo, type PrecioEfectivo } from '../10-pipeline-ofertas/00-director-ofertas.js'
 import type { ConsultaTienda, CrearProducto, EditarProducto } from './06-productos.schema.js'
 import { slugUnico, type Pagina } from './03-taxonomia.service.js'
@@ -20,7 +20,7 @@ export interface ProductoPublicoDto {
   marca: { slug: string; nombre: string }
   precio: string
   precioAnterior: string | null
-  /** En A es el stock físico; en L14 pasa a físico − reservado sin cambiar el contrato. */
+  /** Físico − reservado (L14; en A era el físico, mismo contrato). */
   disponible: number
   etiqueta: string | null
   imagenes: string[]
@@ -61,7 +61,7 @@ const aPublico = (p: repo.ProductoDetalle, vigente?: PrecioEfectivo): ProductoPu
   marca: p.marca,
   precio: vigente?.ofertaId ? vigente.precio : importe(p.precio),
   precioAnterior: vigente?.ofertaId ? vigente.precioBase : importeOpcional(p.precioAnterior),
-  disponible: p.stock,
+  disponible: Math.max(0, p.stock - p.reservado),
   etiqueta: p.etiqueta,
   imagenes: p.imagenes.map((img) => img.url),
   especificaciones: p.especificaciones.map(({ clave, valor }) => ({ clave, valor })),
@@ -129,17 +129,28 @@ function exigirPrecioAnterior(precio: string, precioAnterior: string | null) {
 
 /* ---------- Lectura ---------- */
 
+/**
+ * Liberación perezosa (D-07, L14): antes de mostrar el disponible se vencen las reservas caducadas
+ * de esos productos y, si alguna se venció, se releen las filas.
+ */
+async function conReservasAlDia(filas: repo.ProductoDetalle[]): Promise<repo.ProductoDetalle[]> {
+  const conReserva = filas.filter((p) => p.reservado > 0).map((p) => p.id)
+  if (conReserva.length === 0) return filas
+  await liberarVencidas(conReserva)
+  return repo.buscarVarios(filas.map((p) => p.id))
+}
+
 export async function listar(paginacion: Paginacion): Promise<Pagina<ProductoAdminDto>> {
   const [filas, total] = await repo.listar(rango(paginacion), false)
-  return { data: filas.map(aAdmin), meta: meta(paginacion, total) }
+  return { data: (await conReservasAlDia(filas)).map(aAdmin), meta: meta(paginacion, total) }
 }
 
 export const obtener = async (id: number): Promise<ProductoAdminDto> => aAdmin(await exigirProducto(id))
 
 /** Contrato público con el precio efectivo de hoy (un solo «hoy» por petición). */
 async function aPublicos(filas: repo.ProductoDetalle[], hoy: string = hoyNegocio()): Promise<ProductoPublicoDto[]> {
-  const precios = await precioEfectivo(filas.map((p) => p.id), hoy)
-  return filas.map((p) => aPublico(p, precios.get(p.id)))
+  const [precios, alDia] = await Promise.all([precioEfectivo(filas.map((p) => p.id), hoy), conReservasAlDia(filas)])
+  return alDia.map((p) => aPublico(p, precios.get(p.id)))
 }
 
 /** Tienda: solo publicados, con búsqueda, filtros, orden y paginación (L07), con el precio efectivo (L12). */

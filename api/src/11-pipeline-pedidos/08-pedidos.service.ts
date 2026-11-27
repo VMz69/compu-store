@@ -1,5 +1,5 @@
 import { obtenerProductosVendibles, type ProductoVendible } from '../06-pipeline-catalogo/00-director-catalogo.js'
-import { obtenerDisponibilidad } from '../07-pipeline-inventario/00-director-inventario.js'
+import { liberar, moverReserva, obtenerDisponibilidad } from '../07-pipeline-inventario/00-director-inventario.js'
 import { obtenerClienteParaPedido } from '../09-pipeline-clientes/00-director-clientes.js'
 import { ErrorApp, meta, type MetaPaginacion, type Paginacion } from '../04-pipeline-http/00-director-http.js'
 import type { EstadoPedido } from './02-ajustes-ventas.schema.js'
@@ -9,6 +9,7 @@ import type { CambioEstado, DatosPedido } from './07-pedidos.schema.js'
 import * as repo from './09-pedidos.repository.js'
 import type { ContenidoPedido, PedidoFila, Tx } from './09-pedidos.repository.js'
 import { importeLinea, totalPedido } from './10-totales.js'
+import { alDia, errorStock, reservarEnTx } from './11-reservas.service.js'
 
 /** Quien opera (el nombre queda como snapshot en el historial; nunca el `by` del navegador). */
 export interface Operador {
@@ -27,8 +28,8 @@ export interface PedidoDto {
   formaEntrega: string
   notas: string
   estado: EstadoPedido
-  /** Vigencia de la reserva: llega en L14. */
-  reservadoHasta: null
+  /** Último día de la reserva (`YYYY-MM-DD`, inclusive) mientras está Reservado (L14). */
+  reservadoHasta: string | null
   /** Factura que cerró la venta: llega en L15. */
   facturaId: null
   lineas: { productoId: number; sku: string; nombre: string; cantidad: number; precioUnitario: string; descuento: string; importe: string }[]
@@ -47,7 +48,7 @@ const aPedido = (p: PedidoFila): PedidoDto => ({
   formaEntrega: p.formaEntrega,
   notas: p.notas,
   estado: p.estado,
-  reservadoHasta: null,
+  reservadoHasta: p.reservadoHasta ? p.reservadoHasta.toISOString().slice(0, 10) : null,
   facturaId: null,
   lineas: p.lineas.map((l) => ({
     productoId: l.productoId,
@@ -114,9 +115,15 @@ type Previa = { sku: string; nombre: string; precioUnitario: string }
 /**
  * Líneas con precio del servidor: las que ya estaban en el pedido conservan su snapshot (SKU, nombre y
  * precio, aunque cambie la cantidad); las nuevas toman el precio efectivo de hoy (L12).
- * 422 si un producto no existe o la cantidad supera el disponible.
+ * 422 si un producto no existe o la cantidad supera el disponible. Un pedido reservado (`conReserva`)
+ * valida el stock al mover su reserva, con las filas bloqueadas (L14).
  */
-function armarLineas(datos: DatosPedido, { vendibles, disponibles }: Catalogo, previas: Map<number, Previa>): ContenidoPedido['lineas'] {
+function armarLineas(
+  datos: DatosPedido,
+  { vendibles, disponibles }: Catalogo,
+  previas: Map<number, Previa>,
+  conReserva = false,
+): ContenidoPedido['lineas'] {
   const faltantes = datos.lineas.filter((l) => !previas.has(l.productoId) && !vendibles.has(l.productoId))
   if (faltantes.length > 0) {
     throw regla(
@@ -124,18 +131,12 @@ function armarLineas(datos: DatosPedido, { vendibles, disponibles }: Catalogo, p
       faltantes.map((l) => ({ campo: `lineas.${l.productoId}`, mensaje: 'El producto no existe.' })),
     )
   }
-  const cortas = datos.lineas
-    .map((l) => ({ linea: l, disponible: disponibles.get(l.productoId) ?? 0 }))
-    .filter(({ linea, disponible }) => linea.cantidad > disponible)
-  if (cortas.length > 0) {
-    throw regla(
-      'Stock insuficiente: revisa las cantidades.',
-      cortas.map(({ linea, disponible }) => ({
-        campo: `lineas.${linea.productoId}`,
-        mensaje: disponible === 0 ? 'Sin stock disponible: quita el producto.' : `Solo hay ${disponible} disponible(s); ajusta la cantidad.`,
-      })),
-    )
-  }
+  const cortas = conReserva
+    ? []
+    : datos.lineas
+        .map((l) => ({ productoId: l.productoId, cantidad: l.cantidad, disponible: disponibles.get(l.productoId) ?? 0 }))
+        .filter(({ cantidad, disponible }) => cantidad > disponible)
+  if (cortas.length > 0) throw errorStock(cortas)
   return datos.lineas.map((l) => {
     const previa = previas.get(l.productoId)
     const producto = vendibles.get(l.productoId) as ProductoVendible
@@ -192,11 +193,20 @@ export async function crearPedido(datos: DatosPedido, operador: Operador): Promi
   return obtenerPedido(id)
 }
 
-/** Pedido vigente con su fila bloqueada hasta el final de la transacción. */
+/** Pedido vigente bloqueado hasta el final de la transacción; si su reserva caducó, se vence en línea (D-07). */
+async function bloquearAlDia(tx: Tx, id: number) {
+  const fila = await repo.bloquear(tx, id)
+  if (!fila) throw noExiste()
+  return alDia(tx, fila)
+}
+
+/** Como `bloquearAlDia`, con el detalle completo. */
 async function bloqueado(tx: Tx, id: number): Promise<PedidoFila> {
-  if (!(await repo.bloquear(tx, id))) throw noExiste()
+  await bloquearAlDia(tx, id)
   return (await repo.buscar(id, tx)) as PedidoFila
 }
+
+const reservaDe = (lineas: { productoId: number; cantidad: number }[]) => lineas.map(({ productoId, cantidad }) => ({ productoId, cantidad }))
 
 /**
  * Reemplaza los datos editables de un pedido sin factura. Conserva id, fecha, estado e historial;
@@ -215,7 +225,13 @@ export async function editarPedido(id: number, datos: DatosPedido, operador: Ope
         ? { clienteId: actual.clienteId, clienteNombre: actual.clienteNombre, clienteTelefono: actual.clienteTelefono, clienteCorreo: actual.clienteCorreo }
         : await clienteAsignable(datos)
     const previas = new Map(actual.lineas.map((l) => [l.productoId, { sku: l.sku, nombre: l.nombre, precioUnitario: l.precioUnitario.toFixed(2) }]))
-    const nuevo = contenido(datos, cliente, canal, armarLineas(datos, catalogo, previas))
+    const reservado = actual.estado === 'confirmado'
+    const nuevo = contenido(datos, cliente, canal, armarLineas(datos, catalogo, previas, reservado))
+    if (reservado) {
+      // La reserva pasa de las líneas anteriores a las nuevas; el disponible excluye al propio pedido.
+      const faltantes = await moverReserva(tx, reservaDe(actual.lineas), reservaDe(nuevo.lineas))
+      if (faltantes.length > 0) throw errorStock(faltantes)
+    }
     const antes = actual.total.toFixed(2)
     const nota = nuevo.total === antes ? 'Pedido editado' : `Pedido editado · total ${antes} → ${nuevo.total}`
     await repo.reemplazar(tx, id, nuevo, { estado: actual.estado, usuarioId: operador.id, por: operador.nombre, nota })
@@ -223,15 +239,15 @@ export async function editarPedido(id: number, datos: DatosPedido, operador: Ope
   return obtenerPedido(id)
 }
 
-/** Cancelar o entregar (L13). Las transiciones inválidas se rechazan con 422. */
+/** Cancelar o entregar (L13). Las transiciones inválidas se rechazan con 422. Cancelar un reservado libera su stock. */
 export async function cambiarEstado(id: number, { estado, nota }: CambioEstado, operador: Operador): Promise<PedidoDto> {
   const nombres = await nombresEstado()
   await repo.transaccion(async (tx) => {
-    const actual = await repo.bloquear(tx, id)
-    if (!actual) throw noExiste()
+    const actual = await bloquearAlDia(tx, id)
     if (!puedeTransicionar(actual.estado, estado)) {
       throw regla(`No se puede pasar de "${nombres[actual.estado]}" a "${nombres[estado]}".`)
     }
+    if (actual.estado === 'confirmado') await liberar(tx, reservaDe(await repo.lineasDe(tx, id)))
     await repo.cambiarEstado(tx, id, { estado, usuarioId: operador.id, por: operador.nombre, ...(nota ? { nota } : {}) })
   })
   return obtenerPedido(id)
@@ -241,10 +257,10 @@ export async function cambiarEstado(id: number, { estado, nota }: CambioEstado, 
 export async function eliminarPedido(id: number, motivo: string, operador: Operador): Promise<void> {
   const nombres = await nombresEstado()
   await repo.transaccion(async (tx) => {
-    const actual = await repo.bloquear(tx, id)
-    if (!actual) throw noExiste()
+    const actual = await bloquearAlDia(tx, id)
     const bloqueo = motivoNoEliminable(actual.estado, nombres[actual.estado])
     if (bloqueo) throw regla(bloqueo)
+    if (actual.estado === 'confirmado') await liberar(tx, reservaDe(await repo.lineasDe(tx, id)))
     await repo.marcarEliminado(tx, id, motivo, {
       estado: actual.estado,
       usuarioId: operador.id,
@@ -252,4 +268,10 @@ export async function eliminarPedido(id: number, motivo: string, operador: Opera
       nota: `Pedido eliminado · ${motivo}`,
     })
   })
+}
+
+/** «Confirmar y reservar» (L14): Registrado → Reservado hasta `hasta` (ver `11-reservas.service`). */
+export async function reservarPedido(id: number, hasta: string, operador: Operador): Promise<PedidoDto> {
+  await repo.transaccion((tx) => reservarEnTx(tx, id, hasta, operador))
+  return obtenerPedido(id)
 }

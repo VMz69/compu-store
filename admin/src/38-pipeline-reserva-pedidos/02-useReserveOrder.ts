@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ensurePermission, useSession } from '@/00-director-acceso'
+import { ensurePermission } from '@/00-director-acceso'
 import { useCatalogStore } from '@/00-director-catalogo'
 import { addDaysISO, formatLongISO, todayISO } from '@/71-pipeline-seleccion-fechas/05-date'
 import { closeModal, useModalPayload } from '@/73-pipeline-modales-globales/03-modal.store'
@@ -21,7 +21,6 @@ export function useReserveOrder() {
   const orders = useSalesStore((s) => s.orders)
   const reserve = useSalesStore((s) => s.reserve)
   const products = useCatalogStore((s) => s.products)
-  const { user } = useSession()
   const today = todayISO()
   const bounds = reservationBounds(today)
   const [until, setUntil] = useState(bounds.suggested)
@@ -31,14 +30,15 @@ export function useReserveOrder() {
   const error = validateReservationDate(until, today)
   const days = reservationDaysLeft(until, today)
 
-  const submit = () => {
+  // El servidor decide (stock con bloqueo de fila y fecha); si rechaza, el modal sigue abierto con su mensaje.
+  const submit = async () => {
     if (!order || error) return
     if (!ensurePermission('canReserveOrders', 'No tienes permiso para confirmar y reservar pedidos.')) return
     const latest = useSalesStore.getState().orders
     const latestShortages = findShortages(order.items, useCatalogStore.getState().products, reservedByProduct(latest, order.id, today))
     if (latestShortages.length) return toast(`Stock insuficiente para reservar: ${describeShortages(latestShortages)}`, 'warning')
     try {
-      reserve(order.id, until, user?.name ?? 'Equipo CompuStore')
+      await reserve(order.id, until)
       closeModal()
       toast(`Pedido ${order.id} reservado hasta ${formatLongISO(until)}`, 'success')
     } catch (e) {

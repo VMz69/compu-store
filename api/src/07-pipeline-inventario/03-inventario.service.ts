@@ -2,6 +2,7 @@ import { ErrorApp } from '../04-pipeline-http/00-director-http.js'
 import type { EdicionExistencias, LoteRecibido } from './02-inventario.schema.js'
 import * as repo from './04-inventario.repository.js'
 import * as lotes from './05-lotes.service.js'
+import { errorStockReservado, liberarVencidas, vencerReservas } from './06-reservas.service.js'
 
 /* ---------- Contrato ---------- */
 
@@ -43,12 +44,23 @@ export async function obtenerExistencias(id: number): Promise<ExistenciasDto> {
 export const metricas = (): Promise<repo.Metricas> => repo.metricas()
 
 /**
- * Unidades disponibles por producto (§5). En A es el stock físico; en L14 pasa a
- * físico − reservado sin cambiar el contrato. Los ids inexistentes no aparecen en el mapa.
+ * Unidades disponibles por producto (§5): físico − reservado (L14, mismo contrato que en A). Antes de leer
+ * vence las reservas caducadas de esos productos (D-07). Los ids inexistentes no aparecen en el mapa.
  */
 export async function obtenerDisponibilidad(ids: number[]): Promise<Map<number, number>> {
-  const filas = await repo.stockDe([...new Set(ids)])
-  return new Map(filas.map((fila) => [fila.id, fila.stock]))
+  const unicos = [...new Set(ids)]
+  let filas = await repo.stockDe(unicos)
+  const conReserva = filas.filter((fila) => fila.reservado > 0).map((fila) => fila.id)
+  if (conReserva.length > 0) {
+    await liberarVencidas(conReserva)
+    filas = await repo.stockDe(unicos)
+  }
+  return new Map(filas.map((fila) => [fila.id, Math.max(0, fila.stock - fila.reservado)]))
+}
+
+/** El stock físico nunca queda por debajo de lo reservado por pedidos (L14). */
+async function exigirCubreReservado(tx: repo.Tx, producto: repo.ProductoBloqueado, stock: number): Promise<void> {
+  if (stock < producto.reservado) throw await errorStockReservado(tx, producto.id, producto.reservado)
 }
 
 /* ---------- Escritura ---------- */
@@ -56,6 +68,7 @@ export async function obtenerDisponibilidad(ids: number[]): Promise<Map<number, 
 /** Ajuste ±n de un producto sin lotes. El stock nunca queda negativo, aun con peticiones simultáneas. */
 export async function ajustar(productoId: number, delta: number, usuarioId: number): Promise<ExistenciasDto> {
   await repo.transaccion(async (tx) => {
+    await vencerReservas(tx, [productoId])
     const producto = await exigirBloqueado(tx, productoId)
     if (producto.controlLotes) {
       throw new ErrorApp('BUSINESS_RULE', 422, 'El stock de este producto se controla por lotes: ajústalo desde la ficha.')
@@ -64,6 +77,7 @@ export async function ajustar(productoId: number, delta: number, usuarioId: numb
     if (stock < 0) {
       throw new ErrorApp('BUSINESS_RULE', 422, `Stock insuficiente: hay ${producto.stock} y se intentan restar ${-delta}.`)
     }
+    await exigirCubreReservado(tx, producto, stock)
     await repo.fijarStock(tx, productoId, stock)
     await repo.registrarMovimientos(tx, [{ productoId, loteId: null, delta, motivo: motivoAjuste(delta), usuarioId }])
   })
@@ -105,6 +119,7 @@ const MOTIVO_A_MANUAL = 'Paso a stock manual'
  */
 export async function editarExistencias(productoId: number, datos: EdicionExistencias, usuarioId: number): Promise<ExistenciasDto> {
   await repo.transaccion(async (tx) => {
+    await vencerReservas(tx, [productoId])
     const producto = await exigirBloqueado(tx, productoId)
     if (producto.stock !== datos.stockEsperado) {
       throw new ErrorApp(
@@ -118,10 +133,12 @@ export async function editarExistencias(productoId: number, datos: EdicionExiste
     if (datos.controlLotes) {
       if (!producto.controlLotes && producto.stock > 0) await repo.registrarMovimientos(tx, [movimiento(-producto.stock, MOTIVO_A_LOTES)])
       const stock = await lotes.reconciliar(tx, productoId, datos.lotes, usuarioId)
+      await exigirCubreReservado(tx, producto, stock)
       await repo.fijarStock(tx, productoId, stock, true)
       return
     }
 
+    await exigirCubreReservado(tx, producto, datos.stock)
     if (producto.controlLotes) {
       // Desactivar lotes: salen todos los lotes y entra el stock manual indicado.
       await lotes.reconciliar(tx, productoId, [], usuarioId)

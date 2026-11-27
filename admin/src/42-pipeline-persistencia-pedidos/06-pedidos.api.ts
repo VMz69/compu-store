@@ -135,6 +135,15 @@ export async function changeOrderStatusApi(id: string, status: 'cancelado' | 'en
   return toOrder(data.data)
 }
 
+/**
+ * «Confirmar y reservar» (L14): el servidor aparta el stock hasta `until` (YYYY-MM-DD, inclusive) bajo
+ * bloqueo de fila; 422 si no alcanza o la fecha no es válida. Repetir la misma reserva no aparta más.
+ */
+export async function reserveOrderApi(id: string, until: string): Promise<Order> {
+  const { data } = await apiClient.post<Envelope<PedidoDto>>(`${orderPath(id)}/reserva`, { hasta: until })
+  return toOrder(data.data)
+}
+
 /** Eliminación lógica: el servidor conserva el pedido con quién, cuándo y por qué. */
 export async function deleteOrderApi(id: string, reason: string): Promise<void> {
   await apiClient.delete(orderPath(id), { data: { motivo: reason } })

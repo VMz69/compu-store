@@ -90,6 +90,8 @@ const MATRIZ: Fila[] = [
   { metodo: 'patch', patron: '/pedidos/:id', url: '/pedidos/999999', permisos: ['pedidos.gestionar'] },
   { metodo: 'patch', patron: '/pedidos/:id/estado', url: '/pedidos/999999/estado', permisos: ['pedidos.gestionar'] },
   { metodo: 'delete', patron: '/pedidos/:id', url: '/pedidos/999999', permisos: ['pedidos.eliminar'] },
+  // L14: «Confirmar y reservar» tiene su propia acción (`canReserveOrders` en el admin).
+  { metodo: 'post', patron: '/pedidos/:id/reserva', url: '/pedidos/999999/reserva', permisos: ['pedidos.reservar'] },
 ]
 
 const TODAS: Permiso[] = [...VISTAS, ...ACCIONES]

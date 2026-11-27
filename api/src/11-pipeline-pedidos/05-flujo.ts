@@ -8,8 +8,9 @@ import type { EstadoPedido } from './02-ajustes-ventas.schema.js'
  *     │  └─ vence ────┘   └── anular ──┘
  *     └──► Cancelado ◄────┘
  *
- * L13 expone por `PATCH /pedidos/:id/estado` solo cancelar y entregar. Reservar (L14) y facturar (L15)
- * tienen sus propias operaciones, porque mueven stock.
+ * `PATCH /pedidos/:id/estado` solo cancela y entrega. Reservar (`POST /pedidos/:id/reserva`, L14) y
+ * facturar (L15) tienen sus propias operaciones, porque mueven stock; el vencimiento de la reserva
+ * (Reservado → Registrado) lo hace el servidor (`11-reservas.service`).
  */
 export const TRANSICIONES: Record<EstadoPedido, EstadoPedido[]> = {
   registrado: ['confirmado', 'cancelado'],

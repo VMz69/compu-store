@@ -16,6 +16,7 @@ import {
   fetchChannels,
   fetchOrders,
   fetchStatusLabels,
+  reserveOrderApi,
   saveChannelApi,
   saveStatusLabelApi,
   setChannelActiveApi,
@@ -25,7 +26,7 @@ import type { Channel, ChannelDraft, DeletedOrder, Order, OrderDraft, OrderStatu
 
 /**
  * Store de ventas. Desde L13 la fuente de pedidos, canales y etiquetas de estado es la API; esto es su
- * caché. Reservar (L14) y facturar (L15) aún no tienen operación en el servidor.
+ * caché. Reservar (L14) aparta el stock en el servidor; facturar (L15) aún no tiene operación en el servidor.
  */
 interface SalesState {
   /** Pedidos vigentes: lo único que leen listados, métricas, stock y facturación. */
@@ -50,12 +51,12 @@ interface SalesState {
   deleteOrder: (orderId: string, by: string, reason: string) => DeletedOrder
   /**
    * "Confirmar y reservar": Registrado → Reservado con vigencia hasta `until` (YYYY-MM-DD).
-   * Lanza error si la transición o la fecha no son válidas.
+   * Lo decide el servidor (stock y fecha); lanza su error si no procede.
    */
-  reserve: (orderId: string, until: string, by: string) => void
+  reserve: (orderId: string, until: string) => Promise<Order>
   /**
-   * Libera las reservas vencidas: el pedido vuelve a Registrado (acción del sistema).
-   * Devuelve los ids afectados.
+   * Refleja en la caché las reservas vencidas: el pedido vuelve a Registrado (acción del sistema).
+   * Quien libera el stock es el servidor (barrido y vencimiento en línea, L14). Devuelve los ids afectados.
    */
   expireReservations: (today?: string) => string[]
   /** Aplica una transición válida del flujo. Devuelve `false` si no está permitida. */
@@ -87,9 +88,6 @@ const patchOrder = (orders: Order[], id: string, fn: (o: Order) => Order) => ord
  * · v5 (L13): pedidos, canales y etiquetas viven en la API; toda caché anterior era de demostración.
  */
 const SALES_SCHEMA_VERSION = 5
-
-/** Aviso hasta que el servidor tenga la reserva de stock (L14). */
-export const RESERVATION_PENDING = 'Confirmar y reservar estará disponible con las reservas de stock (L14).'
 
 const errorMessage = (error: unknown, fallback: string) => (error instanceof Error ? error.message : fallback)
 
@@ -162,8 +160,16 @@ export const useSalesStore = create<SalesState>()(
         return deleted
       },
 
-      reserve: () => {
-        throw new Error(RESERVATION_PENDING)
+      reserve: async (orderId, until) => {
+        set({ isLoading: true })
+        try {
+          const reserved = await reserveOrderApi(orderId, until)
+          set((s) => ({ orders: patchOrder(s.orders, orderId, () => reserved), isLoading: false }))
+          return reserved
+        } catch (error) {
+          set({ isLoading: false })
+          throw error
+        }
       },
 
       expireReservations: (today = todayISO()) => {

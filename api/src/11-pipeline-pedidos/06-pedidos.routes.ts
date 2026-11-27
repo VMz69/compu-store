@@ -7,9 +7,11 @@ import {
   esquemaIdPedido,
   esquemaListarPedidos,
   esquemaPedido,
+  esquemaReserva,
   type CambioEstado,
   type DatosPedido,
   type ListarPedidos,
+  type Reserva,
 } from './07-pedidos.schema.js'
 import * as servicio from './08-pedidos.service.js'
 
@@ -24,6 +26,7 @@ const operador = (res: Response): servicio.Operador => {
 const puedeLeer = requierePermiso('pedidos', 'tablero', 'facturacion', 'clientes', 'cotizaciones')
 const puedeGestionar = requierePermiso('pedidos.gestionar')
 const puedeEliminar = requierePermiso('pedidos.eliminar')
+const puedeReservar = requierePermiso('pedidos.reservar')
 
 /** Pedidos (se monta bajo /api/v1/admin, ya protegido). */
 export function crearRouterPedidos(): Router {
@@ -44,6 +47,9 @@ export function crearRouterPedidos(): Router {
   })
   router.patch('/pedidos/:id/estado', puedeGestionar, validar({ params: esquemaIdPedido, body: esquemaCambioEstado }), async (req, res) => {
     res.json({ data: await servicio.cambiarEstado(idDe(req), req.body as CambioEstado, operador(res)) })
+  })
+  router.post('/pedidos/:id/reserva', puedeReservar, validar({ params: esquemaIdPedido, body: esquemaReserva }), async (req, res) => {
+    res.json({ data: await servicio.reservarPedido(idDe(req), (req.body as Reserva).hasta, operador(res)) })
   })
   router.delete('/pedidos/:id', puedeEliminar, validar({ params: esquemaIdPedido, body: esquemaEliminarPedido }), async (req, res) => {
     await servicio.eliminarPedido(idDe(req), (req.body as { motivo: string }).motivo, operador(res))
