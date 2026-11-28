@@ -1,5 +1,4 @@
-import type { Channel, Order, OrderMetrics, OrderStatusId } from './05-types'
-import { ACTIVE_STATUSES, SOLD_STATUSES } from '../39-pipeline-transiciones-pedidos/02-orderFlow'
+import type { Channel, Order, OrderStatusId } from './05-types'
 
 /** Formas de pago aceptadas en pedidos nuevos (los históricos conservan la que tenían). */
 export const PAYMENT_METHODS = ['Efectivo', 'Transferencia']
@@ -11,21 +10,6 @@ export const DELIVERY_METHODS = [
 ]
 
 export const DEFAULT_CITY = 'Cojutepeque'
-
-const countIn = (orders: Order[], statuses: OrderStatusId[]) => orders.filter((o) => statuses.includes(o.status))
-
-export function getOrderMetrics(orders: Order[]): OrderMetrics {
-  return {
-    total: orders.length,
-    registered: countByStatus(orders, 'registrado'),
-    confirmed: countByStatus(orders, 'confirmado'),
-    invoiced: countByStatus(orders, 'facturado'),
-    delivered: countByStatus(orders, 'entregado'),
-    cancelled: countByStatus(orders, 'cancelado'),
-    active: countIn(orders, ACTIVE_STATUSES).length,
-    revenue: countIn(orders, SOLD_STATUSES).reduce((acc, o) => acc + o.total, 0),
-  }
-}
 
 export const countByStatus = (orders: Order[], status: OrderStatusId): number =>
   orders.filter((o) => o.status === status).length

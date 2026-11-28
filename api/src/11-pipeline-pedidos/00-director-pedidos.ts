@@ -14,3 +14,5 @@ export { idVisible, type OperadorReserva } from './11-reservas.service.js'
 // L16: cotizaciones convierte con la misma validación y las mismas reglas que el registro.
 export { esquemaCargo, esquemaClienteOcasional, esquemaLinea, esquemaPedido, type DatosPedido } from './07-pedidos.schema.js'
 export { crearDesdeCotizacion, obtenerPedido, type OrigenCotizacion, type PedidoDto } from './08-pedidos.service.js'
+// L18: métricas para reportes (tablero e historial de clientes), calculadas en la BD.
+export { ESTADOS_VENDIDOS, estadisticasPorCliente, totalesPorEstado, type FilaCliente, type FilaEstado } from './13-metricas.repository.js'

@@ -117,6 +117,9 @@ const MATRIZ: Fila[] = [
   { metodo: 'post', patron: '/resenas/aprobacion', url: '/resenas/aprobacion', permisos: ['interacciones.moderar'] },
   { metodo: 'patch', patron: '/resenas/:id/estado', url: '/resenas/999999/estado', permisos: ['interacciones.moderar'] },
   { metodo: 'delete', patron: '/resenas/:id', url: '/resenas/999999', permisos: ['interacciones.moderar'] },
+  // L18: el tablero se consulta en su vista y el historial de compra de los clientes, en Clientes.
+  { metodo: 'get', patron: '/reportes/tablero', url: '/reportes/tablero', permisos: ['tablero'] },
+  { metodo: 'get', patron: '/reportes/clientes', url: '/reportes/clientes', permisos: ['clientes'] },
 ]
 
 const TODAS: Permiso[] = [...VISTAS, ...ACCIONES]

@@ -1,7 +1,7 @@
 # CompuStore SV — Manual de implementación A + B
 **Versión:** 2.0 · **Fecha:** 23-11-2026 · **Ubicación:** `docs/00-manual-implementacion.md`
 **Sustituye a:** `rutaBackEnd.md` v1.0 (queda como histórico).
-**Consolida:** alcance A/B, matriz de 64 funcionalidades y topología FLOA + VSA.
+**Consolida:** alcance A/B, matriz de 64 funcionalidades inventariadas (63 implementadas + 1 excluida por decisión, la 44: D-09) y topología FLOA + VSA.
 **Destinatarios:** Claude Code (VS Code) y el desarrollador. Es el documento rector único.
 
 ---
@@ -27,7 +27,7 @@
 ---
 
 ## 1. Objetivo y límites
-- Implementar las **64 funcionalidades** (A: 27 · B: 37) sobre los frontends existentes.
+- Implementar **63 funcionalidades** (A: 27 · B: 36) sobre los frontends existentes; de las 64 inventariadas, la 44 (mantenimiento desde la UI) queda excluida por decisión (D-09).
 - **UI intocable:** no rediseñar, eliminar ni mover componentes de `/admin` ni de `/store`. Solo se adaptan el acceso a datos y los estados de disponibilidad.
 - **Sin mezclar mocks con producción:** cada vista está conectada a la API o bloqueada como "pendiente".
 - **Fuera de alcance:** DTE/Hacienda, pagos en línea, cuentas públicas de clientes, integración con facturación externa, microservicios, WebSockets y correos transaccionales (salvo el restablecimiento de contraseña del proveedor de autenticación).
@@ -119,8 +119,7 @@ api/
     ├── 12-pipeline-facturacion/    (B) documentos, correlativos, PDF, anulación
     ├── 13-pipeline-cotizaciones/   (B)
     ├── 14-pipeline-resenas/        (B)
-    ├── 15-pipeline-reportes/       (B)
-    └── 16-pipeline-mantenimiento/  (B)
+    └── 15-pipeline-reportes/       (B)
 ```
 
 **Archivos previstos para la Fase A** (de la topología aprobada; se crean al necesitarlos):
@@ -134,7 +133,7 @@ api/
 | 07-inventario | `00-director-inventario` · `01–04 inventario.(…)` · `05-lotes.service` |
 | 08-tienda | `00-director-tienda` · `01-tienda.routes` · `02-tienda.service` |
 
-> **Cambio frente a la topología aprobada:** en B, `ofertas` pasa antes que `pedidos` (10 ↔ 13), porque el precio efectivo debe existir antes de calcular totales. También se agrega `16-mantenimiento` para la funcionalidad 44. Ambos cambios se confirman en D-10.
+> **Cambio frente a la topología aprobada:** en B, `ofertas` pasa antes que `pedidos` (10 ↔ 13), porque el precio efectivo debe existir antes de calcular totales (D-10). El `16-mantenimiento` previsto para la funcionalidad 44 no se crea: la 44 queda fuera de alcance (D-09, L18).
 
 ---
 
@@ -152,6 +151,7 @@ api/
 | facturacion | `emitirEnTx(tx, datos, operador, emisor)` (seed) · `siguienteCorrelativo(tx, clave)` (L16, consumidor: cotizaciones) | L15 · L16 |
 | cotizaciones | `codigoCotizacion`, `validezHasta` y `SECUENCIA_COTIZACION` (seed) | L16 |
 | resenas | solo sus routers (`crearRouterResenas`, `crearRouterTiendaResenas`); el catálogo lee la tabla `resenas` directamente para la calificación | L17 |
+| pedidos → reportes | `totalesPorEstado()`, `estadisticasPorCliente(paginación)` y `ESTADOS_VENDIDOS` (consumidor: reportes, que solo expone `crearRouterReportes`) | L18 |
 
 Los nombres son orientativos: los definitivos se fijan en el plan de cada lote. **Regla de estabilidad:** `obtenerDisponibilidad` mantiene su contrato aunque en L14 pase de "físico" a "físico − reservado".
 
@@ -271,8 +271,9 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 - `14-resenas`: envío público con antispam (D-13), bandeja, moderación y publicación. La tienda muestra solo las aprobadas.
 - **Cierre:** solo se ven las reseñas aprobadas.
 
-**L18 — Reportes, mantenimiento y cierre de B** · *17, 28, 44*
-- `15-reportes`: dashboard, métricas comerciales, historial y estadísticas de clientes. `16-mantenimiento`: herramientas definidas en D-09.
+**L18 — Reportes y cierre de B** · *17, 28*
+- `15-reportes`: dashboard, métricas comerciales, historial y estadísticas de clientes.
+- La 44 (mantenimiento desde la UI) queda fuera de alcance (D-09): no se crea `16-mantenimiento` y el código deshabilitado del admin no se toca.
 - **Cierre:** ninguna vista del admin queda bloqueada; regresión completa y tag `v2.0-fase-b`.
 
 **L19 — Despliegue final** · *sin funcionalidades nuevas; tareas de L08 aplicadas a A + B*
@@ -283,7 +284,7 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 - Checklist de aceptación de A + B: 2 cuentas seguras y RBAC, vistas reales, cambios del admin reflejados en la tienda, carrito + WhatsApp validados, circuito pedido → reserva → factura → stock, sin escrituras simuladas y respaldos verificables.
 - **Cierre:** A + B en producción y aceptadas, con el tag `v2.1-produccion`.
 
-**Cobertura:** A = 01, 05, 06–11, 13, 45–52, 55–64 (27) · B = 02–04, 12, 14–44 (excepto 13), 53, 54 (37) · **Total: 64.** L08 (contingencia) y L19 (despliegue final) no agregan funcionalidades.
+**Cobertura:** A = 01, 05, 06–11, 13, 45–52, 55–64 (27) · B = 02–04, 12, 14–43 (excepto 13), 53, 54 (36) · **Total: 63 implementadas + 1 excluida por decisión (44, D-09)** de las 64 inventariadas. Motivo de la exclusión: la vista de mantenimiento ya no aparece en la UI actual (sin ruta ni exportación) y los respaldos quedan cubiertos por los scripts de L02 y por L19 (D-08). L08 (contingencia) y L19 (despliegue final) no agregan funcionalidades.
 
 ---
 
@@ -299,7 +300,7 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 | D-06 | Sobre de respuesta y paginación | **Resuelta (L00):** `{data, meta:{page,limit,total,totalPages}}`, `limit` ≤ 100; errores `{error:{code,message,details?}}` | L00 |
 | D-07 | Vencimientos de reservas, cotizaciones y lotes | **Resuelta para reservas (L14):** `reservadoHasta` DATE inclusive con el «hoy» de El Salvador; barrido en el proceso (al arrancar y cada 60 s) + vencimiento en línea (al operar sobre el pedido y, de forma perezosa, antes de calcular el disponible, reservar o validar el carrito). **Lotes (L15):** el vencimiento de un lote no bloquea la venta; al facturar se consume por FEFO (vencimiento más próximo primero, los que no vencen al final; = admin). **Cotizaciones (L16):** `validaHasta` DATE inclusive = día de emisión en El Salvador + validez (7/15/30); «vencida» se deriva al leer (emitida fuera de validez), sin barrido; ni emitida ni aceptada se convierten después de `validaHasta` | L14 · L15 · L16 |
 | D-08 | Respaldos en producción | Backups de Railway + dump externo periódico; restauración probada | L19 (L08 si hay contingencia) |
-| D-09 | Alcance de la 44 (mantenimiento desde la UI) | Definirlo tras inspeccionar la vista | L18 |
+| D-09 | Alcance de la 44 (mantenimiento desde la UI) | **Resuelta (L18):** fuera de alcance. La vista ya no aparece en la UI (sin ruta ni exportación); su código deshabilitado (`admin/src/63-pipeline-mantenimiento-datos/`) no se borra ni se reactiva; no se crea `16-pipeline-mantenimiento`. Los respaldos quedan cubiertos por los scripts de L02 y por L19 (D-08) | L18 |
 | D-10 | Orden B: ofertas (10) antes que pedidos (11) y el nuevo 16 | **Resuelta (L00):** aceptada | L00 |
 | D-11 | Librería de PDF | **Resuelta (L15):** sin librería en el servidor; el admin genera el PDF con su kit jsPDF actual (`46/03-invoicePdf`, compartido con cotizaciones) a partir de la factura inmutable de la API | L15 |
 | D-12 | Correlativos | **Resuelta (L15):** tabla `correlativos` (clave → último) bloqueada con `SELECT … FOR UPDATE` en la transacción del documento; control `DTE-01-M001P001-` + 15 dígitos (desde 2074) e interno de 6 (desde 15781, máx(último + 1, semilla)) | L15 |
@@ -335,10 +336,12 @@ L13, L14 y L15 forman el **circuito comercial indivisible**: su UI se habilita e
 | L15 | B | 12, 33–36 | Completado (L15A: API, 409 pruebas · L15B: admin conectado; circuito pedido → reserva → factura → stock → entrega habilitado; demostración manual confirmada por el propietario, 26-11-2026) | `feat(L15A)` + `feat(L15B)` · 26-11-2026 · rama `feat/api` |
 | L16 | B | 29–32 | Completado (L16A: API, 441 pruebas · L16B: admin conectado; la conversión genera un pedido válido según D-18; demostración manual confirmada por el propietario, 27-11-2026) | `feat(L16A)` + `feat(L16B)` · 27-11-2026 · rama `feat/api` |
 | L17 | B | 40, 41, 53, 54 | Completado (L17A: API, 461 pruebas · L17B: admin y store conectados; solo se ven las reseñas aprobadas; demostración manual confirmada por el propietario, 27-11-2026) | `feat(L17A)` + `feat(L17B)` · 27-11-2026 · rama `feat/api` |
-| L18 | B | 17, 28, 44 · cierre | Pendiente | |
+| L18 | B | 17, 28 · cierre (44 excluida, D-09) | En progreso (468 pruebas; admin y store con `build`, `lint` y madge en verde; falta la demostración manual y el tag `v2.0-fase-b`) | `feat(L18)` · 27-11-2026 · rama `feat/api` |
 | L19 | A + B | despliegue final | Pendiente | |
 
 Estados posibles: Pendiente · En progreso · Completado · Bloqueado · Contingencia.
+
+**Cobertura:** 63 funcionalidades implementadas al cerrar L18 + 1 excluida por decisión (44, mantenimiento desde la UI: la vista ya no aparece en la UI actual y los respaldos los cubren los scripts de L02 y L19; D-09).
 
 **Versión A estable:** `v1.0-fase-a` (25-11-2026), sobre el cierre de L07. Sin desplegar: el despliegue va en L19 (o en L08 si hay contingencia).
 
@@ -551,6 +554,11 @@ Estados posibles: Pendiente · En progreso · Completado · Bloqueado · Conting
 | 27-11-2026 | L17B | D-14 | Store, solo capa de datos y hooks: `38/02` `ResenaApi` + `aReview`; nuevo `38/07-resenas.api` (`obtenerResenas`, todas las páginas, y `enviarResena`, solo los campos del formulario). `20/01` pierde el contrato comentado y `buildPendingReview`; `20/02` `loadReviews(productId)` (si la API falla, conserva lo que hay sin aviso) y `submitReview` async, sin guardar nada en el navegador; `20/03` pide las aprobadas al abrir la ficha; `20/04` valida también los máximos de la API (60/60/1000), evita el doble envío y, si la API rechaza (429, conexión), muestra su mensaje con lo escrito intacto; el aviso «en revisión» solo tras un envío aceptado. La calificación y el total salen del catálogo (L17A) y se actualizan con el refresco al navegar. Sin cambios en componentes. Límite aceptado: el encabezado «Opiniones Verificadas de Clientes» es un literal del componente | `store/src/20-pipeline-estado-resenas/`; `store/src/38-pipeline-datos-api/07-resenas.api.ts` |
 | 27-11-2026 | L17B | — | Verificación: admin y store con `build`, `lint` y madge sin ciclos (con el madge de `api/`). Store contra la API de desarrollo con el seed demo, en Chrome headless (protocolo DevTools): la ficha de PRD-003 muestra «5 (1 opiniones)» y la pestaña lista solo a Kevin R. (aprobada, «6 nov 2026», sin «Compra Verificada»); enviar una opinión muestra el aviso «en revisión», vacía el formulario y la guarda `pendiente` con la ciudad por defecto del país (fila de prueba borrada después). La demostración manual del admin con Firebase real (las 8 demo, aprobar una y en lote, ocultar con motivo, publicar una rechazada, eliminar y el reflejo en la tienda) queda a cargo del propietario; para las demo: `SEED_DEMO=true pnpm -C api db:sembrar` | conversación L17 |
 | 27-11-2026 | L17 | — | Cierre: el propietario confirmó la demostración manual con Firebase real (bandeja con las 8 demo, aprobar una y en lote, ocultar con motivo, publicar una rechazada, eliminar, solo las aprobadas en la tienda con la calificación actualizada y una opinión enviada desde la tienda que llega pendiente al admin) | conversación L17 |
+| 27-11-2026 | L18 | D-09 | **Resuelta (decisión del propietario):** la funcionalidad 44 (mantenimiento desde la UI) queda fuera de alcance. La vista ya no aparece en la UI actual (`00-director-ajustes` no exporta `MaintenancePage` ni hay ruta); su código deshabilitado no se borra ni se reactiva, y no se crea `16-pipeline-mantenimiento`. Los respaldos quedan cubiertos por `scripts/respaldo.sh`/`restaurar.sh` (L02) y por L19 (D-08). Cobertura final: 63 implementadas + 1 excluida. L18 = 17 y 28 | `admin/src/00-director-ajustes.ts`; `admin/src/63-pipeline-mantenimiento-datos/` |
+| 27-11-2026 | L18 | — | Decisiones del propietario: L18 en un solo lote; métricas del tablero (28) e historial de clientes (17) calculados en el servidor; se mantiene la unión por teléfono de los pedidos sin cliente (regla de `getCustomerOrderStats`); el banner del Tablero toma la sucursal, la dirección y los teléfonos de la identidad en vez del literal «Sucursal Cojutepeque», sin tocar componentes. §1 y el encabezado pasan a 63 implementadas + 1 excluida | conversación L18 |
+| 27-11-2026 | L18 | — | API `15-pipeline-reportes` (00-director, 01-routes, 02-service; sin schema propio: usa `esquemaPaginacion`): `GET /admin/reportes/tablero` (vista `tablero`) → `{pedidos:{total, registrados, confirmados, facturados, entregados, cancelados, activos, ventas}}` y `GET /admin/reportes/clientes[?page&limit]` (vista `clientes`) → `{clienteId, pedidos, totalComprado, ultimoPedido}` por cliente del directorio. Las consultas viven en `11-pipeline-pedidos/13-metricas.repository` (`groupBy` por estado y un `LEFT JOIN` con `REGEXP_REPLACE` del teléfono) y se usan por el director de pedidos: reportes no lee tablas de otro dominio. Sin cambios de Prisma. Excluye pedidos eliminados y clientes eliminados; activos = registrado + confirmado + facturado; venta = facturado + entregado, sumada en DECIMAL. No vence reservas al leer (como el listado de pedidos; lo hace el barrido de L14) | `api/src/15-pipeline-reportes/`; `api/src/11-pipeline-pedidos/13-metricas.repository.ts` |
+| 27-11-2026 | L18 | — | Pruebas: `tests/22-reportes.test.ts` (3): tablero por diferencia (conteos, activos y 30.10 + 40.25 = 70.35 sin coma flotante, sin el eliminado); historial con enlace por cliente, por teléfono escrito de otra forma, `clienteId` que manda sobre el teléfono, cancelado que cuenta como pedido pero no suma, eliminados fuera, cliente sin pedidos (0, "0.00", null) y cliente eliminado ausente; paginación y 400 con `limit` 101. `11-permisos`: 2 filas. `pnpm check` en verde (468 pruebas, sin ciclos), estable en dos ejecuciones. API de desarrollo: `/health` 200, ambos endpoints 401 sin token; con los datos de desarrollo, ventas 638.00 = suma de `totalComprado` de los clientes | `api/tests/` |
+| 27-11-2026 | L18 | D-14 | Admin, solo capa de datos y hooks: nuevo `42/07-reportes.api` (`fetchOrderMetrics` → `OrderMetrics`; `fetchCustomerStats` → `CustomerStats` por `CLI-###`, todas las páginas, fecha con `nowStamp`). `42/01-store` suma `orderMetrics` y `customerStats` (no persistidos) y `refreshOrderMetrics`/`refreshCustomerStats` (solo con la vista `tablero`/`clientes`; si fallan, se conserva la última lectura sin aviso, patrón de las métricas de inventario), llamados en la precarga. `35/01-useOrders`: `useOrderMetrics` y el proveedor del puerto `useCustomerOrderStats` leen del servidor y releen al abrir Tablero y Clientes; la interfaz del puerto no cambia. Se retiran `getOrderMetrics` de `42/02` y `43/03-customerStats` (hueco intencional), que quedaron sin uso. «Pedidos recientes» sigue saliendo de la caché de pedidos (datos de la API). Nuevo `57/05-useBranchIdentity`: título «{nombre} · Sucursal {ciudad sin departamento}» y línea «{dirección} · Tel. {teléfonos}» desde Ajustes › Identidad. Sin cambios en componentes. Verificación: admin y store con `build`, `lint` y madge sin ciclos (con el madge de `api/`) | `admin/src/42-pipeline-persistencia-pedidos/`; `admin/src/35-pipeline-consulta-pedidos/01-useOrders.ts`; `admin/src/57-pipeline-resumen-administrativo/` |
 
 ---
 

@@ -1,12 +1,14 @@
-import { useCallback, useMemo } from 'react'
-import type { Customer } from '@/00-director-clientes'
-import { getCustomerOrderStats } from '../43-pipeline-reglas-pedidos/03-customerStats'
-import { countByStatus, filterByStatus, findOrderByQuote, getOrderMetrics } from '../42-pipeline-persistencia-pedidos/02-order.service'
+import { useCallback, useEffect, useMemo } from 'react'
+import type { Customer, CustomerStats } from '@/00-director-clientes'
+import { countByStatus, filterByStatus, findOrderByQuote } from '../42-pipeline-persistencia-pedidos/02-order.service'
 import { isInvoiceable, ORDER_STATUSES, statusOf } from '../39-pipeline-transiciones-pedidos/02-orderFlow'
 import { reservedByProduct } from '../39-pipeline-transiciones-pedidos/03-stock'
 import { useOrderFiltersStore, type OrderStatusFilter } from './02-filters.store'
-import { useSalesStore } from '../42-pipeline-persistencia-pedidos/00-director-persistencia-pedidos'
-import type { OrderStatusId } from '../42-pipeline-persistencia-pedidos/05-types'
+import { refreshCustomerStats, refreshOrderMetrics, useSalesStore } from '../42-pipeline-persistencia-pedidos/00-director-persistencia-pedidos'
+import type { OrderMetrics, OrderStatusId } from '../42-pipeline-persistencia-pedidos/05-types'
+
+const NO_METRICS: OrderMetrics = { total: 0, registered: 0, confirmed: 0, invoiced: 0, delivered: 0, cancelled: 0, active: 0, revenue: 0 }
+const NO_STATS: CustomerStats = { orderCount: 0, totalSpent: 0, lastOrderDate: null }
 
 /** Pedidos visibles según la pestaña de estado activa. */
 export function useFilteredOrders() {
@@ -15,9 +17,12 @@ export function useFilteredOrders() {
   return useMemo(() => filterByStatus(orders, statusFilter), [orders, statusFilter])
 }
 
-export function useOrderMetrics() {
-  const orders = useSalesStore((s) => s.orders)
-  return useMemo(() => getOrderMetrics(orders), [orders])
+/** Métricas del tablero calculadas en el servidor (L18); se releen al abrir el Tablero. */
+export function useOrderMetrics(): OrderMetrics {
+  useEffect(() => {
+    void refreshOrderMetrics()
+  }, [])
+  return useSalesStore((s) => s.orderMetrics) ?? NO_METRICS
 }
 
 export function useRecentOrders(limit = 4) {
@@ -46,10 +51,16 @@ export function useReservedStock(excludeOrderId?: string): Record<string, number
   return useMemo(() => reservedByProduct(orders, excludeOrderId), [orders, excludeOrderId])
 }
 
-/** Implementación del puerto de métricas de Clientes (registrada en `index.ts`). */
+/**
+ * Implementación del puerto de métricas de Clientes (registrada en `00-director-ventas`). Desde L18 el
+ * historial lo calcula el servidor (por cliente o, sin él, por teléfono) y se relee al abrir Clientes.
+ */
 export function useCustomerOrderStats() {
-  const orders = useSalesStore((s) => s.orders)
-  return useCallback((customer: Customer) => getCustomerOrderStats(customer, orders), [orders])
+  useEffect(() => {
+    void refreshCustomerStats()
+  }, [])
+  const stats = useSalesStore((s) => s.customerStats)
+  return useCallback((customer: Customer) => stats[customer.id] ?? NO_STATS, [stats])
 }
 
 /** Pedido activo generado desde cada cotización (para el estado "Convertida"). */

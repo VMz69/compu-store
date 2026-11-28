@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useInventoryMetrics, useProductActions } from '@/00-director-catalogo'
 import { useOrderActions, useOrderMetrics, useRecentOrders } from '@/00-director-ventas'
-import { useStoreSettings } from '@/00-director-ajustes'
+import { useBranchIdentity } from './05-useBranchIdentity'
 import { formatCurrency } from '@/82-pipeline-calculo-importes/02-currency'
 import { percent } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
 import type { KpiData, ProgressTone } from '@/00-director-interfaz'
@@ -11,7 +11,7 @@ type KpiItem = KpiData & { id: string }
 /** Métricas ejecutivas, órdenes recientes y accesos rápidos del Tablero. */
 export function useDashboardMetrics() {
   const navigate = useNavigate()
-  const settings = useStoreSettings()
+  const branch = useBranchIdentity()
   const inv = useInventoryMetrics()
   const ord = useOrderMetrics()
   const recentOrders = useRecentOrders(4)
@@ -50,7 +50,7 @@ export function useDashboardMetrics() {
   ]
 
   return {
-    branch: { title: `${settings.name} · Sucursal Cojutepeque`, address: settings.address, schedule: settings.schedule },
+    branch,
     kpis,
     health,
     recentOrders,

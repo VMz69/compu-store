@@ -24,7 +24,9 @@ import {
   setChannelActiveApi,
   updateOrderApi,
 } from './06-pedidos.api'
-import type { Channel, ChannelDraft, DeletedOrder, Order, OrderDraft, OrderStatusId } from './05-types'
+import { fetchCustomerStats, fetchOrderMetrics } from './07-reportes.api'
+import type { CustomerStats } from '@/00-director-clientes'
+import type { Channel, ChannelDraft, DeletedOrder, Order, OrderDraft, OrderMetrics, OrderStatusId } from './05-types'
 
 /**
  * Store de ventas. Desde L13 la fuente de pedidos, canales y etiquetas de estado es la API; esto es su
@@ -39,6 +41,10 @@ interface SalesState {
   channels: Channel[]
   /** Nombres/descripciones personalizados de los estados del flujo (lo demás es fijo). */
   statusLabels: StatusLabels
+  /** Métricas del tablero calculadas en el servidor (L18); null hasta la primera lectura. No se persisten. */
+  orderMetrics: OrderMetrics | null
+  /** Historial de compra por cliente (`CLI-###`) calculado en el servidor (L18). No se persiste. */
+  customerStats: Record<string, CustomerStats>
   isLoading: boolean
   /** Registra el pedido en estado "Registrado". Lanza error si la cotización ya se convirtió. */
   addOrder: (draft: OrderDraft, by: string) => Promise<Order>
@@ -111,6 +117,8 @@ export const useSalesStore = create<SalesState>()(
       deletedOrders: [],
       channels: [],
       statusLabels: {},
+      orderMetrics: null,
+      customerStats: {},
       isLoading: false,
 
       addOrder: async (draft) => {
@@ -295,6 +303,9 @@ export const useSalesStore = create<SalesState>()(
 const ORDER_VIEWS: ViewId[] = ['pedidos', 'tablero', 'facturacion', 'clientes', 'cotizaciones']
 const CHANNEL_VIEWS: ViewId[] = ['pedidos', 'ajustes', 'tablero']
 const LABEL_VIEWS: ViewId[] = [...ORDER_VIEWS, 'ajustes']
+/** Reportes (L18): el tablero en su vista y el historial de compra en Clientes (= permisos de la API). */
+const METRICS_VIEWS: ViewId[] = ['tablero']
+const CUSTOMER_STATS_VIEWS: ViewId[] = ['clientes']
 
 async function loadInto(views: ViewId[], what: string, load: () => Promise<void>): Promise<void> {
   if (!getCurrentViews().some((view) => views.includes(view))) return
@@ -322,7 +333,34 @@ async function loadSales(): Promise<void> {
     loadInto(ORDER_VIEWS, 'los pedidos', async () => {
       useSalesStore.setState({ orders: await fetchOrders() })
     }),
+    refreshOrderMetrics(),
+    refreshCustomerStats(),
   ])
+}
+
+const hasAnyView = (views: ViewId[]) => getCurrentViews().some((view) => views.includes(view))
+
+/**
+ * Relee las métricas del tablero de la API (L18: al iniciar sesión y al abrir el Tablero). Si falla, se
+ * conservan las últimas, sin aviso y sin calcularlas en el cliente (patrón de las métricas de inventario).
+ */
+export async function refreshOrderMetrics(): Promise<void> {
+  if (!hasAnyView(METRICS_VIEWS)) return
+  try {
+    useSalesStore.setState({ orderMetrics: await fetchOrderMetrics() })
+  } catch {
+    // Silencioso: el tablero sigue mostrando la última lectura válida.
+  }
+}
+
+/** Relee el historial de compra de los clientes (L18: al iniciar sesión y al abrir Clientes). Mismo criterio. */
+export async function refreshCustomerStats(): Promise<void> {
+  if (!hasAnyView(CUSTOMER_STATS_VIEWS)) return
+  try {
+    useSalesStore.setState({ customerStats: await fetchCustomerStats() })
+  } catch {
+    // Silencioso: el directorio sigue mostrando la última lectura válida.
+  }
 }
 
 onAuthenticated(() => void loadSales())
