@@ -51,3 +51,20 @@ Configuración de sus tarjetas del hub: `config/hub.future.ts` (no se importa en
   `registerDemoData`.
 - **Integración DTE con Hacienda**: el sello de recepción hoy es simulado (`billing`); la vista fiscal
   es el lugar natural para credenciales, ambiente (pruebas/producción) y estado de transmisión.
+
+## Estado tras la integración con la API (D-09, L18 · 27-11-2026)
+
+Decisión del propietario: la funcionalidad 44 (Mantenimiento & respaldos) queda **fuera de alcance** por
+ahora. El código de `63-pipeline-mantenimiento-datos/` **se conserva sin conectar**, como base por si más
+adelante se crea un pipeline de mantenimiento. No se borra ni se reactiva tal como está.
+
+- **No reactivarlo tal cual:** sus dos acciones dejaron de tener sentido con la API.
+  - *Exportar JSON* copia la caché del navegador, que ya no es la fuente de verdad y puede estar incompleta
+    (cada store solo carga lo que permiten las vistas del usuario).
+  - *Restablecer demo* reiniciaba datos locales; repetirlo en el servidor borraría la base de datos real.
+- **Respaldos hoy:** `pnpm -C api db:respaldar` / `db:restaurar` (L02, dump completo de MariaDB) y, en
+  producción, respaldos de Railway + dump externo con restauración verificada (L19, D-08).
+- **Si se retoma:** como lote nuevo, con un pipeline del servidor (p. ej. `16-pipeline-mantenimiento`, que
+  hoy no existe): respaldos programados con historial, descarga y restauración, solo para superadmin y con
+  auditoría. Esta vista sería solo su adaptador; se reactiva con los pasos de «Cómo reactivarlas», y
+  `useMaintenance`/`buildBackup` se sustituyen por llamadas a la API.
