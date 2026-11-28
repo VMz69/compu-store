@@ -112,6 +112,11 @@ const MATRIZ: Fila[] = [
     permisos: ['cotizaciones.gestionar'],
     tambien: ['pedidos.gestionar'],
   },
+  // L17: la bandeja de reseñas se consulta en Interacciones; aprobar, rechazar y eliminar exigen `canModerateReviews`.
+  { metodo: 'get', patron: '/resenas', url: '/resenas', permisos: ['interacciones'] },
+  { metodo: 'post', patron: '/resenas/aprobacion', url: '/resenas/aprobacion', permisos: ['interacciones.moderar'] },
+  { metodo: 'patch', patron: '/resenas/:id/estado', url: '/resenas/999999/estado', permisos: ['interacciones.moderar'] },
+  { metodo: 'delete', patron: '/resenas/:id', url: '/resenas/999999', permisos: ['interacciones.moderar'] },
 ]
 
 const TODAS: Permiso[] = [...VISTAS, ...ACCIONES]

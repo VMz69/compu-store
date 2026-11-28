@@ -8,6 +8,7 @@ async function vaciarBD() {
   await prisma.factura.deleteMany()
   await prisma.pedido.deleteMany()
   await prisma.cotizacion.deleteMany()
+  await prisma.resena.deleteMany()
   await prisma.canalVenta.deleteMany()
   await prisma.oferta.deleteMany()
   await prisma.movimientoInventario.deleteMany()
@@ -43,7 +44,7 @@ describe('Seed de la Fase A', () => {
   it('crea el catálogo completo desde una BD vacía', async () => {
     const resumen = await sembrar(prisma)
 
-    expect(resumen).toEqual({ categorias: 5, marcas: 8, productos: 12, configuracion: 1, clientes: 8, ofertas: 0, canales: 4, pedidos: 0, facturas: 0, cotizaciones: 0 })
+    expect(resumen).toEqual({ categorias: 5, marcas: 8, productos: 12, configuracion: 1, clientes: 8, ofertas: 0, canales: 4, pedidos: 0, facturas: 0, cotizaciones: 0, resenas: 0 })
     const ids = (await prisma.producto.findMany({ select: { id: true }, orderBy: { id: 'asc' } })).map((p) => p.id)
     expect(ids).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
   })
@@ -51,7 +52,7 @@ describe('Seed de la Fase A', () => {
   it('es idempotente: una segunda ejecución no crea ni duplica nada', async () => {
     const resumen = await sembrar(prisma)
 
-    expect(resumen).toEqual({ categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0, ofertas: 0, canales: 0, pedidos: 0, facturas: 0, cotizaciones: 0 })
+    expect(resumen).toEqual({ categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0, ofertas: 0, canales: 0, pedidos: 0, facturas: 0, cotizaciones: 0, resenas: 0 })
     expect(await prisma.producto.count()).toBe(12)
     expect(await prisma.cliente.count()).toBe(8)
     expect(await prisma.imagenProducto.count()).toBe(53)
@@ -95,7 +96,7 @@ describe('Seed de la Fase A', () => {
     const interno = (await prisma.correlativo.findUniqueOrThrow({ where: { clave: 'factura-interno' } })).ultimo
     const stockAntes = await prisma.producto.findMany({ where: { id: { in: [1, 5, 7] } }, orderBy: { id: 'asc' }, select: { stock: true } })
     expect(await sembrar(prisma, { demo: true })).toMatchObject({ pedidos: 6, facturas: 2 })
-    expect(await sembrar(prisma, { demo: true })).toMatchObject({ pedidos: 0, facturas: 0, cotizaciones: 0 })
+    expect(await sembrar(prisma, { demo: true })).toMatchObject({ pedidos: 0, facturas: 0, cotizaciones: 0, resenas: 0 })
 
     const pedidos = await prisma.pedido.findMany({ orderBy: { id: 'asc' }, include: { lineas: true, cargos: true, historial: { orderBy: { id: 'asc' } } } })
     expect(pedidos.map((p) => [p.id, p.estado])).toEqual([
@@ -177,6 +178,31 @@ describe('Seed de la Fase A', () => {
 
     // El resto de suites parte sin las cotizaciones demo.
     await prisma.cotizacion.deleteMany()
+  })
+
+  it('con demo siembra las 8 reseñas del mock (REV-001…008) con su moderación, idempotente', async () => {
+    await prisma.resena.deleteMany()
+    expect((await sembrar(prisma, { demo: true })).resenas).toBe(8)
+    expect((await sembrar(prisma, { demo: true })).resenas).toBe(0)
+
+    const resenas = await prisma.resena.findMany({ orderBy: { creadoEn: 'asc' } })
+    expect(resenas.map((r) => [r.productoId, r.estado])).toEqual([
+      [11, 'aprobada'],
+      [5, 'rechazada'],
+      [10, 'aprobada'],
+      [9, 'aprobada'],
+      [3, 'aprobada'],
+      [6, 'pendiente'],
+      [4, 'pendiente'],
+      [1, 'pendiente'],
+    ])
+    const [aprobada, rechazada, , , , pendiente] = resenas
+    expect(aprobada).toMatchObject({ productoSku: 'KNG-FB16-3200', moderadoPor: 'Licda. Sofía Alvarado', motivoRechazo: '' })
+    expect(rechazada).toMatchObject({ motivoRechazo: 'Comentario sin contenido útil.' })
+    expect(pendiente).toMatchObject({ moderadoPor: null, moderadoEn: null })
+
+    // El resto de suites parte sin las reseñas demo.
+    await prisma.resena.deleteMany()
   })
 
   it('no sobrescribe lo editado desde el admin', async () => {

@@ -10,7 +10,7 @@
  * Con `SEED_DEMO=true` también siembra las ofertas de demostración (L12), con fechas
  * relativas al día de la ejecución para que no venzan, y los pedidos de demostración (L13; los
  * reservados de L14 se reservan y los facturados de L15 se facturan con la misma operación que la API),
- * más las cotizaciones de demostración (L16): `SEED_DEMO=true pnpm db:sembrar`.
+ * más las cotizaciones de demostración (L16) y las reseñas de demostración (L17): `SEED_DEMO=true pnpm db:sembrar`.
  */
 import { resolve } from 'node:path'
 import type { CondicionProducto, PrismaClient } from '../generated/prisma/client.js'
@@ -444,6 +444,24 @@ const COTIZACIONES_DEMO = [
   },
 ] as const
 
+// ── Reseñas de demostración (L17, solo con SEED_DEMO=true) ──────────────────
+// Del mock (admin/src/86-pipeline-datos-demo-personas/04-reviews.mock.ts): REV-001…008 con su estado y
+// moderación. Idempotentes por autor + fecha; enlazan el producto si sigue existiendo (snapshot de SKU y nombre).
+
+const MODERADOR_DEMO = 'Licda. Sofía Alvarado'
+const MODERADO_EN_DEMO = '2026-11-05T10:00:00.000Z'
+
+const RESENAS_DEMO = [
+  { productoId: 11, productoNombre: 'Memoria RAM Kingston Fury Beast 16GB DDR4', autor: 'Andrea M.', ciudad: 'San Pedro Perulapán', calificacion: 5, comentario: 'Me ayudaron a elegir la RAM compatible con mi equipo. Excelente servicio.', creadoEn: '2026-11-01T12:00:00.000Z', estado: 'aprobada', motivoRechazo: '' },
+  { productoId: 5, productoNombre: 'Mouse Inalámbrico Logitech M185', autor: 'Anónimo', ciudad: 'El Salvador', calificacion: 3, comentario: 'ok', creadoEn: '2026-11-02T08:45:00.000Z', estado: 'rechazada', motivoRechazo: 'Comentario sin contenido útil.' },
+  { productoId: 10, productoNombre: 'Audífonos Inalámbricos JBL Pure Bass', autor: 'Gabriela S.', ciudad: 'Santa Ana', calificacion: 4, comentario: 'Suenan muy bien y la batería rinde varios días. Cómodos para usar todo el día.', creadoEn: '2026-11-03T18:00:00.000Z', estado: 'aprobada', motivoRechazo: '' },
+  { productoId: 9, productoNombre: 'Laptop HP ProBook 450 G8 Core i5', autor: 'Ing. Marvin C.', ciudad: 'San Salvador', calificacion: 4, comentario: 'Compramos tres para el despacho. Rinden bien; el teclado podría ser mejor.', creadoEn: '2026-11-04T14:10:00.000Z', estado: 'aprobada', motivoRechazo: '' },
+  { productoId: 3, productoNombre: 'Disco M.2 1 TB SAMSUNG NVMe 980', autor: 'Kevin R.', ciudad: 'Cojutepeque', calificacion: 5, comentario: 'Me lo instalaron en tienda y clonaron mi disco anterior. Arranque en segundos.', creadoEn: '2026-11-06T09:30:00.000Z', estado: 'aprobada', motivoRechazo: '' },
+  { productoId: 6, productoNombre: 'Audífonos Gaming Diadema 7.1 Surround', autor: 'xXgamerXx', ciudad: 'San Salvador', calificacion: 1, comentario: 'COMPREN EN OTRO LADO!!! Visiten www.ofertas-baratas.example para mejores precios', creadoEn: '2026-11-07T22:40:00.000Z', estado: 'pendiente', motivoRechazo: '' },
+  { productoId: 4, productoNombre: 'Teclado Mecánico RGB Redragon Gamer', autor: 'Josué M.', ciudad: 'San Rafael Cedros', calificacion: 2, comentario: 'A la semana una tecla dejó de responder. Espero que me atiendan la garantía.', creadoEn: '2026-11-08T11:05:00.000Z', estado: 'pendiente', motivoRechazo: '' },
+  { productoId: 1, productoNombre: 'Laptop Acer Aspire 5 Refurbished', autor: 'Daniela P.', ciudad: 'Cojutepeque', calificacion: 5, comentario: 'Llegó impecable y la batería dura toda la jornada. Muy buena atención en sala de ventas.', creadoEn: '2026-11-08T16:20:00.000Z', estado: 'pendiente', motivoRechazo: '' },
+] as const
+
 // ── Siembra ────────────────────────────────────────────────────────────────
 
 export interface ResumenSeed {
@@ -457,10 +475,11 @@ export interface ResumenSeed {
   pedidos: number
   facturas: number
   cotizaciones: number
+  resenas: number
 }
 
 export interface OpcionesSeed {
-  /** Siembra también los datos de demostración (ofertas de L12, pedidos de L13–L14, facturas de L15 y cotizaciones de L16). */
+  /** Siembra también los datos de demostración (ofertas de L12, pedidos de L13–L14, facturas de L15, cotizaciones de L16 y reseñas de L17). */
   demo?: boolean
 }
 
@@ -517,7 +536,7 @@ export async function sembrar(prisma: PrismaClient, { demo = false }: OpcionesSe
   const { obtenerEmisor } = await import('../src/08-pipeline-tienda/00-director-tienda.js')
   const { codigoCotizacion, SECUENCIA_COTIZACION, validezHasta } = await import('../src/13-pipeline-cotizaciones/00-director-cotizaciones.js')
   return prisma.$transaction(async (tx) => {
-    const resumen: ResumenSeed = { categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0, ofertas: 0, canales: 0, pedidos: 0, facturas: 0, cotizaciones: 0 }
+    const resumen: ResumenSeed = { categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0, ofertas: 0, canales: 0, pedidos: 0, facturas: 0, cotizaciones: 0, resenas: 0 }
 
     const categoriaIds = new Map<string, number>()
     for (const c of CATEGORIAS) {
@@ -665,6 +684,26 @@ export async function sembrar(prisma: PrismaClient, { demo = false }: OpcionesSe
       })
       await tx.$executeRaw`UPDATE correlativos SET ultimo = GREATEST(ultimo, ${numero}) WHERE clave = ${SECUENCIA_COTIZACION}`
       resumen.cotizaciones++
+    }
+
+    for (const { productoId, productoNombre, creadoEn, estado, ...r } of demo ? RESENAS_DEMO : []) {
+      const fecha = new Date(creadoEn)
+      if (await tx.resena.findFirst({ where: { autor: r.autor, creadoEn: fecha } })) continue
+      const producto = await tx.producto.findUnique({ where: { id: productoId }, select: { sku: true, nombre: true } })
+      const moderada = estado !== 'pendiente'
+      await tx.resena.create({
+        data: {
+          ...r,
+          estado,
+          productoId: producto ? productoId : null,
+          productoSku: producto?.sku ?? `PRD-${String(productoId).padStart(3, '0')}`,
+          productoNombre: producto?.nombre ?? productoNombre,
+          creadoEn: fecha,
+          moderadoPor: moderada ? MODERADOR_DEMO : null,
+          moderadoEn: moderada ? new Date(MODERADO_EN_DEMO) : null,
+        },
+      })
+      resumen.resenas++
     }
 
     return resumen

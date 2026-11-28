@@ -168,6 +168,21 @@ export const vendibles = (ids: number[]) =>
         select: { id: true, sku: true, nombre: true, precio: true, publicado: true },
       })
 
+/**
+ * Calificación de las reseñas aprobadas por producto (L17). Excepción como la de ofertas con `productos`:
+ * el catálogo lee la tabla `resenas` directamente para no crear el ciclo catálogo ↔ reseñas.
+ */
+export async function resumenResenas(ids: number[]): Promise<Map<number, { promedio: number; total: number }>> {
+  if (ids.length === 0) return new Map()
+  const grupos = await prisma.resena.groupBy({
+    by: ['productoId'],
+    where: { productoId: { in: ids }, estado: 'aprobada' },
+    _avg: { calificacion: true },
+    _count: { _all: true },
+  })
+  return new Map(grupos.flatMap((g) => (g.productoId === null ? [] : [[g.productoId, { promedio: g._avg.calificacion ?? 0, total: g._count._all }]])))
+}
+
 export const buscar = (id: number, cliente: Tx = prisma) => cliente.producto.findUnique({ where: { id }, include: DETALLE })
 
 export const categoriaPorSlug = (slug: string) => prisma.categoria.findUnique({ where: { slug }, select: { id: true } })

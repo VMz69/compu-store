@@ -85,6 +85,7 @@ model Producto {
   lineasPedido     LineaPedido[]
   lineasFactura    LineaFactura[]
   lineasCotizacion LineaCotizacion[]
+  resenas          Resena[]
 
   @@index([publicado, categoriaId])
   @@map("productos")
@@ -182,6 +183,7 @@ model Usuario {
   facturasCreadas       Factura[]              @relation("FacturaCreadaPor")
   facturasAnuladas      Factura[]              @relation("FacturaAnuladaPor")
   cotizaciones          Cotizacion[]
+  resenasModeradas      Resena[]
 
   @@index([rol])
   @@map("usuarios")
@@ -621,4 +623,40 @@ model CargoCotizacion {
 
   @@index([cotizacionId])
   @@map("cotizaciones_cargos")
+}
+
+// ── Reseñas (L17) ────────────────────────────────────────────────────────────
+
+/// Moderación: toda reseña entra «pendiente»; la tienda solo muestra las aprobadas.
+enum EstadoResena {
+  pendiente
+  aprobada
+  rechazada
+}
+
+/// Opinión enviada desde la ficha del producto. Si el producto se elimina, conserva el snapshot (SKU y nombre).
+model Resena {
+  id                 Int          @id @default(autoincrement())
+  productoId         Int?
+  producto           Producto?    @relation(fields: [productoId], references: [id], onDelete: SetNull)
+  productoSku        String       @db.VarChar(32)
+  productoNombre     String       @db.VarChar(120)
+  autor              String       @db.VarChar(60)
+  ciudad             String       @db.VarChar(60)
+  /// 1–5 estrellas.
+  calificacion       Int          @db.UnsignedTinyInt
+  comentario         String       @db.VarChar(1000)
+  estado             EstadoResena @default(pendiente)
+  creadoEn           DateTime     @default(now())
+  moderadoPorId      Int?
+  moderadoPorUsuario Usuario?     @relation(fields: [moderadoPorId], references: [id], onDelete: SetNull)
+  /// Nombre del moderador como snapshot.
+  moderadoPor        String?      @db.VarChar(80)
+  moderadoEn         DateTime?
+  /// Interno: el cliente no lo ve.
+  motivoRechazo      String       @default("") @db.VarChar(200)
+
+  @@index([productoId, estado, creadoEn])
+  @@index([estado, creadoEn])
+  @@map("resenas")
 }

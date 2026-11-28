@@ -25,8 +25,9 @@ export interface ProductoPublicoDto {
   etiqueta: string | null
   imagenes: string[]
   especificaciones: { clave: string; valor: string }[]
-  /** Reseñas: Fase B (L17). */
-  calificacion: null
+  /** Promedio de las reseñas aprobadas con 1 decimal (L17); null sin reseñas aprobadas. */
+  calificacion: number | null
+  /** Reseñas aprobadas (las que ve el cliente). */
   totalResenas: number
 }
 
@@ -51,7 +52,12 @@ const importeOpcional = (valor: { toFixed: (decimales: number) => string } | nul
  * Contrato público. Con una oferta vigente (L12), `precio` es el precio efectivo y `precioAnterior`
  * el precio base; sin `vigente` (admin) se devuelven siempre el precio base y el anterior manual.
  */
-const aPublico = (p: repo.ProductoDetalle, vigente?: PrecioEfectivo): ProductoPublicoDto => ({
+type ResumenResenas = Map<number, { promedio: number; total: number }>
+
+/** El store muestra la calificación tal cual: el servidor la redondea a 1 decimal. */
+const calificacionDe = (resumen?: { promedio: number; total: number }) => (resumen ? Math.round(resumen.promedio * 10) / 10 : null)
+
+const aPublico = (p: repo.ProductoDetalle, resenas: ResumenResenas, vigente?: PrecioEfectivo): ProductoPublicoDto => ({
   id: p.id,
   slug: p.slug,
   sku: p.sku,
@@ -65,13 +71,13 @@ const aPublico = (p: repo.ProductoDetalle, vigente?: PrecioEfectivo): ProductoPu
   etiqueta: p.etiqueta,
   imagenes: p.imagenes.map((img) => img.url),
   especificaciones: p.especificaciones.map(({ clave, valor }) => ({ clave, valor })),
-  calificacion: null,
-  totalResenas: 0,
+  calificacion: calificacionDe(resenas.get(p.id)),
+  totalResenas: resenas.get(p.id)?.total ?? 0,
 })
 
 /** El admin edita el precio base: nunca recibe el de oferta (así guardar no lo convierte en base). */
-const aAdmin = (p: repo.ProductoDetalle): ProductoAdminDto => ({
-  ...aPublico(p),
+const aAdmin = (p: repo.ProductoDetalle, resenas: ResumenResenas): ProductoAdminDto => ({
+  ...aPublico(p, resenas),
   modelo: p.modelo,
   condicion: p.condicion,
   costo: importeOpcional(p.costo),
@@ -142,15 +148,20 @@ async function conReservasAlDia(filas: repo.ProductoDetalle[]): Promise<repo.Pro
 
 export async function listar(paginacion: Paginacion): Promise<Pagina<ProductoAdminDto>> {
   const [filas, total] = await repo.listar(rango(paginacion), false)
-  return { data: (await conReservasAlDia(filas)).map(aAdmin), meta: meta(paginacion, total) }
+  const [alDia, resenas] = await Promise.all([conReservasAlDia(filas), repo.resumenResenas(filas.map((p) => p.id))])
+  return { data: alDia.map((p) => aAdmin(p, resenas)), meta: meta(paginacion, total) }
 }
 
-export const obtener = async (id: number): Promise<ProductoAdminDto> => aAdmin(await exigirProducto(id))
+export async function obtener(id: number): Promise<ProductoAdminDto> {
+  const producto = await exigirProducto(id)
+  return aAdmin(producto, await repo.resumenResenas([id]))
+}
 
 /** Contrato público con el precio efectivo de hoy (un solo «hoy» por petición). */
 async function aPublicos(filas: repo.ProductoDetalle[], hoy: string = hoyNegocio()): Promise<ProductoPublicoDto[]> {
-  const [precios, alDia] = await Promise.all([precioEfectivo(filas.map((p) => p.id), hoy), conReservasAlDia(filas)])
-  return alDia.map((p) => aPublico(p, precios.get(p.id)))
+  const ids = filas.map((p) => p.id)
+  const [precios, alDia, resenas] = await Promise.all([precioEfectivo(ids, hoy), conReservasAlDia(filas), repo.resumenResenas(ids)])
+  return alDia.map((p) => aPublico(p, resenas, precios.get(p.id)))
 }
 
 /** Tienda: solo publicados, con búsqueda, filtros, orden y paginación (L07), con el precio efectivo (L12). */
