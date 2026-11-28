@@ -1,9 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ensurePermission, usePermission, useSession } from '@/00-director-acceso'
 import { askConfirm } from '@/72-pipeline-confirmaciones-globales/03-confirm.store'
 import { toast } from '@/76-pipeline-avisos-globales/02-toast.store'
 import { filterReviews, REJECT_REASONS, reviewMetrics, spamSignals } from '../56-pipeline-persistencia-comentarios/02-reviews.service'
-import { useReviewsStore } from '../56-pipeline-persistencia-comentarios/00-director-persistencia-comentarios'
+import { loadReviews, useReviewsStore } from '../56-pipeline-persistencia-comentarios/00-director-persistencia-comentarios'
 import type { ProductReview, ReviewStatus } from '../56-pipeline-persistencia-comentarios/03-types'
 
 export type ReviewFilter = 'all' | ReviewStatus
@@ -23,6 +23,11 @@ export function useReviewModeration() {
   const [search, setSearch] = useState('')
   const [rating, setRating] = useState<number | null>(null)
   const by = user?.name ?? 'Equipo CompuStore'
+
+  // Los comentarios llegan desde la tienda en cualquier momento: se relee la bandeja al abrir la vista (L17).
+  useEffect(() => {
+    void loadReviews()
+  }, [])
 
   const items = useMemo(
     () => filterReviews(reviews, { status, search, rating }).map((review) => ({ review, signals: spamSignals(review) })),

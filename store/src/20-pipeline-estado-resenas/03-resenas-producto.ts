@@ -1,17 +1,19 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { isPublished } from './01-contrato-resenas'
 import { useReviewStore } from './02-resenas.store'
 
 /**
- * Reseñas PUBLICADAS del producto y distribución de estrellas memoizada.
- * Las pendientes de moderación (o rechazadas) nunca se muestran ni cuentan.
- * TODO(API): con backend, el servidor ya devuelve solo las aprobadas (`?status=aprobado`).
+ * Reseñas PUBLICADAS del producto y distribución de estrellas memoizada. Se piden a la API al abrir
+ * la ficha (L17), que solo devuelve las aprobadas: las pendientes o rechazadas nunca se muestran ni cuentan.
  */
 export const useProductReviews = (productId: number) => {
   const storedReviews = useReviewStore((state) => state.reviewsByProduct[productId])
-  const published = useMemo(() => (storedReviews ?? []).filter(isPublished), [storedReviews])
-  // Sin respaldo de muestra: sin reseñas aprobadas, la sección queda vacía (0 opiniones) hasta L17.
-  const reviews = published
+  const loadReviews = useReviewStore((state) => state.loadReviews)
+  const reviews = useMemo(() => (storedReviews ?? []).filter(isPublished), [storedReviews])
+
+  useEffect(() => {
+    if (productId > 0) void loadReviews(productId)
+  }, [productId, loadReviews])
 
   const distribution = useMemo(
     () =>

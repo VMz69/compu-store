@@ -1,4 +1,4 @@
-import type { Brand, Category, Product } from '@/00-director-modelos'
+import type { Brand, Category, Product, Review } from '@/00-director-modelos'
 import type { StoreConfig } from '@/01-pipeline-identidad-tienda/00-director-identidad-tienda'
 
 /**
@@ -81,6 +81,16 @@ export interface CarritoValidadoApi {
   valido: boolean
 }
 
+/** Reseña publicada (L17): la API solo devuelve las aprobadas, sin datos de moderación. */
+export interface ResenaApi {
+  id: number
+  autor: string
+  ciudad: string
+  calificacion: number
+  comentario: string
+  creadoEn: string
+}
+
 /* ---------- Traducción ---------- */
 
 /** Portada genérica para productos sin fotos (no es un dato de negocio). */
@@ -103,6 +113,25 @@ export const aProducto = (p: ProductoApi): Product => ({
   images: p.imagenes.slice(1),
   description: p.descripcion,
   specs: p.especificaciones.map(({ clave, valor }) => `${clave}: ${valor}`),
+})
+
+/** Fecha corta del negocio («6 nov 2026»), en la hora de El Salvador. */
+const FECHA_RESENA = new Intl.DateTimeFormat('es-SV', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'America/El_Salvador' })
+
+/**
+ * Reseña aprobada → `Review`. Sin título (el formulario no lo captura) ni «Compra Verificada»
+ * (la API no verifica compras): no se inventan datos.
+ */
+export const aReview = (r: ResenaApi): Review => ({
+  id: r.id,
+  author: r.autor,
+  city: r.ciudad,
+  rating: r.calificacion,
+  date: FECHA_RESENA.format(new Date(r.creadoEn)).replace('.', ''),
+  title: '',
+  comment: r.comentario,
+  verified: false,
+  status: 'aprobado',
 })
 
 export const aCategoria = (c: CategoriaApi): Category => ({

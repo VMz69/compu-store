@@ -1,38 +1,32 @@
 import { create } from 'zustand'
-import { buildPendingReview, type ReviewSubmission } from './01-contrato-resenas'
+import { enviarResena, obtenerResenas } from '@/38-pipeline-datos-api/00-director-datos-api'
+import type { ReviewSubmission } from './01-contrato-resenas'
 import type { Review } from '@/00-director-modelos'
 
 /**
- * Reseñas por producto. En esta fase viven en memoria (se pierden al recargar).
- * Sin reseñas de muestra: la Fase A no presenta datos ficticios como reales (L07B);
- * las reseñas reales llegan con la API en L17.
- *
- * Moderación: cada opinión nueva entra como `pendiente` y NO se muestra hasta que el
- * back office (/admin › Comentarios) la apruebe. Ver contrato en `lib/reviews.api.ts`.
- *
- * TODO(API): cuando exista el backend,
- *  · `reviewsByProduct` se carga con `fetchApprovedReviews(productId)` (solo aprobadas);
- *  · `submitReview` llama a `submitReview()` de la API y ya no guarda localmente
- *    (la opinión pendiente vive en el servidor, no en el navegador del cliente).
+ * Reseñas publicadas por producto (L17): se piden a la API al abrir cada ficha, sin caché entre
+ * visitas. Una opinión nueva se envía al servidor, que la guarda «pendiente» y NO se muestra hasta
+ * que el back office (/admin › Comentarios) la apruebe: nada se guarda en el navegador.
  */
 interface ReviewStore {
   reviewsByProduct: Record<number, Review[]>
-  /** Envía la opinión a moderación (queda `pendiente`). */
-  submitReview: (productId: number, data: ReviewSubmission) => Review
+  /** Relee las aprobadas del producto; si la API falla, se conservan las que hay (sin aviso). */
+  loadReviews: (productId: number) => Promise<void>
+  /** Envía la opinión a moderación; lanza el error de la API (límite de envíos, conexión…). */
+  submitReview: (productId: number, data: ReviewSubmission) => Promise<void>
 }
 
 export const useReviewStore = create<ReviewStore>((set) => ({
   reviewsByProduct: {},
 
-  submitReview: (productId, data) => {
-    // TODO(API): reemplazar por `await submitReview(productId, data)` (lib/reviews.api.ts).
-    const review = buildPendingReview(data)
-    set((state) => ({
-      reviewsByProduct: {
-        ...state.reviewsByProduct,
-        [productId]: [review, ...(state.reviewsByProduct[productId] ?? [])],
-      },
-    }))
-    return review
+  loadReviews: async (productId) => {
+    try {
+      const reviews = await obtenerResenas(productId)
+      set((state) => ({ reviewsByProduct: { ...state.reviewsByProduct, [productId]: reviews } }))
+    } catch {
+      // Se mantiene lo que ya se mostraba: las reseñas no bloquean la ficha.
+    }
   },
+
+  submitReview: (productId, data) => enviarResena(productId, data),
 }))
