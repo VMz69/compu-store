@@ -12,6 +12,8 @@ const DETALLE = {
   historial: { orderBy: [{ fecha: 'asc' }, { id: 'asc' }] },
   // L15: la factura activa (emitida) por la relación; pedidos no importa el pipeline de facturación.
   facturas: { where: { pedidoActivoId: { not: null } }, select: { id: true, numeroControl: true, correlativo: true } },
+  // L16: la cotización de origen por la relación; pedidos no importa el pipeline de cotizaciones.
+  cotizacion: { select: { id: true, codigo: true } },
 } satisfies Prisma.PedidoInclude
 
 export type PedidoFila = Prisma.PedidoGetPayload<{ include: typeof DETALLE }>
@@ -31,6 +33,8 @@ export interface ContenidoPedido {
   total: string
   lineas: { productoId: number; sku: string; nombre: string; cantidad: number; precioUnitario: string; descuento: string; importe: string }[]
   cargos: { concepto: string; monto: string }[]
+  /** Cotización de origen (solo al convertir, L16); editar no la cambia. */
+  cotizacionId?: number
 }
 
 export interface Evento {

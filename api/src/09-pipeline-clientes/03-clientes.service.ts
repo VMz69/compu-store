@@ -116,6 +116,8 @@ export interface ClienteParaPedido {
   nombre: string
   telefono: string
   correo: string | null
+  /** L16: la cotización lo copia en su snapshot. */
+  documento: string | null
   activo: boolean
   eliminado: boolean
 }
@@ -123,5 +125,13 @@ export interface ClienteParaPedido {
 export async function obtenerClienteParaPedido(id: number): Promise<ClienteParaPedido | null> {
   const c = await repo.buscarCualquiera(id)
   if (!c) return null
-  return { id: c.id, nombre: c.nombre, telefono: c.telefono, correo: c.correo, activo: c.activo, eliminado: c.eliminadoEn !== null }
+  return {
+    id: c.id,
+    nombre: c.nombre,
+    telefono: c.telefono,
+    correo: c.correo,
+    documento: c.documento,
+    activo: c.activo,
+    eliminado: c.eliminadoEn !== null,
+  }
 }

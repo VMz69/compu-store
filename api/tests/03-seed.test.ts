@@ -7,6 +7,7 @@ import { hoyNegocio } from '../src/10-pipeline-ofertas/00-director-ofertas.js'
 async function vaciarBD() {
   await prisma.factura.deleteMany()
   await prisma.pedido.deleteMany()
+  await prisma.cotizacion.deleteMany()
   await prisma.canalVenta.deleteMany()
   await prisma.oferta.deleteMany()
   await prisma.movimientoInventario.deleteMany()
@@ -42,7 +43,7 @@ describe('Seed de la Fase A', () => {
   it('crea el catálogo completo desde una BD vacía', async () => {
     const resumen = await sembrar(prisma)
 
-    expect(resumen).toEqual({ categorias: 5, marcas: 8, productos: 12, configuracion: 1, clientes: 8, ofertas: 0, canales: 4, pedidos: 0, facturas: 0 })
+    expect(resumen).toEqual({ categorias: 5, marcas: 8, productos: 12, configuracion: 1, clientes: 8, ofertas: 0, canales: 4, pedidos: 0, facturas: 0, cotizaciones: 0 })
     const ids = (await prisma.producto.findMany({ select: { id: true }, orderBy: { id: 'asc' } })).map((p) => p.id)
     expect(ids).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
   })
@@ -50,7 +51,7 @@ describe('Seed de la Fase A', () => {
   it('es idempotente: una segunda ejecución no crea ni duplica nada', async () => {
     const resumen = await sembrar(prisma)
 
-    expect(resumen).toEqual({ categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0, ofertas: 0, canales: 0, pedidos: 0, facturas: 0 })
+    expect(resumen).toEqual({ categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0, ofertas: 0, canales: 0, pedidos: 0, facturas: 0, cotizaciones: 0 })
     expect(await prisma.producto.count()).toBe(12)
     expect(await prisma.cliente.count()).toBe(8)
     expect(await prisma.imagenProducto.count()).toBe(53)
@@ -94,7 +95,7 @@ describe('Seed de la Fase A', () => {
     const interno = (await prisma.correlativo.findUniqueOrThrow({ where: { clave: 'factura-interno' } })).ultimo
     const stockAntes = await prisma.producto.findMany({ where: { id: { in: [1, 5, 7] } }, orderBy: { id: 'asc' }, select: { stock: true } })
     expect(await sembrar(prisma, { demo: true })).toMatchObject({ pedidos: 6, facturas: 2 })
-    expect(await sembrar(prisma, { demo: true })).toMatchObject({ pedidos: 0, facturas: 0 })
+    expect(await sembrar(prisma, { demo: true })).toMatchObject({ pedidos: 0, facturas: 0, cotizaciones: 0 })
 
     const pedidos = await prisma.pedido.findMany({ orderBy: { id: 'asc' }, include: { lineas: true, cargos: true, historial: { orderBy: { id: 'asc' } } } })
     expect(pedidos.map((p) => [p.id, p.estado])).toEqual([
@@ -141,6 +142,41 @@ describe('Seed de la Fase A', () => {
     await deshacerPedidosDemo()
     const restaurado = await prisma.producto.findMany({ where: { id: { in: [1, 5, 7] } }, orderBy: { id: 'asc' }, select: { stock: true } })
     expect(restaurado).toEqual(stockAntes)
+  })
+
+  it('con demo siembra las 6 cotizaciones del mock (COT-2026-001…006) con sus precios cotizados, idempotente', async () => {
+    // Las pruebas anteriores ya sembraron con demo; se parte de cero para contar.
+    await prisma.pedido.deleteMany({ where: { cotizacionId: { not: null } } })
+    await prisma.cotizacion.deleteMany()
+    expect((await sembrar(prisma, { demo: true })).cotizaciones).toBe(6)
+    expect((await sembrar(prisma, { demo: true })).cotizaciones).toBe(0)
+
+    const cotizaciones = await prisma.cotizacion.findMany({ orderBy: { numero: 'asc' }, include: { lineas: { orderBy: { id: 'asc' } }, cargos: true } })
+    expect(cotizaciones.map((c) => [c.codigo, c.estado, c.creadaPor])).toEqual([
+      ['COT-2026-001', 'aceptada', 'Licda. Sofía Alvarado'],
+      ['COT-2026-002', 'emitida', 'Gabriela Solís'],
+      ['COT-2026-003', 'rechazada', 'Ing. Marvin Castro'],
+      ['COT-2026-004', 'emitida', 'Gabriela Solís'],
+      ['COT-2026-005', 'aceptada', 'Licda. Sofía Alvarado'],
+      ['COT-2026-006', 'emitida', 'Gabriela Solís'],
+    ])
+    const [primera, , ocasional, , , portillo] = cotizaciones
+    // 799 × 3 × 95 % = 2277.15 + 20 × 3 = 60 + instalación 30.00
+    expect(portillo!.total.toFixed(2)).toBe('2367.15')
+    expect(portillo!.cargos.map((c) => c.monto.toFixed(2))).toEqual(['30.00'])
+    expect(portillo).toMatchObject({ clienteId: 6, clienteDocumento: '0702-110520-101-7', validezDias: 15 })
+    // Emitida el 04-11 a las 08:10 de El Salvador + 15 días.
+    expect(portillo!.validaHasta.toISOString().slice(0, 10)).toBe('2026-11-19')
+    expect(ocasional).toMatchObject({ clienteId: null, clienteNombre: 'Colegio San José de Cojutepeque' })
+    expect(primera!.lineas.map((l) => [l.productoId, l.precioUnitario.toFixed(2), l.importe.toFixed(2)])).toEqual([
+      [3, '75.00', '75.00'],
+      [7, '18.00', '18.00'],
+    ])
+    expect((primera!.emisor as { nombreComercial: string }).nombreComercial).toEqual(expect.any(String))
+    expect((await prisma.correlativo.findUniqueOrThrow({ where: { clave: 'cotizacion' } })).ultimo).toBeGreaterThanOrEqual(6)
+
+    // El resto de suites parte sin las cotizaciones demo.
+    await prisma.cotizacion.deleteMany()
   })
 
   it('no sobrescribe lo editado desde el admin', async () => {

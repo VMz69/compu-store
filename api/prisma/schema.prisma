@@ -84,6 +84,7 @@ model Producto {
   ofertas          OfertaProducto[]
   lineasPedido     LineaPedido[]
   lineasFactura    LineaFactura[]
+  lineasCotizacion LineaCotizacion[]
 
   @@index([publicado, categoriaId])
   @@map("productos")
@@ -180,6 +181,7 @@ model Usuario {
   pedidosEliminados     Pedido[]
   facturasCreadas       Factura[]              @relation("FacturaCreadaPor")
   facturasAnuladas      Factura[]              @relation("FacturaAnuladaPor")
+  cotizaciones          Cotizacion[]
 
   @@index([rol])
   @@map("usuarios")
@@ -279,22 +281,23 @@ enum TipoCliente {
 /// Directorio de clientes (L11). El teléfono es único por sus dígitos (`telefonoNormalizado`).
 /// Documento = DUI (persona) o NIT (empresa), opcional y único. La relación con pedidos llega en L13.
 model Cliente {
-  id                  Int         @id @default(autoincrement())
+  id                  Int          @id @default(autoincrement())
   tipo                TipoCliente
-  nombre              String      @db.VarChar(100)
-  documento           String?     @unique @db.VarChar(17)
-  telefono            String      @db.VarChar(20)
-  telefonoNormalizado String      @unique @db.VarChar(15)
-  correo              String?     @db.VarChar(254)
-  ciudad              String      @db.VarChar(80)
-  direccion           String      @db.VarChar(255)
-  notas               String      @db.Text
-  activo              Boolean     @default(true)
-  creadoEn            DateTime    @default(now())
-  actualizadoEn       DateTime    @updatedAt
+  nombre              String       @db.VarChar(100)
+  documento           String?      @unique @db.VarChar(17)
+  telefono            String       @db.VarChar(20)
+  telefonoNormalizado String       @unique @db.VarChar(15)
+  correo              String?      @db.VarChar(254)
+  ciudad              String       @db.VarChar(80)
+  direccion           String       @db.VarChar(255)
+  notas               String       @db.Text
+  activo              Boolean      @default(true)
+  creadoEn            DateTime     @default(now())
+  actualizadoEn       DateTime     @updatedAt
   /// Eliminación lógica (L13): un cliente con pedidos sale del directorio, pero sus pedidos lo conservan.
   eliminadoEn         DateTime?
   pedidos             Pedido[]
+  cotizaciones        Cotizacion[]
 
   @@index([nombre])
   @@map("clientes")
@@ -396,6 +399,9 @@ model Pedido {
   eliminadoPorId    Int?
   eliminadoPor      Usuario?       @relation(fields: [eliminadoPorId], references: [id], onDelete: SetNull)
   motivoEliminacion String?        @db.VarChar(200)
+  /// Cotización de origen (L16); una cotización con pedidos no se elimina.
+  cotizacionId      Int?
+  cotizacion        Cotizacion?    @relation(fields: [cotizacionId], references: [id], onDelete: Restrict)
   lineas            LineaPedido[]
   cargos            CargoPedido[]
   historial         EventoPedido[]
@@ -452,7 +458,9 @@ model EventoPedido {
   @@map("pedidos_historial")
 }
 
-/* ---------- Facturación (L15) ---------- */
+/**
+ * ---------- Facturación (L15) ----------
+ */
 
 /// Último número usado por secuencia (D-12): se bloquea con `SELECT … FOR UPDATE` al emitir. Filas de la migración.
 model Correlativo {
@@ -481,38 +489,38 @@ enum TipoLineaFactura {
 
 /// Factura interna (DTE-01, consumidor final) emitida desde un pedido. Inmutable: se corrige anulándola.
 model Factura {
-  id                Int              @id @default(autoincrement())
+  id                Int            @id @default(autoincrement())
   /// `DTE-01-M001P001-` + 15 dígitos.
-  numeroControl     String           @unique @db.VarChar(31)
+  numeroControl     String         @unique @db.VarChar(31)
   /// Correlativo interno (6 dígitos en el documento); nunca se reutiliza, tampoco el de una anulada.
-  correlativo       Int              @unique @db.UnsignedInt
-  codigoGeneracion  String           @unique @db.Char(36)
+  correlativo       Int            @unique @db.UnsignedInt
+  codigoGeneracion  String         @unique @db.Char(36)
   /// Sello de recepción SIMULADO (no hay transmisión a Hacienda).
-  selloRecepcion    String           @db.Char(40)
+  selloRecepcion    String         @db.Char(40)
   pedidoId          Int
-  pedido            Pedido           @relation(fields: [pedidoId], references: [id], onDelete: Restrict)
+  pedido            Pedido         @relation(fields: [pedidoId], references: [id], onDelete: Restrict)
   /// = pedidoId mientras está emitida; null al anularse. Único: la BD impide dos facturas activas por pedido.
-  pedidoActivoId    Int?             @unique
+  pedidoActivoId    Int?           @unique
   consumidorFinal   Boolean
-  receptorNombre    String           @db.VarChar(100)
-  receptorDocumento String           @db.VarChar(17)
-  receptorDireccion String           @db.VarChar(255)
-  receptorCorreo    String           @db.VarChar(254)
-  receptorTelefono  String           @db.VarChar(20)
+  receptorNombre    String         @db.VarChar(100)
+  receptorDocumento String         @db.VarChar(17)
+  receptorDireccion String         @db.VarChar(255)
+  receptorCorreo    String         @db.VarChar(254)
+  receptorTelefono  String         @db.VarChar(20)
   condicionPago     CondicionPago
-  notas             String           @db.Text
+  notas             String         @db.Text
   /// Snapshot del emisor al emitir (nombre comercial, razón social, NIT, NRC, dirección…).
   emisor            Json
-  total             Decimal          @db.Decimal(12, 2)
-  estado            EstadoFactura    @default(emitida)
-  creadaEn          DateTime         @default(now())
+  total             Decimal        @db.Decimal(12, 2)
+  estado            EstadoFactura  @default(emitida)
+  creadaEn          DateTime       @default(now())
   creadaPorId       Int?
-  creadaPorUsuario  Usuario?         @relation("FacturaCreadaPor", fields: [creadaPorId], references: [id], onDelete: SetNull)
-  creadaPor         String           @db.VarChar(80)
+  creadaPorUsuario  Usuario?       @relation("FacturaCreadaPor", fields: [creadaPorId], references: [id], onDelete: SetNull)
+  creadaPor         String         @db.VarChar(80)
   anuladaEn         DateTime?
   anuladaPorId      Int?
-  anuladaPorUsuario Usuario?         @relation("FacturaAnuladaPor", fields: [anuladaPorId], references: [id], onDelete: SetNull)
-  anuladaPor        String?          @db.VarChar(80)
+  anuladaPorUsuario Usuario?       @relation("FacturaAnuladaPor", fields: [anuladaPorId], references: [id], onDelete: SetNull)
+  anuladaPor        String?        @db.VarChar(80)
   lineas            LineaFactura[]
 
   @@index([estado, creadaEn])
@@ -540,4 +548,77 @@ model LineaFactura {
 
   @@index([facturaId])
   @@map("facturas_lineas")
+}
+
+/**
+ * ---------- Cotizaciones (L16) ----------
+ */
+
+/// Estado guardado. «vencida» (emitida fuera de validez) y «convertida» (con pedido activo) se derivan al leer.
+enum EstadoCotizacion {
+  emitida
+  aceptada
+  rechazada
+}
+
+/// Cotización emitida: snapshot del cliente, del emisor y de los precios; se corrige emitiendo otra.
+model Cotizacion {
+  id               Int               @id @default(autoincrement())
+  /// Secuencia propia `cotizacion` en `correlativos` (D-12): una sola serie que no se reinicia con el año.
+  numero           Int               @unique @db.UnsignedInt
+  /// `COT-{año de emisión}-###`, fijado al emitir.
+  codigo           String            @unique @db.VarChar(20)
+  clienteId        Int?
+  cliente          Cliente?          @relation(fields: [clienteId], references: [id], onDelete: SetNull)
+  clienteNombre    String            @db.VarChar(100)
+  clienteTelefono  String            @db.VarChar(20)
+  clienteCorreo    String            @db.VarChar(254)
+  clienteDocumento String            @db.VarChar(17)
+  notas            String            @db.Text
+  validezDias      Int               @db.UnsignedTinyInt
+  /// Último día de validez (inclusive, calendario de El Salvador, D-07).
+  validaHasta      DateTime          @db.Date
+  estado           EstadoCotizacion  @default(emitida)
+  /// Snapshot del emisor al emitir (mismo contrato que la factura).
+  emisor           Json
+  total            Decimal           @db.Decimal(12, 2)
+  creadaEn         DateTime          @default(now())
+  creadaPorId      Int?
+  creadaPorUsuario Usuario?          @relation(fields: [creadaPorId], references: [id], onDelete: SetNull)
+  creadaPor        String            @db.VarChar(80)
+  lineas           LineaCotizacion[]
+  cargos           CargoCotizacion[]
+  pedidos          Pedido[]
+
+  @@index([creadaEn])
+  @@map("cotizaciones")
+}
+
+/// Línea cotizada con su snapshot; si el producto se elimina, la línea conserva SKU, nombre y precio.
+model LineaCotizacion {
+  id             Int        @id @default(autoincrement())
+  cotizacionId   Int
+  cotizacion     Cotizacion @relation(fields: [cotizacionId], references: [id], onDelete: Cascade)
+  productoId     Int?
+  producto       Producto?  @relation(fields: [productoId], references: [id], onDelete: SetNull)
+  sku            String     @db.VarChar(32)
+  nombre         String     @db.VarChar(120)
+  cantidad       Int        @db.UnsignedInt
+  precioUnitario Decimal    @db.Decimal(12, 2)
+  descuento      Decimal    @default(0) @db.Decimal(5, 2)
+  importe        Decimal    @db.Decimal(12, 2)
+
+  @@index([cotizacionId])
+  @@map("cotizaciones_lineas")
+}
+
+model CargoCotizacion {
+  id           Int        @id @default(autoincrement())
+  cotizacionId Int
+  cotizacion   Cotizacion @relation(fields: [cotizacionId], references: [id], onDelete: Cascade)
+  concepto     String     @db.VarChar(60)
+  monto        Decimal    @db.Decimal(12, 2)
+
+  @@index([cotizacionId])
+  @@map("cotizaciones_cargos")
 }

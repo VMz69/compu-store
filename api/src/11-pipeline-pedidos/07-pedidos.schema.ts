@@ -15,7 +15,8 @@ const decimal = (mensaje: string) =>
     .transform((valor) => String(valor).trim())
     .pipe(z.string().regex(/^\d{1,9}(\.\d{1,2})?$/, mensaje))
 
-const linea = z.strictObject({
+/** Línea de pedido o cotización (L16 la comparte): el precio lo pone el servidor. */
+export const esquemaLinea = z.strictObject({
   productoId: z.number().int().positive('Producto no válido.'),
   cantidad: z.number().int().min(1, 'Cantidad mínima: 1.').max(9999, 'Cantidad máxima: 9999.'),
   descuento: decimal('Descuento inválido (0–100, hasta 2 decimales).')
@@ -24,7 +25,7 @@ const linea = z.strictObject({
 })
 
 /** = `CHARGE_LIMITS` del admin. */
-const cargo = z.strictObject({
+export const esquemaCargo = z.strictObject({
   concepto: z.string().trim().min(3, 'Describe el cargo (mín. 3 letras).').max(60, 'Máximo 60 caracteres.'),
   monto: decimal('Monto inválido (ej. 3.50).')
     .refine((m) => Number(m) > 0, 'Debe ser mayor que $0.')
@@ -32,7 +33,7 @@ const cargo = z.strictObject({
 })
 
 /** Cliente ocasional (sin ficha en el directorio). */
-const clienteOcasional = z.strictObject({
+export const esquemaClienteOcasional = z.strictObject({
   nombre: z.string().trim().min(3, 'Mínimo 3 caracteres.').max(100, 'Máximo 100 caracteres.'),
   telefono: z.string().trim().regex(/^[0-9+\-\s]{8,15}$/, 'Teléfono obligatorio (ej. 7038-8225).'),
   correo: z
@@ -48,14 +49,14 @@ const clienteOcasional = z.strictObject({
 export const esquemaPedido = z
   .strictObject({
     clienteId: z.number().int().positive().nullable().default(null),
-    cliente: clienteOcasional.optional(),
+    cliente: esquemaClienteOcasional.optional(),
     ciudad: z.string().trim().max(80, 'Máximo 80 caracteres.').default(''),
     canalId: z.number({ error: 'Selecciona el canal de venta.' }).int().positive(),
     formaPago: z.string().trim().min(1, 'Selecciona la forma de pago.').max(60),
     formaEntrega: z.string().trim().min(1, 'Indica la forma de entrega.').max(120),
     notas: z.string().trim().max(2000, 'Máximo 2000 caracteres.').default(''),
-    lineas: z.array(linea).min(1, 'Agrega al menos un producto.').max(50, 'Máximo 50 productos.'),
-    cargos: z.array(cargo).max(6, 'Máximo 6 cargos extra por documento.').default([]),
+    lineas: z.array(esquemaLinea).min(1, 'Agrega al menos un producto.').max(50, 'Máximo 50 productos.'),
+    cargos: z.array(esquemaCargo).max(6, 'Máximo 6 cargos extra por documento.').default([]),
   })
   .superRefine((p, ctx) => {
     if (p.clienteId === null && !p.cliente) ctx.addIssue({ code: 'custom', path: ['cliente'], message: 'Indica el cliente.' })

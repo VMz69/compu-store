@@ -26,6 +26,8 @@ interface Fila {
   url: string
   /** Alternativas aceptadas (cualquiera basta). */
   permisos: Permiso[]
+  /** L16: permisos que se exigen además de una alternativa (todos). */
+  tambien?: Permiso[]
 }
 
 const SESION_EXENTAS = ['GET /sesion', 'POST /sesion', 'PUT /sesion/contrasena']
@@ -97,6 +99,19 @@ const MATRIZ: Fila[] = [
   { metodo: 'get', patron: '/facturas/:id', url: '/facturas/999999', permisos: ['facturacion'] },
   { metodo: 'post', patron: '/facturas', url: '/facturas', permisos: ['facturacion.emitir'] },
   { metodo: 'post', patron: '/facturas/:id/anulacion', url: '/facturas/999999/anulacion', permisos: ['facturacion.emitir'] },
+  // L16: las cotizaciones se consultan en su vista; gestionarlas exige `canManageQuotes` y convertir, además, `canChangeOrderStatus`.
+  { metodo: 'get', patron: '/cotizaciones', url: '/cotizaciones', permisos: ['cotizaciones'] },
+  { metodo: 'get', patron: '/cotizaciones/:id', url: '/cotizaciones/999999', permisos: ['cotizaciones'] },
+  { metodo: 'post', patron: '/cotizaciones', url: '/cotizaciones', permisos: ['cotizaciones.gestionar'] },
+  { metodo: 'patch', patron: '/cotizaciones/:id/estado', url: '/cotizaciones/999999/estado', permisos: ['cotizaciones.gestionar'] },
+  { metodo: 'delete', patron: '/cotizaciones/:id', url: '/cotizaciones/999999', permisos: ['cotizaciones.gestionar'] },
+  {
+    metodo: 'post',
+    patron: '/cotizaciones/:id/conversion',
+    url: '/cotizaciones/999999/conversion',
+    permisos: ['cotizaciones.gestionar'],
+    tambien: ['pedidos.gestionar'],
+  },
 ]
 
 const TODAS: Permiso[] = [...VISTAS, ...ACCIONES]
@@ -166,7 +181,7 @@ describe('RBAC: matriz permitido / denegado', () => {
     describe(`${fila.metodo.toUpperCase()} ${fila.patron}`, () => {
       for (const permiso of fila.permisos) {
         it(`permitido con «${permiso}»`, async () => {
-          await fijarPermisos(usuarioId, soloCon(permiso))
+          await fijarPermisos(usuarioId, [...new Set([permiso, ...(fila.tambien ?? [])].flatMap(soloCon))])
           const res = await pedir(fila)
           expect(res.status).not.toBe(403)
           expect(res.status).not.toBe(401)
@@ -178,6 +193,14 @@ describe('RBAC: matriz permitido / denegado', () => {
         expect(res.status).toBe(403)
         expect(res.body.error.code).toBe('PERMISSION_DENIED')
       })
+      for (const extra of fila.tambien ?? []) {
+        it(`denegado sin «${extra}» aunque tenga ${fila.permisos.map((p) => `«${p}»`).join(' o ')}`, async () => {
+          await fijarPermisos(usuarioId, todoMenos([extra]))
+          const res = await pedir(fila)
+          expect(res.status).toBe(403)
+          expect(res.body.error.code).toBe('PERMISSION_DENIED')
+        })
+      }
     })
   }
 })

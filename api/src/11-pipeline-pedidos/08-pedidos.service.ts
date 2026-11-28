@@ -32,6 +32,8 @@ export interface PedidoDto {
   reservadoHasta: string | null
   /** Factura activa que cerró la venta (L15); null si no tiene o si se anuló. */
   factura: { id: number; numeroControl: string; correlativo: number } | null
+  /** Cotización de origen (L16); null si se registró directamente. */
+  cotizacion: { id: number; codigo: string } | null
   lineas: { productoId: number; sku: string; nombre: string; cantidad: number; precioUnitario: string; descuento: string; importe: string }[]
   cargos: { id: number; concepto: string; monto: string }[]
   total: string
@@ -50,6 +52,7 @@ const aPedido = (p: PedidoFila): PedidoDto => ({
   estado: p.estado,
   reservadoHasta: p.reservadoHasta ? p.reservadoHasta.toISOString().slice(0, 10) : null,
   factura: p.facturas[0] ?? null,
+  cotizacion: p.cotizacion,
   lineas: p.lineas.map((l) => ({
     productoId: l.productoId,
     sku: l.sku,
@@ -110,7 +113,7 @@ async function leerCatalogo(datos: DatosPedido): Promise<Catalogo> {
   return { vendibles: new Map(vendibles.map((p) => [p.id, p])), disponibles }
 }
 
-type Previa = { sku: string; nombre: string; precioUnitario: string }
+export type Previa = { sku: string; nombre: string; precioUnitario: string }
 
 /**
  * Líneas con precio del servidor: las que ya estaban en el pedido conservan su snapshot (SKU, nombre y
@@ -183,14 +186,40 @@ export async function obtenerPedido(id: number): Promise<PedidoDto> {
 
 /* ---------- Escritura ---------- */
 
-export async function crearPedido(datos: DatosPedido, operador: Operador): Promise<PedidoDto> {
+/** Contenido de un alta: canal y cliente asignables y líneas con precio del servidor (`previas`: snapshots que se respetan). */
+async function contenidoAlta(datos: DatosPedido, previas: Map<number, Previa>): Promise<ContenidoPedido> {
   const canal = await canalAsignable(datos.canalId)
   const cliente = await clienteAsignable(datos)
-  const lineas = armarLineas(datos, await leerCatalogo(datos), new Map())
-  const id = await repo.transaccion((tx) =>
-    repo.crear(tx, contenido(datos, cliente, canal, lineas), { estado: 'registrado', usuarioId: operador.id, por: operador.nombre }),
-  )
+  const lineas = armarLineas(datos, await leerCatalogo(datos), previas)
+  return contenido(datos, cliente, canal, lineas)
+}
+
+export async function crearPedido(datos: DatosPedido, operador: Operador): Promise<PedidoDto> {
+  const alta = await contenidoAlta(datos, new Map())
+  const id = await repo.transaccion((tx) => repo.crear(tx, alta, { estado: 'registrado', usuarioId: operador.id, por: operador.nombre }))
   return obtenerPedido(id)
+}
+
+/** Cotización que se convierte: sus líneas vigentes (por producto) conservan el precio cotizado (D-18). */
+export interface OrigenCotizacion {
+  id: number
+  codigo: string
+  lineas: Map<number, Previa>
+}
+
+/**
+ * Conversión cotización → pedido (L16) dentro de la transacción de cotizaciones, que ya bloqueó la
+ * cotización y comprobó que se puede convertir (§3.1.6). Mismas reglas que el registro: canal y cliente
+ * asignables, stock ≤ disponible (422 por línea); los productos que no estaban cotizados toman el precio
+ * efectivo de hoy. Devuelve el id del pedido.
+ */
+export async function crearDesdeCotizacion(tx: Tx, origen: OrigenCotizacion, datos: DatosPedido, operador: Operador): Promise<number> {
+  const alta = await contenidoAlta(datos, origen.lineas)
+  return repo.crear(
+    tx,
+    { ...alta, cotizacionId: origen.id },
+    { estado: 'registrado', usuarioId: operador.id, por: operador.nombre, nota: `Desde la cotización ${origen.codigo}` },
+  )
 }
 
 /** Pedido vigente bloqueado hasta el final de la transacción; si su reserva caducó, se vence en línea (D-07). */

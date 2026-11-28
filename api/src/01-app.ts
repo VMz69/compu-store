@@ -16,6 +16,7 @@ import { crearRouterClientes } from './09-pipeline-clientes/00-director-clientes
 import { crearRouterAdminOfertas } from './10-pipeline-ofertas/00-director-ofertas.js'
 import { conectarReservas, crearRouterAjustesVentas, crearRouterPedidos } from './11-pipeline-pedidos/00-director-pedidos.js'
 import { crearRouterFacturas } from './12-pipeline-facturacion/00-director-facturacion.js'
+import { crearRouterCotizaciones } from './13-pipeline-cotizaciones/00-director-cotizaciones.js'
 
 export interface DependenciasApp {
   /** Comprueba la base de datos; se inyecta para poder simular fallos en las pruebas. */
@@ -68,6 +69,7 @@ export function crearApp({ pingBD, identidad, imagenes, origenes, extender }: De
   admin.use(crearRouterAjustesVentas())
   admin.use(crearRouterPedidos())
   admin.use(crearRouterFacturas())
+  admin.use(crearRouterCotizaciones())
   app.use('/api/v1/admin', admin)
 
   // /api/v1/tienda/* es público y de solo lectura.

@@ -9,8 +9,8 @@
  * Uso: `pnpm db:sembrar` (prisma db seed). En pruebas se importa `sembrar`.
  * Con `SEED_DEMO=true` también siembra las ofertas de demostración (L12), con fechas
  * relativas al día de la ejecución para que no venzan, y los pedidos de demostración (L13; los
- * reservados de L14 se reservan y los facturados de L15 se facturan con la misma operación que la API):
- * `SEED_DEMO=true pnpm db:sembrar`.
+ * reservados de L14 se reservan y los facturados de L15 se facturan con la misma operación que la API),
+ * más las cotizaciones de demostración (L16): `SEED_DEMO=true pnpm db:sembrar`.
  */
 import { resolve } from 'node:path'
 import type { CondicionProducto, PrismaClient } from '../generated/prisma/client.js'
@@ -380,6 +380,70 @@ const FACTURAS_DEMO: Record<number, { receptor: { consumidorFinal: boolean; nomb
 }
 const FACTURADOR_DEMO = 'José Henríquez'
 
+// ── Cotizaciones de demostración (L16, solo con SEED_DEMO=true) ─────────────
+// Del mock (admin/src/88-pipeline-datos-demo-documentos/04-quotes.mock.ts) con sus números: COT-2026-001…006.
+// Los precios son los cotizados (snapshot histórico) y los importes salen del mismo cálculo que la API. El
+// cliente del directorio se enlaza si sigue existiendo; la línea, si sigue existiendo el producto. La
+// secuencia `cotizacion` queda en máx(último, 6). Con las fechas del mock, las emitidas ya están vencidas.
+
+const COTIZACIONES_DEMO = [
+  {
+    numero: 6, clienteId: 6, cliente: { nombre: 'Despacho Jurídico Portillo & Asociados', telefono: '7845-1290', correo: 'rportillo@portilloabogados.sv', documento: '0702-110520-101-7' },
+    lineas: [
+      { productoId: 9, sku: 'HP-450G8-I5', nombre: 'Laptop HP ProBook 450 G8 Core i5', precioUnitario: '799.00', cantidad: 3, descuento: '5.00' },
+      { productoId: 5, sku: 'LOG-M185-GR', nombre: 'Mouse Inalámbrico Logitech M185', precioUnitario: '20.00', cantidad: 3, descuento: '0.00' },
+    ],
+    cargos: [{ concepto: 'Configuración e instalación en oficina', monto: '30.00' }],
+    notas: 'Requiere Crédito Fiscal (CCF). Retiro programado para el jueves.',
+    validezDias: 15, estado: 'emitida', creadaEn: '2026-11-04T14:10:00.000Z', creadaPor: 'Gabriela Solís',
+  },
+  {
+    numero: 5, clienteId: 4, cliente: { nombre: 'Empresa Consultores SV', telefono: '2288-4400', correo: 'compras@consultoressv.com', documento: '0614-250318-102-3' },
+    lineas: [
+      { productoId: 2, sku: 'DEL-SE2422H', nombre: 'Monitor Dell 24 pulg. IPS FHD 75Hz', precioUnitario: '250.00', cantidad: 4, descuento: '8.00' },
+      { productoId: 11, sku: 'KNG-FB16-3200', nombre: 'Memoria RAM Kingston Fury Beast 16GB DDR4', precioUnitario: '45.00', cantidad: 4, descuento: '0.00' },
+    ],
+    cargos: [],
+    notas: 'Crédito fiscal a 30 días según acuerdo comercial.',
+    validezDias: 30, estado: 'aceptada', creadaEn: '2026-10-28T10:30:00.000Z', creadaPor: 'Licda. Sofía Alvarado',
+  },
+  {
+    numero: 4, clienteId: 2, cliente: { nombre: 'Carlos Henríquez', telefono: '6833-1100', correo: 'carlos.henriquez@outlook.com', documento: '' },
+    lineas: [
+      { productoId: 12, sku: 'RDG-GC-RECL', nombre: 'Silla Gamer Ergonómica Reclinable', precioUnitario: '185.00', cantidad: 1, descuento: '0.00' },
+      { productoId: 4, sku: 'RDG-K552-RGB', nombre: 'Teclado Mecánico RGB Redragon Gamer', precioUnitario: '60.00', cantidad: 1, descuento: '0.00' },
+      { productoId: 6, sku: 'RDG-H510-71', nombre: 'Audífonos Gaming Diadema 7.1 Surround', precioUnitario: '45.00', cantidad: 1, descuento: '0.00' },
+    ],
+    cargos: [],
+    notas: 'Combo gamer. Consultar disponibilidad de silla en sala.',
+    validezDias: 7, estado: 'emitida', creadaEn: '2026-11-02T16:45:00.000Z', creadaPor: 'Gabriela Solís',
+  },
+  {
+    numero: 3, clienteId: null, cliente: { nombre: 'Colegio San José de Cojutepeque', telefono: '2372-5500', correo: 'administracion@csj.edu.sv', documento: '' },
+    lineas: [{ productoId: 1, sku: 'ACR-A515-REF', nombre: 'Laptop Acer Aspire 5 Refurbished', precioUnitario: '525.00', cantidad: 10, descuento: '10.00' }],
+    cargos: [],
+    notas: 'Cotización para laboratorio de cómputo. Pago contra entrega.',
+    validezDias: 15, estado: 'rechazada', creadaEn: '2026-10-15T09:00:00.000Z', creadaPor: 'Ing. Marvin Castro',
+  },
+  {
+    numero: 2, clienteId: 7, cliente: { nombre: 'Andrea Morales', telefono: '6120-9988', correo: 'andrea.morales@gmail.com', documento: '' },
+    lineas: [{ productoId: 11, sku: 'KNG-FB16-3200', nombre: 'Memoria RAM Kingston Fury Beast 16GB DDR4', precioUnitario: '45.00', cantidad: 2, descuento: '0.00' }],
+    cargos: [],
+    notas: '',
+    validezDias: 7, estado: 'emitida', creadaEn: '2026-10-20T11:20:00.000Z', creadaPor: 'Gabriela Solís',
+  },
+  {
+    numero: 1, clienteId: 1, cliente: { nombre: 'María Hernández', telefono: '7488-9922', correo: 'maria.hernandez@gmail.com', documento: '04512378-9' },
+    lineas: [
+      { productoId: 3, sku: 'SAM-980-1TB', nombre: 'Disco M.2 1 TB SAMSUNG NVMe 980', precioUnitario: '75.00', cantidad: 1, descuento: '0.00' },
+      { productoId: 7, sku: 'RDG-CP-ALU', nombre: 'Base Enfriadora para Laptop de Aluminio', precioUnitario: '18.00', cantidad: 1, descuento: '0.00' },
+    ],
+    cargos: [],
+    notas: '',
+    validezDias: 15, estado: 'aceptada', creadaEn: '2026-10-05T15:00:00.000Z', creadaPor: 'Licda. Sofía Alvarado',
+  },
+] as const
+
 // ── Siembra ────────────────────────────────────────────────────────────────
 
 export interface ResumenSeed {
@@ -392,10 +456,11 @@ export interface ResumenSeed {
   canales: number
   pedidos: number
   facturas: number
+  cotizaciones: number
 }
 
 export interface OpcionesSeed {
-  /** Siembra también los datos de demostración (ofertas de L12, pedidos de L13–L14 y facturas de L15). */
+  /** Siembra también los datos de demostración (ofertas de L12, pedidos de L13–L14, facturas de L15 y cotizaciones de L16). */
   demo?: boolean
 }
 
@@ -450,8 +515,9 @@ export async function sembrar(prisma: PrismaClient, { demo = false }: OpcionesSe
   const { importeLinea, reservarEnTx, totalPedido } = await import('../src/11-pipeline-pedidos/00-director-pedidos.js')
   const { emitirEnTx } = await import('../src/12-pipeline-facturacion/00-director-facturacion.js')
   const { obtenerEmisor } = await import('../src/08-pipeline-tienda/00-director-tienda.js')
+  const { codigoCotizacion, SECUENCIA_COTIZACION, validezHasta } = await import('../src/13-pipeline-cotizaciones/00-director-cotizaciones.js')
   return prisma.$transaction(async (tx) => {
-    const resumen: ResumenSeed = { categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0, ofertas: 0, canales: 0, pedidos: 0, facturas: 0 }
+    const resumen: ResumenSeed = { categorias: 0, marcas: 0, productos: 0, configuracion: 0, clientes: 0, ofertas: 0, canales: 0, pedidos: 0, facturas: 0, cotizaciones: 0 }
 
     const categoriaIds = new Map<string, number>()
     for (const c of CATEGORIAS) {
@@ -568,6 +634,37 @@ export async function sembrar(prisma: PrismaClient, { demo = false }: OpcionesSe
         }
       }
       resumen.pedidos++
+    }
+
+    // Solo si no existe ese número; con su código, validez y emisor calculados como en la API.
+    for (const { numero, clienteId, cliente, lineas, cargos, creadaEn, ...q } of demo ? COTIZACIONES_DEMO : []) {
+      if (await tx.cotizacion.findUnique({ where: { numero } })) continue
+      const emitidaEn = new Date(creadaEn)
+      const enlazado = clienteId !== null && (await tx.cliente.findUnique({ where: { id: clienteId } })) ? clienteId : null
+      const existentes = new Set(
+        (await tx.producto.findMany({ where: { id: { in: lineas.map((l) => l.productoId) } }, select: { id: true } })).map((p) => p.id),
+      )
+      const conImporte = lineas.map((l) => ({ ...l, productoId: existentes.has(l.productoId) ? l.productoId : null, importe: importeLinea(l) }))
+      await tx.cotizacion.create({
+        data: {
+          ...q,
+          numero,
+          codigo: codigoCotizacion(numero, emitidaEn),
+          clienteId: enlazado,
+          clienteNombre: cliente.nombre,
+          clienteTelefono: cliente.telefono,
+          clienteCorreo: cliente.correo,
+          clienteDocumento: cliente.documento,
+          validaHasta: validezHasta(emitidaEn, q.validezDias),
+          emisor: { ...(await obtenerEmisor(tx)).emisor },
+          total: totalPedido(conImporte, [...cargos]),
+          creadaEn: emitidaEn,
+          lineas: { create: conImporte },
+          cargos: { create: [...cargos] },
+        },
+      })
+      await tx.$executeRaw`UPDATE correlativos SET ultimo = GREATEST(ultimo, ${numero}) WHERE clave = ${SECUENCIA_COTIZACION}`
+      resumen.cotizaciones++
     }
 
     return resumen
