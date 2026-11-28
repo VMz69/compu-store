@@ -21,6 +21,8 @@ interface PedidoDto {
   reservadoHasta: string | null
   /** Factura activa (L15); null si no tiene o si se anuló. */
   factura: { id: number; numeroControl: string; correlativo: number } | null
+  /** Cotización de origen (L16); null si se registró directamente. */
+  cotizacion: { id: number; codigo: string } | null
   lineas: { productoId: number; sku: string; nombre: string; cantidad: number; precioUnitario: string; descuento: string; importe: string }[]
   cargos: { id: number; concepto: string; monto: string }[]
   total: string
@@ -81,8 +83,8 @@ const toOrder = (dto: PedidoDto): Order => ({
   reservedUntil: dto.reservadoHasta,
   // El admin identifica la factura por su número de control (= `Invoice.id`).
   invoiceId: dto.factura?.numeroControl ?? null,
-  // La cotización de origen se enlaza en L16 (D-18).
-  quoteId: null,
+  // L16: el admin identifica la cotización por su código (= `Quote.id`).
+  quoteId: dto.cotizacion?.codigo ?? null,
   history: dto.historial.map((e) => ({ status: e.estado, at: e.fecha, by: e.por, ...(e.nota ? { note: e.nota } : {}) })),
 })
 
@@ -129,6 +131,30 @@ export async function fetchOrderApi(id: string): Promise<Order> {
 
 export async function createOrderApi(draft: OrderDraft, canalId: number): Promise<Order> {
   const { data } = await apiClient.post<Envelope<PedidoDto>>(orderPath(), toPedidoBody(draft, canalId))
+  return toOrder(data.data)
+}
+
+/**
+ * Puerto del id de la API de una cotización (L16). La conversión va por id (`/cotizaciones/:id/conversion`)
+ * y el admin solo conoce el código (`COT-AAAA-###`): Cotizaciones lo provee al cargarse, sin que Pedidos
+ * la importe. Sin proveedor: ninguna cotización resuelta.
+ */
+export type QuoteApiIdLookup = (quoteId: string) => number | undefined
+
+const quotePort: { lookup: QuoteApiIdLookup } = { lookup: () => undefined }
+
+export const provideQuoteApiId = (lookup: QuoteApiIdLookup): void => {
+  quotePort.lookup = lookup
+}
+
+/**
+ * Cotización → pedido (L16, D-18): el servidor bloquea la cotización, comprueba que siga convertible
+ * (sin pedido activo, no rechazada y vigente) y registra el pedido con el precio cotizado en sus líneas.
+ */
+export async function convertQuoteApi(draft: OrderDraft & { quoteId: string }, canalId: number): Promise<Order> {
+  const id = quotePort.lookup(draft.quoteId)
+  if (id === undefined) throw new Error(`La cotización ${draft.quoteId} no está cargada: recarga Cotizaciones.`)
+  const { data } = await apiClient.post<Envelope<PedidoDto>>(`/admin/cotizaciones/${id}/conversion`, toPedidoBody(draft, canalId))
   return toOrder(data.data)
 }
 

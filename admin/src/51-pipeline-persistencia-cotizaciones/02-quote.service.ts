@@ -1,7 +1,7 @@
 import type { BadgeTone } from '@/00-director-interfaz'
 import { sumCharges, type ExtraCharge } from '@/78-pipeline-cargos-documentos/03-charges'
 import { lineTotal as pricedLineTotal, money, summarizeLines } from '@/82-pipeline-calculo-importes/00-director-calculo-importes'
-import { matchesQuery, nextSequentialId } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
+import { matchesQuery } from '@/85-pipeline-identificadores-texto/00-director-identificadores-texto'
 import type { Quote, QuoteItem, QuoteStatus, QuoteTotals } from './03-types'
 
 /**
@@ -9,7 +9,6 @@ import type { Quote, QuoteItem, QuoteStatus, QuoteTotals } from './03-types'
  * el constructor y el generador de PDF para que los montos siempre coincidan.
  */
 
-export const QUOTE_ID_PREFIX = 'COT-2026-'
 export const VALIDITY_OPTIONS = [7, 15, 30]
 export const DEFAULT_VALIDITY_DAYS = 15
 
@@ -28,10 +27,14 @@ export function calcTotals(items: QuoteItem[], charges: Pick<ExtraCharge, 'amoun
   return { gross, discount, productsTotal, chargesTotal, total, net, tax: money(total - net), units }
 }
 
-/** Fecha límite de validez (ISO). */
+/**
+ * Fecha límite de validez (ISO): el final del día de emisión + días de validez, inclusive, como el
+ * `validaHasta` del servidor (L16, D-07).
+ */
 export const validUntil = (quote: Pick<Quote, 'createdAt' | 'validityDays'>): string => {
   const date = new Date(quote.createdAt)
   date.setDate(date.getDate() + quote.validityDays)
+  date.setHours(23, 59, 59, 999)
   return date.toISOString()
 }
 
@@ -55,12 +58,6 @@ export const QUOTE_STATUS_META: Record<QuoteStatus, { label: string; tone: Badge
   vencida: { label: 'Vencida', tone: 'neutral', icon: 'fa-solid fa-hourglass-end' },
   convertida: { label: 'Convertida en pedido', tone: 'success', icon: 'fa-solid fa-cart-shopping' },
 }
-
-export const nextQuoteId = (quotes: Quote[]): string =>
-  nextSequentialId(
-    quotes.map((q) => q.id),
-    QUOTE_ID_PREFIX,
-  )
 
 export function filterQuotes(
   quotes: Quote[],

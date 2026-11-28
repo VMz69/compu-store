@@ -48,18 +48,23 @@ export function useQuoteBuilder() {
     if (Object.keys(validate()).length > 0) return toast('Revisa el cliente, los productos y los cargos extra.', 'warning')
     if (!ensurePermission('canManageQuotes', 'No tienes permiso para emitir cotizaciones')) return
     const { customerId, name, phone, email, documentId } = customer.snapshot
-    const quote = await createQuote({
-      customer: { customerId, name, phone, email, documentId },
-      items: lines.items,
-      charges: extra.charges,
-      notes: values.notes.trim(),
-      validityDays: Number(values.validityDays),
-      createdBy: user?.name ?? 'Equipo CompuStore',
-      issuer: { name: settings.name, address: settings.address, phones: settings.phones, email: settings.email, taxRate: settings.taxRate },
-    })
-    toast(`Cotización ${quote.id} generada`, 'success')
-    navigate('/cotizaciones')
-    openModal(QUOTES_MODALS.preview, quote.id)
+    try {
+      // El servidor fija precios, número, emisor y autor (L16); si rechaza, su mensaje se ve y el formulario sigue abierto.
+      const quote = await createQuote({
+        customer: { customerId, name, phone, email, documentId },
+        items: lines.items,
+        charges: extra.charges,
+        notes: values.notes.trim(),
+        validityDays: Number(values.validityDays),
+        createdBy: user?.name ?? 'Equipo CompuStore',
+        issuer: { name: settings.name, address: settings.address, phones: settings.phones, email: settings.email, taxRate: settings.taxRate },
+      })
+      toast(`Cotización ${quote.id} generada`, 'success')
+      navigate('/cotizaciones')
+      openModal(QUOTES_MODALS.preview, quote.id)
+    } catch (error) {
+      toast(error instanceof Error ? error.message : 'No se pudo generar la cotización.', 'danger')
+    }
   }
 
   return {

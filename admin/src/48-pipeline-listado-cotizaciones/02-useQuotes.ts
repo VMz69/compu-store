@@ -68,12 +68,14 @@ export function useQuotes() {
 
   /**
    * Cotización → Pedido. Reglas: vigente (emitida o aceptada), sin pedido activo.
-   * Se respetan precios y descuentos cotizados; el stock se valida en el constructor.
+   * Se respetan precios y descuentos cotizados (D-18: también en el servidor); el stock se valida en el constructor.
    */
   const convert = (quote: Quote) => {
     if (!ensurePermission('canChangeOrderStatus', 'No tienes permiso para registrar pedidos')) return
     const current = effectiveStatus(quote, orderOf(quote.id))
     if (!isConvertible(current)) return toast(`La cotización ${quote.id} está ${QUOTE_STATUS_META[current].label.toLowerCase()}: no se puede convertir.`, 'warning')
+    // L16: tampoco una aceptada después de su validez (el servidor responde 422 con el mismo mensaje).
+    if (new Date(validUntil(quote)) < new Date()) return toast(`La cotización ${quote.id} está vencida: emite una nueva cotización.`, 'warning')
     const { customerId, name, phone, email } = quote.customer
     startOrderFromQuote({ quoteId: quote.id, customer: { customerId, name, phone, email }, items: quote.items, charges: quote.charges ?? [], notes: quote.notes })
     navigate('/pedidos/nuevo')

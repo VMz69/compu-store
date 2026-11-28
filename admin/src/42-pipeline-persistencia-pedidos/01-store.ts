@@ -10,6 +10,7 @@ import { findOrderByQuote, ordersOfChannel } from './02-order.service'
 import { applyStatusLabels, canTransition, deleteBlockedReason, editBlockedReason, ORDER_STATUSES, statusOf, type StatusLabel, type StatusLabels } from '../39-pipeline-transiciones-pedidos/02-orderFlow'
 import {
   changeOrderStatusApi,
+  convertQuoteApi,
   createOrderApi,
   deleteChannelApi,
   deleteOrderApi,
@@ -113,13 +114,15 @@ export const useSalesStore = create<SalesState>()(
       isLoading: false,
 
       addOrder: async (draft) => {
-        // Regla: una cotización se convierte en un solo pedido activo (el enlace en la API llega en L16).
+        // Regla: una cotización se convierte en un solo pedido activo (el servidor la vuelve a comprobar, L16).
         if (draft.quoteId && findOrderByQuote(get().orders, draft.quoteId)) {
           throw new Error(`La cotización ${draft.quoteId} ya tiene un pedido activo.`)
         }
         set({ isLoading: true })
         try {
-          const order = await createOrderApi(draft, channelIdOf(get().channels, draft.channel))
+          const canalId = channelIdOf(get().channels, draft.channel)
+          // Desde una cotización, la conversión del servidor enlaza el pedido y respeta el precio cotizado (D-18).
+          const order = draft.quoteId ? await convertQuoteApi({ ...draft, quoteId: draft.quoteId }, canalId) : await createOrderApi(draft, canalId)
           set((s) => ({ orders: [order, ...s.orders], isLoading: false }))
           return order
         } catch (error) {
